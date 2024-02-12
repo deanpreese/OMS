@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\OMS.Core\OMS.Core.csproj" />
+    <ProjectReference Include="..\OMS.Data\OMS.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="8.0.0" />
+
+    <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="8.0.0" />
+
+    <PackageReference Include="Microsoft.Orleans.Reminders" Version="8.0.0" />
+
+    <PackageReference Include="Microsoft.Orleans.Reminders.AdoNet" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Streaming" Version="8.0.0" />
+
+    <PackageReference Include="Microsoft.Orleans.Runtime" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Sdk" Version="8.0.0" />
+
+
+    <PackageReference Include="Microsoft.Orleans.Core" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Serialization" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Serialization.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Orleans.Server" Version="8.0.0" />
+
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Spectre.Console" Version="0.48.0" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.48.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Trading/" />
+  </ItemGroup>
+
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+
+</Project>

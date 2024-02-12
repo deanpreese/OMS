@@ -1,0 +1,44 @@
+﻿using Orleans;
+using OMS.Core.Models;
+using OMS.Core.Common;
+using Microsoft.Extensions.Logging;
+using Orleans.Streams;
+using OMS.Grains.Interfaces;
+using Orleans.Runtime;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Orleans.Core;
+using OMS.Core.Interfaces;
+using OMS.Data.Repositories;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using OMS.Services.Queue;
+
+namespace OMS.Grains.Impl;
+
+
+public class AdminGrain : Grain, IAdminGrain
+{
+    private IUnitOfWork _unitOfWork;
+
+
+    public AdminGrain(IUnitOfWork unitOfWork )
+    {
+        _unitOfWork = unitOfWork;
+    }
+
+
+    public async Task<int> AddNewTrader(NewTrader newTrader)
+    {
+        return await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
+    }
+
+    public async Task<int> AuthenticateTrader(UserInfo userInfo)
+    {
+        return await _unitOfWork.TraderRepository.AuthenticateTraderAsync(userInfo.UserID, "abc", userInfo.GroupNumber);
+    }
+
+    public async Task<List<UserProfile>> GetTraders(int userGroup)
+    {
+        return await _unitOfWork.TraderRepository.GetUserProfileListAsync(userGroup);
+    }
+}
