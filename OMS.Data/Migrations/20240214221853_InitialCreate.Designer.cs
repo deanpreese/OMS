@@ -12,7 +12,7 @@ using OMS.Data;
 namespace OMS.Data.Migrations
 {
     [DbContext(typeof(OrderManagementDbContext))]
-    [Migration("20240214064916_InitialCreate")]
+    [Migration("20240214221853_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -368,7 +368,7 @@ namespace OMS.Data.Migrations
                             LargestLosingStreak = 0,
                             LargestWinner = 0.0,
                             LargestWinningStreak = 0,
-                            LastUpdate = new DateTime(2024, 2, 14, 6, 49, 16, 338, DateTimeKind.Utc).AddTicks(3190),
+                            LastUpdate = new DateTime(2024, 2, 14, 22, 18, 53, 475, DateTimeKind.Utc).AddTicks(8090),
                             Longs = 0,
                             Losers = 0,
                             NetProfitLong = 0.0,
@@ -393,7 +393,7 @@ namespace OMS.Data.Migrations
                             LargestLosingStreak = 0,
                             LargestWinner = 0.0,
                             LargestWinningStreak = 0,
-                            LastUpdate = new DateTime(2024, 2, 14, 6, 49, 16, 338, DateTimeKind.Utc).AddTicks(3200),
+                            LastUpdate = new DateTime(2024, 2, 14, 22, 18, 53, 475, DateTimeKind.Utc).AddTicks(8100),
                             Longs = 0,
                             Losers = 0,
                             NetProfitLong = 0.0,
@@ -463,7 +463,7 @@ namespace OMS.Data.Migrations
                         new
                         {
                             UserID = 999999,
-                            DateRegistered = new DateTime(2024, 2, 13, 22, 49, 16, 338, DateTimeKind.Utc).AddTicks(3090),
+                            DateRegistered = new DateTime(2024, 2, 14, 14, 18, 53, 475, DateTimeKind.Utc).AddTicks(7990),
                             DisplayName = "User1",
                             Email = "admin",
                             Enabled = 1,
@@ -480,7 +480,7 @@ namespace OMS.Data.Migrations
                         new
                         {
                             UserID = 999998,
-                            DateRegistered = new DateTime(2024, 2, 13, 22, 49, 16, 338, DateTimeKind.Utc).AddTicks(3160),
+                            DateRegistered = new DateTime(2024, 2, 14, 14, 18, 53, 475, DateTimeKind.Utc).AddTicks(8060),
                             DisplayName = "User2",
                             Email = "admin",
                             Enabled = 1,

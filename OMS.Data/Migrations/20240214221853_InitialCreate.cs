@@ -190,8 +190,8 @@ namespace OMS.Data.Migrations
                 columns: new[] { "ScoreCardID", "AveLoss", "AveWin", "GrossLoss", "GrossProfit", "GroupID", "LargestLoser", "LargestLosingStreak", "LargestWinner", "LargestWinningStreak", "LastUpdate", "Longs", "Losers", "NetProfitLong", "NetProfitShort", "Shorts", "TotalNetProfit", "TradeXML", "Trades", "UserID", "WinLossRatio", "Winners" },
                 values: new object[,]
                 {
-                    { 1, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 2, 14, 6, 49, 16, 338, DateTimeKind.Utc).AddTicks(3190), 0, 0, 0.0, 0.0, 0, 0.0, "", 0, 999999, 0.0, 0 },
-                    { 2, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 2, 14, 6, 49, 16, 338, DateTimeKind.Utc).AddTicks(3200), 0, 0, 0.0, 0.0, 0, 0.0, "", 0, 999998, 0.0, 0 }
+                    { 1, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 2, 14, 22, 18, 53, 475, DateTimeKind.Utc).AddTicks(8090), 0, 0, 0.0, 0.0, 0, 0.0, "", 0, 999999, 0.0, 0 },
+                    { 2, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 2, 14, 22, 18, 53, 475, DateTimeKind.Utc).AddTicks(8100), 0, 0, 0.0, 0.0, 0, 0.0, "", 0, 999998, 0.0, 0 }
                 });
 
             migrationBuilder.InsertData(
@@ -199,8 +199,8 @@ namespace OMS.Data.Migrations
                 columns: new[] { "UserID", "DateRegistered", "DisplayName", "Email", "Enabled", "EnabledLive", "FirstName", "GroupRank", "IsOpposite", "LastName", "Leverage", "TraderGroup", "TraderRole", "UserPwd" },
                 values: new object[,]
                 {
-                    { 999998, new DateTime(2024, 2, 13, 22, 49, 16, 338, DateTimeKind.Utc).AddTicks(3160), "User2", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" },
-                    { 999999, new DateTime(2024, 2, 13, 22, 49, 16, 338, DateTimeKind.Utc).AddTicks(3090), "User1", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" }
+                    { 999998, new DateTime(2024, 2, 14, 14, 18, 53, 475, DateTimeKind.Utc).AddTicks(8060), "User2", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" },
+                    { 999999, new DateTime(2024, 2, 14, 14, 18, 53, 475, DateTimeKind.Utc).AddTicks(7990), "User1", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" }
                 });
         }
 

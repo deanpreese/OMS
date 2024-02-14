@@ -1,7 +1,5 @@
 import json
 import requests
-import time
-import datetime as dt
 
 class SimOrderManager():
     

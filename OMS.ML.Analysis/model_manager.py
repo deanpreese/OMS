@@ -2,7 +2,6 @@ import json
 import mlflow
 import pandas as pd
 import requests
-import json
 import datetime as dt
 
 class LoadedModel:
