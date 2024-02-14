@@ -2,6 +2,7 @@ import pandas as pd
 from model_manager import ModelLoader
 import models.wrapped_models
 import order_manager
+import time
 
 #from models.WrappedModels import *  
 #from CommonFunc import *
@@ -19,9 +20,9 @@ y = data["output"].values
 order_manager = order_manager.SimOrderManager()
 runner = ModelLoader()
 
-experiment_id = ["992846708356537991"]
+experiment_id = ["269558605581960436"]
 #models = runner.load_models(experiment_id)
-models = runner.load_random_models(experiment_id, 10)
+models = runner.load_random_models(experiment_id, 5)
 
 total = 0
 
@@ -34,9 +35,11 @@ for i in range(len(y)):
         total += 1        
         order_manager.process_tick(y[i])
         
-        if total > 399:
+        time.sleep(0.5)
+        
+        if total > 10:
             break    
 
 for m in range(len(models)):
-    print(f" {models[m].run_name}  {models[m].run_id}   {models[m].win_cnt}   {models[m].loss_cnt}    {models[m].win_cnt / ((models[m].win_cnt + models[m].loss_cnt))}      {models[m].winners}   {models[m].losses}      {models[m].winners - models[m].losses}  " )
+    print(f" {models[m].trader_id}  {models[m].run_name}  {models[m].run_id}   {models[m].win_cnt}   {models[m].loss_cnt}    {models[m].win_cnt / ((models[m].win_cnt + models[m].loss_cnt))}      {models[m].winners}   {models[m].losses}      {models[m].winners - models[m].losses}  " )
  

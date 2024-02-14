@@ -1,6 +1,6 @@
 
-from datetime import datetime
-from random import random
+import datetime as dte_time
+import random as rand
 import uuid
 import warnings
 import mlflow
@@ -34,7 +34,7 @@ def process_model(exp_name, data,  randomize, models, run_test_size, feature_lis
                 y = data['output'].values
                 
                 if randomize:
-                        idxx = random.sample(range(1, len(data.axes[1]) -2 ), feature_list_size)
+                        idxx = rand.sample(range(1, len(data.axes[1]) -2 ), feature_list_size)
                         features_list.append(idxx)    
                         fl= features_list[f]
                         X = data.iloc[:, fl]  
@@ -47,7 +47,7 @@ def process_model(exp_name, data,  randomize, models, run_test_size, feature_lis
                 #e.features_used = fl_out
                 e.features_used = X_train.columns
                 
-                perf, tot, mse, rmse, r2, score, mae, predictions = e.TrackInMLFlow(exp_name, True, e, X_train, y_train, X_test, y_test)  
+                perf, tot, mse, rmse, r2, score, mae, predictions = e.track_model(exp_name, True, e, X_train, y_train, X_test, y_test)  
                 all_predict_data[model_run_uuid] = predictions
                 perf, tot = show_stats(False, y_test, predictions)
                 mse, rmse  = calc_MSE(y_test, predictions, False)
@@ -92,7 +92,7 @@ def run_models(data, write_to_file, random_features, file_out, estimators, run_t
         if len(data.columns) < max_features:
                 max_features = len(data.columns) - 3
         
-        time_stamp = datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
+        time_stamp = dte_time.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
         exp_name = f"mixer_runs_{time_stamp}"
         
         try:
@@ -136,7 +136,7 @@ def LogFinalResults(p_df, experiment_id_parent):
         
         step = 0
 
-        time_stamp = datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
+        time_stamp = dte_time.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
         exp_name = f"mixer_output_{time_stamp}"
         
         try:
@@ -215,12 +215,12 @@ split_test_size_value = 0.8
 min_features_used = 2
 max_features_used = 11
 step_features_used = 1
-total_cycles_used = 25
+total_cycles_used = 10
 
 
 
 p_df, experiment_id_parent = run_models(dtx, to_file, randomize_features, f_out, est_list, split_test_size_value, min_features_used, max_features_used, step_features_used, total_cycles_used  )
-LogFinalResults(p_df, experiment_id_parent )
+#LogFinalResults(p_df, experiment_id_parent )
 
 print(" ")
 print(p_df)                

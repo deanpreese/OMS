@@ -60,6 +60,9 @@ public class OMSController : ControllerBase
     [HttpPost("process-order")]
     public async Task<ActionResult> ProcessOrder([FromBody] NewOrder order)
     {
+
+        Console.WriteLine("Order Info: " + order.UserID + "  " + order.UserGroup + "  " + order.OrderPX);
+
         int om_id = 0;
         try
         {
@@ -128,5 +131,12 @@ public class OMSController : ControllerBase
         return Ok(om_id);
     }
 
+
+    [HttpPost("verify-model-trader")]
+    public async Task<IActionResult> VerifyModelTrader([FromBody] NewTrader newTrader)
+    {
+        int oid = await _trader_service.VerifyModelTrader(newTrader);
+        return Ok(oid);
+    }
 
 }

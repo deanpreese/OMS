@@ -11,8 +11,9 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.metrics import confusion_matrix
 
 import mlflow
-mlflow.set_tracking_uri(uri="http://127.0.0.1:8888")
-
+#mlflow.set_tracking_uri(uri="http://127.0.0.1:8888")
+#mlflow.set_tracking_uri(uri="http://10.0.0.74:8888")
+mlflow.set_tracking_uri(uri="http://10.0.0.50:8888")
 
 # -----------------------------------------------------
 def gen_classifier_data(model, X_train, y_train, X_test, y_test, y_pred):

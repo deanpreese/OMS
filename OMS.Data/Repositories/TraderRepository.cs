@@ -136,4 +136,31 @@ public class TraderRepository : ITraderRepository
         return sixDigitRandomNumber;
     }
 
+    public async Task<int> VerifyModelTrader(NewTrader user)
+    {
+        var traders = (from u in _context.UserProfiles
+                       where u.DisplayName == user.DisplayName
+                           && u.TraderGroup == user.Group
+                                  select u).ToList();
+
+        if(traders.Count() == 1)
+        {
+            return traders[0].UserID;
+        }
+
+        if (traders.Count() > 1)
+        {
+            return -99;
+        }
+
+        if (traders.Count() == 0)
+        {
+            return 0;
+        }
+
+
+
+        return traders.Count();
+    }
+
 }
