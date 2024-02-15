@@ -5,6 +5,7 @@ import requests
 import datetime as dt
 import random as rand
 from LoadedModel import LoadedModel
+from models import wrapped_models
 
 class ModelLoader:
 
@@ -17,7 +18,13 @@ class ModelLoader:
     def add_model(self, rid):
         rinfo = mlflow.get_run(rid)
         run_txt = f"runs:/{rid}/model" 
+        
+        print(run_txt)
+        
+        
         loaded_model = mlflow.pyfunc.load_model(run_txt)
+        
+        
         
         cols =[]
         try:
@@ -40,7 +47,7 @@ class ModelLoader:
         self.initialize_trader(lm)
                 
         self.model_list.append(lm)        
-    
+                
         return loaded_model, cols
 
     def load_selected_models(self, runs):        

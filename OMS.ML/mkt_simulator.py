@@ -1,8 +1,8 @@
 import pandas as pd
 
 from ModelLoader import ModelLoader
-from order_manager import SimOrderManager
-
+from OrderManager import SimOrderManager
+from models import wrapped_models
 import logging
 logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
 
@@ -17,12 +17,12 @@ X = data.iloc[:, 0:input_features]
 y = data["output"].values
 
 order_manager = SimOrderManager()
-runner = ModelLoader()
+model_loader = ModelLoader()
 
 models = []
 experiment_id = ["792022387336146046"]
 #models = runner.load_models(experiment_id)
-models = runner.load_random_models(experiment_id, 3)
+models = model_loader.load_random_models(experiment_id, 25)
 
 total = 0
 
@@ -34,7 +34,7 @@ for i in range(len(y)):
 
         for m in range(len(models)):
             
-            sleep(0.5)
+            #sleep(0.1)
             loaded_prediction = models[m].do_predict(X.iloc[i])
             order_manager.process_model(models[m], y[i], loaded_prediction)
             order_total += 1
@@ -44,7 +44,7 @@ for i in range(len(y)):
         total += 1        
         order_manager.process_tick(y[i])
        
-        if total > 25:
+        if total > 100:
             break    
 
 end = time.time()
@@ -54,5 +54,8 @@ print(" ")
 #for m in range(len(models)):
 #    print(f" {models[m].trader_id}  {models[m].run_name}  {models[m].run_id}   {models[m].win_cnt}   {models[m].loss_cnt}    {models[m].win_cnt / ((models[m].win_cnt + models[m].loss_cnt))}      {models[m].winners}   {models[m].losses}      {models[m].winners - models[m].losses}  " )
 
-print(f"Time {end-start} seconds to process {order_total}")
+
+t = round(end-start,2)
+
+print(f"Time {t} seconds to process {order_total}  --  {order_total/t}/sec ")
 print(" ") 

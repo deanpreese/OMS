@@ -32,7 +32,7 @@ class SimOrderManager():
         orders = model.check_for_orders(prediction, self.px)        
         
         if len(orders) > 0:        
-            for o in orders:
+             for o in orders:
                 self.send_order(o)
         
  
@@ -47,10 +47,11 @@ class SimOrderManager():
             "Content-Type": "application/json"
         }
 
-        """
         response = requests.post(url, data=json.dumps(new_order), headers=headers)
         if response.status_code == 200:
             pass
         else:
             print(f"New Order send failed with status code {response.text}")                
-        """                    
+                           
+                           
+                              

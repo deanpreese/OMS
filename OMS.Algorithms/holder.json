@@ -1,0 +1,29 @@
+[
+    {
+       "algoclass": "Algorithms.Algos.OpenCloseAlgoTest",
+       "algoname" : "OpenCloseAlgoTest99",
+       "longname": "OpenCloseAlgoTest99-Long",
+       "shortname": "OpenCloseAlgoTest99-Short",
+       "group": 99,
+       "usedebugging": false,
+       "backtesting" : true
+   },
+   {
+    "algoclass": "Algorithms.Algos.OpenCloseAlgoTest2",
+    "algoname" : "OpenCloseAlgoTest98",
+    "longname": "OpenCloseAlgoTest98-Long",
+    "shortname": "OpenCloseAlgoTest98-Short",
+    "group": 98,
+    "usedebugging": false,
+    "backtesting" : true
+    },
+    {
+        "algoclass": "Algorithms.Algos.OpenCloseAlgoTest3",
+        "algoname" : "OpenCloseAlgoTest97",
+        "longname": "OpenCloseAlgoTest97-Long",
+        "shortname": "OpenCloseAlgoTest97-Short",
+        "group": 97,
+        "usedebugging": false,
+        "backtesting" : true
+    }
+]

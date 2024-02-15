@@ -5,6 +5,7 @@ import pandas as pd
 import requests
 import datetime as dt
 import random as rand
+from models import wrapped_models
 
 
 class position_status(Enum):
