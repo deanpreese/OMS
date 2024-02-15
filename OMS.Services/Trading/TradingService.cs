@@ -34,7 +34,7 @@ public class TradingService : ITradingService
         int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(user);
         _unitOfWork.Commit();    
 
-        if( t_v == 0 && (t_v != -99 ))
+        if( t_v == 0 || (t_v != -99 ))
         {
             t_v = await _unitOfWork.TraderRepository.AddTraderAsync(user);
             // Commit transaction

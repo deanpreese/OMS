@@ -20,19 +20,17 @@ public class OMSController : ControllerBase
     private ILogger<OMSController> _logger;
     private OrderManagementDbContext _context;
     private ITradingService _trader_service;
-    private IUnitOfWork _unitOfWork;
     private readonly NewOrderChannelService _newOrderChannelService;
 
 
     public OMSController(ITradingService tradingService,
         ILogger<OMSController> logger, OrderManagementDbContext context, 
-        IUnitOfWork unitOfWork, NewOrderChannelService newOrderChannelService )
+         NewOrderChannelService newOrderChannelService )
     {
 
         _logger = logger;
         _trader_service = tradingService;
         _context = context;
-        _unitOfWork = unitOfWork;
         _newOrderChannelService = newOrderChannelService;
         
     }
@@ -47,11 +45,6 @@ public class OMSController : ControllerBase
     [HttpPost("authenticate")]
     public async Task<IActionResult> AuthenticateTrader([FromBody] UserInfo userInfo)
     {
-
-        //var traderGrain = _grainFactory.GetGrain<IAuthenticated>(userInfo.UserID);
-        //var isAuthenticated = await traderGrain.AuthenticateTrader(userInfo);
-        //return Ok(isAuthenticated);
-
         int auth_code = await _trader_service.AuthenticateTraderAsync(userInfo);
         return Ok(auth_code);
     }
@@ -136,7 +129,59 @@ public class OMSController : ControllerBase
     public async Task<IActionResult> VerifyModelTrader([FromBody] NewTrader newTrader)
     {
         int oid = await _trader_service.VerifyModelTrader(newTrader);
+
+        if( oid != 0 && oid != -99)
+        {
+            // Trader Found or added 
+            //var traderGrain = _grainFactory.GetGrain<IAuthenticated>(userInfo.UserID);
+            //var isAuthenticated = await traderGrain.AuthenticateTrader(userInfo);
+            //return Ok(isAuthenticated);
+        }
+
         return Ok(oid);
     }
+
+
+
+    [HttpPost("add-tick")]
+    public async Task<int> AddTick([FromBody] LastTick lastTick)
+    {
+        return await Task.FromResult(0);
+        
+    }
+
+    [HttpPost("add-feature-data")]
+    public async Task<int> AddFeatureData([FromBody] FeatureData featureData)
+    {
+        return await Task.FromResult(0);
+    }
+
+
+    [HttpPost("get-live-orders")]
+    public async Task<List<LiveOrder>> GetLiveOrders([FromBody] UserInfo user)
+    {
+  
+        return await Task.FromResult(new List<LiveOrder>());
+        
+    }
+    
+    [HttpPost("get-traders")]
+    public async Task<List<UserProfile>> GetTraders([FromBody] int userGroup)
+    {
+        var users = ((from u in _context.UserProfiles
+                                where u.TraderGroup == userGroup
+                                select u).Take(50)).ToList();
+        
+        return await Task.FromResult(users);
+    }
+
+
+    [HttpPost("get-closed-trades")]
+    public async Task<List<ClosedTrade>> GetClosedTrades([FromBody] UserInfo userInfo)
+    {
+        return await Task.FromResult(new List<ClosedTrade>());
+        
+    }
+
 
 }

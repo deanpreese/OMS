@@ -3,6 +3,7 @@ import mlflow
 import pandas as pd
 import requests
 import datetime as dt
+import random as rand
 
 class LoadedModel:
     def __init__(self, model, col_filter, run_id):
@@ -41,14 +42,12 @@ class LoadedModel:
         orders = []
         
         if self.last_prediction == 0:
-            self.last_prediction = prediction
-            
             if prediction < 0 :    
                 order_action = "Sell"
             
             # build new order
             orders.append(self.build_order( order_action,px))
-            
+            self.last_prediction = prediction
            
         elif self.last_prediction < 0 and prediction > 0 or self.last_prediction > 0 and prediction < 0 :
             
@@ -65,10 +64,9 @@ class LoadedModel:
                                        
             # build new order with new prediction
             orders.append(self.build_order(o_n,px))                          
-            
             self.last_prediction = prediction
             
-        elif self.last_prediction > 0 and prediction > 0 or self.last_prediction > 0 and prediction > 0 : 
+        elif self.last_prediction > 0 and prediction > 0 or self.last_prediction < 0 and prediction < 0 : 
             # ignore order
             self.last_prediction = prediction
     
@@ -151,12 +149,17 @@ class ModelLoader:
             
     def load_random_models(self, experiment_id, num_models): 
         
-        runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.MSE DESC"], max_results=num_models)
-        self.load_selected_models(runs)
+        print("Loading Runs ...")
+        #runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.MSE DESC"], max_results=num_models)
+        runs = mlflow.search_runs(experiment_id)
+        idxx = rand.sample(range(1, len(runs) -2 ), num_models)
         
-        return self.model_list
-
-           
+        for i in idxx:
+            r_id = runs.iloc[i].run_id 
+            print(f"Run Id     {r_id}")
+            self.add_model(r_id)
+        
+        return self.model_list     
 
     def initialize_trader(self, lm):
         

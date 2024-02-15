@@ -11,4 +11,5 @@ public interface IAdminGrain : IGrainWithStringKey
     Task<int> AddNewTrader(NewTrader newTrader);
     Task<int> AuthenticateTrader(UserInfo userInfo);
     Task<List<UserProfile>> GetTraders(int userGroup);
+    
 }
