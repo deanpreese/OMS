@@ -42,6 +42,7 @@ public class StartupWOWeb
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ITradingService, TradingService>();
         services.AddScoped<IDataService, DataService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAnalyticsService, AnalyticsService>();
 
 

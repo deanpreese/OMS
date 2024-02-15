@@ -28,19 +28,17 @@ public class TradingService : ITradingService
 
     }
 
+/*
     public async Task<int> VerifyModelTrader(NewTrader user)
     {
-        
         int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(user);
         _unitOfWork.Commit();    
 
-        if( t_v == 0 || (t_v != -99 ))
+        if( t_v == 0 || t_v != -99 )
         {
             t_v = await _unitOfWork.TraderRepository.AddTraderAsync(user);
-            // Commit transaction
             _unitOfWork.Commit();
         }
-
         return t_v;
     }
 
@@ -79,8 +77,7 @@ public class TradingService : ITradingService
 
         return auth_code;
     }
-
-
+*/
     // Example method to handle a new order
     public async Task<LiveOrder> ProcessNewOrderAsync(NewOrder newOrder)
     {

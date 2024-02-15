@@ -13,39 +13,41 @@ using Spectre.Console;
 namespace OMS.Web;
 
 [ApiController]
-[Route("api/order")]
-public class OMSController : ControllerBase
+[Route("mt/order")]
+public class MTController : ControllerBase
 {
 
-    private ILogger<OMSController> _logger;
+    private ILogger<MTController> _logger;
     private OrderManagementDbContext _context;
     private ITradingService _trader_service;
+    private IUserService _user_service;
     private readonly NewOrderChannelService _newOrderChannelService;
 
 
-    public OMSController(ITradingService tradingService,
-        ILogger<OMSController> logger, OrderManagementDbContext context, 
-         NewOrderChannelService newOrderChannelService )
+    public MTController(ITradingService tradingService,
+        ILogger<MTController> logger, OrderManagementDbContext context, 
+         NewOrderChannelService newOrderChannelService, IUserService userService)
     {
 
         _logger = logger;
         _trader_service = tradingService;
         _context = context;
         _newOrderChannelService = newOrderChannelService;
+        _user_service = userService;
         
     }
 
     [HttpPost("add-new-trader")]
     public async Task<IActionResult> AddNewTrader([FromBody] NewTrader newTrader)
     {
-        int oid = await _trader_service.AddTraderAsync(newTrader);
+        int oid = await _user_service.AddNewTrader(newTrader);
         return Ok(oid);
     }
 
     [HttpPost("authenticate")]
     public async Task<IActionResult> AuthenticateTrader([FromBody] UserInfo userInfo)
     {
-        int auth_code = await _trader_service.AuthenticateTraderAsync(userInfo);
+        int auth_code = await _user_service.AuthenticateTrader(userInfo);
         return Ok(auth_code);
     }
 
@@ -81,7 +83,7 @@ public class OMSController : ControllerBase
             GroupNumber = order.UserGroup
         };
 
-        int auth_code = await _trader_service.AuthenticateTraderAsync(userInfo);
+        int auth_code = await _user_service.AuthenticateTrader(userInfo);
         if( auth_code == 0 )
         {
             // Need to add trader
@@ -97,7 +99,7 @@ public class OMSController : ControllerBase
 
             };
 
-            int trader_id = await _trader_service.AddTraderAsync(newTrader);
+            int trader_id = await _user_service.AddNewTrader(newTrader);
 
              UserInfo newUserInfo = new UserInfo
             {
@@ -105,7 +107,7 @@ public class OMSController : ControllerBase
                 Password = "abc",
                 GroupNumber = order.UserGroup
             };
-            auth_code = await _trader_service.AuthenticateTraderAsync(newUserInfo);
+            auth_code = await _user_service.AuthenticateTrader(newUserInfo);
         }
 
         int om_id = 0;
@@ -125,63 +127,6 @@ public class OMSController : ControllerBase
     }
 
 
-    [HttpPost("verify-model-trader")]
-    public async Task<IActionResult> VerifyModelTrader([FromBody] NewTrader newTrader)
-    {
-        int oid = await _trader_service.VerifyModelTrader(newTrader);
-
-        if( oid != 0 && oid != -99)
-        {
-            // Trader Found or added 
-            //var traderGrain = _grainFactory.GetGrain<IAuthenticated>(userInfo.UserID);
-            //var isAuthenticated = await traderGrain.AuthenticateTrader(userInfo);
-            //return Ok(isAuthenticated);
-        }
-
-        return Ok(oid);
-    }
-
-
-
-    [HttpPost("add-tick")]
-    public async Task<int> AddTick([FromBody] LastTick lastTick)
-    {
-        return await Task.FromResult(0);
-        
-    }
-
-    [HttpPost("add-feature-data")]
-    public async Task<int> AddFeatureData([FromBody] FeatureData featureData)
-    {
-        return await Task.FromResult(0);
-    }
-
-
-    [HttpPost("get-live-orders")]
-    public async Task<List<LiveOrder>> GetLiveOrders([FromBody] UserInfo user)
-    {
-  
-        return await Task.FromResult(new List<LiveOrder>());
-        
-    }
-    
-    [HttpPost("get-traders")]
-    public async Task<List<UserProfile>> GetTraders([FromBody] int userGroup)
-    {
-        var users = ((from u in _context.UserProfiles
-                                where u.TraderGroup == userGroup
-                                select u).Take(50)).ToList();
-        
-        return await Task.FromResult(users);
-    }
-
-
-    [HttpPost("get-closed-trades")]
-    public async Task<List<ClosedTrade>> GetClosedTrades([FromBody] UserInfo userInfo)
-    {
-        return await Task.FromResult(new List<ClosedTrade>());
-        
-    }
 
 
 }
