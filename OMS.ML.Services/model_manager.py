@@ -85,11 +85,5 @@ class ModelLoader:
         return self.model_list
 
 
-    def process_models(self, data):
-        
-         for m in range(len(self.model_list)):
-            
-            pass 
-            #loaded_prediction = self.model_list[m].do_predict( data )
             
             

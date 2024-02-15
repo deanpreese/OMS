@@ -13,7 +13,7 @@ using Spectre.Console;
 namespace OMS.Web;
 
 [ApiController]
-[Route("ml/order")]
+[Route("api/ml")]
 public class MLController : ControllerBase
 {
 

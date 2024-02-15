@@ -39,7 +39,7 @@ class SimOrderManager():
 
         print(f" Order    {new_order}   " ) 
                 
-        url = "http://localhost:8786/api/order/process-order"  # Replace with the actual URL of the web service
+        url = "http://localhost:8786/api/ml/process-order"  # Replace with the actual URL of the web service
 
         headers = {
             "Content-Type": "application/json"

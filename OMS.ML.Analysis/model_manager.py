@@ -163,7 +163,7 @@ class ModelLoader:
 
     def initialize_trader(self, lm):
         
-        url = "http://localhost:8786/api/order/verify-model-trader"  # Replace with the actual URL of the web service
+        url = "http://localhost:8786/api/ml/verify-model-trader"  # Replace with the actual URL of the web service
 
         headers = {
             "Content-Type": "application/json"
