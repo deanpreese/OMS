@@ -10,8 +10,9 @@ class SimOrderManager():
     def process_tick(self, tick):
         self.px += tick    
 
-    def process_order(self, model, y_pred, prediction):
+    def process_model(self, model, y_pred, prediction):
         
+        """
         if (prediction > 0 and y_pred > 0  or
             prediction < 0 and y_pred < 0  or 
             prediction == 0 and y_pred == 0 ):
@@ -26,7 +27,8 @@ class SimOrderManager():
             model.losses += abs(  y_pred  ) + self.commission
             model.loss_cnt += 1
        
-
+        """
+        
         orders = model.check_for_orders(prediction, self.px)        
         
         if len(orders) > 0:        
@@ -37,7 +39,7 @@ class SimOrderManager():
 
     def send_order(self, new_order):
 
-        print(f" Order    {new_order}   " ) 
+        print(f" Order   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']}  " ) 
                 
         url = "http://localhost:8786/api/ml/process-order"  # Replace with the actual URL of the web service
 
@@ -45,12 +47,10 @@ class SimOrderManager():
             "Content-Type": "application/json"
         }
 
-                              
+        """
         response = requests.post(url, data=json.dumps(new_order), headers=headers)
-
         if response.status_code == 200:
-            print(response.json())
+            pass
         else:
-            # Error handling
             print(f"New Order send failed with status code {response.text}")                
-                            
+        """                    

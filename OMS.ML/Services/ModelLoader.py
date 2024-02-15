@@ -4,7 +4,7 @@ import pandas as pd
 import requests
 import datetime as dt
 import random as rand
-import LoadedModel
+from LoadedModel import LoadedModel
 
 class ModelLoader:
 
