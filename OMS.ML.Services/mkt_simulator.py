@@ -1,5 +1,7 @@
 import pandas as pd
-from model_manager import ModelLoader
+
+import ModelLoader
+
 import models.wrapped_models
 import order_manager
 
