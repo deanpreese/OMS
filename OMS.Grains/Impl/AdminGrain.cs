@@ -11,7 +11,6 @@ using Orleans.Core;
 using OMS.Core.Interfaces;
 using OMS.Data.Repositories;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
-using OMS.Services.Queue;
 
 namespace OMS.Grains.Impl;
 

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OMS.Services.Data;
+using OMS.Grains.Interfaces;
 
 //using System.Timers;
 
@@ -120,6 +121,10 @@ public class ClosedOrderProcessorService : BackgroundService
                     };
 
                     await orderStreamProvider.OnNextAsync(c_o);
+
+                    string g_k = userInfo.UserID + "_" + userInfo.GroupNumber;
+                    ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
+                    await trader.Update(g_k);
 
 
                     AnsiConsole.MarkupLine("Order Processed by Stats For user " + userInfo.UserID  );

@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OMS.Services.Data;
 using OMS.Services.Queue;
+using OMS.Grains.Interfaces;
 
 //using System.Timers;
 
@@ -56,7 +57,14 @@ public class AlgoOrderQueueProcessorService : BackgroundService
             {
                 try
                 {
-                    Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
+                    //Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
+                    string g_k = orderInfo.UserID + "_" + orderInfo.GroupNumber;
+                    ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
+                    await trader.Update(g_k);
+                    UserProfile u = await trader.GetProfileAsync();
+                    Console.WriteLine("Processing order for : " + g_k + "  " + u.UserID + "  " +  "  " + orderInfo.InfoType);
+                    
+                    
                     
                 }
                 catch (Exception ex)

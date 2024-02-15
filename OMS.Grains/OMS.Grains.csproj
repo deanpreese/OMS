@@ -33,7 +33,6 @@
   <ItemGroup>
     <ProjectReference Include="..\OMS.Data\OMS.Data.csproj" />
     <ProjectReference Include="..\OMS.Core\OMS.Core.csproj" />
-    <ProjectReference Include="..\OMS.Services\OMS.Services.csproj" />
   </ItemGroup>
 
 

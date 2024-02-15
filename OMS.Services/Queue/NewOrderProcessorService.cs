@@ -8,11 +8,13 @@ using OMS.Data;
 using OMS.Services.Common;
 using OMS.Core.Common;
 using Orleans.Streams;
+using OMS.Grains.Interfaces;
 
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Orleans;
 
 namespace OMS.Services.Queue;
 
@@ -91,6 +93,12 @@ public class NewOrderProcessorService : BackgroundService
                     };
 
                     await orderStreamProvider.OnNextAsync(n_o);
+
+                    string g_k = newOrder.UserID + "_" + newOrder.UserGroup;
+                    ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
+                    await trader.Update(g_k);
+
+
                 }
                 else
                 {

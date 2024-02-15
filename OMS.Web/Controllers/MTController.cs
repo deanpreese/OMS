@@ -56,7 +56,7 @@ public class MTController : ControllerBase
     public async Task<ActionResult> ProcessOrder([FromBody] NewOrder order)
     {
 
-        Console.WriteLine("Order Info: " + order.UserID + "  " + order.UserGroup + "  " + order.OrderPX);
+        Console.WriteLine("MT Order Info: " + order.UserID + "  " + order.UserGroup + "  " + order.OrderPX + "  "  + order.OrderAction);
 
         int om_id = 0;
         try
