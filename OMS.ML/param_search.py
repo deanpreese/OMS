@@ -2,8 +2,8 @@ from datetime import datetime
 import mlflow
 import pandas as pd
 
-from common_func import full_split_and_scale
-from models.wrapped_models import TunableCatBoostClassifier
+from common.common_func import full_split_and_scale
+from common.wrapped_models import TunableCatBoostClassifier
 
 datafile = [ 
         'data/ReFried_5M_ALL.csv',   #0

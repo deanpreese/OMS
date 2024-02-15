@@ -4,8 +4,8 @@ from datetime import datetime
 from time import time
 import mlflow
 import pandas as pd
-from common_func import full_split_and_scale
-from models.wrapped_models import TunableCatBoostClassifier, TunableLGBMClassifier, TunableXGBClassifier
+from common.common_func import full_split_and_scale
+from common.wrapped_models import TunableCatBoostClassifier, TunableLGBMClassifier, TunableXGBClassifier
 
 
 def RunData(datafile, models):

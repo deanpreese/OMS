@@ -5,7 +5,7 @@ from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor, BaggingClass
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from common_func import create_param_list
-from models.wrapped_models import ModelType, gen_classifier_data, gen_regressor_data
+from wrapped_models import ModelType, gen_classifier_data, gen_regressor_data
 
 # -----------------------------------------------------
 #

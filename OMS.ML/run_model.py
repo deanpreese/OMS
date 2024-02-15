@@ -2,10 +2,10 @@ from datetime import datetime
 
 import mlflow
 import pandas as pd
-from common_func import full_split_and_scale
-from models.other_wrapped_models import TunableAdaBoostRegressor, TunableGradientBoostingRegressor
-from models.other_wrapped_models import TunableBaggingRegressor, TunableRandomForestRegressor
-from models.wrapped_models import TunableCatBoostClassifier, TunableCatBoostRegressor, TunableLGBMClassifier, TunableLGBMRegressor, TunableXGBClassifier, TunableXGBRegressor
+from common.common_func import full_split_and_scale
+from common.other_wrapped_models import TunableAdaBoostRegressor, TunableGradientBoostingRegressor
+from common.other_wrapped_models import TunableBaggingRegressor, TunableRandomForestRegressor
+from common.wrapped_models import TunableCatBoostClassifier, TunableCatBoostRegressor, TunableLGBMClassifier, TunableLGBMRegressor, TunableXGBClassifier, TunableXGBRegressor
 
 
 run_test_size = 0.8

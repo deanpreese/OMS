@@ -1,6 +1,6 @@
 
 import pandas as pd
-from model_manager import ModelLoader
+from services.ModelLoader import ModelLoader
 
 
 file = "data/lucky13_oos.csv"

@@ -1,10 +1,7 @@
 import pandas as pd
 
 from ModelLoader import ModelLoader
-
-import models.wrapped_models
 from order_manager import SimOrderManager
-
 
 import logging
 logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
@@ -22,6 +19,7 @@ y = data["output"].values
 order_manager = SimOrderManager()
 runner = ModelLoader()
 
+models = []
 experiment_id = ["792022387336146046"]
 #models = runner.load_models(experiment_id)
 models = runner.load_random_models(experiment_id, 3)

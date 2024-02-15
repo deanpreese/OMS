@@ -1,7 +1,7 @@
 from xgboost import XGBClassifier, XGBRegressor
 from lightgbm  import LGBMClassifier, LGBMRegressor
 from catboost import CatBoostClassifier, CatBoostRegressor
-from common_func import calc_reg_streaks, show_stats, create_param_list
+from common.common_func import calc_reg_streaks, show_stats, create_param_list
 
 import pandas as pd
 from enum import Enum
