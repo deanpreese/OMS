@@ -19,7 +19,7 @@ using OMS.Grains.Interfaces;
 //using System.Timers;
 
 
-namespace OMS.Algo.Queue;
+namespace OMS.AlgoServer.Queue;
 
 
 public class AlgoOrderQueueProcessorService : BackgroundService
@@ -63,8 +63,6 @@ public class AlgoOrderQueueProcessorService : BackgroundService
                     await trader.Update(g_k);
                     UserProfile u = await trader.GetProfileAsync();
                     Console.WriteLine("Processing order for : " + g_k + "  " + u.UserID + "  " +  "  " + orderInfo.InfoType);
-                    
-                    
                     
                 }
                 catch (Exception ex)
