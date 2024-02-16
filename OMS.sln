@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.ML", "OMS.ML\OMS.ML.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Algorithms", "OMS.Algorithms\OMS.Algorithms.csproj", "{FAF8E271-239C-4C5F-8EF4-F05D260FFFF3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Analytics", "OMS.Analytics\OMS.Analytics.csproj", "{AB1FD465-8DB4-4208-BC23-3571FF24D36A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{FAF8E271-239C-4C5F-8EF4-F05D260FFFF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAF8E271-239C-4C5F-8EF4-F05D260FFFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAF8E271-239C-4C5F-8EF4-F05D260FFFF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB1FD465-8DB4-4208-BC23-3571FF24D36A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB1FD465-8DB4-4208-BC23-3571FF24D36A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB1FD465-8DB4-4208-BC23-3571FF24D36A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB1FD465-8DB4-4208-BC23-3571FF24D36A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,6 +4,7 @@
     <ProjectReference Include="..\OMS.Core\OMS.Core.csproj" />
     <ProjectReference Include="..\OMS.Data\OMS.Data.csproj" />
     <ProjectReference Include="..\OMS.Grains\OMS.Grains.csproj" />
+    <ProjectReference Include="..\OMS.Analytics\OMS.Analytics.csproj" />
   </ItemGroup>
 
   <ItemGroup>
