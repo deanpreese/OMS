@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using OMS.Core.Models;
 using OMS.Core.Logging;
 
-namespace OMS.Algorithms.Algos;
+
+namespace OMS.AlgoManager.Algos;
 
 public interface IAlgo
 {

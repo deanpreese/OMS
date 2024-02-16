@@ -1,7 +1,7 @@
 using OMS.Core.Models;
 
+namespace OMS.AlgoManager.Filters;
 
-namespace OMS.Algorithms.Filters;
 
 public class NewAlgoFilter : IAlgoFilter
 {

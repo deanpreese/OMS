@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 using OMS.Core.Models;
 using OMS.Core.Logging;
 
-namespace OMS.Algorithms;
+namespace OMS.AlgoManager.Algos;
 
 public class NewOrderAlgoInfo
 {

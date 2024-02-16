@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 
-namespace OMS.Algorithms.Filters;
+namespace OMS.AlgoManager.Filters;
 
 public class AlgoFilterSeptThreeZero : IAlgoFilter
 {

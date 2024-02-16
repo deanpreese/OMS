@@ -23,11 +23,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Relay", "OMS.Relay\OMS.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.ML", "OMS.ML\OMS.ML.csproj", "{DF1FADDB-867F-4552-BE03-13EC262407BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Algorithms", "OMS.Algorithms\OMS.Algorithms.csproj", "{FAF8E271-239C-4C5F-8EF4-F05D260FFFF3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Analytics", "OMS.Analytics\OMS.Analytics.csproj", "{AB1FD465-8DB4-4208-BC23-3571FF24D36A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.AlgoServer", "OMS.AlgoServer\OMS.AlgoServer.csproj", "{9607203C-CA88-4195-AD94-D12A69653FE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Server", "OMS.Server\OMS.Server.csproj", "{A2E74F69-2CC3-40B1-8691-D7234E5FBE83}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.AlgoManager", "OMS.AlgoManager\OMS.AlgoManager.csproj", "{1A529C55-93F3-4F90-86C6-219FE1AA400B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,10 +77,6 @@ Global
 		{DF1FADDB-867F-4552-BE03-13EC262407BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF1FADDB-867F-4552-BE03-13EC262407BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF1FADDB-867F-4552-BE03-13EC262407BB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FAF8E271-239C-4C5F-8EF4-F05D260FFFF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FAF8E271-239C-4C5F-8EF4-F05D260FFFF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FAF8E271-239C-4C5F-8EF4-F05D260FFFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FAF8E271-239C-4C5F-8EF4-F05D260FFFF3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AB1FD465-8DB4-4208-BC23-3571FF24D36A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB1FD465-8DB4-4208-BC23-3571FF24D36A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB1FD465-8DB4-4208-BC23-3571FF24D36A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,6 +85,14 @@ Global
 		{9607203C-CA88-4195-AD94-D12A69653FE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9607203C-CA88-4195-AD94-D12A69653FE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9607203C-CA88-4195-AD94-D12A69653FE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2E74F69-2CC3-40B1-8691-D7234E5FBE83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2E74F69-2CC3-40B1-8691-D7234E5FBE83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2E74F69-2CC3-40B1-8691-D7234E5FBE83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2E74F69-2CC3-40B1-8691-D7234E5FBE83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A529C55-93F3-4F90-86C6-219FE1AA400B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A529C55-93F3-4F90-86C6-219FE1AA400B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A529C55-93F3-4F90-86C6-219FE1AA400B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A529C55-93F3-4F90-86C6-219FE1AA400B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

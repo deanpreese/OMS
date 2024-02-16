@@ -1,6 +1,7 @@
 
 
-namespace OMS.Algorithms.Filters;
+
+namespace OMS.AlgoManager.Filters;
 
 public interface IAlgoFilter
 {
