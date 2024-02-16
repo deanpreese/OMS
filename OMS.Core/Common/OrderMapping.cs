@@ -39,8 +39,8 @@ public class OrderMapping
     public static LiveOrder MapOrder(NewOrder newOrder)
     {
         LiveOrder liveOrder = new LiveOrder();
-        liveOrder.OrderPX = newOrder.OrderPX;
-        liveOrder.OrderTime = DateTime.UtcNow;
+        liveOrder.OrderPX = newOrder.OrderPX;  
+        liveOrder.OrderTime = newOrder.OrderTime;
         liveOrder.OrderManagerID = newOrder.PlatformOrderID ;
         liveOrder.Instrument = newOrder.Instrument;
         liveOrder.OrderAction = newOrder.OrderAction;

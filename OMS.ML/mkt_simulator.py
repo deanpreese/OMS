@@ -22,7 +22,7 @@ model_loader = ModelLoader()
 models = []
 experiment_id = ["792022387336146046"]
 #models = runner.load_models(experiment_id)
-models = model_loader.load_random_models(experiment_id, 25)
+models = model_loader.load_random_models(experiment_id, 50)
 
 total = 0
 
@@ -44,8 +44,13 @@ for i in range(len(y)):
         total += 1        
         order_manager.process_tick(y[i])
        
-        if total > 100:
+        if total > 500:
             break    
+
+
+for m in range(len(models)):
+    order_manager.close_all(models[m])
+
 
 end = time.time()
 

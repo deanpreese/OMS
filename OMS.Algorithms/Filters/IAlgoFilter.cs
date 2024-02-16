@@ -1,10 +1,9 @@
 
 
-namespace OMS.Algorithms.Filters
+namespace OMS.Algorithms.Filters;
+
+public interface IAlgoFilter
 {
-    public interface IAlgoFilter
-    {
-        public void SetupAlgoFilter(bool debugging);
-        public int IsInAlgoFilter(int traderId, int groupNumber);
-    }
+    public void SetupAlgoFilter(bool debugging);
+    public int IsInAlgoFilter(int traderId, int groupNumber);
 }

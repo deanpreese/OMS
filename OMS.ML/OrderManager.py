@@ -37,6 +37,15 @@ class SimOrderManager():
         
  
 
+    def close_all(self, model):
+        
+        o_t_c = model.close_orders(self.px)
+        
+        if len(o_t_c) > 0:
+             for o in o_t_c:
+                self.send_order(o)
+
+
     def send_order(self, new_order):
 
         print(f" Order   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']}  " ) 

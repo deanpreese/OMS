@@ -36,6 +36,7 @@ class LoadedModel:
         self.trader_id = 0
         self.last_prediction = 0
         self.position = position_status.FLAT
+        self.bars_since = 0
         
         
         
@@ -71,7 +72,7 @@ class LoadedModel:
                 self.position = position_status.SHORT
 
             self.last_prediction = prediction
-            
+            self.bars_since = 1
             
             
         if self.position == position_status.LONG:
@@ -79,12 +80,14 @@ class LoadedModel:
             # already long dont add
             if  new_order_action == order_action.Buy:
                 self.last_prediction = prediction
+                self.bars_since += 1
             
             # long but sell order
             if new_order_action == order_action.Sell:
                 orders.append(self.build_order(new_order_action,px))  
                 self.last_prediction = prediction
                 self.position = position_status.FLAT
+                self.bars_since = 0
                 
         
         if self.position == position_status.SHORT:
@@ -92,15 +95,51 @@ class LoadedModel:
             # already short dont add
             if  new_order_action == order_action.Sell:
                 self.last_prediction = prediction
+                self.bars_since += 1
             
             # long but sell order
             if new_order_action == order_action.Buy:
                 orders.append(self.build_order(new_order_action,px))  
                 self.last_prediction = prediction
                 self.position = position_status.FLAT
-       
+                self.bars_since = 0
+    
+    
+        if self.bars_since > 5:
+            orders.append(self.close_this_order(px)) 
+            self.bars_since = 0 
+            self.position = position_status.FLAT 
     
         return orders
+    
+    
+    def close_this_order(self, px):
+        
+        otc = None
+        
+        if self.position == position_status.LONG:
+            otc = self.build_order(order_action.Sell,px)
+            self.position = position_status.FLAT
+            
+        if self.position == position_status.SHORT:
+            otc = self.build_order(order_action.Buy,px)
+            self.position = position_status.FLAT  
+    
+        return otc
+    
+    def close_orders(self, px):
+       
+        orders_to_close = []
+        
+        if self.position == position_status.LONG:
+            orders_to_close.append( self.build_order(order_action.Sell,px))
+            self.position = position_status.FLAT
+            
+        if self.position == position_status.SHORT:
+            orders_to_close.append( self.build_order(order_action.Buy,px))
+            self.position = position_status.FLAT  
+
+        return orders_to_close
     
     
     def build_order(self, new_order_action, px):

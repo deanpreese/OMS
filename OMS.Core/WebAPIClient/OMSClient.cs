@@ -109,26 +109,30 @@ public static class OMSClient
     // -------------------------------------------------------------
     public static async Task<List<UserProfile>>  GetTraders(int numberOfTraders, string server_url = "http://localhost:8786")
     {
+        List<UserProfile> return_list = new List<UserProfile>();
+
         using (HttpClient client = new HttpClient())
         {
             var jsonContent = new StringContent(JsonConvert.SerializeObject(numberOfTraders), Encoding.UTF8, "application/json");
             var response = client.PostAsync(server_url + "/api/data/get-traders", jsonContent);
-
+            
 
             if (!response.IsCompletedSuccessfully)
             {
                 AnsiConsole.WriteLine($"ProcessOrder ML Result: {response.Result}");
-                var result = response.Result.Content.ReadAsStringAsync().Result;
+                var result = await response.Result.Content.ReadAsStringAsync();
                 var deserializedResult = JsonConvert.DeserializeObject<List<UserProfile>>(result);
-                return deserializedResult ?? new List<UserProfile>();
+                return_list = deserializedResult ?? new List<UserProfile>();
             }
             else
             {
                 AnsiConsole.WriteLine($"ProcessOrder ML Failed. Status Code: {response.Exception}");
-                var result = response.Result.Content.ReadAsStringAsync().Result;
-                return new List<UserProfile>();
+                var result = await response.Result.Content.ReadAsStringAsync();
+                return_list = new List<UserProfile>();
             }
+            
         }
+       return return_list;
     }
 
 

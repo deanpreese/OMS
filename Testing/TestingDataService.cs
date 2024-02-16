@@ -23,19 +23,19 @@ public class TestingDataService
     
     public async Task<int> SendOrderAsync(NewOrder order)
     {
-        if (_usingGrains)
-        {
-            string o_s = order.UserID+"_"+order.UserGroup;
-            Console.WriteLine($"Grain: {o_s}");
-            var order_grain = _client.GetGrain<IOrderGrain>(o_s);
-            int rtn_code = await order_grain.ProcessMTOrder(order);
-            return rtn_code;
-        }else
-        {
+        //if (_usingGrains)
+        //{
+            //string o_s = order.UserID+"_"+order.UserGroup;
+            //Console.WriteLine($"Grain: {o_s}");
+            //var order_grain = _client.GetGrain<IOrderGrain>(o_s);
+            //int rtn_code = await order_grain.ProcessMTOrder(order);
+            //return rtn_code;
+        //}else
+        //{
             int sendOrderResult = await OMSClient.SendOrderAsync(order);
             //Thread.Sleep(1000);    
             return sendOrderResult;
-        }
+        //}
     }
 
 
@@ -44,7 +44,7 @@ public class TestingDataService
     {
         if (_usingGrains)
         {
-            string n_t = "newtrader";
+            string n_t = "new_trader";
             Console.WriteLine($"AdminGrain: {n_t}");
             var admin_grain = _client.GetGrain<IAdminGrain>(n_t);
             int rtn_code = await admin_grain.AddNewTrader(newTrader);
@@ -61,7 +61,7 @@ public class TestingDataService
     {
         if (_usingGrains)
         {
-            string n_t = "newtrader";
+            string n_t = "new_trader";
             Console.WriteLine($"AdminGrain: {n_t}");
             var admin_grain = _client.GetGrain<IAdminGrain>(n_t);
 

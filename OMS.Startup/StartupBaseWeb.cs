@@ -46,15 +46,6 @@ public class StartupBaseWeb
 
     }
 
-    public void AddSpectreLogging(IServiceCollection services)
-    {
-        services.AddLogging(logging =>
-        {  
-            logging.ClearProviders();
-            logging.AddSpectreConsole(); 
-        });
-    }
-
     public IApplicationBuilder Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseSwagger();

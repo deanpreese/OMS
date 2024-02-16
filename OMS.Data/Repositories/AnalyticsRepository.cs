@@ -43,6 +43,7 @@ public class AnalyticsRepository : IAnalyticsRepository
                 sc.TotalNetProfit = scData.TotalNetProfit;
                 sc.TradeXML = scData.TradeXML;
                 sc.GroupID = scData.GroupID;
+                sc.LastUpdate = DateTime.UtcNow;
 
                 if (scData.Winners > 0)
                     sc.WinLossRatio = Math.Round((Convert.ToDouble(scData.Winners) / Convert.ToDouble(scData.Trades)), 2);
@@ -60,15 +61,10 @@ public class AnalyticsRepository : IAnalyticsRepository
     }
 
 
-    public Task<List<double>> GetDataByTraderSparklineAsync(int UserID, int GroupNumber)
-    {
-        throw new NotImplementedException();
-    }
-
-
     public async Task<ScoreCard> GetTraderScoreCard(int UserID, int GroupNumber)
     {
         var scoreCard =  _context.ScoreCard.FirstOrDefault(s => s.UserID == UserID && s.GroupID == GroupNumber) ?? new ScoreCard { UserID = -13 };
+        await Task.FromResult(scoreCard);
         return scoreCard;
     }
 

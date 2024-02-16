@@ -63,22 +63,31 @@ public static class TradeStatisticsGenerator
 
             if (currentWinningStreak > largestWinningStreak) largestWinningStreak = currentWinningStreak;
             if (currentLosingStreak > largestLosingStreak) largestLosingStreak = currentLosingStreak;
+
+            /*
+            var prevAverageProfitLoss = ave_pnl;
+            ave_pnl += (trade.Pnl - ave_pnl) / num_trades;
+
+            sumForVariance += (trade.Pnl - prevAverageProfitLoss) * (trade.Pnl - ave_pnl);
+            var variance = num_trades > 1 ? sumForVariance / (num_trades - 1) : 0;
+            profitLossStandardDeviation = (double)Math.Sqrt((double)variance);
+            */
         }
+
+        
+        //double profitFactor = Math.Round( total_net_profit == 0 ? 0 : (gross_loss < 0 ? total_net_profit / Math.Abs(gross_loss) : 10),2);
+        //double winRate = Math.Round(num_trades > 0 ? (double)winners / num_trades : 0, 2);
+        //double lossRate = Math.Round(num_trades > 0 ? (double)losers / num_trades : 0,2);   
+
+
+        //double sharpRatio = Math.Round( profitLossStandardDeviation > 0 ? ave_pnl / profitLossStandardDeviation : 0, 2);
+        //double sortinoRatio = Math.Round(profitLossStandardDeviation > 0 ? ave_pnl / profitLossStandardDeviation : 0 ,2);
+           
 
         scoreCard.LargestWinningStreak = largestWinningStreak;
         scoreCard.LargestLosingStreak = largestLosingStreak;
 
-        // Example serialization of trades to XML for TradeXML property
-        // This requires implementing serialization logic based on your needs
-        scoreCard.TradeXML = SerializeTradesToXml(closedTrades);
-
         return scoreCard;
     }
 
-    private static string SerializeTradesToXml(List<ClosedTrade> trades)
-    {
-        // Implement XML serialization of trades here
-        // This is a placeholder for actual serialization logic
-        return "<Trades>...</Trades>";
-    }
 }

@@ -138,6 +138,8 @@ public class TraderRepository : ITraderRepository
 
     public async Task<int> VerifyModelTrader(NewTrader user)
     {
+        int rtn_val = 0;
+
         var traders = (from u in _context.UserProfiles
                        where u.DisplayName == user.DisplayName
                            && u.TraderGroup == user.Group
@@ -145,22 +147,16 @@ public class TraderRepository : ITraderRepository
 
         if(traders.Count() == 1)
         {
-            return traders[0].UserID;
+            rtn_val =  traders[0].UserID;
         }
 
         if (traders.Count() > 1)
         {
-            return -99;
+            rtn_val = -99;
         }
 
-        if (traders.Count() == 0)
-        {
-            return 0;
-        }
-
-
-
-        return traders.Count();
+        await Task.FromResult(rtn_val);
+        return rtn_val;
     }
 
 }
