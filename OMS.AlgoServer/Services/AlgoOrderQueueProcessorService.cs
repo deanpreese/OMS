@@ -19,7 +19,7 @@ using OMS.Grains.Interfaces;
 //using System.Timers;
 
 
-namespace OMS.AlgoServer.Queue;
+namespace OMS.AlgoServer.Services;
 
 
 public class AlgoOrderQueueProcessorService : BackgroundService

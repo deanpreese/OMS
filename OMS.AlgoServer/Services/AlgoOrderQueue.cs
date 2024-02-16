@@ -1,7 +1,7 @@
 ﻿using System.Threading.Channels;
 using OMS.Core.Models;
 
-namespace OMS.AlgoServer.Queue;
+namespace OMS.AlgoServer.Services;
 
 public class AlgoOrderQueue
 {

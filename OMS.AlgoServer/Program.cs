@@ -2,8 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using OMS.Core.Common;
 using Orleans.Configuration;
-using OMS.AlgoServer.Queue;
-using OMS.AlgoServer;
+using OMS.AlgoServer.Services;
+
 
 using IHost host = Host.CreateDefaultBuilder(args)
     .UseOrleansClient(client =>

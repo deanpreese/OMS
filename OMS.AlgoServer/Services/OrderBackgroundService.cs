@@ -15,9 +15,9 @@ using Microsoft.Extensions.Logging;
 using OMS.Services.Data;
 using OMS.Services.Queue;
 using OMS.Grains.Interfaces;
-using OMS.AlgoServer.Queue;
 
-namespace OMS.AlgoServer;
+
+namespace OMS.AlgoServer.Services;
 
 public class OrderBackgroundService : BackgroundService
 {
