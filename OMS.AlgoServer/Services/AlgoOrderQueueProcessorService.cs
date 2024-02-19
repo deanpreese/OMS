@@ -47,6 +47,11 @@ public class AlgoOrderQueueProcessorService : BackgroundService
         _grainFactory = grainFactory;
        
     }
+    public override Task StartAsync(CancellationToken cancellationToken)
+    {
+        return base.StartAsync(cancellationToken);
+    }
+
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

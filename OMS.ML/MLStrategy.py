@@ -21,7 +21,7 @@ class order_action(Enum):
 
 
 
-class LoadedModel:
+class MLStrategy:
     def __init__(self, model, col_filter, run_id):
         self.model = model
         self.column_filter = col_filter
@@ -61,14 +61,16 @@ class LoadedModel:
 
     def check_for_orders(self, prediction, px):
         
-        if prediction > 0 : new_order_action = order_action.Buy
-        if prediction < 0 : new_order_action = order_action.Sell
-        
+        if prediction > 0:
+            new_order_action = order_action.Buy
+        if prediction < 0:
+            new_order_action = order_action.Sell
+
         orders = []
-        
+
         if self.position == position_status.FLAT:
             orders.append(self.build_order( new_order_action,px))
-            
+
             if new_order_action == order_action.Buy:
                 self.position = position_status.LONG 
 
@@ -86,10 +88,9 @@ class LoadedModel:
                 self.last_prediction = prediction
                 self.bars_since += 1
             
-                if self.check_long_pl(px):
-                   print(f"Close Long PnL{px}") 
-                   orders.append(self.close_this_order(px)) 
-                   
+                if self.check_long_pl(px) or self.check_bars_since(px) :
+                    print(f"Close Long PnL or bars {self.bars_exit}  {px}") 
+                    orders.append(self.close_this_order(px))
             
             # long but sell order
             if new_order_action == order_action.Sell:
@@ -106,9 +107,9 @@ class LoadedModel:
                 self.last_prediction = prediction
                 self.bars_since += 1
                 
-                if self.check_short_pl(px):
-                    print(f"Close Short PnL{px}") 
-                    orders.append(self.close_this_order(px)) 
+                if self.check_short_pl(px) or self.check_bars_since(px) :
+                    print(f"Close Long PnL or bars {self.bars_exit}  {px}") 
+                    orders.append(self.close_this_order(px))
             
             # short but buy order
             if new_order_action == order_action.Buy:
@@ -116,18 +117,17 @@ class LoadedModel:
                 self.last_prediction = prediction
                 self.position = position_status.FLAT
                 self.bars_since = 0
-    
-    
+   
+   
+        return orders
+
+    def check_bars_since(self, px):
+        
         if self.bars_since > self.bars_exit:
             print(f"Close bars greater than {self.bars_exit}  {px}") 
-            orders.append(self.close_this_order(px)) 
-            self.bars_since = 0 
-            self.position = position_status.FLAT 
-    
-    
-        return orders
-    
-    
+            return True
+        return False
+        
     def check_short_pl(self, px):
         
         if self.entry_px > px and abs(self.entry_px - px) > self.profit: 
@@ -136,6 +136,7 @@ class LoadedModel:
         if self.entry_px < px and abs(self.entry_px - px) > self.stop:
             return True
         
+        return False    
     
     def check_long_pl(self, px):
         
@@ -145,25 +146,25 @@ class LoadedModel:
         if self.entry_px > px and abs(self.entry_px - px) > self.stop:
             return True
     
+        return False
+    
     def close_this_order(self, px):
-        
-        
+
         if self.position == position_status.LONG:
             self.position = position_status.FLAT
+            self.bars_since = 0
             return self.build_order(order_action.Sell,px)
             
-            
         if self.position == position_status.SHORT:
-            self.position = position_status.FLAT  
+            self.position = position_status.FLAT
+            self.bars_since = 0  
             return self.build_order(order_action.Buy,px)
            
     
-
-    
+    # --------------------------------------
+    #  Called by OM to close all open orders    
     def close_orders(self, px):
-       
         orders_to_close = []
-        
         if self.position == position_status.LONG:
             orders_to_close.append( self.build_order(order_action.Sell,px))
             self.position = position_status.FLAT
@@ -171,7 +172,6 @@ class LoadedModel:
         if self.position == position_status.SHORT:
             orders_to_close.append( self.build_order(order_action.Buy,px))
             self.position = position_status.FLAT  
-
         return orders_to_close
     
     

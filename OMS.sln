@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.AlgoServer", "OMS.AlgoS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Server", "OMS.Server\OMS.Server.csproj", "{A2E74F69-2CC3-40B1-8691-D7234E5FBE83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.AlgoManager", "OMS.AlgoManager\OMS.AlgoManager.csproj", "{AB364A69-5883-4250-A7E0-5CD2E3754086}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.AlgoFramework", "OMS.AlgoFramework.\OMS.AlgoFramework.csproj", "{8722D8C4-2D42-46C2-8279-C1555CA10C4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,10 +89,10 @@ Global
 		{A2E74F69-2CC3-40B1-8691-D7234E5FBE83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2E74F69-2CC3-40B1-8691-D7234E5FBE83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2E74F69-2CC3-40B1-8691-D7234E5FBE83}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB364A69-5883-4250-A7E0-5CD2E3754086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB364A69-5883-4250-A7E0-5CD2E3754086}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB364A69-5883-4250-A7E0-5CD2E3754086}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB364A69-5883-4250-A7E0-5CD2E3754086}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8722D8C4-2D42-46C2-8279-C1555CA10C4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8722D8C4-2D42-46C2-8279-C1555CA10C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8722D8C4-2D42-46C2-8279-C1555CA10C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8722D8C4-2D42-46C2-8279-C1555CA10C4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

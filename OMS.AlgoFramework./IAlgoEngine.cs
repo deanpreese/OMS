@@ -7,7 +7,7 @@ using OMS.AlgoManager.Utility;
 
 namespace OMS.AlgoManager
 {
-    public interface ILeverageEngine
+    public interface IAlgoEngine
     {
         string EngineName();
         string AlgoDescription();

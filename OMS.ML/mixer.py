@@ -7,7 +7,7 @@ import mlflow
 
 import pandas as pd
 
-from common_func import calc_MSE, calc_reg_results, show_stats, simple_split_and_scale
+from common.common_func import calc_MSE, calc_reg_results, show_stats, simple_split_and_scale
 from models.wrapped_models import TunableCatBoostRegressor, TunableLGBMRegressor, TunableXGBRegressor
 warnings.filterwarnings("ignore")
 
@@ -190,7 +190,7 @@ datafile = [
     ]
 
 
-dtx = pd.read_csv(datafile[4])
+dtx = pd.read_csv(datafile[0])
 
 # 19 Cols available
 #  3-4-5-6 make up 80% of top 100

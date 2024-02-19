@@ -22,7 +22,7 @@ model_loader = ModelLoader()
 models = []
 experiment_id = ["792022387336146046"]
 #models = runner.load_models(experiment_id)
-models = model_loader.load_random_models(experiment_id, 3)
+models = model_loader.load_random_models(experiment_id, 25)
 
 total = 0
 
@@ -44,7 +44,7 @@ for i in range(len(y)):
         total += 1        
         order_manager.process_tick(y[i])
        
-        if total > 10:
+        if total > 150:
             break    
 
 
@@ -62,5 +62,5 @@ print(" ")
 
 t = round(end-start,2)
 
-print(f"Time {t} seconds to process {order_total}  --  {order_total/t}/sec ")
+print(f"Time {t} seconds to process {order_total}  --  {round(order_total/t,2)}/sec ")
 print(" ") 

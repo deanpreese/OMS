@@ -4,7 +4,7 @@ import pandas as pd
 import requests
 import datetime as dt
 import random as rand
-from LoadedModel import LoadedModel
+from MLStrategy import MLStrategy
 from models import wrapped_models
 
 class ModelLoader:
@@ -41,7 +41,10 @@ class ModelLoader:
             cols = []    
         
         self.l_models.append(loaded_model)
-        lm = LoadedModel(loaded_model, cols,rid)
+        
+        #lm = LoadedModel(loaded_model, cols,rid)
+        lm = MLStrategy(loaded_model, cols,rid)
+        
         lm.run_name = rinfo.info.run_name
         
         self.initialize_trader(lm)
