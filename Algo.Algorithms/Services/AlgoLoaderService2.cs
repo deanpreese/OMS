@@ -8,22 +8,25 @@ using System.Text.Json;
 
 using Algo.Algorithms.Models;
 using Algo.Algorithms.Services;
+using System.Text;
 
-namespace Algo.Algorithms.Algos;
+namespace Algo.Algorithms.Services;
 
-public class AlgoNG2 : BackgroundService
+public class AlgoLoaderService2 : BackgroundService
 {  
+    private string algo_to_load = "NG2.json";
+
     private readonly AlgoOrderQueue _algoOrderQueue;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<AlgoNG2> _logger;
+    private readonly ILogger<AlgoLoaderService2> _logger;
     private readonly IClusterClient _clusterClient;
     private readonly IGrainFactory _grainFactory;
     private AlgoData _algoData; 
     ChannelReader<OrderInfo> _reader;
     
 
-    public AlgoNG2(ILogger<AlgoNG2> logger, 
+    public AlgoLoaderService2(ILogger<AlgoLoaderService2> logger, 
             AlgoOrderQueue algoOrderQueue,
             IServiceScopeFactory scopeFactory,
             IServiceProvider serviceProvider,IClusterClient clusterClient, IGrainFactory grainFactory)
@@ -37,19 +40,12 @@ public class AlgoNG2 : BackgroundService
         _algoData = new AlgoData();
 
         _reader = _algoOrderQueue.Subscribe();
+        _algoData = AlgoConfigLoader.LoadConfig(algo_to_load).Result;
        
     }
-    public override Task StartAsync(CancellationToken cancellationToken)
+    public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        string filePath = "NG2.json"; 
-
-        string jsonString = File.ReadAllText(filePath);
-        _algoData = JsonSerializer.Deserialize<AlgoData>(jsonString)??
-            throw new ArgumentNullException($"File {filePath} is empty.");
-
-        Console.WriteLine("AlgoNG2 Started" + jsonString) ;
-
-        return base.StartAsync(cancellationToken);
+       await base.StartAsync(cancellationToken);
     }
 
 

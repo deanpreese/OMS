@@ -29,10 +29,11 @@ using IHost host = Host.CreateDefaultBuilder(args)
     .UseConsoleLifetime().ConfigureServices(services =>
     {
         services.AddSingleton<AlgoOrderQueue>();
-        services.AddHostedService<AlgoFull>();
-        services.AddHostedService<AlgoNG1>();
-        services.AddHostedService<AlgoNG2>();
-        services.AddHostedService<OrderBackgroundService>();
+        services.AddHostedService<OrderBackgroundService>();        
+        services.AddHostedService<AlgoLoaderService1>();
+        services.AddHostedService<AlgoLoaderService2>();
+        services.AddHostedService<AlgoLoaderService3>();
+
         
     })
     .Build();

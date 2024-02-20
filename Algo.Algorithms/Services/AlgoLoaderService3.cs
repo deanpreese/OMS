@@ -8,25 +8,30 @@ using System.Text.Json;
 
 using Algo.Algorithms.Models;
 using Algo.Algorithms.Services;
+using System.Text;
 
-namespace Algo.Algorithms.Algos;
+namespace Algo.Algorithms.Services;
 
-public class AlgoNG1 : BackgroundService
+public class AlgoLoaderService3 : BackgroundService
 {  
+    private string algo_to_load = "Full.json";
+
+
     private readonly AlgoOrderQueue _algoOrderQueue;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<AlgoNG1> _logger;
+    private readonly ILogger<AlgoLoaderService3> _logger;
     private readonly IClusterClient _clusterClient;
     private readonly IGrainFactory _grainFactory;
+    private readonly ChannelReader<OrderInfo> _reader;
     private AlgoData _algoData; 
-    ChannelReader<OrderInfo> _reader;
-    
+    private readonly TimeSpan _interval = TimeSpan.FromSeconds(30); // Setting the interval to 30 seconds
 
-    public AlgoNG1(ILogger<AlgoNG1> logger, 
+    public AlgoLoaderService3(ILogger<AlgoLoaderService3> logger, 
             AlgoOrderQueue algoOrderQueue,
             IServiceScopeFactory scopeFactory,
-            IServiceProvider serviceProvider,IClusterClient clusterClient, IGrainFactory grainFactory)
+            IServiceProvider serviceProvider, IClusterClient clusterClient, 
+            IGrainFactory grainFactory)
     {
         _algoOrderQueue = algoOrderQueue;
         _scopeFactory = scopeFactory;
@@ -34,22 +39,14 @@ public class AlgoNG1 : BackgroundService
         _logger = logger;
         _clusterClient = clusterClient;
         _grainFactory = grainFactory;
-        _algoData = new AlgoData();
-
+    
         _reader = _algoOrderQueue.Subscribe();
+        _algoData = AlgoConfigLoader.LoadConfig(algo_to_load).Result;
        
     }
-    public override Task StartAsync(CancellationToken cancellationToken)
+    public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        string filePath = "NG1.json"; 
-
-        string jsonString = File.ReadAllText(filePath);
-        _algoData = JsonSerializer.Deserialize<AlgoData>(jsonString)??
-            throw new ArgumentNullException($"File {filePath} is empty.");
-
-        Console.WriteLine("AlgoNG1 Started" + jsonString) ;
-
-        return base.StartAsync(cancellationToken);
+        await base.StartAsync(cancellationToken);
     }
 
 
@@ -58,7 +55,6 @@ public class AlgoNG1 : BackgroundService
 
        await Task.Run(async () =>
         {
-            //await foreach (var orderInfo in _algoOrderQueue.ReadAllAsync(stoppingToken))
             await foreach (var orderInfo in _reader.ReadAllAsync(stoppingToken))
             {
                 try
@@ -68,7 +64,7 @@ public class AlgoNG1 : BackgroundService
                     ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
                     await trader.Update(g_k);
                     UserProfile u = await trader.GetProfileAsync();
-                    Console.WriteLine(" ---> AlgoNG1 for : " + g_k + "  " + u.UserID + "  " +  "  " + orderInfo.InfoType);
+                    Console.WriteLine(" <Full> Processing order for : " + g_k + "  " + u.UserID + "  " +  "  " + orderInfo.InfoType);
                     
                 }
                 catch (Exception ex)
