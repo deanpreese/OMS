@@ -8,7 +8,6 @@ using OMS.Data;
 using OMS.Services.Common;
 using OMS.Core.Common;
 using Orleans.Streams;
-using OMS.Grains.Interfaces;
 
 
 using Microsoft.Extensions.Hosting;
@@ -81,23 +80,22 @@ public class NewOrderProcessorService : BackgroundService
 
                 if (om_id != 0)
                 {
-                    var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
-                    var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
-                                .GetStream<OrderInfo>(PlatformConstants.MemoryStreamNamespace, "/orders");
-
-                    OrderInfo n_o =  new OrderInfo
+                    // Add only orders for groups less than 75
+                    if (newOrder.UserGroup < 75)
                     {
-                        UserID = newOrder.UserID,
-                        GroupNumber = newOrder.UserGroup,
-                        InfoType = OrderInfoType.OPEN,
-                    };
+                        var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
+                        var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
+                                    .GetStream<OrderInfo>(PlatformConstants.MemoryStreamNamespace, "/orders");
 
-                    await orderStreamProvider.OnNextAsync(n_o);
+                        OrderInfo n_o =  new OrderInfo
+                        {
+                            UserID = newOrder.UserID,
+                            GroupNumber = newOrder.UserGroup,
+                            InfoType = OrderInfoType.OPEN,
+                        };
 
-                    string g_k = newOrder.UserID + "_" + newOrder.UserGroup;
-                    ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
-                    await trader.Update(g_k);
-
+                        await orderStreamProvider.OnNextAsync(n_o);
+                    }
 
                 }
                 else

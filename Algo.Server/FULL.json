@@ -1,0 +1,9 @@
+{
+    "algoclass": "Algo.Algorithms.Algos.AlgoFull",
+    "algoname" : "OpenCloseAlgoTest98",
+    "longname": "OpenCloseAlgoTest98-Long",
+    "shortname": "OpenCloseAlgoTest98-Short",
+    "group": 88,
+    "usedebugging": false,
+    "backtesting" : true
+}

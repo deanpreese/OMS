@@ -40,4 +40,17 @@ public class AdminGrain : Grain, IAdminGrain
     {
         return await _unitOfWork.TraderRepository.GetUserProfileListAsync(userGroup);
     }
+
+    public async Task<int> VerifyByDisplayName(NewTrader newTrader)
+    {
+        int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(newTrader);
+        _unitOfWork.Commit();    
+
+        if( t_v == 0 || t_v != -99 )
+        {
+            t_v = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
+            _unitOfWork.Commit();
+        }
+        return t_v;
+    }
 }

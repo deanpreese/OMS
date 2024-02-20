@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\OMS.Core\OMS.Core.csproj" />
+    <ProjectReference Include="..\OMS.Services\OMS.Services.csproj" />
+    <ProjectReference Include="..\OMS.Grains\OMS.Grains.csproj" />
+    <ProjectReference Include="..\OMS.Server\OMS.Server.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

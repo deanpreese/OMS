@@ -13,7 +13,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OMS.Services.Data;
-using OMS.Grains.Interfaces;
 
 //using System.Timers;
 
@@ -109,23 +108,22 @@ public class ClosedOrderProcessorService : BackgroundService
 
                     await _analytics_service.UpdateScoreCard(userInfo);
 
-                    var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
-                    var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
-                                .GetStream<OrderInfo>(PlatformConstants.MemoryStreamNamespace, "/orders");
-
-                    OrderInfo c_o =  new OrderInfo
+                    // Add only orders for groups less than 75
+                    if (userInfo.GroupNumber < 75)
                     {
-                        UserID = userInfo.UserID,
-                        GroupNumber = userInfo.GroupNumber,
-                        InfoType = OrderInfoType.CLOSED,
-                    };
+                        var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
+                        var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
+                                    .GetStream<OrderInfo>(PlatformConstants.MemoryStreamNamespace, "/orders");
 
-                    await orderStreamProvider.OnNextAsync(c_o);
+                        OrderInfo c_o =  new OrderInfo
+                        {
+                            UserID = userInfo.UserID,
+                            GroupNumber = userInfo.GroupNumber,
+                            InfoType = OrderInfoType.CLOSED,
+                        };
 
-                    string g_k = userInfo.UserID + "_" + userInfo.GroupNumber;
-                    ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
-                    await trader.Update(g_k);
-
+                        await orderStreamProvider.OnNextAsync(c_o);
+                    }
 
                     AnsiConsole.MarkupLine("Order Processed by Stats For user " + userInfo.UserID  );
 

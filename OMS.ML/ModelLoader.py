@@ -19,12 +19,7 @@ class ModelLoader:
         rinfo = mlflow.get_run(rid)
         run_txt = f"runs:/{rid}/model" 
         
-        print(run_txt)
-        
-        
         loaded_model = mlflow.pyfunc.load_model(run_txt)
-        
-        
         
         cols =[]
         try:
@@ -68,10 +63,11 @@ class ModelLoader:
             
     def load_random_models(self, experiment_id, num_models): 
         
-        print("Loading Runs ...")
+        print("Querying Runs ...")
         #runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.MSE DESC"], max_results=num_models)
         runs = mlflow.search_runs(experiment_id)
         idxx = rand.sample(range(1, len(runs) -2 ), num_models)
+        print("Random Runs Selected...")
         
         for i in idxx:
             r_id = runs.iloc[i].run_id 

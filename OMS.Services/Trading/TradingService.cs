@@ -28,57 +28,6 @@ public class TradingService : ITradingService
 
     }
 
-/*
-    public async Task<int> VerifyModelTrader(NewTrader user)
-    {
-        int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(user);
-        _unitOfWork.Commit();    
-
-        if( t_v == 0 || t_v != -99 )
-        {
-            t_v = await _unitOfWork.TraderRepository.AddTraderAsync(user);
-            _unitOfWork.Commit();
-        }
-        return t_v;
-    }
-
-
-    public async Task<int> AddTraderAsync(NewTrader newTrader)
-    {
-        int traderID = 0;
-
-        try
-        {
-            _logger.LogInformation("Adding new trader...");
-            // Use TraderRepository to add a new trader
-            traderID = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
-            // Commit transaction
-            _unitOfWork.Commit();
-
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-        }
-
-        _logger.LogInformation($"Trader added  {traderID}  ");
-        return traderID;
-    }
-
-    public async Task<int> AuthenticateTraderAsync(UserInfo newTrader)
-    {
-        int auth_code = 0;    
-
-        if (newTrader.Password != null)
-        {
-            auth_code = await _unitOfWork.TraderRepository.AuthenticateTraderAsync(newTrader.UserID, newTrader.Password, newTrader.GroupNumber);    
-            _unitOfWork.Commit();
-        }    
-
-        return auth_code;
-    }
-*/
-    // Example method to handle a new order
     public async Task<LiveOrder> ProcessNewOrderAsync(NewOrder newOrder)
     {
 
