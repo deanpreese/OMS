@@ -6,7 +6,10 @@ using OMS.Grains.Interfaces;
 using System.Threading.Channels;
 using System.Text.Json;
 
-namespace Algo.Algorithums.Algos;
+using Algo.Algorithms.Models;
+using Algo.Algorithms.Services;
+
+namespace Algo.Algorithms.Algos;
 
 public class AlgoNG2 : BackgroundService
 {  
@@ -39,11 +42,6 @@ public class AlgoNG2 : BackgroundService
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         string filePath = "NG2.json"; 
-
-        if (!File.Exists(filePath))
-        {
-            throw new FileNotFoundException($"File {filePath} does not exist.");
-        }
 
         string jsonString = File.ReadAllText(filePath);
         _algoData = JsonSerializer.Deserialize<AlgoData>(jsonString)??

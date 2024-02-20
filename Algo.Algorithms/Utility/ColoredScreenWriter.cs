@@ -1,5 +1,5 @@
 ﻿
-namespace Algo.Algorithums.Utility
+namespace Algo.Algorithms.Utility
 {
     public class ColoredScreenWriter
     {

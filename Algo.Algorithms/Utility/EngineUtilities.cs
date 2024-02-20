@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Algo.Algorithums.Utility
+namespace Algo.Algorithms.Utility
 {
     public static class EngineUtilities
     {

@@ -2,8 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using OMS.Core.Common;
 using Orleans.Configuration;
-using Algo.Algorithums.Algos;
-using Algo.Algorithums;
+
+using Algo.Algorithms.Services;
+using Algo.Algorithms.Models;
+using Algo.Algorithms.Algos;
+
 
 using IHost host = Host.CreateDefaultBuilder(args)
     .UseOrleansClient(client =>

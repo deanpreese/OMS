@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 
-namespace Algo.Algorithums.Filters;
+namespace Algo.Algorithms.Filters;
 
 public class AlgoFilterSeptThreeZero : IAlgoFilter
 {

@@ -6,7 +6,10 @@ using OMS.Grains.Interfaces;
 using System.Threading.Channels;
 using System.Text.Json;
 
-namespace Algo.Algorithums.Algos;
+using Algo.Algorithms.Models;
+using Algo.Algorithms.Services;
+
+namespace Algo.Algorithms.Algos;
 
 public class AlgoNG1 : BackgroundService
 {  
@@ -38,18 +41,13 @@ public class AlgoNG1 : BackgroundService
     }
     public override Task StartAsync(CancellationToken cancellationToken)
     {
-        string filePath = "MG1.json"; 
-
-        if (!File.Exists(filePath))
-        {
-            throw new FileNotFoundException($"File {filePath} does not exist.");
-        }
+        string filePath = "NG1.json"; 
 
         string jsonString = File.ReadAllText(filePath);
         _algoData = JsonSerializer.Deserialize<AlgoData>(jsonString)??
             throw new ArgumentNullException($"File {filePath} is empty.");
 
-        Console.WriteLine("AlgoFull Started" + jsonString) ;
+        Console.WriteLine("AlgoNG1 Started" + jsonString) ;
 
         return base.StartAsync(cancellationToken);
     }

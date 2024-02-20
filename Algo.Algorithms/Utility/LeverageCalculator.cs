@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Algo.Algorithums.Filters;
-using Algo.Algorithums.Models;
+using Algo.Algorithms.Filters;
+using Algo.Algorithms.Models;
 
-namespace Algo.Algorithums.Utility
+namespace Algo.Algorithms.Utility
 {
     public class LeverageCalculator
     {

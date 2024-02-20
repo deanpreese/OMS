@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Algo.Algorithums.Filters
+namespace Algo.Algorithms.Filters
 {
     public class GroupLeverageFilter
     {

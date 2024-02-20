@@ -1,6 +1,6 @@
 
 
-namespace Algo.Algorithums.Models;
+namespace Algo.Algorithms.Models;
 
 public class TraderXRef
 {

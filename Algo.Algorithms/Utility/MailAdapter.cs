@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 
-namespace Algo.Algorithums.Utility
+namespace Algo.Algorithms.Utility
 {
     public class MailAdapter
     {

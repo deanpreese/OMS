@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text; 
 
 
-namespace Algo.Algorithums
+namespace Algo.Algorithms
 {
     public interface IAlgoEngine
     {

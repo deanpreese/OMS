@@ -1,9 +1,9 @@
 ﻿using System.Text;
 
-using Algo.Algorithums.Models;
+using Algo.Algorithms.Models;
 
 
-namespace Algo.Algorithums.Utility
+namespace Algo.Algorithms.Utility
 {
     public class XRefManager
     {

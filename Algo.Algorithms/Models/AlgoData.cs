@@ -1,4 +1,4 @@
-﻿namespace Algo.Algorithums;
+﻿namespace Algo.Algorithms.Models;
 
 public class AlgoData
 {

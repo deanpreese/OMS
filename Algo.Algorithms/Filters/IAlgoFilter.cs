@@ -1,7 +1,7 @@
 
 
 
-namespace Algo.Algorithums.Filters;
+namespace Algo.Algorithms.Filters;
 
 public interface IAlgoFilter
 {

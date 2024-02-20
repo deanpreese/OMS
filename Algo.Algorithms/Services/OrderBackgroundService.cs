@@ -17,7 +17,7 @@ using OMS.Services.Queue;
 using OMS.Grains.Interfaces;
 
 
-namespace Algo.Algorithums;
+namespace Algo.Algorithms.Services;
 
 public class OrderBackgroundService : BackgroundService
 {
