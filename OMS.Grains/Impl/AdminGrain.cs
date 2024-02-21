@@ -28,7 +28,9 @@ public class AdminGrain : Grain, IAdminGrain
 
     public async Task<int> AddNewTrader(NewTrader newTrader)
     {
-        return await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
+        int t_id = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
+        _unitOfWork.Commit();
+        return t_id;
     }
 
     public async Task<int> AuthenticateTrader(UserInfo userInfo)
@@ -44,13 +46,18 @@ public class AdminGrain : Grain, IAdminGrain
     public async Task<int> VerifyByDisplayName(NewTrader newTrader)
     {
         int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(newTrader);
-        _unitOfWork.Commit();    
-
-        if( t_v == 0 || t_v != -99 )
+        if( t_v == 0 )
         {
             t_v = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
-            _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
         }
         return t_v;
     }
+
+
+    public async Task<int> AuthByDisplayName(NewTrader newTrader)
+    {
+        return await _unitOfWork.TraderRepository.VerifyModelTrader(newTrader);      
+    }
+
 }

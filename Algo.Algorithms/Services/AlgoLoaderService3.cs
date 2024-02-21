@@ -9,6 +9,7 @@ using System.Text.Json;
 using Algo.Algorithms.Models;
 using Algo.Algorithms.Services;
 using System.Text;
+using OMS.Services.Trading;
 
 namespace Algo.Algorithms.Services;
 
@@ -16,37 +17,32 @@ public class AlgoLoaderService3 : BackgroundService
 {  
     private string algo_to_load = "Full.json";
 
-
     private readonly AlgoOrderQueue _algoOrderQueue;
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<AlgoLoaderService3> _logger;
-    private readonly IClusterClient _clusterClient;
     private readonly IGrainFactory _grainFactory;
-    private readonly ChannelReader<OrderInfo> _reader;
+    private readonly ChannelReader<LiveOrder> _reader;
     private AlgoData _algoData; 
-    private readonly TimeSpan _interval = TimeSpan.FromSeconds(30); // Setting the interval to 30 seconds
-
+    private readonly IClusterClient _client;
+    
     public AlgoLoaderService3(ILogger<AlgoLoaderService3> logger, 
             AlgoOrderQueue algoOrderQueue,
-            IServiceScopeFactory scopeFactory,
-            IServiceProvider serviceProvider, IClusterClient clusterClient, 
-            IGrainFactory grainFactory)
+            IGrainFactory grainFactory, IClusterClient client)
     {
         _algoOrderQueue = algoOrderQueue;
-        _scopeFactory = scopeFactory;
-        _serviceProvider = serviceProvider;
         _logger = logger;
-        _clusterClient = clusterClient;
         _grainFactory = grainFactory;
+        _client = client;
     
+        _algoData = new AlgoData();
         _reader = _algoOrderQueue.Subscribe();
-        _algoData = AlgoConfigLoader.LoadConfig(algo_to_load).Result;
        
     }
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        await base.StartAsync(cancellationToken);
+       AlgoConfig configLoader = new AlgoConfig(algo_to_load, _grainFactory, _client);
+       _algoData = configLoader.GetAlgoData().Result;        
+       await base.StartAsync(cancellationToken);
+
     }
 
 
@@ -60,11 +56,11 @@ public class AlgoLoaderService3 : BackgroundService
                 try
                 {
                     //Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
-                    string g_k = orderInfo.UserID + "_" + orderInfo.GroupNumber;
+                    string g_k = orderInfo.UserID + "_" + orderInfo.UserGroup;
                     ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
                     await trader.Update(g_k);
                     UserProfile u = await trader.GetProfileAsync();
-                    Console.WriteLine(" <Full> Processing order for : " + g_k + "  " + u.UserID + "  " +  "  " + orderInfo.InfoType);
+                    Console.WriteLine(" <Full> Processing order for : " + g_k + "  " + u.UserID + "  " +  "  " + orderInfo.OrderAction);
                     
                 }
                 catch (Exception ex)

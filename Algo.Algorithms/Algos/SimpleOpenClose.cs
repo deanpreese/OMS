@@ -1,7 +1,7 @@
 ﻿using Algo.Algorithms.Models;
 using OMS.Core.Models;
 
-namespace Algo.Algorithms;
+namespace Algo.Algorithms.Algos;
 
 public class SimpleOpenClose
 {
@@ -14,7 +14,7 @@ public class SimpleOpenClose
     }
 
 
-    
+
 
     public void GenerateAlgoOrder(LiveOrder order)
     {

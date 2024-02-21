@@ -85,16 +85,9 @@ public class NewOrderProcessorService : BackgroundService
                     {
                         var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
                         var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
-                                    .GetStream<OrderInfo>(PlatformConstants.MemoryStreamNamespace, "/orders");
+                                    .GetStream<LiveOrder>(PlatformConstants.MemoryStreamNamespace, "/new-orders");
 
-                        OrderInfo n_o =  new OrderInfo
-                        {
-                            UserID = newOrder.UserID,
-                            GroupNumber = newOrder.UserGroup,
-                            InfoType = OrderInfoType.OPEN,
-                        };
-
-                        await orderStreamProvider.OnNextAsync(n_o);
+                        await orderStreamProvider.OnNextAsync(live.Result);
                     }
 
                 }

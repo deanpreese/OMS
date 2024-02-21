@@ -1,9 +1,7 @@
 {
     "algoclass": "Algo.Algorithms.Algos.AlgoNG2",
-    "algoname" : "OpenCloseAlgoTest98",
-    "longname": "OpenCloseAlgoTest98-Long",
-    "shortname": "OpenCloseAlgoTest98-Short",
-    "group": 88,
+    "algoname" : "OpenCloseAlgoTest90",
+    "group": 90,
     "usedebugging": false,
     "backtesting" : true
 }

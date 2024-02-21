@@ -1,4 +1,5 @@
-﻿using OMS.Core.Models;
+﻿using System.Reflection.Metadata.Ecma335;
+using OMS.Core.Models;
 
 namespace OMS.Core.Common;
 
@@ -55,6 +56,22 @@ public class OrderMapping
     }
 
 
+
+    public static NewOrder MapOrder(LiveOrder liveOrder)
+    {
+        NewOrder newOrder = new NewOrder {
+            OrderPX = liveOrder.OrderPX , 
+            OrderTime = liveOrder.OrderTime,
+            Instrument = liveOrder.Instrument,
+            OrderAction = liveOrder.OrderAction,
+            OrderType = liveOrder.OrderType,
+            PlatformOrderID = 0,
+            Quantity = liveOrder.Quantity,
+            UserID = 0,
+            UserGroup = 0,
+        };
+            return newOrder;
+    }
 }
 
    

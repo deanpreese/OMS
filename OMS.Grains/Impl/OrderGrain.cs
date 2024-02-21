@@ -27,8 +27,9 @@ public class OrderGrain : Grain, IOrderGrain
         _unitOfWork = unitOfWork;
     }
 
-    public Task<int> ProcessOrder(NewOrder order)
+    public async Task<int> ProcessOrder(NewOrder order)
     {
-        throw new NotImplementedException();
+        await _newOrderChannelService.WriteAsync(order);
+        return 0;
     }
 }

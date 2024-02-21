@@ -26,7 +26,7 @@ public class OrderBackgroundService : BackgroundService
     private readonly ILogger<OrderBackgroundService> _logger;
     private readonly AlgoOrderQueue _algoOrderQueue;
 
-    private IAsyncStream<OrderInfo>? openOrderStreamProvider;
+    private IAsyncStream<LiveOrder>? openOrderStreamProvider;
 
 
     public OrderBackgroundService(IClusterClient client, 
@@ -43,7 +43,7 @@ public class OrderBackgroundService : BackgroundService
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         openOrderStreamProvider = _client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
-                    .GetStream<OrderInfo>(PlatformConstants.MemoryStreamNamespace, "/orders");
+                    .GetStream<LiveOrder>(PlatformConstants.MemoryStreamNamespace, "/new-orders");
 
         return base.StartAsync(cancellationToken);
     }
@@ -51,17 +51,17 @@ public class OrderBackgroundService : BackgroundService
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         await openOrderStreamProvider.SubscribeAsync(
-            async (newOrderUserInfo, token) =>
+            async (newLiveOrder, token) =>
             {
 
                 try
                 {
                     //Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
-                    string g_k = newOrderUserInfo.UserID + "_" + newOrderUserInfo.GroupNumber;
+                    string g_k = newLiveOrder.UserID + "_" + newLiveOrder.UserGroup;
                     ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
                     await trader.Update(g_k);
                     UserProfile u = await trader.GetProfileAsync();
-                    Console.WriteLine("------ AlgoNG2 for : " + g_k + "  " + u.UserID + "  " +  "  " + newOrderUserInfo.InfoType);
+                    Console.WriteLine("------ AlgoNG2 for : " + g_k + "  " + u.UserID + "  " +  "  " + newLiveOrder.OrderAction);
                     
                 }
                 catch (Exception ex)
@@ -71,7 +71,7 @@ public class OrderBackgroundService : BackgroundService
 
 
 
-                await _algoOrderQueue.WriteAsync(newOrderUserInfo);
+                await _algoOrderQueue.WriteAsync(newLiveOrder);
             });
     }
 }

@@ -36,11 +36,11 @@ public class TraderRepository : ITraderRepository
         user.GroupRank = 0;
         user.TraderGroup = addedTrader.Group;
         user.TraderRole = 1;
+        
         ScoreCard scd = new ScoreCard();
         scd.UserID  = user.UserID;
         scd.TradeXML = " ";
         scd.GroupID = addedTrader.Group;
-
         _context.Add(scd);
         _context.UserProfiles.Add(user);
          return Task.FromResult(user.UserID);
@@ -145,14 +145,9 @@ public class TraderRepository : ITraderRepository
                            && u.TraderGroup == user.Group
                                   select u).ToList();
 
-        if(traders.Count() == 1)
+        if(traders.Count() >= 1)
         {
             rtn_val =  traders[0].UserID;
-        }
-
-        if (traders.Count() > 1)
-        {
-            rtn_val = -99;
         }
 
         await Task.FromResult(rtn_val);

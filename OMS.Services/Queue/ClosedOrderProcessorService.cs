@@ -108,23 +108,6 @@ public class ClosedOrderProcessorService : BackgroundService
 
                     await _analytics_service.UpdateScoreCard(userInfo);
 
-                    // Add only orders for groups less than 75
-                    if (userInfo.GroupNumber < 75)
-                    {
-                        var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
-                        var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
-                                    .GetStream<OrderInfo>(PlatformConstants.MemoryStreamNamespace, "/orders");
-
-                        OrderInfo c_o =  new OrderInfo
-                        {
-                            UserID = userInfo.UserID,
-                            GroupNumber = userInfo.GroupNumber,
-                            InfoType = OrderInfoType.CLOSED,
-                        };
-
-                        await orderStreamProvider.OnNextAsync(c_o);
-                    }
-
                     AnsiConsole.MarkupLine("Order Processed by Stats For user " + userInfo.UserID  );
 
                 }catch (Exception ex)

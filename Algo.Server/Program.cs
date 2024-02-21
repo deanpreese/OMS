@@ -5,7 +5,6 @@ using Orleans.Configuration;
 
 using Algo.Algorithms.Services;
 using Algo.Algorithms.Models;
-using Algo.Algorithms.Algos;
 
 
 using IHost host = Host.CreateDefaultBuilder(args)
@@ -28,12 +27,12 @@ using IHost host = Host.CreateDefaultBuilder(args)
     })
     .UseConsoleLifetime().ConfigureServices(services =>
     {
+        services.AddHostedService<AlgoLoaderService1>();
+        //services.AddHostedService<AlgoLoaderService2>();
+        //services.AddHostedService<AlgoLoaderService3>();
+
         services.AddSingleton<AlgoOrderQueue>();
         services.AddHostedService<OrderBackgroundService>();        
-        services.AddHostedService<AlgoLoaderService1>();
-        services.AddHostedService<AlgoLoaderService2>();
-        services.AddHostedService<AlgoLoaderService3>();
-
         
     })
     .Build();
