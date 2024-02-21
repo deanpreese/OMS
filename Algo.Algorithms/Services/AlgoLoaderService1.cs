@@ -64,8 +64,9 @@ public class AlgoLoaderService1 : BackgroundService
                     UserProfile u = await trader.GetProfileAsync();
                     Console.WriteLine(" ---> AlgoNG1 for : " + g_k + "  " + newOrderInfo.OrderPX + "  " +  "  " + newOrderInfo.OrderAction);
 
-                    IOrderGrain orderGrain = _grainFactory.GetGrain<IOrderGrain>(_algoData.algo_grain());     
 
+
+                    IOrderGrain orderGrain = _grainFactory.GetGrain<IOrderGrain>(_algoData.algo_grain());     
                     NewOrder n_o = OrderMapping.MapOrder(newOrderInfo);
                     n_o.UserGroup = _algoData.group;
                     n_o.UserID = _algoData.algo_traderId;

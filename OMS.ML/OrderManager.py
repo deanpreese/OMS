@@ -1,14 +1,18 @@
 import json
 import requests
 
+from datetime import datetime, timedelta
+
 class SimOrderManager():
     
     def __init__(self):
         self.px = 5000
         self.commission = 0
+        self.tick_dte = datetime(2023, 1, 1, 12, 0)
     
     def process_tick(self, tick):
         self.px += tick    
+        self.tick_dte = self.tick_dte + timedelta(minutes=5)
 
     def process_model(self, model, y_pred, prediction):
         
@@ -48,7 +52,10 @@ class SimOrderManager():
 
     def send_order(self, new_order):
 
-        print(f" Order   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']}  " ) 
+        dte_iso = self.tick_dte.isoformat()
+        new_order['orderTime']  = dte_iso
+
+        print(f" Order   {new_order['userID']}   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']} {new_order['orderTime']} " ) 
                 
         url = "http://localhost:8786/api/ml/process-order"  # Replace with the actual URL of the web service
 

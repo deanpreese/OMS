@@ -59,6 +59,23 @@ public class ScoreCard
     public double AveWin {get; set;}
     [Id(20)]
     public double AveLoss {get; set;}
+
+    public double AveTradeDuration {get; set;}
+    public double AveWinDuration {get; set;}
+    public double AveLossDuration {get; set;}
+    public double StdDevAllTrades {get; set;}
+    public double StdDevWinTrades {get; set;}
+    public double StdDevLossTrades {get; set;}
+    public double SharpRatio {get; set;}
+    public double SortinoRatio {get; set;}
+
+    public double PNL_Last3 {get; set;}
+    public double PNL_Last5 {get; set;}
+    public double PNL_Last8 {get; set;}
+    public double PNL_Last13 {get; set;}
+    public double PNL_Last21 {get; set;}
+    public double PNL_Last34 {get; set;}
+
     public DateTime LastUpdate
     {
         get => _lastUpdate;
