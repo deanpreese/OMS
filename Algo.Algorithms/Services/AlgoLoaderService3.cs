@@ -59,7 +59,7 @@ public class AlgoLoaderService3 : BackgroundService
                     string g_k = orderInfo.UserID + "_" + orderInfo.UserGroup;
                     ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
                     await trader.Update(g_k);
-                    UserProfile u = await trader.GetProfileAsync();
+                    UserProfile u = await trader.GetProfileAsync(g_k);
                     Console.WriteLine(" <Full> Processing order for : " + g_k + "  " + u.UserID + "  " +  "  " + orderInfo.OrderAction);
                     
                 }

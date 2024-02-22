@@ -29,7 +29,7 @@ public class AdminGrain : Grain, IAdminGrain
     public async Task<int> AddNewTrader(NewTrader newTrader)
     {
         int t_id = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
-        _unitOfWork.Commit();
+        await _unitOfWork.CommitAsync();
         return t_id;
     }
 

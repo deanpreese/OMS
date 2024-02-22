@@ -18,9 +18,7 @@ public class TraderGrain : Grain, ITraderGrain
 {
     private readonly IPersistentState<UserProfile> _profile;
     private readonly IPersistentState<ScoreCard> _scoreCard;
-
     private string _key_string ;
-
     private IUnitOfWork _unitOfWork;
 
     public TraderGrain(
@@ -51,7 +49,6 @@ public class TraderGrain : Grain, ITraderGrain
         await UpdateScoreCard(_key_string);
     }
 
-
     public async Task SetProfileAsync(UserProfile profile_to_set)
     {
         _profile.State = profile_to_set;
@@ -64,11 +61,14 @@ public class TraderGrain : Grain, ITraderGrain
         await _scoreCard.WriteStateAsync();
     }
 
-    public Task<UserProfile> GetProfileAsync() => Task.FromResult(_profile.State);
-    public Task<ScoreCard> GetScoreCardAsync() => Task.FromResult(_scoreCard.State);
+    public async Task<UserProfile> GetProfileAsync(string profile_key){
+        return await UpdateProfile(profile_key);
+    } 
+    public async Task<ScoreCard> GetScoreCardAsync(string profile_key){
+        return await UpdateScoreCard(profile_key);
+    }
 
-
-    private async Task UpdateProfile(int userId, int groupNum)
+    private async Task<UserProfile> UpdateProfile(int userId, int groupNum)
     {
         var profile_from_db = await _unitOfWork.TraderRepository.GetUserProfileAsync(userId, groupNum);
         UserProfile userProfile = new UserProfile();
@@ -77,19 +77,20 @@ public class TraderGrain : Grain, ITraderGrain
             userProfile = profile_from_db.First();        
         }
        await SetProfileAsync(userProfile);
+       return userProfile;
     }
 
-    public  async Task UpdateProfile(string profile_key)
+    public async Task<UserProfile> UpdateProfile(string profile_key)
     {
         string[] profile_key_parts = profile_key.Split('_');
         int userId = int.Parse(profile_key_parts[0]);
         int groupNum = int.Parse(profile_key_parts[1]);
         
-        await UpdateProfile(userId, groupNum);    
+        return await UpdateProfile(userId, groupNum);    
     }
 
 
-    private async Task UpdateScoreCard(int userId, int groupNum)
+    private async Task<ScoreCard> UpdateScoreCard(int userId, int groupNum)
     {
         var sc_from_db = await _unitOfWork.TraderRepository.GetScoreCardAsync(userId, groupNum);
 
@@ -99,15 +100,16 @@ public class TraderGrain : Grain, ITraderGrain
             sc = sc_from_db.First();        
         }
        await SetScoreCardAsync(sc);
+       return sc;
     }
 
-    public  async Task UpdateScoreCard(string profile_key)
+    public async Task<ScoreCard> UpdateScoreCard(string profile_key)
     {
         string[] profile_key_parts = profile_key.Split('_');
         int userId = int.Parse(profile_key_parts[0]);
         int groupNum = int.Parse(profile_key_parts[1]);
         
-        await UpdateScoreCard(userId, groupNum);    
+        return await UpdateScoreCard(userId, groupNum);    
     }
 
 

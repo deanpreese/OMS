@@ -153,6 +153,20 @@ namespace OMS.Data.Migrations
                     WinLossRatio = table.Column<double>(type: "double precision", nullable: false),
                     AveWin = table.Column<double>(type: "double precision", nullable: false),
                     AveLoss = table.Column<double>(type: "double precision", nullable: false),
+                    AveTradeDuration = table.Column<double>(type: "double precision", nullable: false),
+                    AveWinDuration = table.Column<double>(type: "double precision", nullable: false),
+                    AveLossDuration = table.Column<double>(type: "double precision", nullable: false),
+                    StdDevAllTrades = table.Column<double>(type: "double precision", nullable: false),
+                    StdDevWinTrades = table.Column<double>(type: "double precision", nullable: false),
+                    StdDevLossTrades = table.Column<double>(type: "double precision", nullable: false),
+                    SharpRatio = table.Column<double>(type: "double precision", nullable: false),
+                    SortinoRatio = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last3 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last5 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last8 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last13 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last21 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last34 = table.Column<double>(type: "double precision", nullable: false),
                     LastUpdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -187,11 +201,11 @@ namespace OMS.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "ScoreCard",
-                columns: new[] { "ScoreCardID", "AveLoss", "AveWin", "GrossLoss", "GrossProfit", "GroupID", "LargestLoser", "LargestLosingStreak", "LargestWinner", "LargestWinningStreak", "LastUpdate", "Longs", "Losers", "NetProfitLong", "NetProfitShort", "Shorts", "TotalNetProfit", "TradeXML", "Trades", "UserID", "WinLossRatio", "Winners" },
+                columns: new[] { "ScoreCardID", "AveLoss", "AveLossDuration", "AveTradeDuration", "AveWin", "AveWinDuration", "GrossLoss", "GrossProfit", "GroupID", "LargestLoser", "LargestLosingStreak", "LargestWinner", "LargestWinningStreak", "LastUpdate", "Longs", "Losers", "NetProfitLong", "NetProfitShort", "PNL_Last13", "PNL_Last21", "PNL_Last3", "PNL_Last34", "PNL_Last5", "PNL_Last8", "SharpRatio", "Shorts", "SortinoRatio", "StdDevAllTrades", "StdDevLossTrades", "StdDevWinTrades", "TotalNetProfit", "TradeXML", "Trades", "UserID", "WinLossRatio", "Winners" },
                 values: new object[,]
                 {
-                    { 1, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 2, 14, 22, 27, 47, 268, DateTimeKind.Utc).AddTicks(3480), 0, 0, 0.0, 0.0, 0, 0.0, "", 0, 999999, 0.0, 0 },
-                    { 2, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 2, 14, 22, 27, 47, 268, DateTimeKind.Utc).AddTicks(3500), 0, 0, 0.0, 0.0, 0, 0.0, "", 0, 999998, 0.0, 0 }
+                    { 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 2, 21, 20, 47, 48, 792, DateTimeKind.Utc).AddTicks(5840), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 0, 999999, 0.0, 0 },
+                    { 2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 2, 21, 20, 47, 48, 792, DateTimeKind.Utc).AddTicks(5850), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 0, 999998, 0.0, 0 }
                 });
 
             migrationBuilder.InsertData(
@@ -199,8 +213,8 @@ namespace OMS.Data.Migrations
                 columns: new[] { "UserID", "DateRegistered", "DisplayName", "Email", "Enabled", "EnabledLive", "FirstName", "GroupRank", "IsOpposite", "LastName", "Leverage", "TraderGroup", "TraderRole", "UserPwd" },
                 values: new object[,]
                 {
-                    { 999998, new DateTime(2024, 2, 14, 14, 27, 47, 268, DateTimeKind.Utc).AddTicks(3460), "User2", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" },
-                    { 999999, new DateTime(2024, 2, 14, 14, 27, 47, 268, DateTimeKind.Utc).AddTicks(3380), "User1", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" }
+                    { 999998, new DateTime(2024, 2, 21, 12, 47, 48, 792, DateTimeKind.Utc).AddTicks(5810), "User2", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" },
+                    { 999999, new DateTime(2024, 2, 21, 12, 47, 48, 792, DateTimeKind.Utc).AddTicks(5740), "User1", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" }
                 });
         }
 

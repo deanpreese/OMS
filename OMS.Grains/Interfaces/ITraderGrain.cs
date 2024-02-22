@@ -12,9 +12,9 @@ public interface ITraderGrain : IGrainWithStringKey
     Task Update(string profile_key);
     Task SetProfileAsync(UserProfile profile_to_set);
     Task SetScoreCardAsync(ScoreCard scoreCard_to_set);
-    Task<UserProfile> GetProfileAsync();
-    Task<ScoreCard> GetScoreCardAsync();
-    Task UpdateProfile(string profile_key);
-    Task UpdateScoreCard(string profile_key);
+    Task<UserProfile> GetProfileAsync(string profile_key);
+    Task<ScoreCard> GetScoreCardAsync(string profile_key);
+    Task<UserProfile> UpdateProfile(string profile_key);
+    Task<ScoreCard> UpdateScoreCard(string profile_key);
 
 }

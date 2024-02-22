@@ -11,6 +11,7 @@ using OMS.Data.Repositories;
 using OMS.Startup;
 using OMS.Core.Logging; 
 using Orleans.Configuration;
+using Orleans.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Console;

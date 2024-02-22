@@ -65,16 +65,19 @@ public static class TradeStatisticsGenerator
             if (currentLosingStreak > largestLosingStreak) largestLosingStreak = currentLosingStreak;
 
         }
-
        
+        scoreCard.LargestWinningStreak = largestWinningStreak;
+        scoreCard.LargestLosingStreak = largestLosingStreak;
+
         scoreCard.AveTradeDuration = closedTrades.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds);
+
         // Calculate average time in winners
-        var winners = closedTrades.Where(trade => trade.PNL > 0);
-        scoreCard.AveWinDuration= winners.Any() ? winners.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds) : 0;
+        var winners_list = closedTrades.Where(trade => trade.PNL > 0);
+        scoreCard.AveWinDuration= winners_list.Any() ? winners_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds) : 0;
 
         // Calculate average time in losers
-        var losers = closedTrades.Where(trade => trade.PNL <= 0);
-        scoreCard.AveLossDuration = losers.Any() ? losers.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds) : 0;
+        var losers_list = closedTrades.Where(trade => trade.PNL <= 0);
+        scoreCard.AveLossDuration = losers_list.Any() ? losers_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds) : 0;
 
         // Standard Deviation of P&L
         double meanProfit = closedTrades.Average(trade => trade.PNL);
@@ -82,15 +85,13 @@ public static class TradeStatisticsGenerator
         scoreCard.StdDevAllTrades = Math.Sqrt(variance);
 
         // Standard Deviation for Winners
-        var winners_list = closedTrades.Where(trade => trade.PNL > 0).ToList();
-        double meanProfitWinners = winners.Average(trade => trade.PNL);
-        double varianceWinners = winners_list.Sum(trade => Math.Pow(trade.PNL - meanProfitWinners, 2)) / winners.Count();
+        double meanProfitWinners = winners_list.Any() ? winners_list.Average(trade => trade.PNL) : 0;
+        double varianceWinners = winners_list.Sum(trade => Math.Pow(trade.PNL - meanProfitWinners, 2)) / winners_list.Count();
         scoreCard.StdDevWinTrades = Math.Sqrt(varianceWinners);
 
         // Standard Deviation for Losers
-        var losers_list = closedTrades.Where(trade => trade.PNL < 0).ToList();
-        double meanProfitLosers = losers.Average(trade => trade.PNL);
-        double varianceLosers = losers_list.Sum(trade => Math.Pow(trade.PNL - meanProfitLosers, 2)) / losers.Count();
+        double meanProfitLosers = losers_list.Any() ? losers_list.Average(trade => trade.PNL) : 0;
+        double varianceLosers = losers_list.Sum(trade => Math.Pow(trade.PNL - meanProfitLosers, 2)) / losers_list.Count();
         scoreCard.StdDevLossTrades = Math.Sqrt(varianceLosers);
 
         // Sharpe Ratio
@@ -104,8 +105,6 @@ public static class TradeStatisticsGenerator
         double downsideDeviation = Math.Sqrt(downsideVariance);
         scoreCard.SortinoRatio = (meanProfit - riskFreeRate) / downsideDeviation;
 
-        scoreCard.LargestWinningStreak = largestWinningStreak;
-        scoreCard.LargestLosingStreak = largestLosingStreak;
 
         scoreCard.PNL_Last3 = CalculatePNLByDuration(closedTrades, 3);
         scoreCard.PNL_Last5 = CalculatePNLByDuration(closedTrades, 5);

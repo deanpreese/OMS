@@ -12,7 +12,7 @@ using OMS.Data;
 namespace OMS.Data.Migrations
 {
     [DbContext(typeof(OrderManagementDbContext))]
-    [Migration("20240214222747_InitialCreate")]
+    [Migration("20240221204749_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -290,7 +290,16 @@ namespace OMS.Data.Migrations
                     b.Property<double>("AveLoss")
                         .HasColumnType("double precision");
 
+                    b.Property<double>("AveLossDuration")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("AveTradeDuration")
+                        .HasColumnType("double precision");
+
                     b.Property<double>("AveWin")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("AveWinDuration")
                         .HasColumnType("double precision");
 
                     b.Property<double>("GrossLoss")
@@ -329,8 +338,41 @@ namespace OMS.Data.Migrations
                     b.Property<double>("NetProfitShort")
                         .HasColumnType("double precision");
 
+                    b.Property<double>("PNL_Last13")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last21")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last3")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last34")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last5")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last8")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("SharpRatio")
+                        .HasColumnType("double precision");
+
                     b.Property<int>("Shorts")
                         .HasColumnType("integer");
+
+                    b.Property<double>("SortinoRatio")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("StdDevAllTrades")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("StdDevLossTrades")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("StdDevWinTrades")
+                        .HasColumnType("double precision");
 
                     b.Property<double>("TotalNetProfit")
                         .HasColumnType("double precision");
@@ -360,7 +402,10 @@ namespace OMS.Data.Migrations
                         {
                             ScoreCardID = 1,
                             AveLoss = 0.0,
+                            AveLossDuration = 0.0,
+                            AveTradeDuration = 0.0,
                             AveWin = 0.0,
+                            AveWinDuration = 0.0,
                             GrossLoss = 0.0,
                             GrossProfit = 0.0,
                             GroupID = 0,
@@ -368,12 +413,23 @@ namespace OMS.Data.Migrations
                             LargestLosingStreak = 0,
                             LargestWinner = 0.0,
                             LargestWinningStreak = 0,
-                            LastUpdate = new DateTime(2024, 2, 14, 22, 27, 47, 268, DateTimeKind.Utc).AddTicks(3480),
+                            LastUpdate = new DateTime(2024, 2, 21, 20, 47, 48, 792, DateTimeKind.Utc).AddTicks(5840),
                             Longs = 0,
                             Losers = 0,
                             NetProfitLong = 0.0,
                             NetProfitShort = 0.0,
+                            PNL_Last13 = 0.0,
+                            PNL_Last21 = 0.0,
+                            PNL_Last3 = 0.0,
+                            PNL_Last34 = 0.0,
+                            PNL_Last5 = 0.0,
+                            PNL_Last8 = 0.0,
+                            SharpRatio = 0.0,
                             Shorts = 0,
+                            SortinoRatio = 0.0,
+                            StdDevAllTrades = 0.0,
+                            StdDevLossTrades = 0.0,
+                            StdDevWinTrades = 0.0,
                             TotalNetProfit = 0.0,
                             TradeXML = "",
                             Trades = 0,
@@ -385,7 +441,10 @@ namespace OMS.Data.Migrations
                         {
                             ScoreCardID = 2,
                             AveLoss = 0.0,
+                            AveLossDuration = 0.0,
+                            AveTradeDuration = 0.0,
                             AveWin = 0.0,
+                            AveWinDuration = 0.0,
                             GrossLoss = 0.0,
                             GrossProfit = 0.0,
                             GroupID = 0,
@@ -393,12 +452,23 @@ namespace OMS.Data.Migrations
                             LargestLosingStreak = 0,
                             LargestWinner = 0.0,
                             LargestWinningStreak = 0,
-                            LastUpdate = new DateTime(2024, 2, 14, 22, 27, 47, 268, DateTimeKind.Utc).AddTicks(3500),
+                            LastUpdate = new DateTime(2024, 2, 21, 20, 47, 48, 792, DateTimeKind.Utc).AddTicks(5850),
                             Longs = 0,
                             Losers = 0,
                             NetProfitLong = 0.0,
                             NetProfitShort = 0.0,
+                            PNL_Last13 = 0.0,
+                            PNL_Last21 = 0.0,
+                            PNL_Last3 = 0.0,
+                            PNL_Last34 = 0.0,
+                            PNL_Last5 = 0.0,
+                            PNL_Last8 = 0.0,
+                            SharpRatio = 0.0,
                             Shorts = 0,
+                            SortinoRatio = 0.0,
+                            StdDevAllTrades = 0.0,
+                            StdDevLossTrades = 0.0,
+                            StdDevWinTrades = 0.0,
                             TotalNetProfit = 0.0,
                             TradeXML = "",
                             Trades = 0,
@@ -463,7 +533,7 @@ namespace OMS.Data.Migrations
                         new
                         {
                             UserID = 999999,
-                            DateRegistered = new DateTime(2024, 2, 14, 14, 27, 47, 268, DateTimeKind.Utc).AddTicks(3380),
+                            DateRegistered = new DateTime(2024, 2, 21, 12, 47, 48, 792, DateTimeKind.Utc).AddTicks(5740),
                             DisplayName = "User1",
                             Email = "admin",
                             Enabled = 1,
@@ -480,7 +550,7 @@ namespace OMS.Data.Migrations
                         new
                         {
                             UserID = 999998,
-                            DateRegistered = new DateTime(2024, 2, 14, 14, 27, 47, 268, DateTimeKind.Utc).AddTicks(3460),
+                            DateRegistered = new DateTime(2024, 2, 21, 12, 47, 48, 792, DateTimeKind.Utc).AddTicks(5810),
                             DisplayName = "User2",
                             Email = "admin",
                             Enabled = 1,

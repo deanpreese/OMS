@@ -60,20 +60,34 @@ public class ScoreCard
     [Id(20)]
     public double AveLoss {get; set;}
 
+    [Id(22)]
     public double AveTradeDuration {get; set;}
+    [Id(23)]
     public double AveWinDuration {get; set;}
+    [Id(24)]
     public double AveLossDuration {get; set;}
+    [Id(25)]
     public double StdDevAllTrades {get; set;}
+    [Id(26)]
     public double StdDevWinTrades {get; set;}
+    [Id(27)]
     public double StdDevLossTrades {get; set;}
+    [Id(28)]
     public double SharpRatio {get; set;}
+    [Id(29)]
     public double SortinoRatio {get; set;}
 
+    [Id(30)]
     public double PNL_Last3 {get; set;}
+    [Id(31)]
     public double PNL_Last5 {get; set;}
+    [Id(32)]
     public double PNL_Last8 {get; set;}
+    [Id(33)]
     public double PNL_Last13 {get; set;}
+    [Id(34)]
     public double PNL_Last21 {get; set;}
+    [Id(35)]
     public double PNL_Last34 {get; set;}
 
     public DateTime LastUpdate

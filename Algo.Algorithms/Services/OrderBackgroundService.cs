@@ -53,24 +53,6 @@ public class OrderBackgroundService : BackgroundService
         await openOrderStreamProvider.SubscribeAsync(
             async (newLiveOrder, token) =>
             {
-
-                try
-                {
-                    //Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
-                    string g_k = newLiveOrder.UserID + "_" + newLiveOrder.UserGroup;
-                    ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
-                    await trader.Update(g_k);
-                    UserProfile u = await trader.GetProfileAsync();
-                    Console.WriteLine("------ AlgoNG2 for : " + g_k + "  " + u.UserID + "  " +  "  " + newLiveOrder.OrderAction);
-                    
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.Message);
-                }
-
-
-
                 await _algoOrderQueue.WriteAsync(newLiveOrder);
             });
     }

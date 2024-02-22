@@ -54,6 +54,22 @@ public class AnalyticsRepository : IAnalyticsRepository
                 if (scData.GrossLoss < 0)
                     sc.AveLoss = Math.Round((double)scData.GrossLoss / (double)scData.Losers, 2);
 
+
+                sc.AveTradeDuration = scData.AveTradeDuration;
+                sc.AveWinDuration = scData.AveWinDuration;
+                sc.AveLossDuration = scData.AveLossDuration;
+                sc.StdDevAllTrades = scData.StdDevAllTrades;
+                sc.StdDevWinTrades = scData.StdDevWinTrades;
+                sc.StdDevLossTrades = scData.StdDevLossTrades;
+                sc.SharpRatio = scData.SharpRatio;
+                sc.SortinoRatio = scData.SortinoRatio;
+                sc.PNL_Last3 = scData.PNL_Last3;               
+                sc.PNL_Last5 = scData.PNL_Last5;
+                sc.PNL_Last8 = scData.PNL_Last8;
+                sc.PNL_Last13 = scData.PNL_Last13;
+                sc.PNL_Last21 = scData.PNL_Last21;
+                sc.PNL_Last34 = scData.PNL_Last34;
+
             _context.ScoreCard.Update(sc);
         }
 

@@ -39,10 +39,8 @@ public class AlgoLoaderService1 : BackgroundService
     }
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-
         AlgoConfig configLoader = new AlgoConfig(algo_to_load, _grainFactory, _client);
         _algoData = configLoader.GetAlgoData().Result;
-        
         await base.StartAsync(cancellationToken);
     }
 
@@ -60,11 +58,12 @@ public class AlgoLoaderService1 : BackgroundService
                     //Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
                     string g_k = newOrderInfo.UserID + "_" + newOrderInfo.UserGroup;
                     ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
-                    await trader.Update(g_k);
-                    UserProfile u = await trader.GetProfileAsync();
-                    Console.WriteLine(" ---> AlgoNG1 for : " + g_k + "  " + newOrderInfo.OrderPX + "  " +  "  " + newOrderInfo.OrderAction);
+                    await trader.UpdateProfile(g_k);
+                    await trader.UpdateScoreCard(g_k);
+                    UserProfile u = await trader.GetProfileAsync(g_k);
+                    ScoreCard sc = await trader.GetScoreCardAsync(g_k);
 
-
+                    Console.WriteLine(" --> " + _algoData.algoname + " : " + g_k + "  " + newOrderInfo.OrderPX + "  " + newOrderInfo.OrderAction + "  " + sc.TotalNetProfit );
 
                     IOrderGrain orderGrain = _grainFactory.GetGrain<IOrderGrain>(_algoData.algo_grain());     
                     NewOrder n_o = OrderMapping.MapOrder(newOrderInfo);

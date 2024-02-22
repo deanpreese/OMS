@@ -22,7 +22,7 @@ model_loader = ModelLoader()
 models = []
 experiment_id = ["792022387336146046"]
 #models = runner.load_models(experiment_id)
-models = model_loader.load_random_models(experiment_id, 25)
+models = model_loader.load_random_models(experiment_id, 5)
 
 total = 0
 
