@@ -7,13 +7,13 @@ using System.Threading.Channels;
 using System.Text.Json;
 
 using Algo.Algorithms.Models;
-using Algo.Algorithms.Services;
 using System.Text;
 using OMS.Services.Trading;
 using OMS.Core.Common;
+using Algo.Algorithms.Utility;
 
 
-namespace Algo.Algorithms.Services;
+namespace Algo.Server.Services;
 
 public class AlgoLoaderService2 : BackgroundService
 {  

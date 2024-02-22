@@ -7,40 +7,41 @@ using System.Threading.Channels;
 using System.Text.Json;
 
 using Algo.Algorithms.Models;
-using Algo.Algorithms.Services;
 using System.Text;
 using OMS.Services.Trading;
-using OMS.Core.Common;
-using Algo.Algorithms.Algos;
+using Algo.Algorithms;
+using Algo.Algorithms.Utility;
 
-namespace Algo.Algorithms.Services;
+namespace Algo.Server.Services;
 
-public class AlgoLoaderService1 : BackgroundService
+public class AlgoLoaderService3 : BackgroundService
 {  
-    private string algo_to_load = "NG1.json";
-    private readonly AlgoOrderQueue _algoOrderQueue;
-    private readonly ILogger<AlgoLoaderService1> _logger;
-    private AlgoData _algoData; 
-    ChannelReader<LiveOrder> _reader;
-    private readonly IClusterClient _client;
+    private string algo_to_load = "Full.json";
 
-    public AlgoLoaderService1(ILogger<AlgoLoaderService1> logger, 
+    private readonly AlgoOrderQueue _algoOrderQueue;
+    private readonly ILogger<AlgoLoaderService3> _logger;
+    private readonly ChannelReader<LiveOrder> _reader;
+    private AlgoData _algoData; 
+    private readonly IClusterClient _client;
+    
+    public AlgoLoaderService3(ILogger<AlgoLoaderService3> logger, 
             AlgoOrderQueue algoOrderQueue,
             IClusterClient client)
     {
         _algoOrderQueue = algoOrderQueue;
         _logger = logger;
         _client = client;
-
+    
         _algoData = new AlgoData();
         _reader = _algoOrderQueue.Subscribe();
-
+       
     }
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        AlgoConfig configLoader = new AlgoConfig(algo_to_load, _client);
-        _algoData = configLoader.GetAlgoData().Result;
-        await base.StartAsync(cancellationToken);
+       AlgoConfig configLoader = new AlgoConfig(algo_to_load,  _client);
+       _algoData = configLoader.GetAlgoData().Result;        
+       await base.StartAsync(cancellationToken);
+
     }
 
 
@@ -49,15 +50,16 @@ public class AlgoLoaderService1 : BackgroundService
 
        await Task.Run(async () =>
         {
-            SimpleOpenClose algo = new SimpleOpenClose(_client, _algoData);
-
-            await foreach (var newOrderInfo in _reader.ReadAllAsync(stoppingToken))
+            await foreach (var orderInfo in _reader.ReadAllAsync(stoppingToken))
             {
                 try
                 {
-                    NewOrder n_order = algo.GenerateAlgoOrder(newOrderInfo);
-                    IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.algo_grain());     
-                    await orderGrain.ProcessOrder(n_order);
+                    //Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
+                    string g_k = orderInfo.UserID + "_" + orderInfo.UserGroup;
+                    ITraderGrain trader =  _client.GetGrain<ITraderGrain>(g_k);
+                    await trader.Update(g_k);
+                    UserProfile u = await trader.GetProfileAsync(g_k);
+                    Console.WriteLine(" <Full> Processing order for : " + g_k + "  " + u.UserID + "  " +  "  " + orderInfo.OrderAction);
                     
                 }
                 catch (Exception ex)

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OMS.Core.Common;
 using Orleans.Configuration;
 
-using Algo.Algorithms.Services;
+using Algo.Server.Services;
 using Algo.Algorithms.Models;
 
 

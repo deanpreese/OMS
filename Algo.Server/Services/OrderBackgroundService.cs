@@ -17,27 +17,23 @@ using OMS.Services.Queue;
 using OMS.Grains.Interfaces;
 
 
-namespace Algo.Algorithms.Services;
+namespace Algo.Server.Services;
 
 public class OrderBackgroundService : BackgroundService
 {
     private readonly IClusterClient _client;
-    private readonly IGrainFactory _grainFactory;
     private readonly ILogger<OrderBackgroundService> _logger;
     private readonly AlgoOrderQueue _algoOrderQueue;
-
     private IAsyncStream<LiveOrder>? openOrderStreamProvider;
 
 
     public OrderBackgroundService(IClusterClient client, 
         AlgoOrderQueue algoOrderQueue, 
-        ILogger<OrderBackgroundService> logger, 
-        IGrainFactory grainFactory)
+        ILogger<OrderBackgroundService> logger)
     {
         _client = client;
         _logger = logger;
         _algoOrderQueue = algoOrderQueue;
-        _grainFactory = grainFactory;
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)

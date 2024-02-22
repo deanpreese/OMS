@@ -17,12 +17,11 @@ using OMS.Services.Queue;
 using OMS.Grains.Interfaces;
 
 using Algo.Algorithms.Models;
-using Algo.Algorithms.Services;
 using System.Text;
 using System.Text.Json;
 using System.IO;
 
-namespace Algo.Algorithms;
+namespace Algo.Algorithms.Utility;
 
 
 public class AlgoConfig
