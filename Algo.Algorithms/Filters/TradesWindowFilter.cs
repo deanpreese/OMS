@@ -10,11 +10,9 @@ using OrleansCodeGen.OMS.Core.Models;
 
 namespace Algo.Algorithms.Filters;
 
-public class TradesWindowFilter : AbstractBase, IAlgoFilter
+public class TradesWindowFilter : AbstractAlgoFilter, IAlgoFilter
 {
-
-    public TradesWindowFilter(UserProfile userProfile, ScoreCard scoreCard, AlgoData algoData) 
-        : base(userProfile, scoreCard, algoData) 
+    public TradesWindowFilter(UserProfile userProfile, ScoreCard scoreCard) : base(userProfile, scoreCard) 
     {
     }
 

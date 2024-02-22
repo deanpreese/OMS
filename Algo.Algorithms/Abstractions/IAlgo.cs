@@ -6,5 +6,5 @@ namespace Algo.Algorithms.Abstractions;
 
 public interface IAlgo
 {
-   public void GenerateAlgoOrder(LiveOrder order);
+   public NewOrder GenerateAlgoOrder(LiveOrder order);
 }

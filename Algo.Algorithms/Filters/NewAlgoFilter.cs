@@ -5,9 +5,10 @@ using OMS.Core.Models;
 
 namespace Algo.Algorithms.Filters;
 
-public class NewAlgoFilter : AbstractBase, IAlgoFilter
+public class NewAlgoFilter : AbstractAlgoFilter, IAlgoFilter
 {
-    public NewAlgoFilter(UserProfile userProfile, ScoreCard scoreCard, AlgoData algoData) : base(userProfile, scoreCard, algoData)
+
+    public NewAlgoFilter(UserProfile userProfile, ScoreCard scoreCard) : base(userProfile, scoreCard) 
     {
     }
 

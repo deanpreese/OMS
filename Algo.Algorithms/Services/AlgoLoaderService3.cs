@@ -19,18 +19,16 @@ public class AlgoLoaderService3 : BackgroundService
 
     private readonly AlgoOrderQueue _algoOrderQueue;
     private readonly ILogger<AlgoLoaderService3> _logger;
-    private readonly IGrainFactory _grainFactory;
     private readonly ChannelReader<LiveOrder> _reader;
     private AlgoData _algoData; 
     private readonly IClusterClient _client;
     
     public AlgoLoaderService3(ILogger<AlgoLoaderService3> logger, 
             AlgoOrderQueue algoOrderQueue,
-            IGrainFactory grainFactory, IClusterClient client)
+            IClusterClient client)
     {
         _algoOrderQueue = algoOrderQueue;
         _logger = logger;
-        _grainFactory = grainFactory;
         _client = client;
     
         _algoData = new AlgoData();
@@ -39,7 +37,7 @@ public class AlgoLoaderService3 : BackgroundService
     }
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-       AlgoConfig configLoader = new AlgoConfig(algo_to_load, _grainFactory, _client);
+       AlgoConfig configLoader = new AlgoConfig(algo_to_load,  _client);
        _algoData = configLoader.GetAlgoData().Result;        
        await base.StartAsync(cancellationToken);
 
@@ -57,7 +55,7 @@ public class AlgoLoaderService3 : BackgroundService
                 {
                     //Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
                     string g_k = orderInfo.UserID + "_" + orderInfo.UserGroup;
-                    ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
+                    ITraderGrain trader =  _client.GetGrain<ITraderGrain>(g_k);
                     await trader.Update(g_k);
                     UserProfile u = await trader.GetProfileAsync(g_k);
                     Console.WriteLine(" <Full> Processing order for : " + g_k + "  " + u.UserID + "  " +  "  " + orderInfo.OrderAction);

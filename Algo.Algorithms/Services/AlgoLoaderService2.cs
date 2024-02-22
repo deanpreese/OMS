@@ -20,7 +20,6 @@ public class AlgoLoaderService2 : BackgroundService
     private string algo_to_load = "NG2.json";
     private readonly AlgoOrderQueue _algoOrderQueue;
     private readonly ILogger<AlgoLoaderService2> _logger;
-    private readonly IGrainFactory _grainFactory;
     private AlgoData _algoData; 
     ChannelReader<LiveOrder> _reader;
     private readonly IClusterClient _client;
@@ -32,7 +31,6 @@ public class AlgoLoaderService2 : BackgroundService
     {
         _algoOrderQueue = algoOrderQueue;
         _logger = logger;
-        _grainFactory = grainFactory;
         _client = client;
 
         _algoData = new AlgoData();
@@ -41,7 +39,7 @@ public class AlgoLoaderService2 : BackgroundService
     }
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-       AlgoConfig configLoader = new AlgoConfig(algo_to_load, _grainFactory, _client);
+       AlgoConfig configLoader = new AlgoConfig(algo_to_load, _client);
        _algoData = configLoader.GetAlgoData().Result;        
        await base.StartAsync(cancellationToken);
     }
@@ -59,12 +57,12 @@ public class AlgoLoaderService2 : BackgroundService
                 {
                     //Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
                     string g_k = newOrderInfo.UserID + "_" + newOrderInfo.UserGroup;
-                    ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(g_k);
+                    ITraderGrain trader =  _client.GetGrain<ITraderGrain>(g_k);
                     await trader.Update(g_k);
                     UserProfile u = await trader.GetProfileAsync(g_k);
                     Console.WriteLine(" ---> AlgoNG2 for : " + g_k + "  " + newOrderInfo.OrderPX + "  " +  "  " + newOrderInfo.OrderAction);
 
-                    IOrderGrain orderGrain = _grainFactory.GetGrain<IOrderGrain>(_algoData.algo_grain());    
+                    IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.algo_grain());    
 
                     NewOrder n_o = OrderMapping.MapOrder(newOrderInfo);
                     n_o.UserGroup = _algoData.group;

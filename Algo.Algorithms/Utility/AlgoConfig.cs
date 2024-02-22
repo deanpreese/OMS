@@ -29,14 +29,11 @@ public class AlgoConfig
 {
     AlgoData _algoData ;
     string _filePath ;
-    private readonly IGrainFactory _grainFactory;
-
     IClusterClient _clusterClient;
 
-    public AlgoConfig(string filePath, IGrainFactory grainFactory, IClusterClient clusterClient)
+    public AlgoConfig(string filePath, IClusterClient clusterClient)
     {
         _algoData = new AlgoData();
-        _grainFactory = grainFactory;
         _filePath = filePath;
         _clusterClient = clusterClient;
     }
