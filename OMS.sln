@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algo.Server", "Algo.Server\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algo.Algorithms", "Algo.Algorithms\Algo.Algorithms.csproj", "{B0320BBD-D600-42C7-94CA-6172D66CDF51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.DataServer", "OMS.DataServer\OMS.DataServer.csproj", "{6954EE88-324A-4907-A164-5504224166F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{B0320BBD-D600-42C7-94CA-6172D66CDF51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0320BBD-D600-42C7-94CA-6172D66CDF51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0320BBD-D600-42C7-94CA-6172D66CDF51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6954EE88-324A-4907-A164-5504224166F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6954EE88-324A-4907-A164-5504224166F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6954EE88-324A-4907-A164-5504224166F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6954EE88-324A-4907-A164-5504224166F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
