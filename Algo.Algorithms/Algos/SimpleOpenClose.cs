@@ -1,25 +1,16 @@
-﻿using Algo.Algorithms.Models;
+﻿using Algo.Algorithms.Abstractions;
+using Algo.Algorithms.Models;
 using OMS.Core.Models;
 
 namespace Algo.Algorithms.Algos;
 
-public class SimpleOpenClose
+public class SimpleOpenClose : AbstractBase, IAlgo 
 {
-
-    private AlgoData _algoData;
-
-    public SimpleOpenClose(AlgoData algoData)
+    public SimpleOpenClose(UserProfile userProfile, ScoreCard scoreCard, AlgoData algoData) : base(userProfile, scoreCard, algoData)
     {
-        _algoData = algoData;
     }
-
-
-
 
     public void GenerateAlgoOrder(LiveOrder order)
     {
-
     }
-
-
 }

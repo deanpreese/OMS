@@ -1,72 +1,152 @@
+using Algo.Algorithms.Abstractions;
+using Algo.Algorithms.Models;
 using OMS.Core.Models;
 
 
 namespace Algo.Algorithms.Filters;
 
-public class NewAlgoFilter : IAlgoFilter
+public class NewAlgoFilter : AbstractBase, IAlgoFilter
 {
-    bool useDebugging;
-
-    public void SetupAlgoFilter( bool debugging)
+    public NewAlgoFilter(UserProfile userProfile, ScoreCard scoreCard, AlgoData algoData) : base(userProfile, scoreCard, algoData)
     {
-        
-        useDebugging = debugging;
-        //sb = new StatisticsBuilder(dwl);
-        //hoh = new HistOrderHelper();
-        
     }
 
-    
-    public int IsInAlgoFilter(int traderId, int groupNumber)
+    public int IsInAlgoFilter()
+    {
+        int includeExclude = 0;
+               
+        if (_scoreCard.PNL_Last3  > 0)  { includeExclude = 1; }  
+        if (_scoreCard.PNL_Last5  > 0)  { includeExclude = 1; }
+        if (_scoreCard.PNL_Last8  > 0 ) { includeExclude =  0; }
+
+        return includeExclude;
+    }
+
+  public int IsInAlgoFilter99(int traderId, int groupNumber)
     {
         int includeExclude = 0;
         
-        /*
-        
-        List<ClosedTrade> TradesOne = hoh.GetXXXOrdersByTrader(traderId,  10, groupNumber );
-        if ( TradesOne.Count < 3 ) 
-        { 
-            includeExclude = 0;
-            return includeExclude;
+        //Winning Trader overall
+        if(_scoreCard.GrossProfit > Math.Abs((double)_scoreCard.GrossLoss))
+        {
+            includeExclude = 1;
+        }else
+        {
+            double Set3 =  _scoreCard.PNL_Last3;
+            double Set5 =  _scoreCard.PNL_Last5;
+            double Set13 = _scoreCard.PNL_Last13;
+
+            if( Set5 < Set13 && Set3 < Set5)
+            {
+                if(Set5 < 0)        
+                {
+                   includeExclude = -1; 
+                }
+            }
+                
+            if( Set5 > Set13 && Set3 > Set5) 
+            {
+                if(Set5 > 0)        
+                {
+                   includeExclude = 1; 
+                }
+            }
+            
         }
         
-        // ------------------
-        double[] aveVsEquity = sb.GetEquityAveComparision(traderId, groupNumber, 5);
-        double Set3 =  sb.GetTradesPNL( traderId, 3);
-        double Set5 =  sb.GetTradesPNL( traderId, 5);
-        double Set10 = sb.GetTradesPNL( traderId, 10);
+        return includeExclude;
+    }
+ 
 
-        if(aveVsEquity[0] > 0)
+    public int IsInAlgoFilter98(int traderId, int groupNumber)
+    {
+        int includeExclude = 0;
+        
+        if ( _scoreCard.Winners > _scoreCard.Losers)
         {
-            if ( aveVsEquity[0] > aveVsEquity[1] )
+            if(_scoreCard.GrossProfit > Math.Abs((double)_scoreCard.GrossLoss))
             {
-               
-                if (Set3  > 0)  { includeExclude = 1; }  
-                if (Set5  > 0)  { includeExclude = 1; }
-                if (Set10  > 0) { includeExclude =  0; }
+                includeExclude = 1;
+            }
 
-                 return includeExclude;
-            }else
+        }else
+        {
+            double Set3 =  _scoreCard.PNL_Last3;
+            double Set5 =  _scoreCard.PNL_Last5;
+            double Set13 = _scoreCard.PNL_Last13;
+
+            if(_scoreCard.WinLossRatio < .45)
             {
-                return -1;
+                // 5 SMA < 13 SMA -->>  Losing
+                if( Set5 < Set13 && Set3 < Set5)
+                {
+                    if(Set5 < 0)        
+                    {
+                    includeExclude = -1; 
+                    }
+                }
+                    
+                // 5 SMA > 13 SMA -->>  Winning
+                if( Set5 > Set13 && Set3 > Set5) 
+                {
+                    if(Set5 > 0)        
+                    {
+                    includeExclude = 1; 
+                    }
+                }
+            }
+            
+        }
+
+        
+        return includeExclude;
+    }
+
+
+    public int IsInAlgoFilter97(int traderId, int groupNumber)
+    {
+        int includeExclude = 0;
+  
+
+        if ( _scoreCard.Winners > _scoreCard.Losers)
+        {
+            if(_scoreCard.GrossProfit > Math.Abs((double)_scoreCard.GrossLoss))
+            {
+                includeExclude = 1;
+            }
+
+        }else
+        {
+            double Set3 =  _scoreCard.PNL_Last3;
+            double Set5 =  _scoreCard.PNL_Last5;
+            double Set13 = _scoreCard.PNL_Last13;
+
+            if(_scoreCard.WinLossRatio < .45)
+            {
+                // 5 SMA < 13 SMA -->>  Losing
+                if( Set5 < Set13 && Set3 < Set5)
+                {
+                    if(Set5 < 0)        
+                    {
+                    includeExclude = -1; 
+                    }
+                }
+
+            }
+
+            if(_scoreCard.WinLossRatio > .5 )                        
+            {
+                // 5 SMA > 13 SMA -->>  Winning
+                if( Set5 > Set13 && Set3 > Set5) 
+                {
+                    if(Set5 > 0)        
+                    {
+                    includeExclude = 1; 
+                    }
+                }
             }
         }
-
-        if(aveVsEquity[0] < 0)
-        {
-            if ( aveVsEquity[0] < aveVsEquity[1] )
-            {
-                if (Set3  < 0)  { includeExclude = -1; }  
-                if (Set5  < 0)  { includeExclude =  1; }
-                if (Set10  < 0) { includeExclude =  0 ;  }
-
-                 return includeExclude;
-            }else
-            {
-                return 0;
-            }
-        }
-        */
+        
         return includeExclude;
     }
 
