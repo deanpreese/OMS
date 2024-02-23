@@ -22,11 +22,11 @@ public abstract class AbstractBase
     {
         trader_key = newOrder.UserID + "_" + newOrder.UserGroup;
         ITraderGrain trader =  _grainFactory.GetGrain<ITraderGrain>(trader_key);
-        await trader.UpdateProfile(trader_key);
-        await trader.UpdateScoreCard(trader_key);
+        //await trader.UpdateProfile(trader_key);
+        //await trader.UpdateScoreCard(trader_key);
         _userProfile = await trader.GetProfileAsync(trader_key);
         _scoreCard = await trader.GetScoreCardAsync(trader_key);
-        Console.WriteLine(" --> " + _algoData.algoname + " : " + trader_key + "  " + newOrder.OrderPX + "  " + newOrder.OrderAction + "  " + _scoreCard.TotalNetProfit );
+        Console.WriteLine(_algoData.algoname + " : " + trader_key + "  " + newOrder.OrderPX + "  " + newOrder.OrderAction );
 
 
     }   

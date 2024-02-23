@@ -58,17 +58,14 @@ public class DataProcessor : BackgroundService
 
         if (featureData.TimeTicks < DateTime.UtcNow.Ticks - 150000000 )
         {
-            //await CallExternalWebService(csv_data);
             await OMSClient.SendToMLForPrediction(csv_data);    
-            Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " + featureData.TimeTicks + "  " + new DateTime(featureData.TimeTicks) + "  " + featureData.FeatureNameData + "  " + featureData.FeatureSetData);        
+            Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks));        
         }else
         {
-            //await CallExternalWebService(csv_data);
             await OMSClient.SendToMLForPrediction(csv_data);    
-            Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " + featureData.TimeTicks + "  " + new DateTime(featureData.TimeTicks) + "  " + featureData.FeatureNameData + "  " + featureData.FeatureSetData);    
+            Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +new DateTime(featureData.TimeTicks) );    
         }
         
-        //AnsiConsole.MarkupLine(" ");    
         await Task.CompletedTask; 
     }
    

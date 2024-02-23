@@ -18,18 +18,17 @@ using Microsoft.Extensions.Configuration;
 
 namespace OMS.Startup;
 
-public class StartupBaseWeb
+public class StartupWeb
 {
     public IConfiguration Configuration { get; }
     
-    public StartupBaseWeb(IConfiguration configuration)
+    public StartupWeb(IConfiguration configuration)
     {
         Configuration = configuration;
     }
 
     public IServiceCollection ConfigureServices(IServiceCollection services)
     {
-
         services.AddControllers()
             .AddJsonOptions(options =>
             {
@@ -39,11 +38,8 @@ public class StartupBaseWeb
         services.AddMvc();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-
         services.AddHttpsRedirection(opt => opt.HttpsPort = 44300);
-
         return services;
-
     }
 
     public IApplicationBuilder Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -51,17 +47,15 @@ public class StartupBaseWeb
         app.UseSwagger();
         app.UseSwaggerUI();
         app.UseDeveloperExceptionPage();
-
         app.UseRouting();
         app.UseCors(builder => builder
             .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader());
 
-       app.UseStaticFiles();
+        app.UseStaticFiles();
         //app.UseHttpsRedirection();
         app.UseAuthorization();
-
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(

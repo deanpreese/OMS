@@ -49,7 +49,8 @@ public class OrleansStartup
                 })
                 
                 .AddMemoryGrainStorage(PlatformConstants.OrderMemoryStreamStore)
-                .AddMemoryGrainStorage(PlatformConstants.GrainMemoryStreamStore)                    
+                .AddMemoryGrainStorage(PlatformConstants.GrainMemoryStreamStore) 
+
                 .AddMemoryStreams(PlatformConstants.OrderStreamProvider);
 
             siloBuilder.ConfigureLogging(logging =>

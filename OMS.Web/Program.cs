@@ -9,10 +9,10 @@ builder.Host.UseOrleans((ctx, siloBuilder) =>
     siloBuilder = orleansStartup.ConfigureSilo(siloBuilder); 
 });
 
-var startup_web = new StartupBaseWeb(builder.Configuration);
+var startup_web = new StartupWeb(builder.Configuration);
 startup_web.ConfigureServices(builder.Services);
 
-var startup_base = new StartupWOWeb(builder.Configuration);
+var startup_base = new StartupServices(builder.Configuration);
 startup_base.ConfigureServices(builder.Services);
 
 

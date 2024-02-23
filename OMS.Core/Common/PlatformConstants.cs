@@ -12,9 +12,6 @@ public class PlatformConstants
     public const string OrderMemoryStreamStore = "OrderStorage";
     public const string OrderStreamProvider = "order-stream-provider";
     
-    public const string InformationStreamProvider = "info-stream-provider";
-    public const string InfoMemoryStreamStore = "InfoStorage";
-    
     public const string MemoryStreamNamespace = "memory-stream-namespace";
     
 

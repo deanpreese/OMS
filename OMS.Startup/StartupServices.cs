@@ -19,11 +19,11 @@ using OMS.Services.Common;
 
 namespace OMS.Startup;
 
-public class StartupWOWeb
+public class StartupServices
 {
     public IConfiguration Configuration { get; }
     
-    public StartupWOWeb(IConfiguration configuration)
+    public StartupServices(IConfiguration configuration)
     {
         Configuration = configuration;
     }
@@ -61,15 +61,6 @@ public class StartupWOWeb
 
     }
 
-    public void AddSpectreLogging(IServiceCollection services)
-    {
-        services.AddLogging(logging =>
-        {  
-            logging.ClearProviders();
-            logging.AddSpectreConsole(); 
-            //logging.AddConsole();   
-        });
-    }
 
     public IApplicationBuilder Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
