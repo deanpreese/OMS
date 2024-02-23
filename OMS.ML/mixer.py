@@ -190,7 +190,7 @@ datafile = [
     ]
 
 
-dtx = pd.read_csv(datafile[0])
+dtx = pd.read_csv(datafile[4])
 
 # 19 Cols available
 #  3-4-5-6 make up 80% of top 100
@@ -215,7 +215,7 @@ split_test_size_value = 0.8
 min_features_used = 2
 max_features_used = 11
 step_features_used = 1
-total_cycles_used = 10
+total_cycles_used = 1
 
 
 

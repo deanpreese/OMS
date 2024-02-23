@@ -39,6 +39,28 @@ public static class OMSClient
     }
 
 
+    public static async Task<int> VerifyModelTrader(NewTrader newTrader, string server_url = "http://localhost:8786")
+    {
+            using (HttpClient client = new HttpClient())
+            {
+                var jsonContent = new StringContent(JsonConvert.SerializeObject(newTrader), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(server_url + "/api/ml/verify-model-trader", jsonContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+                    AnsiConsole.WriteLine($"Auth Result: {result}");
+                    return int.Parse(result); 
+                }
+                else
+                {
+                    AnsiConsole.WriteLine($"Auth Failed. Status Code: {response.StatusCode}");
+                    return 0;
+                }
+                
+            }
+    }
+
 
     // -------------------------------------------------------------
     public static async Task<int> AuthenticateTraderAsync(UserInfo newTrader, string server_url = "http://localhost:8786")
@@ -134,6 +156,40 @@ public static class OMSClient
         }
        return return_list;
     }
+
+
+
+    public static async Task<int> SendToMLForPrediction(string csvData, string server_url = "http://localhost:8786")
+    {
+         // Your API endpoint
+        string url = "http://localhost:8888/predict";
+
+        HttpContent content = new StringContent(csvData, Encoding.UTF8, "text/csv");
+
+        // Create an HttpClient instance
+        using (var httpClient = new HttpClient())
+        {
+            var response = await httpClient.PostAsync(url, content);
+
+            // Check the response
+            if (response.IsSuccessStatusCode)
+            {
+                // Handle success
+                string responseBody = await response.Content.ReadAsStringAsync();
+                AnsiConsole.WriteLine(responseBody);
+                // Process the response body as needed
+            }
+            else
+            {
+                // Handle failure
+            }
+        }
+
+        return 1;   
+
+    }
+
+
 
 
 }

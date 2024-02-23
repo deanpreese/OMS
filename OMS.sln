@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algo.Algorithms", "Algo.Alg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.DataServer", "OMS.DataServer\OMS.DataServer.csproj", "{6954EE88-324A-4907-A164-5504224166F7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.ML.Runner", "OMS.ML.Runner\OMS.ML.Runner.csproj", "{15D6CC12-31DF-4041-B1E4-4BB8DDCBAD72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{6954EE88-324A-4907-A164-5504224166F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6954EE88-324A-4907-A164-5504224166F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6954EE88-324A-4907-A164-5504224166F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15D6CC12-31DF-4041-B1E4-4BB8DDCBAD72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15D6CC12-31DF-4041-B1E4-4BB8DDCBAD72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15D6CC12-31DF-4041-B1E4-4BB8DDCBAD72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15D6CC12-31DF-4041-B1E4-4BB8DDCBAD72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
