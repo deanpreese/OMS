@@ -38,5 +38,9 @@
 
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Startup/" />
+  </ItemGroup>
+
 
 </Project>

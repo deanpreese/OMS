@@ -16,7 +16,7 @@ using OMS.Core.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 
-namespace OMS.Startup;
+namespace OMS.Web.Startup;
 
 public class StartupWeb
 {

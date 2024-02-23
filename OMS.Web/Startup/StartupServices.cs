@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using OMS.Services.Common;
 
-namespace OMS.Startup;
+namespace OMS.Web.Startup;
 
 public class StartupServices
 {

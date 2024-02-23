@@ -19,7 +19,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace OMS.Startup;
+namespace OMS.Web.Startup;
 
 public class OrleansStartup
 {

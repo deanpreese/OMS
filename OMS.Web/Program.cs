@@ -1,5 +1,5 @@
 
-using OMS.Startup;
+using OMS.Web.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 
