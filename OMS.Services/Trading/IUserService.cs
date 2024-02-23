@@ -6,5 +6,5 @@ public interface IUserService
 {
     Task<int> AddNewTrader(NewTrader newTrader);
     Task<int> AuthenticateTrader( UserInfo userInfo);
-    Task<int> VerifyByDisplayName( NewTrader newTrader);
+    Task<int> VerifyAndAddByDisplayName( NewTrader newTrader);
 }

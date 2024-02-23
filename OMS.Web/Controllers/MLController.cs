@@ -55,7 +55,7 @@ public class MLController : ControllerBase
     [HttpPost("verify-model-trader")]
     public async Task<IActionResult> VerifyModelTrader([FromBody] NewTrader newTrader)
     {
-        int oid = await _user_service.VerifyByDisplayName(newTrader);
+        int oid = await _user_service.VerifyAndAddByDisplayName(newTrader);
         return Ok(oid);
     }
 

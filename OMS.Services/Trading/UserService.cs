@@ -65,12 +65,11 @@ public class UserService : IUserService
         return auth_code;
     }
 
-    public async Task<int> VerifyByDisplayName(NewTrader newTrader)
+    public async Task<int> VerifyAndAddByDisplayName(NewTrader newTrader)
     {
         int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(newTrader);
-        _unitOfWork.Commit();    
 
-        if( t_v == 0 || t_v != -99 )
+        if( t_v == 0) 
         {
             t_v = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
             _unitOfWork.Commit();

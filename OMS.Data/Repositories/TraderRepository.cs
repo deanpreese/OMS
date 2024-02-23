@@ -149,9 +149,8 @@ public class TraderRepository : ITraderRepository
         {
             rtn_val =  traders[0].UserID;
         }
-
-        await Task.FromResult(rtn_val);
-        return rtn_val;
+        
+        return await Task.FromResult(rtn_val);
     }
 
 }
