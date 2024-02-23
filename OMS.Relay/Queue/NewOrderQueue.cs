@@ -1,11 +1,9 @@
-﻿using System.Collections.Concurrent;
-using System.Security.Cryptography;
-using System.Threading.Channels;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using System.Threading.Channels;
 using OMS.Core.Models;
-using OMS.Services.Common;
+using OMS.Relay.Services;
 
-namespace OMS.Services.Queue;
+
+namespace OMS.Relay.Queue;
 
 public class NewOrderQueue
 {
@@ -16,10 +14,10 @@ public class NewOrderQueue
 
     private  List<NewOrder> _liveOrderCollection = new List<NewOrder>();
     private  List<ClosedTrade> _closedOrderCollection = new List<ClosedTrade>();
-    private IPlatformOrderIDGen _platformOrderIDGen;
+    private IRelayPlatformOrderIDGen _platformOrderIDGen;
     private readonly object _lock = new object();
 
-public NewOrderQueue(ILogger<NewOrderQueue> logger, IPlatformOrderIDGen id_gen)
+public NewOrderQueue(ILogger<NewOrderQueue> logger, IRelayPlatformOrderIDGen id_gen)
     {
         _logger = logger;
         _platformOrderIDGen = id_gen;

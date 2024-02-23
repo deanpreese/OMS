@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.SignalR;
 
 using OMS.Core.Models;
 using OMS.Services.Queue;
-using OMS.Relay.SignalHub;
 
 
 namespace OMS.MT4Relay.Controllers

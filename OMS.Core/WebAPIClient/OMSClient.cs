@@ -161,27 +161,24 @@ public static class OMSClient
 
     public static async Task<int> SendToMLForPrediction(string csvData, string server_url = "http://localhost:8786")
     {
-         // Your API endpoint
-        string url = "http://localhost:8888/predict";
 
         HttpContent content = new StringContent(csvData, Encoding.UTF8, "text/csv");
 
         // Create an HttpClient instance
         using (var httpClient = new HttpClient())
         {
-            var response = await httpClient.PostAsync(url, content);
+            var response = await httpClient.PostAsync(server_url, content);
 
             // Check the response
             if (response.IsSuccessStatusCode)
             {
-                // Handle success
                 string responseBody = await response.Content.ReadAsStringAsync();
-                AnsiConsole.WriteLine(responseBody);
-                // Process the response body as needed
+                //AnsiConsole.WriteLine(responseBody);
             }
             else
             {
-                // Handle failure
+                
+                AnsiConsole.WriteLine("Failed to send data to ML. Status code: " + response.StatusCode);
             }
         }
 

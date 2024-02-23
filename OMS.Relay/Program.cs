@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
-using OMS.Services.Queue;
-using OMS.Services.Common;
-using OMS.Relay.SignalHub;
+using OMS.Relay.Queue;
+using OMS.Relay.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
-builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();    
+builder.Services.AddSingleton<IRelayPlatformOrderIDGen, RelayPlatformOrderIDGen>();    
 builder.Services.AddSingleton<NewOrderQueue>();
 builder.Services.AddHostedService<NewOrderProcessor>();
 
@@ -42,7 +41,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapHub<SignalHub>("/hubs/signal-hub");
 
 app.Run();
 

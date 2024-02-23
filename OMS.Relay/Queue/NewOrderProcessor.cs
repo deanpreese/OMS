@@ -6,10 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using System.Data;
-using Microsoft.AspNetCore.SignalR;
-using OMS.Relay.SignalHub;
 
-namespace OMS.Services.Queue;
+namespace OMS.Relay.Queue;
 
 public class NewOrderProcessor : BackgroundService
 {
@@ -17,20 +15,17 @@ public class NewOrderProcessor : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<NewOrderProcessor> _logger;
-    private IHubContext<SignalHub> _hubContext;
     
     public NewOrderProcessor( ILogger<NewOrderProcessor> logger, 
             NewOrderQueue newOrderChannelService,
             IServiceScopeFactory scopeFactory,
-                IServiceProvider serviceProvider,
-                IHubContext<SignalHub> hubContext 
+                IServiceProvider serviceProvider 
               )
     {
         _orderChannelService = newOrderChannelService;
         _scopeFactory = scopeFactory;
         _serviceProvider = serviceProvider;
         _logger = logger;
-        _hubContext = hubContext;
        
     }
 
@@ -124,8 +119,6 @@ public class NewOrderProcessor : BackgroundService
                 }
             }
 
-            await _hubContext.Clients.AllExcept("ReceiveLiveOrders", "ReceiveClosedTrades").SendAsync("ReceiveLiveOrders", openOrders.Count);
-            await _hubContext.Clients.AllExcept("ReceiveLiveOrders", "ReceiveClosedTrades").SendAsync("ReceiveClosedTrades", closedOrders.Count);
         });
         await Task.CompletedTask;
 

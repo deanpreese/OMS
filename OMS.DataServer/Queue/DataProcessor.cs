@@ -58,11 +58,11 @@ public class DataProcessor : BackgroundService
 
         if (featureData.TimeTicks < DateTime.UtcNow.Ticks - 150000000 )
         {
-            await OMSClient.SendToMLForPrediction(csv_data);    
+            await OMSClient.SendToMLForPrediction(csv_data, "http://localhost:8888/predict");    
             Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks));        
         }else
         {
-            await OMSClient.SendToMLForPrediction(csv_data);    
+            await OMSClient.SendToMLForPrediction(csv_data, "http://localhost:8888/predict");        
             Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +new DateTime(featureData.TimeTicks) );    
         }
         
