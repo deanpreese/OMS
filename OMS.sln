@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algo.Trader", "Algo.Trader\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.MigrationsManager", "OMS.MigrationsManager\OMS.MigrationsManager.csproj", "{C0F999DB-C538-4C28-8BBC-483EB3FCD544}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.CQRS", "OMS.CQRS\OMS.CQRS.csproj", "{F4A1024D-2751-4C68-95D0-C0BF7E484C82}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{C0F999DB-C538-4C28-8BBC-483EB3FCD544}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0F999DB-C538-4C28-8BBC-483EB3FCD544}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0F999DB-C538-4C28-8BBC-483EB3FCD544}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4A1024D-2751-4C68-95D0-C0BF7E484C82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4A1024D-2751-4C68-95D0-C0BF7E484C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4A1024D-2751-4C68-95D0-C0BF7E484C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4A1024D-2751-4C68-95D0-C0BF7E484C82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
