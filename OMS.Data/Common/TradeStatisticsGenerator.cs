@@ -3,7 +3,7 @@ using OMS.Core.Common;
 using OMS.Core.Models;
 using OMS.Data;
 
-namespace OMS.Analytics;
+namespace OMS.Data.Common;
 
 public static class TradeStatisticsGenerator
 {

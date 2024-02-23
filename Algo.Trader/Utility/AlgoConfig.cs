@@ -16,14 +16,14 @@ using OMS.Services.Data;
 using OMS.Services.Queue;
 using OMS.Grains.Interfaces;
 
-using Algo.Algorithms.Models;
+using Algo.Trader.Models;
 using System.Text;
 using System.Text.Json;
 using System.IO;
 using Newtonsoft.Json;
 using OMS.Core.WebAPIClient;
 
-namespace Algo.Algorithms.Utility;
+namespace Algo.Trader.Utility;
 
 
 public class AlgoConfig

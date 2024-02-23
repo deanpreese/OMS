@@ -58,6 +58,11 @@ def init_app():
         
         return Response("CSV data processed successfully", status=200)        
         
+    @app.route('/close-all-open', methods=['POST'])
+    def close_all_open():
+        for m in range(len(models)):
+            order_manager.close_all(models[m])
+
         
     return app
 

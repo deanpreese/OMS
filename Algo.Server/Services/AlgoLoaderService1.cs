@@ -6,12 +6,12 @@ using OMS.Grains.Interfaces;
 using System.Threading.Channels;
 using System.Text.Json;
 
-using Algo.Algorithms.Models;
+using Algo.Trader.Models;
 using System.Text;
 using OMS.Services.Trading;
 using OMS.Core.Common;
-using Algo.Algorithms.Algos;
-using Algo.Algorithms.Utility;
+using Algo.Trader.Trader;
+using Algo.Trader.Utility;
 
 namespace Algo.Server.Services;
 

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Algo.Algorithms.Abstractions;
-using Algo.Algorithms.Models;
+using Algo.Trader.Abstractions;
+using Algo.Trader.Models;
 using OMS.Core.Models;
-using OrleansCodeGen.OMS.Core.Models;
+using OrleansCodeGen;
 
 
-namespace Algo.Algorithms.Filters;
+namespace Algo.Trader.Filters;
 
 public class TradesWindowFilter : AbstractAlgoFilter, IAlgoFilter
 {

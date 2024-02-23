@@ -1,8 +1,8 @@
-using Algo.Algorithms.Models;
+using Algo.Trader.Models;
 using OMS.Core.Models;
 
 
-namespace Algo.Algorithms.Abstractions;
+namespace Algo.Trader.Abstractions;
 
 
 public interface IAlgoFilter

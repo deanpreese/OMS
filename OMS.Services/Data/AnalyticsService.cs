@@ -6,7 +6,7 @@ using OMS.Core.Models;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using OMS.Data;
-using OMS.Analytics;
+using OMS.Data.Common;
 
 namespace OMS.Services.Data;
  

@@ -1,8 +1,8 @@
-﻿using Algo.Algorithms.Models;
+﻿using Algo.Trader.Models;
 using OMS.Core.Models;
 using OMS.Grains.Interfaces;
 
-namespace Algo.Algorithms.Abstractions;
+namespace Algo.Trader.Abstractions;
 
 public abstract class AbstractBase
 {

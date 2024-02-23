@@ -1,7 +1,7 @@
 ﻿using OMS.Core.Models;
 
 
-namespace Algo.Algorithms.Abstractions;
+namespace Algo.Trader.Abstractions;
 
 
 public interface IAlgo

@@ -4,7 +4,7 @@ using OMS.Core.Common;
 using Orleans.Configuration;
 
 using Algo.Server.Services;
-using Algo.Algorithms.Models;
+using Algo.Trader.Models;
 
 
 using IHost host = Host.CreateDefaultBuilder(args)

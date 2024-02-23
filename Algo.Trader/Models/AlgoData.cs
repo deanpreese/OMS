@@ -1,6 +1,6 @@
 ﻿using System.Security.Permissions;
+namespace Algo.Trader.Models;
 
-namespace Algo.Algorithms.Models;
 
 public class AlgoData
 {

@@ -1,9 +1,9 @@
-﻿using Algo.Algorithms.Abstractions;
-using Algo.Algorithms.Models;
+﻿using Algo.Trader.Abstractions;
+using Algo.Trader.Models;
 using OMS.Core.Common;
 using OMS.Core.Models;
 
-namespace Algo.Algorithms.Algos;
+namespace Algo.Trader.Trader;
 
 public class SimpleOpenClose : AbstractBase, IAlgo 
 {

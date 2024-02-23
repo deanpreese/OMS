@@ -1,6 +1,6 @@
 ﻿using OMS.Core.Models;
 
-namespace Algo.Algorithms;
+namespace Algo.Trader.Abstractions;
 
 public abstract class AbstractAlgoFilter
 {

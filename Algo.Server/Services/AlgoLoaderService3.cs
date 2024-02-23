@@ -6,11 +6,11 @@ using OMS.Grains.Interfaces;
 using System.Threading.Channels;
 using System.Text.Json;
 
-using Algo.Algorithms.Models;
+using Algo.Trader.Models;
 using System.Text;
 using OMS.Services.Trading;
-using Algo.Algorithms;
-using Algo.Algorithms.Utility;
+using Algo.Trader;
+using Algo.Trader.Utility;
 
 namespace Algo.Server.Services;
 

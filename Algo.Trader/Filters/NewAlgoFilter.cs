@@ -1,9 +1,9 @@
-using Algo.Algorithms.Abstractions;
-using Algo.Algorithms.Models;
+using Algo.Trader.Abstractions;
+using Algo.Trader.Models;
 using OMS.Core.Models;
 
 
-namespace Algo.Algorithms.Filters;
+namespace Algo.Trader.Filters;
 
 public class NewAlgoFilter : AbstractAlgoFilter, IAlgoFilter
 {

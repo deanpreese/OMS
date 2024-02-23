@@ -1,7 +1,6 @@
 ﻿using System.Data.Entity.Core.Metadata.Edm;
 using OMS.Core.Interfaces;
 using OMS.Core.Models;
-using SQLitePCL;
 
 namespace OMS.Data;
 
