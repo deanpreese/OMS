@@ -4,8 +4,15 @@ import pandas as pd
 import requests
 import datetime as dt
 import random as rand
+
+
 from MLStrategy import MLStrategy
+from CompositeStrategy import CompositeStrategy
+
 from models import wrapped_models
+
+from  common.CommonCli import CommonCli as common_cli
+
 
 class ModelLoader:
 
@@ -31,21 +38,76 @@ class ModelLoader:
             arti_d = mlflow.artifacts.load_dict(art_to_load)
             cols = [x[0] for x in arti_d['data'] if x[0] != 'output']
             self.l_artifacts.append(cols)
+            
         except Exception as e:
             print(f"An error occurred: {e}")
             cols = []    
         
         self.l_models.append(loaded_model)
-        
         lm = MLStrategy(loaded_model, cols,rid)
-        
         lm.run_name = rinfo.info.run_name
+        lm.metrics = rinfo.data.metrics
         
-        self.initialize_trader(lm)
-                
+        t_id = common_cli.initialize_trader(lm.run_name, lm.trader_group)
+        lm.trader_id = t_id
+        
         self.model_list.append(lm)        
                 
         return loaded_model, cols
+
+
+    def load_composite_models(self, experiment_id, num_models): 
+        
+        print("Querying Runs ...")
+        #runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.MSE DESC"], max_results=num_models)
+        runs = mlflow.search_runs(experiment_id)
+        idxx = rand.sample(range(1, len(runs) -1 ), num_models)
+        
+        print("Random Runs Selected...")
+        
+        comp_strategies = []
+        
+        for i in idxx:
+            r_id = runs.iloc[i].run_id 
+            print(f"Run Id     {r_id}")
+            loaded_strat = self.add_composite_strategies(r_id)
+            comp_strategies.append(loaded_strat)
+        
+        return comp_strategies    
+
+
+    def add_composite_strategies(self, rid):
+        rinfo = mlflow.get_run(rid)
+        
+        comp_strat = CompositeStrategy()
+        comp_strat.run_id = rid
+        comp_strat.run_name = rinfo.info.run_name        
+
+        t_id = common_cli.initialize_trader(comp_strat.run_name, comp_strat.trader_group)
+        comp_strat.trader_id = t_id
+
+        try:
+            art = json.loads(rinfo.data.tags['mlflow.loggedArtifacts'])
+
+            for item in art:
+                if item.get('path') == "regen_data.json" :
+                    art_file = item.get('path', None)
+                    art_uri = rinfo.info.artifact_uri
+                    art_to_load = f"{art_uri}/{art_file}"
+                    print(art_to_load)
+                    arti_d = mlflow.artifacts.load_dict(art_to_load)
+                    for x in arti_d['data']:
+                        print(x[2])
+                        self.add_model(x[2])
+                        
+                    comp_strat.strategy_models = self.model_list    
+                    
+                    return comp_strat
+                    
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+
 
     def load_selected_models(self, runs):        
         for index, run in runs.iterrows():    
@@ -74,32 +136,3 @@ class ModelLoader:
             self.add_model(r_id)
         
         return self.model_list     
-
-    def initialize_trader(self, lm):
-        
-        url = "http://localhost:8786/api/ml/verify-model-trader"  # Replace with the actual URL of the web service
-
-        headers = {
-            "Content-Type": "application/json"
-        }
-
-        add_trader_model = {  
-            "group": 55,
-            "userId": 0,
-            "displayName": lm.run_name,
-            "userPwd": "abc",
-            "firstName": "Model",
-            "lastName": "Trader",
-            "email": "bac.abc"
-        }
-                        
-        response = requests.post(url, data=json.dumps(add_trader_model), headers=headers)
-
-        if response.status_code == 200:
-            result = response.json()
-            lm.trader_id = result
-            
-        else:
-            # Error handling
-            print(f"Trader initialize request failed with status code {response.status_code}")
-                    

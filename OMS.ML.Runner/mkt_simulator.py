@@ -20,24 +20,19 @@ order_manager = SimOrderManager()
 model_loader = ModelLoader()
 
 models = []
-experiment_id = ["792022387336146046"]
-#models = model_loader.load_random_models(experiment_id, 3)
+experiment_id = ["5"]
+models = model_loader.load_random_models(experiment_id, 2)
 
 total = 0
-
 order_total = 0
-
 start = time.time()
 
 for i in range(len(y)):
 
-        print(X.iloc[i])
-
         for m in range(len(models)):
             
-            #sleep(0.1)
-            #loaded_prediction = models[m].do_predict(X.iloc[i])
-            #order_manager.process_model(models[m], y[i], loaded_prediction)
+            loaded_prediction = models[m].do_predict(X.iloc[i])
+            order_manager.process_model(models[m], y[i], loaded_prediction)
             order_total += 1
 
         print(f"Order Count {total}")
@@ -45,7 +40,7 @@ for i in range(len(y)):
         total += 1        
         order_manager.process_tick(y[i])
        
-        if total > 25:
+        if total > 199:
             break    
 
 
@@ -60,8 +55,6 @@ print(" ")
 #for m in range(len(models)):
 #    print(f" {models[m].trader_id}  {models[m].run_name}  {models[m].run_id}   {models[m].win_cnt}   {models[m].loss_cnt}    {models[m].win_cnt / ((models[m].win_cnt + models[m].loss_cnt))}      {models[m].winners}   {models[m].losses}      {models[m].winners - models[m].losses}  " )
 
-
 t = round(end-start,2)
-
 print(f"Time {t} seconds to process {order_total}  --  {round(order_total/t,2)}/sec ")
 print(" ") 

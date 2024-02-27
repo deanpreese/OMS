@@ -59,12 +59,12 @@ def process_model(exp_name, data,  randomize, models, run_test_size, feature_lis
                 
                 estimator_run_ids.append(model_run_uuid)
                 
-                outputs = [ modelname, perf, tot, mse, rmse, score, fl_out, model_run_uuid ]        
+                outputs = [ modelname, perf, tot, mse, rmse, score, fl_out, model_run_uuid, e.run_id ]        
                 estimator_perf.append(outputs)  
 
         all_predict_data["target"] = y_test
         e_perf = pd.DataFrame(estimator_perf)        
-        e_perf.columns = ["Estimator", "Perf", "Total", "MSE", "RMSE", "Score", "Features", "UUID" ]
+        e_perf.columns = ["Estimator", "Perf", "Total", "MSE", "RMSE", "Score", "Features", "UUID", "RUN_ID" ]
         
         correctX, correctY, correctP, totalX, cxp, cyp, cpp = calc_reg_results(all_predict_data, estimator_run_ids)
 
@@ -140,37 +140,52 @@ def LogFinalResults(p_df, experiment_id_parent):
         exp_name = f"mixer_output_{time_stamp}"
         
         try:
-            experiment_id = mlflow.create_experiment(exp_name)
+           experiment_id = mlflow.create_experiment(exp_name)
         except Exception as e:
             print(f"{e}")    
             experiment_id = mlflow.get_experiment_by_name(exp_name).experiment_id        
-                            
-                
-        with mlflow.start_run(experiment_id = experiment_id):                
 
-                
-                mlflow.log_table(data=p_df, artifact_file="all_results.json")                
+        
+        e_df = pd.DataFrame(p_df['e_perf'])
+        t_r = []
+        
+        for index, row in e_df.iterrows():
+                est = row[0][index][0]
+                feat = row[0][index][6]
+                r_rid  = row[0][index][8]       
+                t_p = [est , feat , r_rid]
+                t_r.append(t_p)
+         
+        
+        column_x = ["Estimator", "Features", "mlflow_run_id" ]
+        x_df = pd.DataFrame(t_r, columns=column_x)
+                                
+        #with mlflow.start_run(experiment_id = experiment_id):                
+                #mlflow.log_table(data=p_df, artifact_file="all_results.json")                
                         
-                for run_uuid, input_features, e_perf, features_list, correctX, correctY, correctP, totalX, cxp, cyp, cpp in p_df.values.tolist() :
-                
-                        with mlflow.start_run(experiment_id = experiment_id, nested=True): 
-                                       
-                                mlflow.log_param('FeatureCount', input_features)
-                                mlflow.log_param('run_uuid', run_uuid)
-                                mlflow.log_metric('FeatureCount', input_features, step)
-                                mlflow.log_metric('correctX', correctX, step)
-                                mlflow.log_metric('correctP', correctP, step)
-                                mlflow.log_metric('correctY', correctY, step)
-                                mlflow.log_metric('totalX', totalX, step)
-                                mlflow.log_metric('cxp', cxp, step)
-                                mlflow.log_metric("cyp", cyp, step)
-                                mlflow.log_metric("cpp", cpp, step)
+       
+        for run_uuid, input_features, e_perf, features_list, correctX, correctY, correctP, totalX, cxp, cyp, cpp in p_df.values.tolist() :
+        
+                with mlflow.start_run(experiment_id = experiment_id, nested=False): 
                                 
-                                mlflow.log_table(data=pd.DataFrame(e_perf), artifact_file="perf_data.json")        
-                                mlflow.log_table(data=pd.DataFrame(features_list), artifact_file="features_list.json")        
-                                
-                                step += 1        
-
+                        mlflow.log_param('FeatureCount', input_features)
+                        mlflow.log_param('run_uuid', run_uuid)
+                        mlflow.log_metric('FeatureCount', input_features, step)
+                        mlflow.log_metric('correctX', correctX, step)
+                        mlflow.log_metric('correctP', correctP, step)
+                        mlflow.log_metric('correctY', correctY, step)
+                        mlflow.log_metric('totalX', totalX, step)
+                        mlflow.log_metric('cxp', cxp, step)
+                        mlflow.log_metric("cyp", cyp, step)
+                        mlflow.log_metric("cpp", cpp, step)
+                        
+                        mlflow.log_table(data=pd.DataFrame(e_perf), artifact_file="all_perf_data.json")        
+                        mlflow.log_table(data=x_df, artifact_file="regen_data.json")                                                       
+                                                
+                        #mlflow.log_table(data=pd.DataFrame(features_list), artifact_file="features_list.json")        
+                        
+                        step += 1        
+        
                 
 # ---------------------------
 #
@@ -213,14 +228,14 @@ randomize_features = True
 split_test_size_value = 0.8          
 
 min_features_used = 2
-max_features_used = 11
+max_features_used = 5
 step_features_used = 1
 total_cycles_used = 1
 
 
 
 p_df, experiment_id_parent = run_models(dtx, to_file, randomize_features, f_out, est_list, split_test_size_value, min_features_used, max_features_used, step_features_used, total_cycles_used  )
-#LogFinalResults(p_df, experiment_id_parent )
+LogFinalResults(p_df, experiment_id_parent )
 
 print(" ")
 print(p_df)                

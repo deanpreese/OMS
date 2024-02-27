@@ -3,12 +3,18 @@ import requests
 from datetime import datetime as dt
 from datetime import timedelta
 
+from common.CommonCli import CommonCli
+
 class OrderManager():
+        
     
     def __init__(self):
         self.px = 0
         self.commission = 0
         self.tick_dte = dt(1, 1, 1)
+        
+        self.com_cli = CommonCli.CommonCli()
+        
 
     def process_tick_rt(self, tick, ticks):
         self.px = tick    
@@ -21,7 +27,6 @@ class OrderManager():
         if len(orders) > 0:        
              for o in orders:
                 self.send_order(o)
-        
  
 
     def close_all(self, model):
@@ -41,15 +46,5 @@ class OrderManager():
         if self.px > 0:
         
             print(f" Order   {new_order['userID']}   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']} {new_order['orderTime']} " ) 
-
-            url = "http://localhost:8786/api/ml/process-order"  # Replace with the actual URL of the web service
-
-            headers = {
-                "Content-Type": "application/json"
-            }
-
-            response = requests.post(url, data=json.dumps(new_order,default=str), headers=headers)
-            if response.status_code == 200:
-                pass
-            else:
-                print(f"New Order send failed with status code {response.text}")                
+    
+            self.com_cli.send_order(new_order)         

@@ -8,7 +8,7 @@ using OMS.Services.Trading;
 using OMS.Services.Data ;
 using OMS.Services.Queue;
 using OMS.Data.Repositories;
-using OMS.Startup;
+
 using OMS.Core.Logging; 
 using Orleans.Configuration;
 using Orleans.Hosting;
