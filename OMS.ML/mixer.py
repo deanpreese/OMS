@@ -8,8 +8,12 @@ import mlflow
 import pandas as pd
 
 from common.common_func import calc_MSE, calc_reg_results, show_stats, simple_split_and_scale
+
 from models.wrapped_models import TunableCatBoostRegressor, TunableLGBMRegressor, TunableXGBRegressor
-warnings.filterwarnings("ignore")
+
+import logging
+logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
+
 
 
 def process_model(exp_name, data,  randomize, models, run_test_size, feature_list_size):
@@ -47,7 +51,8 @@ def process_model(exp_name, data,  randomize, models, run_test_size, feature_lis
                 #e.features_used = fl_out
                 e.features_used = X_train.columns
                 
-                perf, tot, mse, rmse, r2, score, mae, predictions = e.track_model(exp_name, True, e, X_train, y_train, X_test, y_test)  
+                perf, tot, mse, rmse, r2, score, mae, predictions = e.track_model(exp_name, True, e, X_train, 
+                                                                                  y_train, X_test, y_test)  
                 all_predict_data[model_run_uuid] = predictions
                 perf, tot = show_stats(False, y_test, predictions)
                 mse, rmse  = calc_MSE(y_test, predictions, False)
@@ -69,7 +74,8 @@ def process_model(exp_name, data,  randomize, models, run_test_size, feature_lis
         correctX, correctY, correctP, totalX, cxp, cyp, cpp = calc_reg_results(all_predict_data, estimator_run_ids)
 
 
-        perf_data_t = [run_uuid, feature_list_size, e_perf.values.tolist(), features_list, correctX, correctY, correctP, totalX, cxp, cyp, cpp]
+        perf_data_t = [run_uuid, feature_list_size, e_perf.values.tolist(), features_list, 
+                       correctX, correctY, correctP, totalX, cxp, cyp, cpp]
         
         return perf_data_t    
 
@@ -77,14 +83,16 @@ def process_model(exp_name, data,  randomize, models, run_test_size, feature_lis
 
 def GenerateResults(perf_data):
         p_df = pd.DataFrame(perf_data)    
-        p_df.columns = ["rid", "input_features", "e_perf", "features_list", "correctX", "correctY", "correctP", "totalX", "cxp", "cyp", "cpp" ]
+        p_df.columns = ["rid", "input_features", "e_perf", "features_list", "correctX", "correctY", 
+                        "correctP", "totalX", "cxp", "cyp", "cpp" ]
         p_df.sort_values(by=['cpp'], ascending=False, inplace=True)
         return p_df
 
 
 
 
-def run_models(data, write_to_file, random_features, file_out, estimators, run_test_size, min_features, max_features, step_features, total_cycles ):
+def run_models(data, write_to_file, random_features,  estimators, run_test_size, 
+               min_features, max_features, step_features, total_cycles ):
         
         feature_list_size = min_features
         p_df = pd.DataFrame()
@@ -113,13 +121,11 @@ def run_models(data, write_to_file, random_features, file_out, estimators, run_t
                                 random_features = True
                                 feature_list_size = f
                                 
-                                perf_data_t = process_model(experiment_id, data,  random_features, estimators, run_test_size, feature_list_size)
+                                perf_data_t = process_model(experiment_id, data,  random_features, 
+                                                            estimators, run_test_size, feature_list_size)
                                 perf_data.append(perf_data_t)
                         
                         p_df = GenerateResults(perf_data)
-                                
-                if write_to_file:
-                        p_df.to_csv(file_out)
                 
                                         
         else:   
@@ -145,23 +151,6 @@ def LogFinalResults(p_df, experiment_id_parent):
             print(f"{e}")    
             experiment_id = mlflow.get_experiment_by_name(exp_name).experiment_id        
 
-        
-        e_df = pd.DataFrame(p_df['e_perf'])
-        t_r = []
-        
-        for index, row in e_df.iterrows():
-                est = row[0][index][0]
-                feat = row[0][index][6]
-                r_rid  = row[0][index][8]       
-                t_p = [est , feat , r_rid]
-                t_r.append(t_p)
-         
-        
-        column_x = ["Estimator", "Features", "mlflow_run_id" ]
-        x_df = pd.DataFrame(t_r, columns=column_x)
-                                
-        #with mlflow.start_run(experiment_id = experiment_id):                
-                #mlflow.log_table(data=p_df, artifact_file="all_results.json")                
                         
        
         for run_uuid, input_features, e_perf, features_list, correctX, correctY, correctP, totalX, cxp, cyp, cpp in p_df.values.tolist() :
@@ -180,10 +169,6 @@ def LogFinalResults(p_df, experiment_id_parent):
                         mlflow.log_metric("cpp", cpp, step)
                         
                         mlflow.log_table(data=pd.DataFrame(e_perf), artifact_file="all_perf_data.json")        
-                        mlflow.log_table(data=x_df, artifact_file="regen_data.json")                                                       
-                                                
-                        #mlflow.log_table(data=pd.DataFrame(features_list), artifact_file="features_list.json")        
-                        
                         step += 1        
         
                 
@@ -207,34 +192,23 @@ datafile = [
 
 dtx = pd.read_csv(datafile[4])
 
-# 19 Cols available
-#  3-4-5-6 make up 80% of top 100
-#f_out = "output/13x_ALL_3M_mm_cbr_lgb.csv"
-#est_list = [ CBRModel(), LGBModel(), ]
-
-
-# 93 cols available
-#  3-4-5-6 make up 75% of top 100
-f_out = "output/mm_cbr_LGB_IndX_ALL_DIFF_15_BIG.csv"
 est_list = [ TunableCatBoostRegressor(), TunableLGBMRegressor(), TunableXGBRegressor() ]
-#est_list = [ TunableCatBoostRegressor(), TunableCatBoostRegressor(), TunableCatBoostRegressor() ]
-
 
 to_file = False
-#to_file = True
-#randomize_features = False
 randomize_features = True
 
-split_test_size_value = 0.8          
+split_test_size_value = 0.2          
 
 min_features_used = 2
-max_features_used = 5
+max_features_used = 10
 step_features_used = 1
-total_cycles_used = 1
+total_cycles_used = 5
 
 
+p_df, experiment_id_parent = run_models(dtx, to_file, randomize_features, est_list, 
+                                        split_test_size_value, min_features_used, max_features_used, 
+                                        step_features_used, total_cycles_used  )
 
-p_df, experiment_id_parent = run_models(dtx, to_file, randomize_features, f_out, est_list, split_test_size_value, min_features_used, max_features_used, step_features_used, total_cycles_used  )
 LogFinalResults(p_df, experiment_id_parent )
 
 print(" ")

@@ -19,23 +19,19 @@ class MLStrategy (CommonStrategy):
         self.run_name = ""
 
         self.trader_id = 0
-        self.trader_group = 55
+        self.trader_group = 25
         
 
-        
-        
     def do_predict(self,data):
-
+        
+        XD = data
         if len(self.column_filter) == 0:
-            XD = data
             self.column_filter = list(data.keys())
         else:
             XD = data[self.column_filter]
             
-        d = XD.to_numpy().reshape(1,-1)
-        df = pd.DataFrame(d)
-        df.columns = self.column_filter
-        
+        df = pd.DataFrame(XD.to_numpy().reshape(1, -1), columns=self.column_filter)          
+            
         return self.model.predict(df)
         
   

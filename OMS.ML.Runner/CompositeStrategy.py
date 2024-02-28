@@ -22,13 +22,14 @@ class CompositeStrategy (CommonStrategy):
         self.run_id = 0
         self.run_name = ""
         
-        self.long_threshold = 0.2
-        self.short_threshold = -0.2
-        self.long_big_threshold = 0.1
-        self.short_big_threshold = -0.1
+        
+        self.long_threshold = 0
+        self.short_threshold = 0
+        self.long_big_threshold = 0
+        self.short_big_threshold = 0        
         
         self.trader_id = 0
-        self.trader_group = 75
+        self.trader_group = 50
         
 
 
@@ -41,18 +42,16 @@ class CompositeStrategy (CommonStrategy):
         for m in range(len(self.strategy_models)):
             
             perf = self.strategy_models[m].metrics["Perf"]
-            
             predict = self.strategy_models[m].do_predict(data)
             
-            agg_weighted_predict = agg_weighted_predict + (predict * perf)
-            agg_predict = agg_predict + predict
+            agg_weighted_predict += predict * perf
+            agg_predict += predict
              
-             
-        if  ((agg_predict > self.long_big_threshold) or (agg_weighted_predict > self.long_threshold) ) :
+        if agg_predict > self.long_big_threshold or agg_weighted_predict > self.long_threshold:
             return_predict = 1
-        elif  ((agg_predict < self.short_big_threshold) or (agg_weighted_predict <  self.short_threshold) ) :
+        elif agg_predict < self.short_big_threshold or agg_weighted_predict < self.short_threshold:
             return_predict = -1
-        else: 
-            return_predict = 0    
+        else:
+            return_predict = 0
         
         return return_predict

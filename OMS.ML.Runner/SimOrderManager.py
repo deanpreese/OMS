@@ -40,10 +40,7 @@ class SimOrderManager():
 
     def send_order(self, new_order):
 
-        dte_iso = self.tick_dte.isoformat()
-        new_order['orderTime']  = dte_iso
-
+        new_order['orderTime']  = self.tick_dte.isoformat()
         print(f"Order   {new_order['userID']}   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']} {new_order['orderTime']} " ) 
-        
         CommonCli.send_order(new_order)
         

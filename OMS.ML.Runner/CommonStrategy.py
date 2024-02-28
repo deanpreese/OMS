@@ -30,6 +30,8 @@ class CommonStrategy :
       self.last_prediction = 0
       self.position = position_status.FLAT
       self.bars_since = 0
+      
+      self.perf = 0
     
 
    def check_for_orders(self, prediction, px):

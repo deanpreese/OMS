@@ -18,11 +18,14 @@ class ModelLoader:
 
     def __init__(self):
         self.experiment_id = 0
-        self.l_models = []
+        #self.l_models = []
         self.l_artifacts = []
         self.model_list = []
 
-    def add_model(self, rid):
+    # -------------------------
+    # Main add_model function
+    # -------------------------
+    def add_model(self, rid, isReg):
         rinfo = mlflow.get_run(rid)
         run_txt = f"runs:/{rid}/model" 
         
@@ -43,31 +46,33 @@ class ModelLoader:
             print(f"An error occurred: {e}")
             cols = []    
         
-        self.l_models.append(loaded_model)
+        #self.l_models.append(loaded_model)
         lm = MLStrategy(loaded_model, cols,rid)
         lm.run_name = rinfo.info.run_name
         lm.metrics = rinfo.data.metrics
+        lm.perf = rinfo.data.metrics["Perf"]
         
-        t_id = common_cli.initialize_trader(lm.run_name, lm.trader_group)
-        lm.trader_id = t_id
+        if isReg:
+            t_id = common_cli.initialize_trader(lm.run_name, lm.trader_group)
+            lm.trader_id = t_id
+        else:
+            lm.trader_id = 0    
         
         self.model_list.append(lm)        
                 
         return loaded_model, cols
 
 
+    # -------------------------
     def load_composite_models(self, experiment_id, num_models): 
         
         print("Querying Runs ...")
-        #runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.MSE DESC"], max_results=num_models)
-        runs = mlflow.search_runs(experiment_id)
-        idxx = rand.sample(range(1, len(runs) -1 ), num_models)
-        
-        print("Random Runs Selected...")
-        
+        runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.cpp DESC"], max_results=num_models)
         comp_strategies = []
         
-        for i in idxx:
+        for i in range(len(runs)):
+            self.model_list = []    
+            
             r_id = runs.iloc[i].run_id 
             print(f"Run Id     {r_id}")
             loaded_strat = self.add_composite_strategies(r_id)
@@ -90,29 +95,31 @@ class ModelLoader:
             art = json.loads(rinfo.data.tags['mlflow.loggedArtifacts'])
 
             for item in art:
-                if item.get('path') == "regen_data.json" :
+                if item.get('path') == "all_perf_data.json" :
                     art_file = item.get('path', None)
                     art_uri = rinfo.info.artifact_uri
                     art_to_load = f"{art_uri}/{art_file}"
-                    print(art_to_load)
-                    arti_d = mlflow.artifacts.load_dict(art_to_load)
-                    for x in arti_d['data']:
-                        print(x[2])
-                        self.add_model(x[2])
-                        
-                    comp_strat.strategy_models = self.model_list    
                     
-                    return comp_strat
+                    print(art_to_load)
+                    
+                    arti_d = mlflow.artifacts.load_dict(art_to_load)
+                    
+                    for item_data in arti_d['data']:
+                        print( item_data[8])
+                        self.add_model(item_data[8], False)
+                        
+            comp_strat.strategy_models = self.model_list    
+            return comp_strat
                     
         except Exception as e:
             print(f"An error occurred: {e}")
 
 
-
+    # -------------------------
     def load_selected_models(self, runs):        
         for index, run in runs.iterrows():    
             run_id = run.run_id
-            self.add_model(run_id)
+            self.add_model(run_id, True)
             
         return self.model_list
 
@@ -121,7 +128,7 @@ class ModelLoader:
         self.load_selected_models(runs)
         
         return self.model_list    
-            
+    
     def load_random_models(self, experiment_id, num_models): 
         
         print("Querying Runs ...")
@@ -133,6 +140,6 @@ class ModelLoader:
         for i in idxx:
             r_id = runs.iloc[i].run_id 
             print(f"Run Id     {r_id}")
-            self.add_model(r_id)
+            self.add_model(r_id, True)
         
         return self.model_list     
