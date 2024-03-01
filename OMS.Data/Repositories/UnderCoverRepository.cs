@@ -23,7 +23,7 @@ public class UnderCoverRepository : IUnderCoverRepository
     {
             OrderFlow ordFlow = new OrderFlow();
             ordFlow.OrderManagerID = orderToAdd.OrderManagerID;
-            ordFlow.GroupID = orderToAdd.UserGroup;
+            ordFlow.GroupID = orderToAdd.GroupID;
             ordFlow.AuthToken = orderToAdd.AuthToken;
             ordFlow.ExecutedOrderID = orderToAdd.ExecutedOrderID;
             ordFlow.Instrument = orderToAdd.Instrument ?? PlatformConstants.InvalidSymbol;

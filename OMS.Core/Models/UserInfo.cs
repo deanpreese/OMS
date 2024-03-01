@@ -14,14 +14,14 @@ public class UserInfo
     {
         UserID = userID ;
         Password = passwd;
-        GroupNumber = groupNum ;
+        GroupID = groupNum ;
     }
 
     [Id(0)]
     public int UserID { get; set; }
     [Id(1)]
-    public string? Password { get; set; }
+    public string Password { get; set; }
     [Id(2)]
-    public int GroupNumber { get; set; }
+    public int GroupID { get; set; }
 
 }

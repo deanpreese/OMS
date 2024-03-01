@@ -39,7 +39,7 @@ public class MLController : ControllerBase
     [HttpPost("process-order")]
     public async Task<ActionResult> ProcessOrder([FromBody] NewOrder order)
     {
-        Console.WriteLine("ML Order Info: " + order.UserID + "  " + order.UserGroup + "  " + order.OrderPX + "  "  + order.OrderAction);
+        Console.WriteLine("ML Order Info: " + order.UserID + "  " + order.GroupID + "  " + order.OrderPX + "  "  + order.OrderAction);
         int om_id = 0;
         try
         {

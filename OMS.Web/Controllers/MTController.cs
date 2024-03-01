@@ -56,7 +56,7 @@ public class MTController : ControllerBase
     public async Task<ActionResult> ProcessOrder([FromBody] NewOrder order)
     {
 
-        Console.WriteLine("MT Order Info: " + order.UserID + "  " + order.UserGroup + "  " + order.OrderPX + "  "  + order.OrderAction);
+        Console.WriteLine("MT Order Info: " + order.UserID + "  " + order.GroupID + "  " + order.OrderPX + "  "  + order.OrderAction);
 
         int om_id = 0;
         try
@@ -80,7 +80,7 @@ public class MTController : ControllerBase
         {
             UserID = order.UserID,
             Password = "abc",
-            GroupNumber = order.UserGroup
+            GroupID= order.GroupID
         };
 
         int auth_code = await _user_service.AuthenticateTrader(userInfo);
@@ -89,8 +89,8 @@ public class MTController : ControllerBase
             // Need to add trader
             NewTrader newTrader = new NewTrader
             {
-                Group = order.UserGroup,
-                UserId = 0,
+                GroupID = order.GroupID,
+                UserID = 0,
                 DisplayName = order.UserName,
                 UserPwd = "abc",
                 FirstName = "MetaTrader",
@@ -105,7 +105,7 @@ public class MTController : ControllerBase
             {
                 UserID = trader_id,
                 Password = "abc",
-                GroupNumber = order.UserGroup
+                GroupID = order.GroupID
             };
             auth_code = await _user_service.AuthenticateTrader(newUserInfo);
         }

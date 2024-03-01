@@ -106,7 +106,7 @@ public NewOrderQueue(ILogger<NewOrderQueue> logger, IRelayPlatformOrderIDGen id_
         {
             var filteredOrders = _liveOrderCollection
                 .Where(distinct_order => distinct_order.UserName == order.UserName
-                                        && distinct_order.UserGroup == order.UserGroup
+                                        && distinct_order.GroupID == order.GroupID
                                         && distinct_order.Instrument == order.Instrument
                                         && distinct_order.OrderAction != order.OrderAction)
                 .ToList();

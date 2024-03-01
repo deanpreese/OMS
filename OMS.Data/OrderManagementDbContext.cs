@@ -7,7 +7,7 @@ namespace OMS.Data
 {
     public class OrderManagementDbContext : DbContext
     {
-        protected readonly IConfiguration? Configuration;
+        protected readonly IConfiguration Configuration;
 
         public OrderManagementDbContext(DbContextOptions<OrderManagementDbContext> options)
             : base(options)
@@ -56,7 +56,7 @@ namespace OMS.Data
                     DateRegistered = DateTime.Now,
                     Enabled = 1,
                     EnabledLive = 0,
-                    TraderGroup = 0
+                    GroupID = 0
                 }); 
 
             modelBuilder.Entity<UserProfile>().HasData(
@@ -71,7 +71,7 @@ namespace OMS.Data
                     DateRegistered = DateTime.Now,
                     Enabled = 1,
                     EnabledLive = 0,
-                    TraderGroup = 0
+                    GroupID = 0
                 }); 
 
             
@@ -81,9 +81,9 @@ namespace OMS.Data
                     ScoreCardID = 1,
                     UserID = 999999,
                     GroupID =0,
-                    Trades =0,
-                    Winners =0,
-                    Losers =0,
+                    Trades =10,
+                    Winners =3,
+                    Losers =7,
                     Longs =0,
                     Shorts =0,
                     NetProfitLong =0,
@@ -96,7 +96,7 @@ namespace OMS.Data
                     LargestLosingStreak =0,
                     TotalNetProfit =0,
                     TradeXML = "",
-                    WinLossRatio =0,
+                    WinLossRatio =0.3,
                     AveWin =0,
                     AveLoss =0,
                     LastUpdate = DateTime.UtcNow
@@ -108,7 +108,7 @@ namespace OMS.Data
                     ScoreCardID = 2,
                     UserID = 999998,
                     GroupID =0,
-                    Trades =0,
+                    Trades =10,
                     Winners =0,
                     Losers =0,
                     Longs =0,
@@ -123,7 +123,7 @@ namespace OMS.Data
                     LargestLosingStreak =0,
                     TotalNetProfit =0,
                     TradeXML = "",
-                    WinLossRatio =0,
+                    WinLossRatio =0.7,
                     AveWin =0,
                     AveLoss =0,
                     LastUpdate = DateTime.UtcNow

@@ -7,18 +7,18 @@ namespace OMS.Core.Models;
 public class NewTrader
 {
     [Id(0)]
-    public int Group {get;set;}
+    public int GroupID {get;set;}
     [Id(1)]
-    public int UserId { get; set; }
+    public int UserID { get; set; }
     [Id(2)]
-    public string? DisplayName { get; set; }
+    public string DisplayName { get; set; }
     [Id(3)]
-    public string? UserPwd { get; set; }
+    public string UserPwd { get; set; }
     [Id(4)]
-    public string? FirstName { get; set; }
+    public string FirstName { get; set; }
     [Id(5)]
-    public string? LastName { get; set; }
+    public string LastName { get; set; }
     [Id(6)]
-    public string? Email { get; set; } 
+    public string Email { get; set; } 
 
 }

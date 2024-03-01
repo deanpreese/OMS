@@ -25,7 +25,7 @@ public class SpectreInlineLogger : ILogger {
         config.ConsoleConfiguration?.Invoke(_console);
     }
 
-    IDisposable? ILogger.BeginScope<TState>(TState state) {
+    IDisposable ILogger.BeginScope<TState>(TState state) {
         return null;
     }
 
@@ -33,7 +33,7 @@ public class SpectreInlineLogger : ILogger {
         return logLevel >= _config.LogLevel;
     }
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception, string> formatter) {
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) {
         if (!IsEnabled(logLevel)) {
             return;
         }

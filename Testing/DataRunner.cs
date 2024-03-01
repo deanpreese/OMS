@@ -51,7 +51,7 @@ namespace Testing;
                 };
 
                 o.UserID = int.Parse(values[0]);
-                o.UserGroup = int.Parse(values[1]);
+                o.GroupID = int.Parse(values[1]);
 
                 if (values[2] == "Buy")
                 {
@@ -137,14 +137,14 @@ namespace Testing;
                 {
                     newTraders.Add(new NewTrader
                     {
-                        UserId = trader.UserID,
-                        Group = trader.TraderGroup,
+                        UserID = trader.UserID,
+                        GroupID = trader.GroupID,
                         DisplayName = trader.DisplayName,
                         UserPwd = trader.UserPwd,
                         Email = trader.Email
                     });
 
-                    Console.WriteLine($"Trader: {trader.DisplayName} - {trader.UserID} - {trader.TraderGroup}");
+                    Console.WriteLine($"Trader: {trader.DisplayName} - {trader.UserID} - {trader.GroupID}");
                 }
             }
             return newTraders;

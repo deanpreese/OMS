@@ -17,15 +17,15 @@ public class UserProfile
     [Id(0)]
     public int UserID { get; set; }
     [Id(1)]
-    public string? DisplayName { get; set; } 
+    public string DisplayName { get; set; } 
     [Id(2)]
-    public string? UserPwd { get; set; }
+    public string UserPwd { get; set; }
     [Id(3)]
-    public string? FirstName { get; set; } 
+    public string FirstName { get; set; } 
     [Id(4)]
-    public string? LastName { get; set; } 
+    public string LastName { get; set; } 
     [Id(5)]
-    public string? Email { get; set; } 
+    public string Email { get; set; } 
     [Id(6)]
     public DateTime DateRegistered
     {
@@ -44,7 +44,7 @@ public class UserProfile
     [Id(11)]
     public int GroupRank { get; set; }
     [Id(12)]
-    public int TraderGroup { get; set; }
+    public int GroupID { get; set; }
     [Id(13)]
     public int TraderRole { get; set; }
 }

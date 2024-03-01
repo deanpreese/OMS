@@ -6,7 +6,7 @@ namespace OMS.Core.Logging;
 
 public static class SpectreConsoleLoggingExtensions
 {
-    public static ILoggingBuilder AddSpectreConsole(this ILoggingBuilder loggingBuilder, SpectreConsoleLoggerConfiguration? config = null)
+    public static ILoggingBuilder AddSpectreConsole(this ILoggingBuilder loggingBuilder, SpectreConsoleLoggerConfiguration config = null)
     {
         loggingBuilder.AddProvider(new SpectreConsoleLoggerProvider(config ?? new SpectreConsoleLoggerConfiguration()));
         return loggingBuilder;
@@ -19,7 +19,7 @@ public static class SpectreConsoleLoggingExtensions
         return loggingBuilder.AddSpectreConsole(config);
     }
 
-    public static ILoggingBuilder AddInlineSpectreConsole(this ILoggingBuilder loggingBuilder, SpectreConsoleLoggerConfiguration? config = null) {
+    public static ILoggingBuilder AddInlineSpectreConsole(this ILoggingBuilder loggingBuilder, SpectreConsoleLoggerConfiguration config = null) {
         loggingBuilder.AddProvider(new SpectreInlineLoggerProvider(config ?? new SpectreConsoleLoggerConfiguration()));
         return loggingBuilder;
     }

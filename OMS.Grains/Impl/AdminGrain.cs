@@ -35,7 +35,7 @@ public class AdminGrain : Grain, IAdminGrain
 
     public async Task<int> AuthenticateTrader(UserInfo userInfo)
     {
-        return await _unitOfWork.TraderRepository.AuthenticateTraderAsync(userInfo.UserID, "abc", userInfo.GroupNumber);
+        return await _unitOfWork.TraderRepository.AuthenticateTraderAsync(userInfo.UserID, "abc", userInfo.GroupID);
     }
 
     public async Task<List<UserProfile>> GetTraders(int userGroup)

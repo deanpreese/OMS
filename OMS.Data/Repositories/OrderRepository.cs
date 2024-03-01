@@ -80,7 +80,7 @@ public class OrderRepository : IOrderRepository
     public Task<List<LiveOrder>> GetLiveOrders(int GroupNumber)
     {
         List<LiveOrder> orders = (from o in _context.LiveOrder
-                            where o.UserGroup == GroupNumber
+                            where o.GroupID == GroupNumber
                             select o).ToList();
          return Task.FromResult(orders);
     }
@@ -97,7 +97,7 @@ public class OrderRepository : IOrderRepository
     public Task<List<LiveOrder>> GetOrdersByGroupAsync(int groupNumber)
     {
         List<LiveOrder> orders =(from o in _context.LiveOrder
-                                where o.UserGroup == groupNumber
+                                where o.GroupID == groupNumber
                                 select o).ToList();
         return Task.FromResult(orders);
     }
@@ -129,7 +129,7 @@ public class OrderRepository : IOrderRepository
     {
         List<LiveOrder> orders = (from c in _context.LiveOrder
                             where c.UserID == UserID
-                            && c.UserGroup == GroupNumber
+                            && c.GroupID == GroupNumber
                             orderby c.OrderTime
                             select c).ToList();
 

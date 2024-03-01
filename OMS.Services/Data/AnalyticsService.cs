@@ -24,14 +24,14 @@ public class AnalyticsService : IAnalyticsService
 
     public async Task<int> UpdateScoreCard(UserInfo userInfo)
     {
-        List<ClosedTrade> trades = await _unitOfWork.OrderRepository.Get_XXX_ClosedOrdersByTrader(userInfo.UserID, userInfo.GroupNumber,-1);
+        List<ClosedTrade> trades = await _unitOfWork.OrderRepository.Get_XXX_ClosedOrdersByTrader(userInfo.UserID, userInfo.GroupID,-1);
 
         try {
 
-            ScoreCard scoreCard = TradeStatisticsGenerator.GenerateScoreCard(userInfo.UserID, userInfo.GroupNumber, trades);
+            ScoreCard scoreCard = TradeStatisticsGenerator.GenerateScoreCard(userInfo.UserID, userInfo.GroupID, trades);
             if (scoreCard != null)
             {
-                ScoreCard sc = await _unitOfWork.AnalyticsRepository.GetTraderScoreCard(userInfo.UserID, userInfo.GroupNumber);
+                ScoreCard sc = await _unitOfWork.AnalyticsRepository.GetTraderScoreCard(userInfo.UserID, userInfo.GroupID);
 
                 if (sc == null)
                 {

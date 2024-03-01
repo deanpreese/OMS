@@ -137,7 +137,7 @@ public class TradingService : ITradingService
 
         UserInfo userInfo  = new UserInfo();
         userInfo.UserID = orderToClose.UserID;
-        userInfo.GroupNumber = orderToClose.UserGroup;
+        userInfo.GroupID = orderToClose.GroupID;
         userInfo.Password = "abc";
 
         try 

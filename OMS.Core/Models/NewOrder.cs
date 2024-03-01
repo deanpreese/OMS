@@ -19,13 +19,13 @@ public class NewOrder
     public int PlatformOrderID { get; set; }
     // In the case of NinjaTrader as the execution platform, this would be the filled order ID returned on execution
     [Id(1)]
-    public string? UserName { get; set; }
+    public string UserName { get; set; }
     
     [Id(2)]
     public int UserID { get; set; }
     
     [Id(3)]
-    public int UserGroup { get; set; }
+    public int GroupID { get; set; }
 
     // Token for successful trader authentication
     [Id(4)]

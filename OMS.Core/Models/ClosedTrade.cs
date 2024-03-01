@@ -31,7 +31,7 @@ public class ClosedTrade
     public int GroupID { get; set; }
 
     [Id(5)]
-    public string? Instrument { get; set; }
+    public string Instrument { get; set; }
 
     [Id(6)]
     public int Quantity { get; set; }
@@ -120,6 +120,6 @@ public class ClosedTrade
     [Timestamp]
     [Id(27)]
 
-    public byte[]? Version { get; set; }
+    public byte[] Version { get; set; }
 
 }

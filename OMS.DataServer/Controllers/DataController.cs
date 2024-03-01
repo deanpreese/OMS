@@ -58,7 +58,7 @@ public class DataController : ControllerBase
     public async Task<List<UserProfile>> GetTraders([FromBody] int userGroup)
     {
         var users = ((from u in _context.UserProfiles
-                                where u.TraderGroup == userGroup
+                                where u.GroupID == userGroup
                                 select u).Take(50)).ToList();
         
         return await Task.FromResult(users);

@@ -4,8 +4,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.SignalR;
 
 using OMS.Core.Models;
-using OMS.Services.Queue;
-
+using OMS.Relay.Queue;
 
 namespace OMS.MT4Relay.Controllers
 {

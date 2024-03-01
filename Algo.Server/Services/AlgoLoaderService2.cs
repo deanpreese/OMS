@@ -56,7 +56,7 @@ public class AlgoLoaderService2 : BackgroundService
                 try
                 {
                     //Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
-                    string g_k = newOrderInfo.UserID + "_" + newOrderInfo.UserGroup;
+                    string g_k = newOrderInfo.UserID + "_" + newOrderInfo.GroupID;
                     ITraderGrain trader =  _client.GetGrain<ITraderGrain>(g_k);
                     await trader.Update(g_k);
                     UserProfile u = await trader.GetProfileAsync(g_k);
@@ -65,7 +65,7 @@ public class AlgoLoaderService2 : BackgroundService
                     IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.algo_grain());    
 
                     NewOrder n_o = OrderMapping.MapOrder(newOrderInfo);
-                    n_o.UserGroup = _algoData.group;
+                    n_o.GroupID = _algoData.group;
                     n_o.UserID = _algoData.algo_traderId;
 
                     OrderAction n = n_o.OrderAction;

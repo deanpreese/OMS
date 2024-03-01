@@ -55,7 +55,7 @@ public class AlgoLoaderService3 : BackgroundService
                 try
                 {
                     //Console.WriteLine("Order Info: " + orderInfo.UserID + "  " + orderInfo.GroupNumber + "  " + orderInfo.InfoType);
-                    string g_k = orderInfo.UserID + "_" + orderInfo.UserGroup;
+                    string g_k = orderInfo.UserID + "_" + orderInfo.GroupID;
                     ITraderGrain trader =  _client.GetGrain<ITraderGrain>(g_k);
                     await trader.Update(g_k);
                     UserProfile u = await trader.GetProfileAsync(g_k);

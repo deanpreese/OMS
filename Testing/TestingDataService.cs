@@ -23,19 +23,19 @@ public class TestingDataService
     
     public async Task<int> SendOrderAsync(NewOrder order)
     {
-        //if (_usingGrains)
-        //{
-            //string o_s = order.UserID+"_"+order.UserGroup;
-            //Console.WriteLine($"Grain: {o_s}");
-            //var order_grain = _client.GetGrain<IOrderGrain>(o_s);
-            //int rtn_code = await order_grain.ProcessMTOrder(order);
-            //return rtn_code;
-        //}else
-        //{
+        if (_usingGrains)
+        {
+            string o_s = order.UserID+"_"+order.GroupID;
+            Console.WriteLine($"Grain: {o_s}");
+            var order_grain = _client.GetGrain<IOrderGrain>(o_s);
+            int rtn_code = await order_grain.ProcessOrder(order);
+            return rtn_code;
+        }else
+        {
             int sendOrderResult = await OMSClient.SendOrderAsync(order);
             //Thread.Sleep(1000);    
             return sendOrderResult;
-        //}
+        }
     }
 
 
@@ -83,8 +83,8 @@ public class TestingDataService
         {
             NewTrader newTrader = new NewTrader
             {
-                UserId = 0,
-                Group = group,
+                UserID = 0,
+                GroupID = group,
                 UserPwd= "abc",
                 DisplayName ="Gen Display",
                 FirstName = "Gen First",
@@ -93,7 +93,7 @@ public class TestingDataService
             };
 
             int  trader = await AddTraderToPlatform(newTrader);
-            newTrader.UserId = trader;
+            newTrader.UserID = trader;
             generated_traders.Add(newTrader);
         }
         return generated_traders;
@@ -109,8 +109,8 @@ public class TestingDataService
         {
 
             UserInfo u = new UserInfo();
-            u.UserID = trader.UserId;
-            u.GroupNumber = trader.Group;
+            u.UserID = trader.UserID;
+            u.GroupID = trader.GroupID;
             u.Password = trader.UserPwd;
 
             
@@ -118,10 +118,10 @@ public class TestingDataService
 
             if (tid == 0)
             {
-                Console.WriteLine($"Auth Failed.  { trader.UserId}" );
+                Console.WriteLine($"Auth Failed.  { trader.UserID}" );
             }else
             {    
-                Console.WriteLine($"Auth Success.  { trader.UserId}" );
+                Console.WriteLine($"Auth Success.  { trader.UserID}" );
                 verified_traders.Add(trader);
             }
         }
@@ -147,8 +147,8 @@ public class TestingDataService
                         AuthToken = 1111111,
                         OrderType = OrderType.MARKET,
                         PlatformOrderID = random.Next(1000000, 5000000),
-                        UserID = trader.UserId,
-                        UserGroup = trader.Group,
+                        UserID = trader.UserID,
+                        GroupID = trader.GroupID,
                         UserName = "ME",
                         Instrument = "DEMO",
                         OrderPX = random.Next(10, 30),
@@ -161,8 +161,8 @@ public class TestingDataService
                         AuthToken = 1111111,
                         OrderType = OrderType.MARKET,
                         PlatformOrderID = random.Next(1000000, 5000000),
-                        UserID = trader.UserId,
-                        UserGroup = trader.Group,
+                        UserID = trader.UserID,
+                        GroupID = trader.GroupID,
                         UserName = "ME",
                         Instrument = "DEMO",
                         OrderPX = random.Next(10, 30),

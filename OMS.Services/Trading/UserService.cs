@@ -58,7 +58,7 @@ public class UserService : IUserService
 
         if (userInfo.Password != null)
         {
-            auth_code = await _unitOfWork.TraderRepository.AuthenticateTraderAsync(userInfo.UserID, userInfo.Password, userInfo.GroupNumber);    
+            auth_code = await _unitOfWork.TraderRepository.AuthenticateTraderAsync(userInfo.UserID, userInfo.Password, userInfo.GroupID);    
             _unitOfWork.Commit();
         }    
 

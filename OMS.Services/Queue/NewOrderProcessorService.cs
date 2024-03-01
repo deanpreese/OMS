@@ -81,7 +81,7 @@ public class NewOrderProcessorService : BackgroundService
                 if (om_id != 0)
                 {
                     // Add only orders for groups less than 76
-                    if (newOrder.UserGroup < 76)
+                    if (newOrder.GroupID < 76)
                     {
                         var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
                         var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)

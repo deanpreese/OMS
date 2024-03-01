@@ -47,7 +47,7 @@ namespace Testing
                 OrderType = OrderType.MARKET,
                 PlatformOrderID = rndm,
                 UserID = uInfo.UserID,
-                UserGroup = uInfo.GroupNumber,
+                GroupID = uInfo.GroupID,
                 UserName = "ME",
                 Instrument = "DEMO",
                 OrderPX = 0,
@@ -158,12 +158,11 @@ namespace Testing
         // ========================================================================
         public async Task BuyOrder(int qty, double px)
         {
-            //hread.Sleep(500);
+            //Thread.Sleep(500);
             NewOrder o = GenerateBaseOrder();
             o.Quantity = qty;
             o.OrderAction = OrderAction.Buy;
             o.OrderPX = px;
-            //int r = await OMSClient.SendOrderAsync(o);
             int r = await _dataService.SendOrderAsync(o);    
             Console.WriteLine("BuyOrder: " + r);
         }
@@ -177,7 +176,6 @@ namespace Testing
             so.Quantity = qty;
             so.OrderPX = px;
             int r = await _dataService.SendOrderAsync(so);
-            //int r = await OMSClient.SendOrderAsync(so);
             Console.WriteLine("SellOrder: " + r);
         }
 

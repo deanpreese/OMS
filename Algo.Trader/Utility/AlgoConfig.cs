@@ -60,9 +60,9 @@ public class AlgoConfig
 
         NewTrader n_trader = new NewTrader
         {
-            UserId = 0,
+            UserID = 0,
             DisplayName = _algoData.algoname,
-            Group = _algoData.group,
+            GroupID = _algoData.group,
             UserPwd = "abc",
             FirstName = "Algo",
             LastName = _algoData.algoname,

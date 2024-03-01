@@ -16,13 +16,14 @@ public class SimpleOpenClose : AbstractBase, IAlgo
 
     public NewOrder GenerateAlgoOrder(LiveOrder order)
     {
-        trader_key = order.UserID + "_" + order.UserGroup;
+        trader_key = order.UserID + "_" + order.GroupID;
         InitializeGrains(trader_key); 
        
 
 
+
         NewOrder n_o = OrderMapping.MapOrder(order);
-        n_o.UserGroup = _algoData.group;
+        n_o.GroupID = _algoData.group;
         n_o.UserID = _algoData.algo_traderId;
         n_o.RelatedOrderID = order.PlatformOrderID;        
         return n_o;
@@ -84,7 +85,7 @@ public class SimpleOpenClose : AbstractBase, IAlgo
     
     private void PrintOrderInfo(LiveOrder order, OrderType orderType)
     {
-        Console.WriteLine("Algo Order: " + order.UserID + "  " + order.UserGroup + "  " + order.OrderAction + "  " + orderType);
+        Console.WriteLine("Algo Order: " + order.UserID + "  " + order.GroupID + "  " + order.OrderAction + "  " + orderType);
     }
 
 }

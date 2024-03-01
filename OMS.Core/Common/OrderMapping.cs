@@ -10,7 +10,7 @@ public class OrderMapping
         ClosedTrade histOrder = new ClosedTrade()
         {
             UserID = orderToClose.UserID,
-            GroupID = orderToClose.UserGroup,
+            GroupID = orderToClose.GroupID,
             Instrument = orderToClose.Instrument,
             Quantity = orderToClose.Quantity,
             Leverage = orderToClose.Leverage,
@@ -49,7 +49,7 @@ public class OrderMapping
         liveOrder.PlatformOrderID = newOrder.PlatformOrderID;
         liveOrder.Quantity = newOrder.Quantity;
         liveOrder.UserID = newOrder.UserID;
-        liveOrder.UserGroup = newOrder.UserGroup;
+        liveOrder.GroupID = newOrder.GroupID;
         liveOrder.Leverage = 1;
         liveOrder.Opposite = 0;
         return liveOrder;
@@ -68,7 +68,7 @@ public class OrderMapping
             PlatformOrderID = 0,
             Quantity = liveOrder.Quantity,
             UserID = 0,
-            UserGroup = 0,
+            GroupID = 0,
         };
             return newOrder;
     }

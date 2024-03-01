@@ -25,7 +25,7 @@ public class LiveOrder
     [Id(2)]
     public int UserID { get; set; }
     [Id(3)]
-    public int UserGroup { get; set; }
+    public int GroupID { get; set; }
     [Id(4)]
     public double Leverage { get; set; }
     [Id(5)]
@@ -69,6 +69,6 @@ public class LiveOrder
     public double MFE { get; set; }
 
     [Timestamp]
-    public byte[]? Version { get; set; }
+    public byte[] Version { get; set; }
 
 }

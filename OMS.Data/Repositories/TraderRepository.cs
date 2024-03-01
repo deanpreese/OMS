@@ -22,7 +22,7 @@ public class TraderRepository : ITraderRepository
     public Task<int> AddTraderAsync(NewTrader addedTrader)
     {
         UserProfile user = new UserProfile();    
-        user.UserID =  GetNewTraderID(addedTrader.Group);
+        user.UserID =  GetNewTraderID(addedTrader.GroupID);
         user.DisplayName = addedTrader.DisplayName;
         user.UserPwd = addedTrader.UserPwd;
         user.Email = addedTrader.Email;
@@ -34,16 +34,16 @@ public class TraderRepository : ITraderRepository
         user.Leverage = 1;
         user.IsOpposite = 0;
         user.GroupRank = 0;
-        user.TraderGroup = addedTrader.Group;
+        user.GroupID = addedTrader.GroupID;
         user.TraderRole = 1;
         
         ScoreCard scd = new ScoreCard();
         scd.UserID  = user.UserID;
         scd.TradeXML = " ";
-        scd.GroupID = addedTrader.Group;
+        scd.GroupID = addedTrader.GroupID;
         _context.Add(scd);
         _context.UserProfiles.Add(user);
-         return Task.FromResult(user.UserID);
+        return Task.FromResult(user.UserID);
 
     }
 
@@ -57,7 +57,7 @@ public class TraderRepository : ITraderRepository
 
         if (userList.Count > 0)
         {
-            UserProfile? u = userList.FirstOrDefault();
+            UserProfile u = userList.FirstOrDefault();
             if (u != null && u.UserPwd != null && u.UserPwd != password)
             {
                 auth_token = 0;
@@ -83,7 +83,7 @@ public class TraderRepository : ITraderRepository
     {
         var profile =  (from u in _context.UserProfiles
                               where u.UserID == TraderID
-                                    && u.TraderGroup == GroupNumber
+                                    && u.GroupID == GroupNumber
                               select u).ToList();
 
         return Task.FromResult(profile);
@@ -93,7 +93,7 @@ public class TraderRepository : ITraderRepository
     public Task<List<UserProfile>> GetUserProfileListAsync(int GroupNumber)
     {
         List<UserProfile> ups = (from u in _context.UserProfiles
-                                    where u.TraderGroup == GroupNumber
+                                    where u.GroupID== GroupNumber
                                         select u).ToList();
         return Task.FromResult(ups);
 
@@ -115,7 +115,7 @@ public class TraderRepository : ITraderRepository
     {
         return (from u in _context.UserProfiles
                             where u.UserID == TraderID
-                                && u.TraderGroup == GroupNumber
+                                && u.GroupID == GroupNumber
                             select u).ToList();
     }
 
@@ -142,7 +142,7 @@ public class TraderRepository : ITraderRepository
 
         var traders = (from u in _context.UserProfiles
                        where u.DisplayName == user.DisplayName
-                           && u.TraderGroup == user.Group
+                           && u.GroupID == user.GroupID
                                   select u).ToList();
 
         if(traders.Count() >= 1)
