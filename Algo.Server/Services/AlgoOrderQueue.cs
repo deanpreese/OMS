@@ -12,7 +12,7 @@ public class AlgoOrderQueue
     public AlgoOrderQueue()
     {
         // Create a bounded channel with a capacity limit to prevent out-of-memory issues in case of high load
-        _channel = Channel.CreateBounded<LiveOrder>(new BoundedChannelOptions(5000)
+        _channel = Channel.CreateBounded<LiveOrder>(new BoundedChannelOptions(10000)
         {
             FullMode = BoundedChannelFullMode.Wait,
             SingleReader = false, // Set to true if only one consumer will read from the channel

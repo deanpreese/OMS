@@ -178,6 +178,27 @@ public class OrderRepository : IOrderRepository
          return Task.FromResult(orders);                                   
     }
 
+    public Task<ClosedTrade> GetLastClosedTrade(int UserID, int GroupNumber)
+    {
+        ClosedTrade closedTrade = new ClosedTrade();
+
+
+        List<ClosedTrade> trades = ((from o in _context.ClosedTrades
+                                   where o.UserID == UserID 
+                                    && o.GroupID == GroupNumber 
+                                   select o)).ToList();
+        if (trades.Count() > 0)
+        {
+            closedTrade = trades.Last();
+        }
+    
+        return Task.FromResult(closedTrade);
+
+    }
+
+
+
+
 
     public Task<List<ClosedTrade>> GetClosedTrades(int GroupNumber)
     {

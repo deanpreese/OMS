@@ -15,13 +15,35 @@ public class NewAlgoFilter : AbstractAlgoFilter, IAlgoFilter
     public int IsInAlgoFilter()
     {
         int includeExclude = 0;
+
+        if (_scoreCard != null)
+        {
+            if (_scoreCard.WinLossRatio < .52 )
+            {
+                includeExclude = -1;     
+            }
+
+            if (_scoreCard.WinLossRatio > .52 )
+            {
+                includeExclude = 1;
+            }
+        }
+
+        return includeExclude;
+    }
+
+  public int IsInAlgoFilter100(int traderId, int groupNumber)
+  {
+        int includeExclude = 0;
                
         if (_scoreCard.PNL_Last3  > 0)  { includeExclude = 1; }  
         if (_scoreCard.PNL_Last5  > 0)  { includeExclude = 1; }
         if (_scoreCard.PNL_Last8  > 0 ) { includeExclude =  0; }
 
         return includeExclude;
-    }
+  }
+
+
 
   public int IsInAlgoFilter99(int traderId, int groupNumber)
     {

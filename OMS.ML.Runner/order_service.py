@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from io import StringIO
 import cProfile
+from io import BytesIO
 
 from ModelLoader import ModelLoader
 from OrderManager import OrderManager
@@ -18,11 +19,9 @@ logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
 
 def LoadModels():
     m = []
-    #experiment_id = ["792022387336146046"]
-    #experiment_id = ["748668048429049790"]
-    
-    experiment_id = ["1"]
-    m = model_loader.load_random_models(experiment_id, 5)
+   
+    experiment_id = ["6"]
+    m = model_loader.load_random_models(experiment_id, 2)
     return m
 
 def init_app():
@@ -31,15 +30,15 @@ def init_app():
     with app.app_context():
         models = LoadModels()
        
+       
     @app.route('/predict', methods=['POST'])
-    def predict():
+    def predictx():
         
-        csv_data = StringIO(request.data.decode('utf-8'))
+        csv_data = BytesIO(request.data)
         column_names = ['time', 'SDLR310', 'SDBB91', 'SDKC91', 'SDKC9', 'ROC', 'ATR34', 'ATR32', 'ATR31', 'ATR3', 'ATR21', 'ATR2', 'RSI', 'STOK1', 'output', 'outputC', 'actual']
         data_df = pd.read_csv(csv_data, header=None, names=column_names)
-
-        time = data_df['time']
-        px = data_df['actual']
+        time = data_df["time"]
+        px = data_df["actual"]
         data_df.drop(columns=['time', 'actual', 'output', 'outputC'], inplace=True)
         
         for m in range(len(models)):

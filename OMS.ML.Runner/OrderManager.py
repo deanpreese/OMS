@@ -13,7 +13,7 @@ class OrderManager():
         self.commission = 0
         self.tick_dte = dt(1, 1, 1)
         
-        self.com_cli = CommonCli.CommonCli()
+        self.com_cli = CommonCli()
         
 
     def process_tick_rt(self, tick, ticks):
@@ -47,4 +47,4 @@ class OrderManager():
         
             print(f" Order   {new_order['userID']}   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']} {new_order['orderTime']} " ) 
     
-            self.com_cli.send_order(new_order)         
+            CommonCli.send_order(new_order)        

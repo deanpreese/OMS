@@ -68,6 +68,7 @@ class ModelLoader:
         
         print("Querying Runs ...")
         runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.cpp DESC"], max_results=num_models)
+       
         comp_strategies = []
         
         for i in range(len(runs)):

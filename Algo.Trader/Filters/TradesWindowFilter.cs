@@ -19,6 +19,7 @@ public class TradesWindowFilter : AbstractAlgoFilter, IAlgoFilter
     public int IsInAlgoFilter()
     {
         int includeExclude = 0;
+
         if (_scoreCard.Trades > 5)
         {
             includeExclude = 1;

@@ -1,3 +1,4 @@
+
 DELETE FROM PUBLIC."ActivityLogs" ;
 ALTER SEQUENCE public."ActivityLogs_ActivityID_seq" RESTART WITH 1;
 
@@ -13,3 +14,4 @@ DELETE FROM PUBLIC."ScoreCard" ;
 ALTER SEQUENCE public."ScoreCard_ScoreCardID_seq" RESTART WITH 1;
 DELETE FROM PUBLIC."UserProfiles" ;
 ALTER SEQUENCE public."UserProfiles_UserID_seq" RESTART WITH 1;
+

@@ -18,8 +18,13 @@ public class TraderGrain : Grain, ITraderGrain
 {
     private readonly IPersistentState<UserProfile> _profile;
     private readonly IPersistentState<ScoreCard> _scoreCard;
+    
     private string _key_string ;
     private IUnitOfWork _unitOfWork;
+
+    public List<LiveOrder> Orders;
+    public int User_id { get; set; }
+    public int Group_num { get; set; }
 
     public TraderGrain(
         [PersistentState("profile", "GrainStorage")]
@@ -32,6 +37,11 @@ public class TraderGrain : Grain, ITraderGrain
         _unitOfWork = unitOfWork;
         _scoreCard = scoreCard;
         _key_string = this.GetPrimaryKeyString();
+        Orders = new List<LiveOrder>();
+
+        string[] keys = _key_string.Split('_');
+        User_id = int.Parse(keys[1]);
+        Group_num = int.Parse(keys[1]);
 
     }
 
@@ -39,10 +49,27 @@ public class TraderGrain : Grain, ITraderGrain
     {
         await UpdateProfile(_key_string);
         await UpdateScoreCard(_key_string);
+        await GetLiveOrders(_key_string);
         await base.OnActivateAsync(cancellationToken);
     }
 
 
+    public Task<int> GetLiveOrderCount()
+    {
+        return Task.FromResult(Orders.Count);
+    }
+
+    public Task<int> User_ID()
+    {
+        return Task.FromResult(User_id);
+    }
+
+    public Task<int> Group_Number()
+    {
+        return Task.FromResult(Group_num);
+
+    }
+    
     public async Task Update(string profile_key)
     {
         await UpdateProfile(_key_string);
@@ -84,8 +111,7 @@ public class TraderGrain : Grain, ITraderGrain
     {
         string[] profile_key_parts = profile_key.Split('_');
         int userId = int.Parse(profile_key_parts[0]);
-        int groupNum = int.Parse(profile_key_parts[1]);
-        
+        int groupNum = int.Parse(profile_key_parts[1]);        
         return await UpdateProfile(userId, groupNum);    
     }
 
@@ -110,6 +136,24 @@ public class TraderGrain : Grain, ITraderGrain
         int groupNum = int.Parse(profile_key_parts[1]);
         
         return await UpdateScoreCard(userId, groupNum);    
+    }
+
+    public async Task<List<LiveOrder>> GetLiveOrders(string profile_key)
+    {
+        string[] profile_key_parts = profile_key.Split('_');
+        int userId = int.Parse(profile_key_parts[0]);
+        int groupNum = int.Parse(profile_key_parts[1]);
+     
+        Orders = await _unitOfWork.OrderRepository.GetOrdersByTraderAsync(userId, groupNum);
+        return Orders;
+    }
+
+    public async Task<ClosedTrade> GetLastClosedTrade(string profile_key)
+    {
+        string[] profile_key_parts = profile_key.Split('_');
+        int userId = int.Parse(profile_key_parts[0]);
+        int groupNum = int.Parse(profile_key_parts[1]);
+        return await _unitOfWork.OrderRepository.GetLastClosedTrade(userId, groupNum);
     }
 
 
