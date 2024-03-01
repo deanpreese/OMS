@@ -9,7 +9,7 @@ DB_CONTEXT="OrderManagementDbContext" #
 #DB_CONNECTION="Host=10.0.0.50;Database=orders;Username=trading;Password=abc" 
 DB_CONNECTION="Host=localhost;Database=orders;Username=trading;Password=abc" 
 EF_ASSEMBLY="OMS.Data" 
-START_UP_PROJECT="MigrationsManager.csproj"
+START_UP_PROJECT="OMS.MigrationsManager.csproj"
 
 
 # Function to drop the PostgreSQL database

@@ -204,8 +204,8 @@ namespace OMS.Data.Migrations
                 columns: new[] { "ScoreCardID", "AveLoss", "AveLossDuration", "AveTradeDuration", "AveWin", "AveWinDuration", "GrossLoss", "GrossProfit", "GroupID", "LargestLoser", "LargestLosingStreak", "LargestWinner", "LargestWinningStreak", "LastUpdate", "Longs", "Losers", "NetProfitLong", "NetProfitShort", "PNL_Last13", "PNL_Last21", "PNL_Last3", "PNL_Last34", "PNL_Last5", "PNL_Last8", "SharpRatio", "Shorts", "SortinoRatio", "StdDevAllTrades", "StdDevLossTrades", "StdDevWinTrades", "TotalNetProfit", "TradeXML", "Trades", "UserID", "WinLossRatio", "Winners" },
                 values: new object[,]
                 {
-                    { 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 2, 21, 20, 47, 48, 792, DateTimeKind.Utc).AddTicks(5840), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 0, 999999, 0.0, 0 },
-                    { 2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 2, 21, 20, 47, 48, 792, DateTimeKind.Utc).AddTicks(5850), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 0, 999998, 0.0, 0 }
+                    { 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 1, 6, 17, 52, 110, DateTimeKind.Utc).AddTicks(1030), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 0, 999999, 0.0, 0 },
+                    { 2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 1, 6, 17, 52, 110, DateTimeKind.Utc).AddTicks(1040), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 0, 999998, 0.0, 0 }
                 });
 
             migrationBuilder.InsertData(
@@ -213,8 +213,8 @@ namespace OMS.Data.Migrations
                 columns: new[] { "UserID", "DateRegistered", "DisplayName", "Email", "Enabled", "EnabledLive", "FirstName", "GroupRank", "IsOpposite", "LastName", "Leverage", "TraderGroup", "TraderRole", "UserPwd" },
                 values: new object[,]
                 {
-                    { 999998, new DateTime(2024, 2, 21, 12, 47, 48, 792, DateTimeKind.Utc).AddTicks(5810), "User2", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" },
-                    { 999999, new DateTime(2024, 2, 21, 12, 47, 48, 792, DateTimeKind.Utc).AddTicks(5740), "User1", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" }
+                    { 999998, new DateTime(2024, 2, 29, 22, 17, 52, 110, DateTimeKind.Utc).AddTicks(1010), "User2", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" },
+                    { 999999, new DateTime(2024, 2, 29, 22, 17, 52, 110, DateTimeKind.Utc).AddTicks(930), "User1", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" }
                 });
         }
 
