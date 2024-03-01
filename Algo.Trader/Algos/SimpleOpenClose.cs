@@ -19,7 +19,7 @@ public class SimpleOpenClose : AbstractBase, IAlgo
         trader_key = order.UserID + "_" + order.UserGroup;
         InitializeGrains(trader_key); 
        
-        Console.WriteLine(_algoData.algoname + "  > " + trader_key + "  " + order.OrderPX + "  " + order.OrderAction );
+
 
         NewOrder n_o = OrderMapping.MapOrder(order);
         n_o.UserGroup = _algoData.group;
@@ -29,7 +29,7 @@ public class SimpleOpenClose : AbstractBase, IAlgo
 
     }
 
-    public override LiveOrder DetermineOrderAction(LiveOrder order)
+    public override LiveOrder DetermineAlgoAction(LiveOrder order)
     {
         int filterAction = CheckFilters();
 
@@ -40,10 +40,12 @@ public class SimpleOpenClose : AbstractBase, IAlgo
             if (filterAction > 0)
             {
                 order.OrderAction = OrderAction.Buy;
+                PrintOrderInfo(order, OrderType.OPEN);
             }
             if (filterAction < 0)
             {
                 order.OrderAction = OrderAction.Sell;
+                PrintOrderInfo(order, OrderType.OPEN);
             }
         }
 
@@ -57,12 +59,15 @@ public class SimpleOpenClose : AbstractBase, IAlgo
             if (lastOrder.OrderAction == OrderAction.Buy)
             {
                 order.OrderAction = OrderAction.Sell;
+                PrintOrderInfo(order, OrderType.CLOSE);
             }
             if (lastOrder.OrderAction == OrderAction.Sell)
             {
                 order.OrderAction = OrderAction.Buy;
+                PrintOrderInfo(order, OrderType.CLOSE);
             }
         }
+
 
         return order;
     }
@@ -77,4 +82,9 @@ public class SimpleOpenClose : AbstractBase, IAlgo
         return includeExclude;
     }
     
+    private void PrintOrderInfo(LiveOrder order, OrderType orderType)
+    {
+        Console.WriteLine("Algo Order: " + order.UserID + "  " + order.UserGroup + "  " + order.OrderAction + "  " + orderType);
+    }
+
 }

@@ -38,12 +38,12 @@ public abstract class AbstractBase
         _traderOpenOrdersCount = await _trader.GetLiveOrderCount();
         _traderLastClosedTrade = await _trader.GetLastClosedTrade(trader_key);
 
-        IAlgoGrain _algoGrain = _grainFactory.GetGrain<IAlgoGrain>(_algo_key);
+        _algoGrain = _grainFactory.GetGrain<IAlgoGrain>(_algo_key);
         AlgoLiveOrders = await _algoGrain.GetLiveOrders(trader_key);
 
     }   
 
     public abstract int CheckFilters();
-    public abstract LiveOrder DetermineOrderAction(LiveOrder order);
+    public abstract LiveOrder DetermineAlgoAction(LiveOrder order);
     
 }

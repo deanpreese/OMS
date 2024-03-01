@@ -13,10 +13,10 @@ public class OrderData
     public int ExecutionID { get; set; }
     // ID used for order matching
     public int RelatedOrderID { get; set; }
-    public string? TraderID { get; set; }
+    public string TraderID { get; set; }
     public int GroupNumber = 0;
     public DateTime OrderTime { get; set; }
-    public string? Instrument { get; set; }
+    public string Instrument { get; set; }
     public double OrderPX { get; set; }
     public int OrderType { get; set; }
     public int OrderAction { get; set; }
@@ -30,7 +30,7 @@ public class OrderData
     {
         string rtn = "NON";
         return rtn;
-}
+    }
 
 public double PNL { get; set; }
 public double MAE { get; set; }
