@@ -1,0 +1,5 @@
+select  "UserID", "GroupID", "WinLossRatio"
+from public."ScoreCard";
+
+select "UserID", "GroupID"
+from public."UserProfiles"

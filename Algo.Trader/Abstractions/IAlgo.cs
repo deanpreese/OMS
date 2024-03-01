@@ -6,5 +6,5 @@ namespace Algo.Trader.Abstractions;
 
 public interface IAlgo
 {
-   public NewOrder GenerateAlgoOrder(LiveOrder order);
+   public Task<NewOrder> GenerateAlgoOrder(LiveOrder order);
 }

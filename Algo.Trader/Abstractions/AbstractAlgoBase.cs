@@ -8,18 +8,9 @@ public abstract class AbstractBase
 {
     public AlgoData _algoData;
     public IGrainFactory _grainFactory;
-    ITraderGrain _trader;
-    IAlgoGrain _algoGrain;
-    
-    public string trader_key = "";
-
-    public UserProfile _traderUserProfile;
-    public ScoreCard _traderScoreCard;
-    public int _traderOpenOrdersCount = 0;
-    public ClosedTrade _traderLastClosedTrade;
-
-    public string _algo_key = "";
-    public List<LiveOrder> AlgoLiveOrders = new List<LiveOrder>();
+    public ITraderGrain TraderGrain;
+    public IAlgoGrain AlgoGrain;
+    public string Algo_Key;
     public List<IAlgoFilter> _filters = new List<IAlgoFilter>();
 
 
@@ -27,23 +18,27 @@ public abstract class AbstractBase
     {
         _grainFactory = grainFactory;
         _algoData = algoData;
-        _algo_key = _algoData.algo_traderId + "_" + _algoData.group;
+        Algo_Key = _algoData.algo_traderId + "_" + _algoData.group;
     }
 
     public async void InitializeGrains(string trader_key)
     {
-        _trader =  _grainFactory.GetGrain<ITraderGrain>(trader_key);
-        _traderUserProfile = await _trader.GetProfileAsync(trader_key);
-        _traderScoreCard = await _trader.GetScoreCardAsync(trader_key);
-        _traderOpenOrdersCount = await _trader.GetLiveOrderCount();
-        _traderLastClosedTrade = await _trader.GetLastClosedTrade(trader_key);
+        try{
+            await Task.Run(() =>
+            {
+                TraderGrain = _grainFactory.GetGrain<ITraderGrain>(trader_key);
+                AlgoGrain = _grainFactory.GetGrain<IAlgoGrain>(Algo_Key);
+            });
 
-        _algoGrain = _grainFactory.GetGrain<IAlgoGrain>(_algo_key);
-        AlgoLiveOrders = await _algoGrain.GetLiveOrders(trader_key);
+        }catch (Exception ex)
+        {
+            Console.WriteLine("INIT ERROR " + ex.StackTrace);
+        }
 
+        
     }   
 
     public abstract int CheckFilters();
-    public abstract LiveOrder DetermineAlgoAction(LiveOrder order);
+    public abstract Task<LiveOrder> DetermineAlgoAction(LiveOrder order);
     
 }

@@ -136,7 +136,7 @@ namespace Testing
                 }
 
 
-                AnsiConsole.MarkupLine("[Green]Process Complete - Press any key to exit[/]");
+                AnsiConsole.MarkupLine("Process Complete - Press any key to exit");
                 Console.ReadLine();
 
             }

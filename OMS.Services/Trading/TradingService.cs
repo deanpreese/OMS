@@ -52,7 +52,7 @@ public class TradingService : ITradingService
             om_id = BitConverter.ToInt32(salt, 0);
         }
 
-        LiveOrder liveOrder = OrderMapping.MapOrder(newOrder);
+        LiveOrder liveOrder = OrderMapping.MapOrderNewToLive(newOrder);
         liveOrder.OrderManagerID = om_id;
         return liveOrder;
     }

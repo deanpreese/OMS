@@ -22,7 +22,7 @@ public static class OMSClient
             using (HttpClient client = new HttpClient())
             {
                 var jsonContent = new StringContent(JsonConvert.SerializeObject(newTrader), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(server_url + "/api/order/add-new-trader", jsonContent);
+                var response = await client.PostAsync(server_url + "/api/mt/add-new-trader", jsonContent);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -68,7 +68,7 @@ public static class OMSClient
             using (HttpClient client = new HttpClient())
             {
                 var jsonContent = new StringContent(JsonConvert.SerializeObject(newTrader), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(server_url + "/api/order/authenticate", jsonContent);
+                var response = await client.PostAsync(server_url + "/api/mt/authenticate", jsonContent);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -92,7 +92,7 @@ public static class OMSClient
         using (HttpClient client = new HttpClient())
         {
             var jsonContent = new StringContent(JsonConvert.SerializeObject(newOrder), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(server_url + "/api/order/process-order", jsonContent);
+            var response = await client.PostAsync(server_url + "/api/mt/process-order", jsonContent);
 
             var result = await response.Content.ReadAsStringAsync();
             int code = int.Parse(result);
@@ -109,7 +109,7 @@ public static class OMSClient
         using (HttpClient client = new HttpClient())
         {
             var jsonContent = new StringContent(JsonConvert.SerializeObject(newOrder), Encoding.UTF8, "application/json");
-            var response = client.PostAsync(server_url + "/api/order/process-ml-order", jsonContent);
+            var response = client.PostAsync(server_url + "/api/ml/process-order", jsonContent);
 
 
             if (!response.IsCompletedSuccessfully)

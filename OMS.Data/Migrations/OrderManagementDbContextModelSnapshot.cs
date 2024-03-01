@@ -37,7 +37,6 @@ namespace OMS.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SessionGuid")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("SessionID")
@@ -161,8 +160,10 @@ namespace OMS.Data.Migrations
                     b.Property<int>("ExecutedOrderID")
                         .HasColumnType("integer");
 
+                    b.Property<int>("GroupID")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Instrument")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<double>("Leverage")
@@ -201,9 +202,6 @@ namespace OMS.Data.Migrations
                     b.Property<int>("RelatedOrderID")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserGroup")
-                        .HasColumnType("integer");
-
                     b.Property<int>("UserID")
                         .HasColumnType("integer");
 
@@ -235,7 +233,6 @@ namespace OMS.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Instrument")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<double>("Leverage")
@@ -375,7 +372,6 @@ namespace OMS.Data.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<string>("TradeXML")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Trades")
@@ -410,9 +406,9 @@ namespace OMS.Data.Migrations
                             LargestLosingStreak = 0,
                             LargestWinner = 0.0,
                             LargestWinningStreak = 0,
-                            LastUpdate = new DateTime(2024, 3, 1, 6, 17, 52, 110, DateTimeKind.Utc).AddTicks(1030),
+                            LastUpdate = new DateTime(2024, 3, 1, 19, 0, 40, 908, DateTimeKind.Utc).AddTicks(2090),
                             Longs = 0,
-                            Losers = 0,
+                            Losers = 7,
                             NetProfitLong = 0.0,
                             NetProfitShort = 0.0,
                             PNL_Last13 = 0.0,
@@ -429,10 +425,10 @@ namespace OMS.Data.Migrations
                             StdDevWinTrades = 0.0,
                             TotalNetProfit = 0.0,
                             TradeXML = "",
-                            Trades = 0,
+                            Trades = 10,
                             UserID = 999999,
-                            WinLossRatio = 0.0,
-                            Winners = 0
+                            WinLossRatio = 0.29999999999999999,
+                            Winners = 3
                         },
                         new
                         {
@@ -449,7 +445,7 @@ namespace OMS.Data.Migrations
                             LargestLosingStreak = 0,
                             LargestWinner = 0.0,
                             LargestWinningStreak = 0,
-                            LastUpdate = new DateTime(2024, 3, 1, 6, 17, 52, 110, DateTimeKind.Utc).AddTicks(1040),
+                            LastUpdate = new DateTime(2024, 3, 1, 19, 0, 40, 908, DateTimeKind.Utc).AddTicks(2110),
                             Longs = 0,
                             Losers = 0,
                             NetProfitLong = 0.0,
@@ -468,9 +464,9 @@ namespace OMS.Data.Migrations
                             StdDevWinTrades = 0.0,
                             TotalNetProfit = 0.0,
                             TradeXML = "",
-                            Trades = 0,
+                            Trades = 10,
                             UserID = 999998,
-                            WinLossRatio = 0.0,
+                            WinLossRatio = 0.69999999999999996,
                             Winners = 0
                         });
                 });
@@ -501,6 +497,9 @@ namespace OMS.Data.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
 
+                    b.Property<int>("GroupID")
+                        .HasColumnType("integer");
+
                     b.Property<int>("GroupRank")
                         .HasColumnType("integer");
 
@@ -512,9 +511,6 @@ namespace OMS.Data.Migrations
 
                     b.Property<double>("Leverage")
                         .HasColumnType("double precision");
-
-                    b.Property<int>("TraderGroup")
-                        .HasColumnType("integer");
 
                     b.Property<int>("TraderRole")
                         .HasColumnType("integer");
@@ -530,34 +526,34 @@ namespace OMS.Data.Migrations
                         new
                         {
                             UserID = 999999,
-                            DateRegistered = new DateTime(2024, 2, 29, 22, 17, 52, 110, DateTimeKind.Utc).AddTicks(930),
+                            DateRegistered = new DateTime(2024, 3, 1, 11, 0, 40, 908, DateTimeKind.Utc).AddTicks(1990),
                             DisplayName = "User1",
                             Email = "admin",
                             Enabled = 1,
                             EnabledLive = 0,
                             FirstName = "User",
+                            GroupID = 0,
                             GroupRank = 0,
                             IsOpposite = 0,
                             LastName = "One",
                             Leverage = 0.0,
-                            TraderGroup = 0,
                             TraderRole = 0,
                             UserPwd = "abc"
                         },
                         new
                         {
                             UserID = 999998,
-                            DateRegistered = new DateTime(2024, 2, 29, 22, 17, 52, 110, DateTimeKind.Utc).AddTicks(1010),
+                            DateRegistered = new DateTime(2024, 3, 1, 11, 0, 40, 908, DateTimeKind.Utc).AddTicks(2070),
                             DisplayName = "User2",
                             Email = "admin",
                             Enabled = 1,
                             EnabledLive = 0,
                             FirstName = "User",
+                            GroupID = 0,
                             GroupRank = 0,
                             IsOpposite = 0,
                             LastName = "One",
                             Leverage = 0.0,
-                            TraderGroup = 0,
                             TraderRole = 0,
                             UserPwd = "abc"
                         });

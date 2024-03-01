@@ -64,7 +64,7 @@ public class AlgoLoaderService2 : BackgroundService
 
                     IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.algo_grain());    
 
-                    NewOrder n_o = OrderMapping.MapOrder(newOrderInfo);
+                    NewOrder n_o = OrderMapping.MapOrderLiveToNew(newOrderInfo);
                     n_o.GroupID = _algoData.group;
                     n_o.UserID = _algoData.algo_traderId;
 

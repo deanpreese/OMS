@@ -55,7 +55,8 @@ public class AlgoLoaderService1 : BackgroundService
             {
                 try
                 {
-                    NewOrder n_order = algo.GenerateAlgoOrder(newOrderInfo);
+                    NewOrder n_order = await algo.GenerateAlgoOrder(newOrderInfo);
+
                     IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.algo_grain());     
                     await orderGrain.ProcessOrder(n_order);
                     

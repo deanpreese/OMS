@@ -24,7 +24,7 @@ namespace OMS.Data.Migrations
                     GroupID = table.Column<int>(type: "integer", nullable: false),
                     LoginTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     SessionID = table.Column<int>(type: "integer", nullable: false),
-                    SessionGuid = table.Column<string>(type: "text", nullable: false)
+                    SessionGuid = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -79,14 +79,14 @@ namespace OMS.Data.Migrations
                     PlatformOrderID = table.Column<int>(type: "integer", nullable: false),
                     ExecutedOrderID = table.Column<int>(type: "integer", nullable: false),
                     UserID = table.Column<int>(type: "integer", nullable: false),
-                    UserGroup = table.Column<int>(type: "integer", nullable: false),
+                    GroupID = table.Column<int>(type: "integer", nullable: false),
                     Leverage = table.Column<double>(type: "double precision", nullable: false),
                     Opposite = table.Column<int>(type: "integer", nullable: false),
                     AuthToken = table.Column<int>(type: "integer", nullable: false),
                     OrderManagerID = table.Column<int>(type: "integer", nullable: false),
                     RelatedOrderID = table.Column<int>(type: "integer", nullable: false),
                     OrderTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Instrument = table.Column<string>(type: "text", nullable: false),
+                    Instrument = table.Column<string>(type: "text", nullable: true),
                     OrderPX = table.Column<double>(type: "double precision", nullable: false),
                     OrderType = table.Column<int>(type: "integer", nullable: false),
                     OrderAction = table.Column<int>(type: "integer", nullable: false),
@@ -116,7 +116,7 @@ namespace OMS.Data.Migrations
                     UserID = table.Column<int>(type: "integer", nullable: false),
                     GroupID = table.Column<int>(type: "integer", nullable: false),
                     OrderTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Instrument = table.Column<string>(type: "text", nullable: false),
+                    Instrument = table.Column<string>(type: "text", nullable: true),
                     OrderPX = table.Column<double>(type: "double precision", nullable: false),
                     OrderType = table.Column<int>(type: "integer", nullable: false),
                     OrderAction = table.Column<int>(type: "integer", nullable: false),
@@ -149,7 +149,7 @@ namespace OMS.Data.Migrations
                     LargestWinningStreak = table.Column<int>(type: "integer", nullable: false),
                     LargestLosingStreak = table.Column<int>(type: "integer", nullable: false),
                     TotalNetProfit = table.Column<double>(type: "double precision", nullable: false),
-                    TradeXML = table.Column<string>(type: "text", nullable: false),
+                    TradeXML = table.Column<string>(type: "text", nullable: true),
                     WinLossRatio = table.Column<double>(type: "double precision", nullable: false),
                     AveWin = table.Column<double>(type: "double precision", nullable: false),
                     AveLoss = table.Column<double>(type: "double precision", nullable: false),
@@ -191,7 +191,7 @@ namespace OMS.Data.Migrations
                     IsOpposite = table.Column<int>(type: "integer", nullable: false),
                     EnabledLive = table.Column<int>(type: "integer", nullable: false),
                     GroupRank = table.Column<int>(type: "integer", nullable: false),
-                    TraderGroup = table.Column<int>(type: "integer", nullable: false),
+                    GroupID = table.Column<int>(type: "integer", nullable: false),
                     TraderRole = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -204,17 +204,17 @@ namespace OMS.Data.Migrations
                 columns: new[] { "ScoreCardID", "AveLoss", "AveLossDuration", "AveTradeDuration", "AveWin", "AveWinDuration", "GrossLoss", "GrossProfit", "GroupID", "LargestLoser", "LargestLosingStreak", "LargestWinner", "LargestWinningStreak", "LastUpdate", "Longs", "Losers", "NetProfitLong", "NetProfitShort", "PNL_Last13", "PNL_Last21", "PNL_Last3", "PNL_Last34", "PNL_Last5", "PNL_Last8", "SharpRatio", "Shorts", "SortinoRatio", "StdDevAllTrades", "StdDevLossTrades", "StdDevWinTrades", "TotalNetProfit", "TradeXML", "Trades", "UserID", "WinLossRatio", "Winners" },
                 values: new object[,]
                 {
-                    { 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 1, 6, 17, 52, 110, DateTimeKind.Utc).AddTicks(1030), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 0, 999999, 0.0, 0 },
-                    { 2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 1, 6, 17, 52, 110, DateTimeKind.Utc).AddTicks(1040), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 0, 999998, 0.0, 0 }
+                    { 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 1, 19, 0, 40, 908, DateTimeKind.Utc).AddTicks(2090), 0, 7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 10, 999999, 0.29999999999999999, 3 },
+                    { 2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 1, 19, 0, 40, 908, DateTimeKind.Utc).AddTicks(2110), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 10, 999998, 0.69999999999999996, 0 }
                 });
 
             migrationBuilder.InsertData(
                 table: "UserProfiles",
-                columns: new[] { "UserID", "DateRegistered", "DisplayName", "Email", "Enabled", "EnabledLive", "FirstName", "GroupRank", "IsOpposite", "LastName", "Leverage", "TraderGroup", "TraderRole", "UserPwd" },
+                columns: new[] { "UserID", "DateRegistered", "DisplayName", "Email", "Enabled", "EnabledLive", "FirstName", "GroupID", "GroupRank", "IsOpposite", "LastName", "Leverage", "TraderRole", "UserPwd" },
                 values: new object[,]
                 {
-                    { 999998, new DateTime(2024, 2, 29, 22, 17, 52, 110, DateTimeKind.Utc).AddTicks(1010), "User2", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" },
-                    { 999999, new DateTime(2024, 2, 29, 22, 17, 52, 110, DateTimeKind.Utc).AddTicks(930), "User1", "admin", 1, 0, "User", 0, 0, "One", 0.0, 0, 0, "abc" }
+                    { 999998, new DateTime(2024, 3, 1, 11, 0, 40, 908, DateTimeKind.Utc).AddTicks(2070), "User2", "admin", 1, 0, "User", 0, 0, 0, "One", 0.0, 0, "abc" },
+                    { 999999, new DateTime(2024, 3, 1, 11, 0, 40, 908, DateTimeKind.Utc).AddTicks(1990), "User1", "admin", 1, 0, "User", 0, 0, 0, "One", 0.0, 0, "abc" }
                 });
         }
 

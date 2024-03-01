@@ -54,9 +54,10 @@ public class TraderGrain : Grain, ITraderGrain
     }
 
 
-    public Task<int> GetLiveOrderCount()
+    public async Task<int> GetLiveOrderCount()
     {
-        return Task.FromResult(Orders.Count);
+        await GetLiveOrders(_key_string);
+        return Orders.Count;
     }
 
     public Task<int> User_ID()

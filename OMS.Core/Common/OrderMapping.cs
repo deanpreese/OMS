@@ -37,7 +37,7 @@ public class OrderMapping
     }
 
 
-    public static LiveOrder MapOrder(NewOrder newOrder)
+    public static LiveOrder MapOrderNewToLive(NewOrder newOrder)
     {
         LiveOrder liveOrder = new LiveOrder();
         liveOrder.OrderPX = newOrder.OrderPX;  
@@ -52,12 +52,13 @@ public class OrderMapping
         liveOrder.GroupID = newOrder.GroupID;
         liveOrder.Leverage = 1;
         liveOrder.Opposite = 0;
+        liveOrder.RelatedOrderID = newOrder.RelatedOrderID;
         return liveOrder;
     }
 
 
 
-    public static NewOrder MapOrder(LiveOrder liveOrder)
+    public static NewOrder MapOrderLiveToNew(LiveOrder liveOrder)
     {
         NewOrder newOrder = new NewOrder {
             OrderPX = liveOrder.OrderPX , 
