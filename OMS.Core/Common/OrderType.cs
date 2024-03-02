@@ -7,4 +7,5 @@ public enum OrderType : int
     STOP = 0,
     OPEN = 100,
     CLOSE = 99 ,
+    NONE = -1
 }

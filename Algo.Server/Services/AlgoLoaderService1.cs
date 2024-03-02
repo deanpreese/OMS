@@ -10,8 +10,8 @@ using Algo.Trader.Models;
 using System.Text;
 using OMS.Services.Trading;
 using OMS.Core.Common;
-using Algo.Trader.Trader;
 using Algo.Trader.Utility;
+using Algo.Trader;
 
 namespace Algo.Server.Services;
 
@@ -49,7 +49,8 @@ public class AlgoLoaderService1 : BackgroundService
 
        await Task.Run(async () =>
         {
-            SimpleOpenClose algo = new SimpleOpenClose(_client, _algoData);
+            //SimpleOpenClose algo = new SimpleOpenClose(_client, _algoData);
+            BasicOpenClose algo = new BasicOpenClose(_client, _algoData);
 
             await foreach (var newOrderInfo in _reader.ReadAllAsync(stoppingToken))
             {
@@ -57,8 +58,12 @@ public class AlgoLoaderService1 : BackgroundService
                 {
                     NewOrder n_order = await algo.GenerateAlgoOrder(newOrderInfo);
 
-                    IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.algo_grain());     
-                    await orderGrain.ProcessOrder(n_order);
+                    if(n_order.OrderAction != OrderAction.NoAction)
+                    {
+                        IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.algo_grain());     
+                        await orderGrain.ProcessOrder(n_order);
+                    }
+
                     
                 }
                 catch (Exception ex)

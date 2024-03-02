@@ -25,6 +25,26 @@ public class NewAlgoFilter : AbstractAlgoFilter, IAlgoFilter
 
             if (_scoreCard.WinLossRatio > .52 )
             {
+                includeExclude = 0;
+            }
+        }
+
+        return includeExclude;
+    }
+
+    public int IsInAlgoFilter101()
+    {
+        int includeExclude = 0;
+
+        if (_scoreCard != null)
+        {
+            if (_scoreCard.WinLossRatio < .52 )
+            {
+                includeExclude = -1;     
+            }
+
+            if (_scoreCard.WinLossRatio > .52 )
+            {
                 includeExclude = 1;
             }
         }
