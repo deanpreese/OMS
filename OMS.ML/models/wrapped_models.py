@@ -128,8 +128,6 @@ class TunableCatBoostClassifier(CatBoostClassifier):
             
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
         
-            self.run_id = mlflow.active_run().info.run_id  
-        
             modelx =  CatBoostClassifier(**self.param_set())
             model.fit(X_train, y_train)
             modelx.fit(X_train, y_train)
@@ -222,8 +220,6 @@ class TunableLGBMClassifier(LGBMClassifier):
            
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
         
-            self.run_id = mlflow.active_run().info.run_id  
-        
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             pred_proba = model.predict_proba(X_test)
@@ -276,8 +272,6 @@ class TunableXGBClassifier(XGBClassifier):
     def track_model(self, experiment_id, nested, model, X_train, y_train, X_test, y_test):
            
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
-        
-            self.run_id = mlflow.active_run().info.run_id  
         
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
@@ -335,8 +329,6 @@ class TunableCatBoostRegressor(CatBoostRegressor):
     def track_model(self, experiment_id, nested, model, X_train, y_train, X_test, y_test):
         
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
-                        
-            self.run_id = mlflow.active_run().info.run_id                        
                         
             modelx =  CatBoostRegressor(**self.param_set())
             model.fit(X_train, y_train)
@@ -412,8 +404,6 @@ class TunableLGBMRegressor(LGBMRegressor):
             
         
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
-
-            self.run_id = mlflow.active_run().info.run_id
                                 
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
@@ -474,8 +464,6 @@ class TunableXGBRegressor(XGBRegressor):
     def track_model(self, experiment_id, nested, model, X_train, y_train, X_test, y_test):
             
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
-        
-            self.run_id = mlflow.active_run().info.run_id
         
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
