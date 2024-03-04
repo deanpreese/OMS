@@ -16,7 +16,7 @@ using OMS.Data.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 
-namespace OMS.Web.Startup;
+namespace OMS.API.Startup;
 
 public class StartupWeb
 {

@@ -10,7 +10,7 @@ using OMS.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace OMS.Web;
+namespace OMS.API;
 
 [ApiController]
 [Route("api/data")]

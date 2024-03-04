@@ -17,8 +17,7 @@ using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
-
-namespace OMS.Web.Startup;
+namespace OMS.API.Startup;
 
 public class OrleansStartup
 {
