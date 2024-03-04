@@ -20,7 +20,7 @@ public class FollowService : BackgroundService
     private string algo_to_load = "NG2.json";
     private readonly StrategyOrderQueue _algoOrderQueue;
     private readonly ILogger<FollowService> _logger;
-    private AlgoData _algoData; 
+    private StrategyAccount _algoData; 
     ChannelReader<LiveOrder> _reader;
     private readonly IClusterClient _client;
 
@@ -32,7 +32,7 @@ public class FollowService : BackgroundService
         _logger = logger;
         _client = client;
 
-        _algoData = new AlgoData();
+        _algoData = new StrategyAccount();
         _reader = _algoOrderQueue.Subscribe();
 
     }
@@ -59,7 +59,7 @@ public class FollowService : BackgroundService
 
                     if(n_order.OrderAction != OrderAction.NoAction)
                     {
-                        IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.algo_grain());     
+                        IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.strategy_grain());     
                         await orderGrain.ProcessOrder(n_order);
                     }
 

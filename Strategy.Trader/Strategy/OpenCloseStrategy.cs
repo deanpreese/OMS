@@ -11,7 +11,7 @@ public class OpenCloseStrategy : AbstractStrategy
     // Group 89
 
 
-    public OpenCloseStrategy(IGrainFactory grainFactory, AlgoData algoData) : base(grainFactory, algoData)
+    public OpenCloseStrategy(IGrainFactory grainFactory, StrategyAccount algoData) : base(grainFactory, algoData)
     {
        
     }

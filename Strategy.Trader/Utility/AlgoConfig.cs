@@ -9,44 +9,44 @@ namespace Strategy.Trader.Utility;
 
 public class AlgoConfig
 {
-    AlgoData _algoData;
+    StrategyAccount _algoData;
     string _filePath;
     IClusterClient _clusterClient;
 
     public AlgoConfig(string filePath, IClusterClient clusterClient)
     {
-        _algoData = new AlgoData();
+        _algoData = new StrategyAccount();
         _filePath = filePath;
         _clusterClient = clusterClient;
     }
 
-    public async Task<AlgoData> GetAlgoData()
+    public async Task<StrategyAccount> GetAlgoData()
     {
         await LoadConfig(_filePath);
         return await VerifyAlgoTraders();
     }
 
-    private async Task<AlgoData> LoadConfig(string filePath)
+    private async Task<StrategyAccount> LoadConfig(string filePath)
     {
         string jsonString = await File.ReadAllTextAsync(filePath);
-        _algoData = await System.Text.Json.JsonSerializer.DeserializeAsync<AlgoData>(new MemoryStream(Encoding.UTF8.GetBytes(jsonString))) ??
+        _algoData = await System.Text.Json.JsonSerializer.DeserializeAsync<StrategyAccount>(new MemoryStream(Encoding.UTF8.GetBytes(jsonString))) ??
             throw new ArgumentNullException($"File {filePath} is empty.");
 
-        Console.WriteLine($"{_algoData.algoname} Started" + jsonString);
+        Console.WriteLine($"{_algoData.startegy_name} Started" + jsonString);
         return _algoData;
     }
 
-    private async Task<AlgoData> VerifyAlgoTraders()
+    private async Task<StrategyAccount> VerifyAlgoTraders()
     {
 
         NewTrader n_trader = new NewTrader
         {
             UserID = 0,
-            DisplayName = _algoData.algoname,
+            DisplayName = _algoData.startegy_name,
             GroupID = _algoData.group,
             UserPwd = "abc",
             FirstName = "Algo",
-            LastName = _algoData.algoname,
+            LastName = _algoData.startegy_name,
             Email = "abc@abc"
         };
 
@@ -59,7 +59,7 @@ public class AlgoConfig
 
 
 
-        _algoData.algo_traderId = t_v;
+        _algoData.strategy_traderId = t_v;
 
         Console.WriteLine("Trader " + t_v);
 

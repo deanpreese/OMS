@@ -5,7 +5,7 @@ using OMS.Core.Interfaces;
 
 namespace OMS.Infrastructure.Grains;
 
-public class AlgoGrain : Grain, IAlgoGrain
+public class StrategyGrain : Grain, IStrategyGrain
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly string _key_string;
@@ -13,7 +13,7 @@ public class AlgoGrain : Grain, IAlgoGrain
     public int Algo_Group_num { get; set; }
     public List<LiveOrder> OpenOrders { get; set; }     
     
-    public AlgoGrain( IUnitOfWork unitOfWork)
+    public StrategyGrain( IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
         _key_string = this.GetPrimaryKeyString();

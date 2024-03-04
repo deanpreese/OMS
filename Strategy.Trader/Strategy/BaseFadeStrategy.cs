@@ -11,7 +11,7 @@ public class BaseFadeStrategy : AbstractStrategy
     //  NG3
     // Group 88
 
-    public BaseFadeStrategy(IGrainFactory grainFactory, AlgoData algoData) : base(grainFactory, algoData)
+    public BaseFadeStrategy(IGrainFactory grainFactory, StrategyAccount algoData) : base(grainFactory, algoData)
     {
     }
 

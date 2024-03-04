@@ -5,7 +5,7 @@ namespace OMS.Core.Interfaces;
 
 
 [Alias("IAlgoGrain")]
-public interface IAlgoGrain : IGrainWithStringKey
+public interface IStrategyGrain : IGrainWithStringKey
 {
     Task<int> Algo_ID();
     Task<int> Algo_Group_Number();

@@ -13,15 +13,15 @@ namespace Strategy.Trader.Abstractions;
 public abstract class AbstractStrategy : IStrategy 
 {
      public IGrainFactory _grainFactory;
-     public AlgoData _algoData;
-     private string _algo_key;
+     public StrategyAccount _strategyData;
+     private string _strategy_key;
       public List<IStrategyFilter> _filters = new List<IStrategyFilter>();
 
-    public AbstractStrategy(IGrainFactory grainFactory, AlgoData algoData) 
+    public AbstractStrategy(IGrainFactory grainFactory, StrategyAccount strategyData) 
     {
         _grainFactory = grainFactory;
-        _algoData = algoData;
-        _algo_key = _algoData.algo_traderId + "_" + _algoData.group;
+        _strategyData = strategyData;
+        _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
                 
     }
 
@@ -39,14 +39,14 @@ public abstract class AbstractStrategy : IStrategy
         Console.WriteLine("--- > Order From : " + _trader_key + "  " + _orig_live_order.OrderAction ) ;                       
 
         ITraderGrain _trader_grain = _grainFactory.GetGrain<ITraderGrain>(_trader_key);
-        IAlgoGrain  _algo_grain = _grainFactory.GetGrain<IAlgoGrain>(_algo_key);
+        IStrategyGrain  _strategy_grain = _grainFactory.GetGrain<IStrategyGrain>(_strategy_key);
 
         _filters = AddOrderFilters(await _trader_grain.GetProfileAsync(_trader_key), await _trader_grain.GetScoreCardAsync(_trader_key));
-        LiveOrder algo_order = await DetermineAlgoAction(_trader_key, _algo_key,  _trader_grain, _algo_grain, _orig_live_order);
+        LiveOrder algo_order = await DetermineAlgoAction(_trader_key, _strategy_key,  _trader_grain, _strategy_grain, _orig_live_order);
 
         _mapped_new_order = OrderMapping.MapOrderLiveToNew(algo_order);
-        _mapped_new_order.GroupID = _algoData.group;
-        _mapped_new_order.UserID = _algoData.algo_traderId;
+        _mapped_new_order.GroupID = _strategyData.group;
+        _mapped_new_order.UserID = _strategyData.strategy_traderId;
         _mapped_new_order.RelatedOrderID = _orig_live_order.PlatformOrderID;        
 
         Console.WriteLine("   ");
@@ -55,7 +55,7 @@ public abstract class AbstractStrategy : IStrategy
 
     }
 
-    public async Task<LiveOrder> DetermineAlgoAction(string trader_key, string algo_key, ITraderGrain _traderGrain, IAlgoGrain _algoGrain, LiveOrder order)
+    public async Task<LiveOrder> DetermineAlgoAction(string trader_key, string algo_key, ITraderGrain _traderGrain, IStrategyGrain _algoGrain, LiveOrder order)
     {
         int filterAction = CheckFilters();
 
@@ -112,7 +112,7 @@ public abstract class AbstractStrategy : IStrategy
                     order.OrderAction = OrderAction.NoAction;
 
                     ClosedTrade closed = await _traderGrain.GetLastClosedTrade(trader_key);
-                    List<LiveOrder> liveOrders = await _algoGrain.GetLiveOrders(_algo_key);
+                    List<LiveOrder> liveOrders = await _algoGrain.GetLiveOrders(_strategy_key);
 
                     Console.WriteLine("Closed Trade ID : " + closed.StorerID); 
                     Console.WriteLine("Live Orders Count: " + liveOrders.Count);
@@ -151,7 +151,7 @@ public abstract class AbstractStrategy : IStrategy
 
     private void PrintOrderInfo(LiveOrder order, OrderType orderType)
     {
-        Console.WriteLine("New Algo Order: " + _algo_key + "  " + order.OrderAction + "  " + orderType);
+        Console.WriteLine("New Algo Order: " + _strategy_key + "  " + order.OrderAction + "  " + orderType);
     }
 
     

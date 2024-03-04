@@ -14,7 +14,7 @@ public class BaseFollowStrategy : AbstractStrategy
     // Group 90
 
 
-    public BaseFollowStrategy(IGrainFactory grainFactory, AlgoData algoData) : base(grainFactory, algoData)
+    public BaseFollowStrategy(IGrainFactory grainFactory, StrategyAccount algoData) : base(grainFactory, algoData)
     {
     }
 
