@@ -15,7 +15,7 @@ using OMS.Core.Common;
 using OMS.Core;
 using OMS.Core.WebAPIClient;
 using OMS.Core.Models;
-using OMS.Grains.Interfaces;
+
 using System.Diagnostics;
 
 namespace Testing

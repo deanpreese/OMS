@@ -9,8 +9,7 @@ using OMS.Core.Common;
 using OMS.Core.Models;
 using OMS.Core.WebAPIClient;
 using Orleans.Configuration;
-
-using Spectre.Console;
+using Orleans.Hosting;
 
 namespace Testing
 {
@@ -38,13 +37,13 @@ namespace Testing
 
                 var client = host.Services.GetRequiredService<IClusterClient>();
 
-                AnsiConsole.WriteLine(" ");
-                AnsiConsole.MarkupLine("[green] TestRunner [/]");
-                AnsiConsole.WriteLine(" ");
-                AnsiConsole.WriteLine("0 - AutoGenData -- Traders, Groups and Trades");
-                AnsiConsole.WriteLine("1 - Run Standard Order Tests");
-                AnsiConsole.WriteLine("2 - Read from CSV");
-                AnsiConsole.WriteLine("3 - Pull Traders from DB");
+                Console.WriteLine(" ");
+                Console.WriteLine("TestRunner");
+                Console.WriteLine(" ");
+                Console.WriteLine("0 - AutoGenData -- Traders, Groups and Trades");
+                Console.WriteLine("1 - Run Standard Order Tests");
+                Console.WriteLine("2 - Read from CSV");
+                Console.WriteLine("3 - Pull Traders from DB");
 
                 int opt = 0;
                 bool useGrain = false;
@@ -53,11 +52,11 @@ namespace Testing
                 {
                     string input = Console.ReadLine();
                     opt = input != null ? int.Parse(input) : 0;
-                    AnsiConsole.WriteLine(" ");
-                    AnsiConsole.WriteLine("1   Use Grains");
-                    AnsiConsole.WriteLine("2   WebAPI");
+                    Console.WriteLine(" ");
+                    Console.WriteLine("1   Use Grains");
+                    Console.WriteLine("2   WebAPI");
                     string grains_input = Console.ReadLine();
-                    AnsiConsole.WriteLine(" ");
+                    Console.WriteLine(" ");
 
                     int g_yes = grains_input != null ? int.Parse(grains_input) : 0; 
 
@@ -69,7 +68,7 @@ namespace Testing
                 }
                 catch (Exception)
                 {
-                    AnsiConsole.WriteLine("Invalid Option");
+                    Console.WriteLine("Invalid Option");
                     return;
                 }
 
@@ -78,7 +77,7 @@ namespace Testing
                 switch (opt)
                 {
                     case 0:
-                        AnsiConsole.WriteLine("Provide 3 numbers CSV- (Traders, Trades, Groups)");
+                        Console.WriteLine("Provide 3 numbers CSV- (Traders, Trades, Groups)");
                         string input = Console.ReadLine();
 
                         if (input != null)
@@ -102,7 +101,7 @@ namespace Testing
 
 
                     case 2:
-                        AnsiConsole.WriteLine("Provide CSV file");
+                        Console.WriteLine("Provide CSV file");
                         string filename = Console.ReadLine();
 
                         if (filename != null)
@@ -115,7 +114,7 @@ namespace Testing
                         break;
 
                     case 3:
-                        AnsiConsole.WriteLine("Provide 2 numbers CSV - Traders , Trades, Group_Num ");
+                        Console.WriteLine("Provide 2 numbers CSV - Traders , Trades, Group_Num ");
                         string input_db = Console.ReadLine();
 
                         if (input_db != null)
@@ -136,7 +135,7 @@ namespace Testing
                 }
 
 
-                AnsiConsole.MarkupLine("Process Complete - Press any key to exit");
+                Console.WriteLine("Process Complete - Press any key to exit");
                 Console.ReadLine();
 
             }

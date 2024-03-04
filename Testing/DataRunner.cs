@@ -1,19 +1,20 @@
 ﻿using System;
 using OMS.Core.Common;
-using OMS.Core.Models;  
+using OMS.Core.Models;
 using OMS.Core.WebAPIClient;
 using System.Diagnostics;
 
 using System;
 using Microsoft.Extensions.Hosting;
-using OMS.Grains.Interfaces;
+
 using System.Drawing.Printing;
+using OMS.Core.Interfaces;
 
 
 namespace Testing;
 
 
-    public class DataRunner
+public class DataRunner
     {
         IClusterClient _client;
         bool _usingGrains = false;
