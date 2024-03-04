@@ -21,7 +21,7 @@ model_loader = ModelLoader()
 
 models = []
 experiment_id = ["6"]
-models = model_loader.load_random_models(experiment_id, 25)
+models = model_loader.load_random_models(experiment_id, 50)
 
 total = 0
 order_total = 0
@@ -40,7 +40,7 @@ for i in range(len(y)):
         total += 1        
         order_manager.process_tick(y[i])
        
-        if total > 199:
+        if total > 249:
             break    
 
 

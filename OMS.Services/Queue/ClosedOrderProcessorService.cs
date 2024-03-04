@@ -3,7 +3,6 @@ using OMS.Services.Trading;
 using OMS.Core.Interfaces;
 using OMS.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Spectre.Console;
 using OMS.Data;
 using OMS.Services.Common;
 using OMS.Core.Common;
@@ -108,7 +107,7 @@ public class ClosedOrderProcessorService : BackgroundService
 
                     await _analytics_service.UpdateScoreCard(userInfo);
 
-                    AnsiConsole.MarkupLine("Order Processed by Stats For user " + userInfo.UserID  );
+                    Console.WriteLine("Order Processed by Stats For user " + userInfo.UserID  );
 
                 }catch (Exception ex)
                 {

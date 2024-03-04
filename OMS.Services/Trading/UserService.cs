@@ -2,7 +2,6 @@
 using OMS.Data;
 using OMS.Services.Trading;
 using OMS.Services.Queue;
-using OMS.Core.Logging;
 using Microsoft.Extensions.Logging;
 using OMS.Core.Interfaces;
 

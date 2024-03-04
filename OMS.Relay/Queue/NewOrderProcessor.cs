@@ -4,7 +4,7 @@ using OMS.Core.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Spectre.Console;
+
 using System.Data;
 
 namespace OMS.Relay.Queue;
@@ -68,7 +68,9 @@ public class NewOrderProcessor : BackgroundService
             await _orderChannelService.AddToNewOrdersList(newOrder);
         }
 
-        AnsiConsole.MarkupLine(" ");    
+
+
+        
         await Task.CompletedTask; 
     }
 
@@ -76,35 +78,35 @@ public class NewOrderProcessor : BackgroundService
     {
         await Task.Run(async () =>
         {
-            AnsiConsole.MarkupLine(" ");
+            Console.WriteLine(" ");
             List<NewOrder> openOrders = await _orderChannelService.GetNewOrdersList();
-            AnsiConsole.MarkupLine("[White]" + DateTime.UtcNow  + " Open Orders " +  openOrders.Count   + "[/]");
+            Console.WriteLine( DateTime.UtcNow  + " Open Orders " +  openOrders.Count);
             
             foreach (NewOrder order in openOrders)
             {
                 if (order.OrderAction > 0 )
                 {
-                    AnsiConsole.MarkupLine("[lightgreen]" +   DateTime.UtcNow  + " New Order " + order.PlatformOrderID + "   " + order.UserName + " " + order.Instrument + " " + order.OrderAction + " " + order.OrderPX + "[/]");
+                    Console.WriteLine( DateTime.UtcNow  + " New Order " + order.PlatformOrderID + "   " + order.UserName + " " + order.Instrument + " " + order.OrderAction + " " + order.OrderPX );
                 }else{
-                    AnsiConsole.MarkupLine("[indianred_1]" + DateTime.UtcNow +  " New Order " + order.PlatformOrderID + "   " + order.UserName + " " + order.Instrument + " " + order.OrderAction + " " + order.OrderPX + "[/]");
+                    Console.WriteLine(DateTime.UtcNow +  " New Order " + order.PlatformOrderID + "   " + order.UserName + " " + order.Instrument + " " + order.OrderAction + " " + order.OrderPX );
                 }
                
             }
             
-            AnsiConsole.MarkupLine(" ");    
-            AnsiConsole.MarkupLine("[White]" + DateTime.UtcNow  + " Closed Orders " + "[/]");
+            Console.WriteLine(" ");    
+            Console.WriteLine( DateTime.UtcNow  + " Closed Orders ") ;
             List<ClosedTrade> closedOrders = await _orderChannelService.GetClosedOrdersList();
 
             
 
             if(closedOrders.Count > 5)
             {
-                AnsiConsole.MarkupLine("[grey82]" + DateTime.UtcNow  + " Closed Orders Count " +  closedOrders.Count  +"[/]");
+                Console.WriteLine(DateTime.UtcNow  + " Closed Orders Count " +  closedOrders.Count);
             }else
             {
                 foreach (ClosedTrade order in closedOrders)
                 {
-                    AnsiConsole.MarkupLine($"UserID: {order.UserID} " +
+                    Console.WriteLine($"UserID: {order.UserID} " +
                                           $"UserGroup: {order.GroupID} " +
                                           $"Instrument: {order.Instrument} " +
                                           $"Quantity: {order.Quantity} " +

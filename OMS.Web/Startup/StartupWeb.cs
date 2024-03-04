@@ -12,7 +12,7 @@ using OMS.Services.Trading;
 using OMS.Services.Data;
 using OMS.Services.Queue;
 using OMS.Data.Repositories;
-using OMS.Core.Logging;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 

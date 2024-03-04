@@ -1,0 +1,7 @@
+{
+    "algoclass": "BaseFollowAlgo_NG2",
+    "algoname" : "BaseFollowAlgo",
+    "group": 81,
+    "usedebugging": false,
+    "backtesting" : true
+}

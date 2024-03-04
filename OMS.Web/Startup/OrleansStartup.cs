@@ -9,7 +9,6 @@ using OMS.Services.Data ;
 using OMS.Services.Queue;
 using OMS.Data.Repositories;
 
-using OMS.Core.Logging; 
 using Orleans.Configuration;
 using Orleans.Hosting;
 using Microsoft.AspNetCore.Builder;

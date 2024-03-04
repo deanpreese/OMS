@@ -3,7 +3,6 @@ using OMS.Services.Trading;
 using OMS.Core.Interfaces;
 using OMS.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Spectre.Console;
 using OMS.Data;
 using OMS.Services.Common;
 using OMS.Core.Common;
@@ -93,7 +92,7 @@ public class NewOrderProcessorService : BackgroundService
                 }
                 else
                 {
-                    AnsiConsole.MarkupLine("Error Processing " + newOrder.UserID + "  " +  live.Result.PlatformOrderID);
+                    Console.WriteLine("Error Processing " + newOrder.UserID + "  " +  live.Result.PlatformOrderID);
                 }
                     
             }

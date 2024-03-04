@@ -7,9 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
-
 using OMS.Core.Models;
-using Spectre.Console;
 
 namespace OMS.Core.WebAPIClient;
 
@@ -27,12 +25,12 @@ public static class OMSClient
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsStringAsync();
-                    AnsiConsole.WriteLine($"Add Result: {result}");
+                    Console.WriteLine($"Add Result: {result}");
                     return int.Parse(result); 
                 }
                 else
                 {
-                    AnsiConsole.WriteLine($"Add Failed. Status Code: {response.StatusCode}");
+                    Console.WriteLine($"Add Failed. Status Code: {response.StatusCode}");
                     return 0;
                 }
             }
@@ -49,12 +47,12 @@ public static class OMSClient
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsStringAsync();
-                    AnsiConsole.WriteLine($"Auth Result: {result}");
+                    Console.WriteLine($"Auth Result: {result}");
                     return int.Parse(result); 
                 }
                 else
                 {
-                    AnsiConsole.WriteLine($"Auth Failed. Status Code: {response.StatusCode}");
+                    Console.WriteLine($"Auth Failed. Status Code: {response.StatusCode}");
                     return 0;
                 }
                 
@@ -73,12 +71,12 @@ public static class OMSClient
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsStringAsync();
-                    AnsiConsole.WriteLine($"Auth Result: {result}");
+                    Console.WriteLine($"Auth Result: {result}");
                     return int.Parse(result); 
                 }
                 else
                 {
-                    AnsiConsole.WriteLine($"Auth Failed. Status Code: {response.StatusCode}");
+                    Console.WriteLine($"Auth Failed. Status Code: {response.StatusCode}");
                     return 0;
                 }
                 
@@ -114,12 +112,12 @@ public static class OMSClient
 
             if (!response.IsCompletedSuccessfully)
             {
-                AnsiConsole.WriteLine($"ProcessOrder ML Result: {response.Result}");
+                Console.WriteLine($"ProcessOrder ML Result: {response.Result}");
                 return 0; // Parse the result string to an integer before returning
             }
             else
             {
-                AnsiConsole.WriteLine($"ProcessOrder ML Failed. Status Code: {response.Exception}");
+                Console.WriteLine($"ProcessOrder ML Failed. Status Code: {response.Exception}");
                 var result = response.Result.Content.ReadAsStringAsync().Result;
                 return Int32.Parse(result); // Add return statement
             }
@@ -141,14 +139,14 @@ public static class OMSClient
 
             if (!response.IsCompletedSuccessfully)
             {
-                AnsiConsole.WriteLine($"ProcessOrder ML Result: {response.Result}");
+                Console.WriteLine($"ProcessOrder ML Result: {response.Result}");
                 var result = await response.Result.Content.ReadAsStringAsync();
                 var deserializedResult = JsonConvert.DeserializeObject<List<UserProfile>>(result);
                 return_list = deserializedResult ?? new List<UserProfile>();
             }
             else
             {
-                AnsiConsole.WriteLine($"ProcessOrder ML Failed. Status Code: {response.Exception}");
+                Console.WriteLine($"ProcessOrder ML Failed. Status Code: {response.Exception}");
                 var result = await response.Result.Content.ReadAsStringAsync();
                 return_list = new List<UserProfile>();
             }
@@ -178,7 +176,7 @@ public static class OMSClient
             else
             {
                 
-                AnsiConsole.WriteLine("Failed to send data to ML. Status code: " + response.StatusCode);
+                Console.WriteLine("Failed to send data to ML. Status code: " + response.StatusCode);
             }
         }
 

@@ -2,7 +2,6 @@
 using OMS.Core.Models;
 using OMS.Relay.Services;
 
-
 namespace OMS.Relay.Queue;
 
 public class NewOrderQueue

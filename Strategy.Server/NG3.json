@@ -1,0 +1,7 @@
+{
+    "algoclass": "BaseFadeAlgo_NG3",
+    "algoname" : "BaseFadeAlgo",
+    "group": 80,
+    "usedebugging": false,
+    "backtesting" : true
+}

@@ -1,0 +1,7 @@
+{
+    "algoclass": "BaseOpenClose_NG1",
+    "algoname" : "BaseOpenClose",
+    "group": 99,
+    "usedebugging": false,
+    "backtesting" : true
+}

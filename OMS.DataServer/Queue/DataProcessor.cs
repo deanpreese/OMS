@@ -4,7 +4,7 @@ using OMS.Core.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Spectre.Console;
+
 using System.Data;
 using System.Text;
 using OMS.Core.WebAPIClient;

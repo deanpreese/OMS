@@ -8,7 +8,7 @@ using OMS.Services.Queue;
 using OMS.Core.Interfaces;
 using OMS.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Spectre.Console;
+
 
 namespace OMS.Web;
 
@@ -47,7 +47,7 @@ public class MLController : ControllerBase
         }
         catch (Exception ex)
         {
-            AnsiConsole.MarkupLine(ex.Message);
+            Console.WriteLine(ex.Message);
         }
         return Ok(om_id);
     }
