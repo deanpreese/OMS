@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OMS.Core\OMS.Core.csproj" />
-    <ProjectReference Include="..\OMS.Services\OMS.Services.csproj" />
     <ProjectReference Include="..\OMS.Grains\OMS.Grains.csproj" />
 
   </ItemGroup>

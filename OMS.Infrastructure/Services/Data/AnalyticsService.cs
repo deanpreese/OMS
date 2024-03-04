@@ -1,0 +1,59 @@
+﻿using System;
+using System.Threading.Tasks;
+using OMS.Core.Interfaces;
+using OMS.Core.Models;
+using System.Security.Cryptography;
+using Microsoft.Extensions.Logging;
+using OMS.Infrastructure.Data.Common;
+
+namespace OMS.Infrastructure.Services.Data;
+
+public class AnalyticsService : IAnalyticsService
+{
+    private readonly IUnitOfWork _unitOfWork;
+    private ILogger<AnalyticsService> _logger;
+    
+
+    public AnalyticsService(IUnitOfWork unitOfWork, ILogger<AnalyticsService> logger)
+    {
+        _unitOfWork = unitOfWork;
+        _logger = logger;
+    }
+
+    public async Task<int> UpdateScoreCard(UserInfo userInfo)
+    {
+        List<ClosedTrade> trades = await _unitOfWork.OrderRepository.Get_XXX_ClosedOrdersByTrader(userInfo.UserID, userInfo.GroupID,-1);
+
+        try {
+
+            ScoreCard scoreCard = TradeStatisticsGenerator.GenerateScoreCard(userInfo.UserID, userInfo.GroupID, trades);
+            if (scoreCard != null)
+            {
+                ScoreCard sc = await _unitOfWork.AnalyticsRepository.GetTraderScoreCard(userInfo.UserID, userInfo.GroupID);
+
+                if (sc == null)
+                {
+                    await _unitOfWork.AnalyticsRepository.AddTraderScoreCard(scoreCard);
+                     _unitOfWork.Commit();  
+                }
+                else
+                {
+                    await _unitOfWork.AnalyticsRepository.UpdateTraderScoreCard(scoreCard);
+                    _unitOfWork.Commit();  
+                    
+                }   
+            }
+
+
+        }catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+
+
+        return  Task.FromResult(0).Result;
+    }
+
+
+
+}

@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Orleans.Core;
 using OMS.Core.Interfaces;
-using OMS.Data.Repositories;
 
 
 namespace OMS.Grains.Interfaces;

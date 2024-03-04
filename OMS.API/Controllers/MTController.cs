@@ -1,13 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using OMS.Core.Common;
-using OMS.Core;
-using OMS.Data;
 using OMS.Core.Models;
-using OMS.Services.Trading;
-using OMS.Services.Queue;
-using OMS.Core.Interfaces;
-using OMS.Data.Repositories;
-using Microsoft.EntityFrameworkCore;
+using OMS.Infrastructure.Data;
+using OMS.Infrastructure.Services.Queue;
+using OMS.Infrastructure.Services.Trading;
 
 
 namespace OMS.API;

@@ -1,13 +1,4 @@
-﻿
-using System.Text.Json.Serialization;
-using OMS.Data;
-using Microsoft.EntityFrameworkCore;
-using OMS.Core.Common;
-using OMS.Core.Interfaces;
-using OMS.Services.Trading;
-using OMS.Services.Data ;
-using OMS.Services.Queue;
-using OMS.Data.Repositories;
+﻿using OMS.Core.Common;
 
 using Orleans.Configuration;
 using Orleans.Hosting;

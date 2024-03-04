@@ -3,11 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Services", "OMS.Services\OMS.Services.csproj", "{F8AC1913-874B-4EF5-BC94-0D883294140C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Core", "OMS.Core\OMS.Core.csproj", "{04C37EEC-B2C6-4A8B-A95B-A1F3CE930B31}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Data", "OMS.Data\OMS.Data.csproj", "{FE4A3FD4-AF23-44A8-9ACA-DBDE4D1C9D13}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Grains", "OMS.Grains\OMS.Grains.csproj", "{2FBD78CA-F27C-4A9C-9FA2-863044908344}"
 EndProject
@@ -19,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.ML", "OMS.ML\OMS.ML.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.DataServer", "OMS.DataServer\OMS.DataServer.csproj", "{6954EE88-324A-4907-A164-5504224166F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.MigrationsManager", "OMS.MigrationsManager\OMS.MigrationsManager.csproj", "{C0F999DB-C538-4C28-8BBC-483EB3FCD544}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.CQRS", "OMS.CQRS\OMS.CQRS.csproj", "{F4A1024D-2751-4C68-95D0-C0BF7E484C82}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy.Trader", "Strategy.Trader\Strategy.Trader.csproj", "{BDFC2DA1-EFEC-45F4-BC86-6EAEF0D9D590}"
@@ -29,24 +23,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy.Server", "Strategy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.API", "OMS.API\OMS.API.csproj", "{9B64655C-5DCD-4382-A403-DA819014D6CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Infrastructure", "OMS.Infrastructure\OMS.Infrastructure.csproj", "{1CFC3CE0-546E-49E7-A1CD-82E8C2C8971C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrations", "Migrations\Migrations.csproj", "{FFCA57DF-4B6B-443D-ABC6-3F6CFC025651}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F8AC1913-874B-4EF5-BC94-0D883294140C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8AC1913-874B-4EF5-BC94-0D883294140C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8AC1913-874B-4EF5-BC94-0D883294140C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8AC1913-874B-4EF5-BC94-0D883294140C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04C37EEC-B2C6-4A8B-A95B-A1F3CE930B31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04C37EEC-B2C6-4A8B-A95B-A1F3CE930B31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04C37EEC-B2C6-4A8B-A95B-A1F3CE930B31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04C37EEC-B2C6-4A8B-A95B-A1F3CE930B31}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE4A3FD4-AF23-44A8-9ACA-DBDE4D1C9D13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE4A3FD4-AF23-44A8-9ACA-DBDE4D1C9D13}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE4A3FD4-AF23-44A8-9ACA-DBDE4D1C9D13}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE4A3FD4-AF23-44A8-9ACA-DBDE4D1C9D13}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2FBD78CA-F27C-4A9C-9FA2-863044908344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2FBD78CA-F27C-4A9C-9FA2-863044908344}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FBD78CA-F27C-4A9C-9FA2-863044908344}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -67,10 +57,6 @@ Global
 		{6954EE88-324A-4907-A164-5504224166F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6954EE88-324A-4907-A164-5504224166F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6954EE88-324A-4907-A164-5504224166F7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C0F999DB-C538-4C28-8BBC-483EB3FCD544}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C0F999DB-C538-4C28-8BBC-483EB3FCD544}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C0F999DB-C538-4C28-8BBC-483EB3FCD544}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C0F999DB-C538-4C28-8BBC-483EB3FCD544}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4A1024D-2751-4C68-95D0-C0BF7E484C82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4A1024D-2751-4C68-95D0-C0BF7E484C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4A1024D-2751-4C68-95D0-C0BF7E484C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,6 +73,14 @@ Global
 		{9B64655C-5DCD-4382-A403-DA819014D6CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B64655C-5DCD-4382-A403-DA819014D6CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B64655C-5DCD-4382-A403-DA819014D6CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CFC3CE0-546E-49E7-A1CD-82E8C2C8971C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CFC3CE0-546E-49E7-A1CD-82E8C2C8971C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CFC3CE0-546E-49E7-A1CD-82E8C2C8971C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CFC3CE0-546E-49E7-A1CD-82E8C2C8971C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFCA57DF-4B6B-443D-ABC6-3F6CFC025651}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFCA57DF-4B6B-443D-ABC6-3F6CFC025651}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFCA57DF-4B6B-443D-ABC6-3F6CFC025651}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFCA57DF-4B6B-443D-ABC6-3F6CFC025651}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

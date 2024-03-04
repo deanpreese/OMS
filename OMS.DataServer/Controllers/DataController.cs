@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OMS.Data;
 using OMS.Core.Models;
+using OMS.Infrastructure.Data;
 
 namespace OMS.DataServer;
 

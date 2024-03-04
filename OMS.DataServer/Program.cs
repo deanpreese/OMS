@@ -1,14 +1,12 @@
-using OMS.Services.Data;
-using OMS.Data.Repositories;
-using OMS.Services.Trading;
-using OMS.Services.Queue;
-using OMS.Services;
 using OMS.Core.Interfaces;
-
-using OMS.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using OMS.DataServer;
+using OMS.Infrastructure.Data;
+using OMS.Infrastructure.Data.Repositories;
+using OMS.Infrastructure.Services.Data;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 

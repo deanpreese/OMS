@@ -1,21 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
-using System.Text.Json.Serialization;
-using OMS.Data;
-using Microsoft.EntityFrameworkCore;
-using OMS.Core.Common;
+﻿using Microsoft.EntityFrameworkCore;
 using OMS.Core.Interfaces;
-using OMS.Services.Trading;
-using OMS.Services.Data;
-using OMS.Services.Queue;
-using OMS.Data.Repositories;
+using OMS.Infrastructure.Data;
+using OMS.Infrastructure.Data.Repositories;
+using OMS.Infrastructure.Services.Common;
+using OMS.Infrastructure.Services.Data;
+using OMS.Infrastructure.Services.Queue;
+using OMS.Infrastructure.Services.Trading;
 
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using OMS.Services.Common;
 
 namespace OMS.API.Startup;
 

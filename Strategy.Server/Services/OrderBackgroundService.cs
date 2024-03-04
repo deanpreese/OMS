@@ -1,21 +1,9 @@
 ﻿using OMS.Core.Models;
-using OMS.Services.Trading;
-using OMS.Core.Interfaces;
-using OMS.Data.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Spectre.Console;
-using OMS.Data;
-using OMS.Services.Common;
 using OMS.Core.Common;
 using Orleans.Streams;
 
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using OMS.Services.Data;
-using OMS.Services.Queue;
-using OMS.Grains.Interfaces;
-
 
 namespace Strategy.Server.Services;
 
