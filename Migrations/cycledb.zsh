@@ -2,14 +2,14 @@
 DB_NAME="orders"
 DB_USER="dean"
 DB_PASSWORD="abc"
-MIGRATIONS_DIR="../OMS.DATA/Migrations" # e.g., ./Data/Migrations
-PROJECT_DIR="../OMS.Data" # e.g., ./MyApp
-PROJECT_FILE="../OMS.Data/OMS.Data.csproj" # e.g., ./MyApp
+MIGRATIONS_DIR="../OMS.Infrastructure/Data/Migrations" # e.g., ./Data/Migrations
+PROJECT_DIR="../OMS.Infrastructure" # e.g., ./MyApp
+PROJECT_FILE="../OMS.Infrastructure/OMS.Infrastructure.csproj" # e.g., ./MyApp
 DB_CONTEXT="OrderManagementDbContext" #
 #DB_CONNECTION="Host=10.0.0.50;Database=orders;Username=trading;Password=abc" 
 DB_CONNECTION="Host=localhost;Database=orders;Username=trading;Password=abc" 
-EF_ASSEMBLY="OMS.Data" 
-START_UP_PROJECT="OMS.MigrationsManager.csproj"
+EF_ASSEMBLY="OMS.Infrastructure" 
+START_UP_PROJECT="Migrations.csproj"
 
 
 # Function to drop the PostgreSQL database

@@ -122,10 +122,4 @@ public class ClosedTrade
     [Id(26)]
     public double NetChange { get; set; }
 
-
-    [Timestamp]
-    [Id(27)]
-
-    public byte[] Version { get; set; }
-
 }

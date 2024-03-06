@@ -68,7 +68,4 @@ public class LiveOrder
     [Id(17)]
     public double MFE { get; set; }
 
-    [Timestamp]
-    public byte[] Version { get; set; }
-
 }
