@@ -142,11 +142,6 @@ namespace OMS.Infrastructure.Migrations
                     b.Property<int>("UserID")
                         .HasColumnType("integer");
 
-                    b.Property<byte[]>("Version")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea");
-
                     b.HasKey("StorerID");
 
                     b.ToTable("ClosedTrades");
@@ -210,11 +205,6 @@ namespace OMS.Infrastructure.Migrations
 
                     b.Property<int>("UserID")
                         .HasColumnType("integer");
-
-                    b.Property<byte[]>("Version")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea");
 
                     b.HasKey("LiveOrderID");
 
@@ -412,7 +402,7 @@ namespace OMS.Infrastructure.Migrations
                             LargestLosingStreak = 0,
                             LargestWinner = 0.0,
                             LargestWinningStreak = 0,
-                            LastUpdate = new DateTime(2024, 3, 6, 20, 6, 55, 852, DateTimeKind.Utc).AddTicks(450),
+                            LastUpdate = new DateTime(2024, 3, 6, 20, 26, 58, 352, DateTimeKind.Utc).AddTicks(7130),
                             Longs = 0,
                             Losers = 7,
                             NetProfitLong = 0.0,
@@ -451,7 +441,7 @@ namespace OMS.Infrastructure.Migrations
                             LargestLosingStreak = 0,
                             LargestWinner = 0.0,
                             LargestWinningStreak = 0,
-                            LastUpdate = new DateTime(2024, 3, 6, 20, 6, 55, 852, DateTimeKind.Utc).AddTicks(460),
+                            LastUpdate = new DateTime(2024, 3, 6, 20, 26, 58, 352, DateTimeKind.Utc).AddTicks(7150),
                             Longs = 0,
                             Losers = 0,
                             NetProfitLong = 0.0,
@@ -532,7 +522,7 @@ namespace OMS.Infrastructure.Migrations
                         new
                         {
                             UserID = 999999,
-                            DateRegistered = new DateTime(2024, 3, 6, 12, 6, 55, 852, DateTimeKind.Utc).AddTicks(360),
+                            DateRegistered = new DateTime(2024, 3, 6, 12, 26, 58, 352, DateTimeKind.Utc).AddTicks(7050),
                             DisplayName = "User1",
                             Email = "admin",
                             Enabled = 1,
@@ -549,7 +539,7 @@ namespace OMS.Infrastructure.Migrations
                         new
                         {
                             UserID = 999998,
-                            DateRegistered = new DateTime(2024, 3, 6, 12, 6, 55, 852, DateTimeKind.Utc).AddTicks(430),
+                            DateRegistered = new DateTime(2024, 3, 6, 12, 26, 58, 352, DateTimeKind.Utc).AddTicks(7110),
                             DisplayName = "User2",
                             Email = "admin",
                             Enabled = 1,

@@ -64,8 +64,7 @@ namespace OMS.Infrastructure.Migrations
                     PNL = table.Column<double>(type: "double precision", nullable: false),
                     MAE = table.Column<double>(type: "double precision", nullable: false),
                     MFE = table.Column<double>(type: "double precision", nullable: false),
-                    NetChange = table.Column<double>(type: "double precision", nullable: false),
-                    Version = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: true)
+                    NetChange = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -94,8 +93,7 @@ namespace OMS.Infrastructure.Migrations
                     OrderAction = table.Column<int>(type: "integer", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     MAE = table.Column<double>(type: "double precision", nullable: false),
-                    MFE = table.Column<double>(type: "double precision", nullable: false),
-                    Version = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: true)
+                    MFE = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,8 +204,8 @@ namespace OMS.Infrastructure.Migrations
                 columns: new[] { "ScoreCardID", "AveLoss", "AveLossDuration", "AveTradeDuration", "AveWin", "AveWinDuration", "GrossLoss", "GrossProfit", "GroupID", "LargestLoser", "LargestLosingStreak", "LargestWinner", "LargestWinningStreak", "LastUpdate", "Longs", "Losers", "NetProfitLong", "NetProfitShort", "PNL_Last13", "PNL_Last21", "PNL_Last3", "PNL_Last34", "PNL_Last5", "PNL_Last8", "SharpRatio", "Shorts", "SortinoRatio", "StdDevAllTrades", "StdDevLossTrades", "StdDevWinTrades", "TotalNetProfit", "TradeXML", "Trades", "UserID", "WinLossRatio", "Winners" },
                 values: new object[,]
                 {
-                    { 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 6, 20, 6, 55, 852, DateTimeKind.Utc).AddTicks(450), 0, 7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 10, 999999, 0.29999999999999999, 3 },
-                    { 2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 6, 20, 6, 55, 852, DateTimeKind.Utc).AddTicks(460), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 10, 999998, 0.69999999999999996, 0 }
+                    { 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 6, 20, 26, 58, 352, DateTimeKind.Utc).AddTicks(7130), 0, 7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 10, 999999, 0.29999999999999999, 3 },
+                    { 2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 6, 20, 26, 58, 352, DateTimeKind.Utc).AddTicks(7150), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 10, 999998, 0.69999999999999996, 0 }
                 });
 
             migrationBuilder.InsertData(
@@ -215,8 +213,8 @@ namespace OMS.Infrastructure.Migrations
                 columns: new[] { "UserID", "DateRegistered", "DisplayName", "Email", "Enabled", "EnabledLive", "FirstName", "GroupID", "GroupRank", "IsOpposite", "LastName", "Leverage", "TraderRole", "UserPwd" },
                 values: new object[,]
                 {
-                    { 999998, new DateTime(2024, 3, 6, 12, 6, 55, 852, DateTimeKind.Utc).AddTicks(430), "User2", "admin", 1, 0, "User", 0, 0, 0, "One", 0.0, 0, "abc" },
-                    { 999999, new DateTime(2024, 3, 6, 12, 6, 55, 852, DateTimeKind.Utc).AddTicks(360), "User1", "admin", 1, 0, "User", 0, 0, 0, "One", 0.0, 0, "abc" }
+                    { 999998, new DateTime(2024, 3, 6, 12, 26, 58, 352, DateTimeKind.Utc).AddTicks(7110), "User2", "admin", 1, 0, "User", 0, 0, 0, "One", 0.0, 0, "abc" },
+                    { 999999, new DateTime(2024, 3, 6, 12, 26, 58, 352, DateTimeKind.Utc).AddTicks(7050), "User1", "admin", 1, 0, "User", 0, 0, 0, "One", 0.0, 0, "abc" }
                 });
         }
 
