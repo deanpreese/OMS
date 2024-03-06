@@ -5,14 +5,12 @@ namespace Strategy.Trader.Models;
 public class StrategyAccount
 {
     public string strategy_class {get;set;}
-    public string startegy_name {get;set;}
+    public string strategy_name {get;set;}
     public int group {get;set;}
-    public bool usedebugging {get;set;}
-    public bool backtesting {get;set;}
-
     public int strategy_traderId {get;set;}
+    public int orders_per_direction {get;set;}
 
-    public string strategy_grain() {
+    public string strategy_grain_key() {
         return strategy_traderId + "_" + group.ToString();
     }
 }

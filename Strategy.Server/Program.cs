@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Strategy.Server;
 
-AlgoServerStartUp  algoServerStartUp = new AlgoServerStartUp();
+StrategyServerStartUp  algoServerStartUp = new StrategyServerStartUp();
 
 using IHost host = Host.CreateDefaultBuilder(args)
     .UseOrleansClient(client =>

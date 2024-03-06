@@ -57,7 +57,7 @@ public class NewOrderProcessor : BackgroundService
                 NewOrder orderFromList = list.First();
                 LiveOrder orderToMatch = OrderMapping.MapOrderNewToLive(orderFromList);
                 LiveOrder orderToStore = OrderMapping.MapOrderNewToLive(newOrder);
-                ClosedTrade histOrder = OrderMapping.CloseOrder(orderToMatch, orderToStore);     
+                ClosedTrade histOrder = OrderMapping.MapClosedOrder(orderToMatch, orderToStore);     
 
                 await _orderChannelService.AddToClosedOrdersList(histOrder);
                 await _orderChannelService.RemoveFromNewOrdersList(orderFromList.PlatformOrderID);

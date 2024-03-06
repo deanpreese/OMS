@@ -11,13 +11,18 @@ using Strategy.Trader.Abstractions;
 
 namespace Strategy.Trader.Filters;
 
-public class TradesWindowFilter : AbstractStrategyFilter, IStrategyFilter
+public class TradesWindowFilter : IStrategyFilter
 {
-    public TradesWindowFilter(UserProfile userProfile, ScoreCard scoreCard) : base(userProfile, scoreCard) 
-    {
-    }
+    private UserProfile _userProfile;
+    private ScoreCard _scoreCard;
 
-    public int IsInAlgoFilter()
+
+    public void UpdateFilter(UserProfile userProfile, ScoreCard scoreCard)
+    {
+        _userProfile = userProfile;
+        _scoreCard = scoreCard;
+    }
+    public int IsInFilter()
     {
         int includeExclude = 0;
 

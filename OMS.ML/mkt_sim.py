@@ -20,8 +20,8 @@ order_manager = SimOrderManager()
 model_loader = ModelLoader()
 
 models = []
-experiment_id = ["6"]
-models = model_loader.load_random_models(experiment_id, 50)
+experiment_id = ["1"]
+models = model_loader.load_random_models(experiment_id, 25)
 
 total = 0
 order_total = 0

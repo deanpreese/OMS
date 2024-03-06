@@ -44,6 +44,8 @@ public class TradingService : ITradingService
 
     private LiveOrder MapOrder(NewOrder newOrder)
     {
+        newOrder.PlatformOrderID = _platformOrderIDGen.GetNextOrderID();
+
         int om_id = 0;
         using (var generator = RandomNumberGenerator.Create())
         {
@@ -121,7 +123,7 @@ public class TradingService : ITradingService
     // ******************************************************************************************* /
     public async Task<double> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, IOrderRepository orderRepository)
     {
-        ClosedTrade histOrder = OrderMapping.CloseOrder(orderToClose, orderToStore);       
+        ClosedTrade histOrder = OrderMapping.MapClosedOrder(orderToClose, orderToStore);       
 
         histOrder.MAE = orderToClose.MAE; 
         histOrder.MFE = orderToClose.MFE;

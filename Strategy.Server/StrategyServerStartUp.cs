@@ -10,7 +10,7 @@ using Strategy.Server.Services;
 
 namespace Strategy.Server;
 
-public class AlgoServerStartUp
+public class StrategyServerStartUp
 {
     public IClientBuilder ConfigureClient(IClientBuilder clientBuilder)
     {

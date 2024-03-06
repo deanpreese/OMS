@@ -67,8 +67,8 @@ def run_sim(exp_id, n_models):
     print(" ") 
     
     
-exp_idx = ["2"]
-num_models = 5
+exp_idx = ["6"]
+num_models = 1
 
 run_sim(exp_idx, num_models)    
 

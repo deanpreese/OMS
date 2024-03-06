@@ -1,7 +1,6 @@
 {
-    "algoclass": "BaseOpenClose_NG1",
-    "algoname" : "BaseOpenClose",
+    "strategy_class": "BaseOpenClose_NG1",
+    "strategy_name" : "BaseOpenClose",
     "group": 99,
-    "usedebugging": false,
-    "backtesting" : true
+    "orders_per_direction": 10
 }

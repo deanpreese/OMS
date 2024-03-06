@@ -1,5 +1,12 @@
 
 
+import time
+from datetime import datetime
+
+# Current time in ticks (milliseconds since epoch)
+current_ticks = int(time.time())
+print(f"Current time in ticks: {current_ticks}")
+
 
 
 exit()

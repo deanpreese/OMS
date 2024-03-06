@@ -22,9 +22,6 @@ namespace MigrationsManager
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             var optionsBuilder = new DbContextOptionsBuilder<OrderManagementDbContext>();
             optionsBuilder.UseNpgsql(connectionString);
-            //optionsBuilder.EnableSensitiveDataLogging();
-            //optionsBuilder.EnableDetailedErrors();
-
 
             Console.WriteLine("Complete.");
 

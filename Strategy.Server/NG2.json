@@ -1,7 +1,6 @@
 {
-    "algoclass": "BaseFollowAlgo_NG2",
-    "algoname" : "BaseFollowAlgo",
+    "strategy_class": "BaseFollowAlgo_NG2",
+    "strategy_name" : "BaseFollowAlgo",
     "group": 81,
-    "usedebugging": false,
-    "backtesting" : true
+    "orders_per_direction": 10
 }

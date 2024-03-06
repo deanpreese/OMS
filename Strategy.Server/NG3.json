@@ -1,7 +1,6 @@
 {
-    "algoclass": "BaseFadeAlgo_NG3",
-    "algoname" : "BaseFadeAlgo",
+    "strategy_class": "BaseFadeAlgo_NG3",
+    "strategy_name" : "BaseFadeAlgo",
     "group": 80,
-    "usedebugging": false,
-    "backtesting" : true
+    "orders_per_direction": 10
 }

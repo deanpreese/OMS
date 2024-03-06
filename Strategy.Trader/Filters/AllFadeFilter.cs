@@ -1,23 +1,25 @@
 ﻿
-
 using OMS.Core.Models;
 using Strategy.Trader.Abstractions;
 
-//
-//   Group 88
-//
-
-
 namespace Strategy.Trader.Filters;
 
-public class AllFadeFilter : AbstractStrategyFilter, IStrategyFilter
+public class AllFadeFilter :  IStrategyFilter
 {
-    public AllFadeFilter(UserProfile userProfile, ScoreCard scoreCard) : base(userProfile, scoreCard)
+
+    UserProfile _userProfile;
+    ScoreCard _scoreCard;
+
+
+    public void UpdateFilter(UserProfile userProfile, ScoreCard scoreCard)
     {
+        _userProfile = userProfile;
+        _scoreCard = scoreCard;
     }
 
-    public int IsInAlgoFilter()
+    public int IsInFilter()
     {
         return -1;
     }
+
 }

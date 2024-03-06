@@ -3,21 +3,23 @@
 using OMS.Core.Models;
 using Strategy.Trader.Abstractions;
 
-//
-//   Group 90
-//
-
-
 namespace Strategy.Trader.Filters;
 
-public class AllFollowFilter : AbstractStrategyFilter, IStrategyFilter
+public class AllFollowFilter : IStrategyFilter
 {
-    public AllFollowFilter(UserProfile userProfile, ScoreCard scoreCard) : base(userProfile, scoreCard)
+    UserProfile _userProfile;
+    ScoreCard _scoreCard;
+
+    public void UpdateFilter(UserProfile userProfile, ScoreCard scoreCard)
     {
+        _userProfile = userProfile; 
+        _scoreCard = scoreCard;   
     }
 
-    public int IsInAlgoFilter()
+
+    public int IsInFilter()
     {
         return 1;
     }
+
 }

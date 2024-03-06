@@ -5,7 +5,7 @@ namespace OMS.Core.Common;
 
 public class OrderMapping
 {
-    public static ClosedTrade CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore)
+    public static ClosedTrade MapClosedOrder(LiveOrder orderToClose, LiveOrder orderToStore)
     {
         ClosedTrade histOrder = new ClosedTrade()
         {
@@ -15,7 +15,9 @@ public class OrderMapping
             Quantity = orderToClose.Quantity,
             Leverage = orderToClose.Leverage,
             OppositeTrader = false,
+
             OpenPlatformOrderID = orderToClose.PlatformOrderID,
+            OpenOrderMangerID = orderToClose.OrderManagerID,
             OpenAuthToken = orderToClose.AuthToken,
             OpenExecutionID = orderToClose.ExecutedOrderID,
             OpenRelatedOrderID = orderToClose.RelatedOrderID,
@@ -23,7 +25,9 @@ public class OrderMapping
             OpenOrderPX = orderToClose.OrderPX,
             OpenOrderType = orderToClose.OrderType,
             OpenOrderAction = orderToClose.OrderAction,
+
             ClosePlatformOrderID = orderToStore.PlatformOrderID,
+            ClosedOrderMangerID = orderToStore.OrderManagerID,
             CloseAuthToken = orderToStore.AuthToken,
             CloseExecutionID = orderToStore.ExecutedOrderID,
             CloseRelatedOrderID = orderToStore.RelatedOrderID,
@@ -42,7 +46,7 @@ public class OrderMapping
         LiveOrder liveOrder = new LiveOrder();
         liveOrder.OrderPX = newOrder.OrderPX;  
         liveOrder.OrderTime = newOrder.OrderTime;
-        liveOrder.OrderManagerID = newOrder.PlatformOrderID ;
+        liveOrder.OrderManagerID = 0 ;
         liveOrder.Instrument = newOrder.Instrument;
         liveOrder.OrderAction = newOrder.OrderAction;
         liveOrder.OrderType = newOrder.OrderType;

@@ -34,8 +34,8 @@ public class FadeService : BackgroundService
     }
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        AlgoConfig configLoader = new AlgoConfig(algo_to_load, _client);
-        _algoData = configLoader.GetAlgoData().Result;
+        StrategyConfig configLoader = new StrategyConfig(algo_to_load, _client);
+        _algoData = configLoader.GetStrategyData().Result;
         await base.StartAsync(cancellationToken);
     }
 
@@ -45,17 +45,17 @@ public class FadeService : BackgroundService
 
        await Task.Run(async () =>
         {
-            BaseFadeStrategy algo = new BaseFadeStrategy(_client, _algoData);
+            BaseFadeStrategy strategy = new BaseFadeStrategy(_client, _algoData);
 
             await foreach (var newOrderInfo in _reader.ReadAllAsync(stoppingToken))
             {
                 try
                 {
-                    NewOrder n_order = await algo.GenerateAlgoOrder(newOrderInfo);
+                    NewOrder n_order = await strategy.OnNewOrder(newOrderInfo);
 
                     if(n_order.OrderAction != OrderAction.NoAction)
                     {
-                        IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.strategy_grain());     
+                        IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.strategy_grain_key());     
                         await orderGrain.ProcessOrder(n_order);
                     }
 

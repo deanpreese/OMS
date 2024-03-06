@@ -192,17 +192,16 @@ datafile = [
 
 dtx = pd.read_csv(datafile[4])
 
-est_list = [ TunableCatBoostRegressor(), TunableLGBMRegressor(), TunableXGBRegressor(),
-            TunableCatBoostRegressor(), TunableLGBMRegressor(), TunableXGBRegressor(),
-            TunableCatBoostRegressor(), TunableLGBMRegressor(), TunableXGBRegressor()]
+#est_list = [ TunableCatBoostRegressor(), TunableLGBMRegressor(), TunableXGBRegressor()]
+est_list = [ TunableXGBRegressor(), TunableXGBRegressor(), TunableLGBMRegressor(), TunableLGBMRegressor()]
 
 to_file = False
 randomize_features = True
 
-split_test_size_value = 0.5          
+split_test_size_value = 0.2          
 
 min_features_used = 2
-max_features_used = 10
+max_features_used = 11
 step_features_used = 1
 total_cycles_used = 3
 

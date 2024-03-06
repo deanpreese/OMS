@@ -45,6 +45,9 @@ public class ClosedTrade
     [Id(9)]
     public int OpenPlatformOrderID { get; set; }
 
+    [Id(28)]
+    public int OpenOrderMangerID { get; set; }
+
     // Trader Token
     [Id(10)]
     public int OpenAuthToken { get; set; }
@@ -75,6 +78,9 @@ public class ClosedTrade
     // ====================================
     [Id(16)]
     public int ClosePlatformOrderID { get; set; }
+
+    [Id(29)]
+    public int ClosedOrderMangerID { get; set; }
 
     // Trader Token
     [Id(17)]

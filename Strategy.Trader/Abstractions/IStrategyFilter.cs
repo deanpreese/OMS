@@ -7,5 +7,6 @@ namespace Strategy.Trader.Abstractions;
 
 public interface IStrategyFilter
 {
-    public int IsInAlgoFilter();
+    public void UpdateFilter(UserProfile userProfile, ScoreCard scoreCard);
+    public int IsInFilter();
 }

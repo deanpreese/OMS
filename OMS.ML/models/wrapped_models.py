@@ -3,6 +3,17 @@ from lightgbm  import LGBMClassifier, LGBMRegressor
 from catboost import CatBoostClassifier, CatBoostRegressor
 from common.common_func import calc_reg_streaks, show_stats, create_param_list
 
+import mlflow.onnx
+from onnx import onnx_pb
+import skl2onnx
+from skl2onnx.common.data_types import FloatTensorType, Int64TensorType
+
+import onnxruntime as rt
+import onnxmltools
+from onnxconverter_common.data_types import FloatTensorType
+from onnxmltools.convert import convert_xgboost
+
+
 import pandas as pd
 from enum import Enum
 
@@ -128,6 +139,8 @@ class TunableCatBoostClassifier(CatBoostClassifier):
             
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
         
+            self.run_id = mlflow.active_run().info.run_id  
+        
             modelx =  CatBoostClassifier(**self.param_set())
             model.fit(X_train, y_train)
             modelx.fit(X_train, y_train)
@@ -220,6 +233,8 @@ class TunableLGBMClassifier(LGBMClassifier):
            
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
         
+            self.run_id = mlflow.active_run().info.run_id  
+        
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             pred_proba = model.predict_proba(X_test)
@@ -272,6 +287,8 @@ class TunableXGBClassifier(XGBClassifier):
     def track_model(self, experiment_id, nested, model, X_train, y_train, X_test, y_test):
            
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
+        
+            self.run_id = mlflow.active_run().info.run_id  
         
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
@@ -330,14 +347,15 @@ class TunableCatBoostRegressor(CatBoostRegressor):
         
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
                         
-            modelx =  CatBoostRegressor(**self.param_set())
+            self.run_id = mlflow.active_run().info.run_id                        
+            #modelx =  CatBoostRegressor(**self.param_set())
             model.fit(X_train, y_train)
-            modelx.fit(X_train, y_train)
+            #modelx.fit(X_train, y_train)
             
             y_pred = model.predict(X_test)
             mlflow.log_params( self.used_params )
-            mlflow.catboost.log_model(modelx, "model")
-            mlflow.catboost.log_model(model, "TunableCatBoostRegressor")
+            mlflow.catboost.log_model(model, "model")
+            #mlflow.catboost.log_model(modelx, "TunableCatBoostRegressor")
             mlflow.log_table(data=pd.DataFrame(self.features_used), artifact_file="features_used.json")                 
             perf, tot, mse, rmse, r2, score, mae = gen_regressor_data(model, X_train, y_train, X_test, y_test, y_pred)
         
@@ -351,7 +369,7 @@ class TunableLGBMRegressor(LGBMRegressor):
                  objective=None, min_child_samples=20, subsample=1.0, colsample_bytree=1.0,
                  random_state=None, n_jobs=-1, verbose=1):
         
-        mlflow.lightgbm.autolog(False)
+        #mlflow.lightgbm.autolog(False)
         self.features_used = []            
         
          
@@ -404,10 +422,12 @@ class TunableLGBMRegressor(LGBMRegressor):
             
         
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
-                                
+
+            self.run_id = mlflow.active_run().info.run_id
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
-            mlflow.lightgbm.log_model(model, "TunableLGBMRegressor")
+
+            mlflow.lightgbm.log_model(model, "model")
             mlflow.log_table(data=pd.DataFrame(self.features_used), artifact_file="features_used.json")                 
             perf, tot, mse, rmse, r2, score, mae = gen_regressor_data(model, X_train, y_train, X_test, y_test, y_pred)
         
@@ -418,7 +438,6 @@ class TunableLGBMRegressor(LGBMRegressor):
 class TunableXGBRegressor(XGBRegressor):
     
     def __init__(self, **kwargs):
-        mlflow.xgboost.autolog()
         self.used_params = kwargs
         self.features_used = []
         super().__init__(**kwargs)
@@ -465,10 +484,12 @@ class TunableXGBRegressor(XGBRegressor):
             
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
         
+            self.run_id = mlflow.active_run().info.run_id
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
+            
             mlflow.log_params( self.used_params )
-            mlflow.xgboost.log_model(model, "TunableXGBRegressor")
+            mlflow.xgboost.log_model(model, "model")
             mlflow.log_table(data=pd.DataFrame(self.features_used), artifact_file="features_used.json")     
             perf, tot, mse, rmse, r2, score, mae = gen_regressor_data(model, X_train, y_train, X_test, y_test, y_pred)
         

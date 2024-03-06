@@ -7,46 +7,46 @@ using Strategy.Trader.Models;
 namespace Strategy.Trader.Utility;
 
 
-public class AlgoConfig
+public class StrategyConfig
 {
-    StrategyAccount _algoData;
+    StrategyAccount _strategyData;
     string _filePath;
     IClusterClient _clusterClient;
 
-    public AlgoConfig(string filePath, IClusterClient clusterClient)
+    public StrategyConfig(string filePath, IClusterClient clusterClient)
     {
-        _algoData = new StrategyAccount();
+        _strategyData = new StrategyAccount();
         _filePath = filePath;
         _clusterClient = clusterClient;
     }
 
-    public async Task<StrategyAccount> GetAlgoData()
+    public async Task<StrategyAccount> GetStrategyData()
     {
         await LoadConfig(_filePath);
-        return await VerifyAlgoTraders();
+        return await VerifyStrategyTraders();
     }
 
     private async Task<StrategyAccount> LoadConfig(string filePath)
     {
         string jsonString = await File.ReadAllTextAsync(filePath);
-        _algoData = await System.Text.Json.JsonSerializer.DeserializeAsync<StrategyAccount>(new MemoryStream(Encoding.UTF8.GetBytes(jsonString))) ??
+        _strategyData = await System.Text.Json.JsonSerializer.DeserializeAsync<StrategyAccount>(new MemoryStream(Encoding.UTF8.GetBytes(jsonString))) ??
             throw new ArgumentNullException($"File {filePath} is empty.");
 
-        Console.WriteLine($"{_algoData.startegy_name} Started" + jsonString);
-        return _algoData;
+        Console.WriteLine($"{_strategyData.strategy_name} Started" + jsonString);
+        return _strategyData;
     }
 
-    private async Task<StrategyAccount> VerifyAlgoTraders()
+    private async Task<StrategyAccount> VerifyStrategyTraders()
     {
 
         NewTrader n_trader = new NewTrader
         {
             UserID = 0,
-            DisplayName = _algoData.startegy_name,
-            GroupID = _algoData.group,
+            DisplayName = _strategyData.strategy_name,
+            GroupID = _strategyData.group,
             UserPwd = "abc",
             FirstName = "Algo",
-            LastName = _algoData.startegy_name,
+            LastName = _strategyData.strategy_name,
             Email = "abc@abc"
         };
 
@@ -59,11 +59,11 @@ public class AlgoConfig
 
 
 
-        _algoData.strategy_traderId = t_v;
+        _strategyData.strategy_traderId = t_v;
 
         Console.WriteLine("Trader " + t_v);
 
-        return _algoData;
+        return _strategyData;
     }
 
 

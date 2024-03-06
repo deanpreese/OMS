@@ -26,7 +26,7 @@ public class StartupServices
         {
             string conn =  "Host=127.0.0.1;Database=orders;Username=trading;Password=abc";
             options.UseNpgsql(conn);
-            options.EnableSensitiveDataLogging();
+            //options.EnableSensitiveDataLogging();
             options.EnableThreadSafetyChecks();
 
         },ServiceLifetime.Scoped);
