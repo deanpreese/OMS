@@ -158,6 +158,12 @@ public abstract class AbstractStrategy : IStrategy
         bool newPosition = true;
         
         List<LiveOrder> liveOrders = await strategyGrain.GetLiveOrders(_strategy_key);
+
+        for (int i = 0; i < 10; i++)
+        {
+            liveOrders = await strategyGrain.GetLiveOrders(_strategy_key);
+        }
+
         Console.WriteLine(_strategyData.strategy_name +  " Strategy Orders Count for New: " + liveOrders.Count);
 
         if(liveOrders.Count > 0)
