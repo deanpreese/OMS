@@ -55,6 +55,9 @@ class ModelLoader:
         if isReg:
             t_id = common_cli.initialize_trader(lm.run_name, lm.trader_group)
             lm.trader_id = t_id
+            
+            print(f"Trader {t_id} initialized for {lm.run_name}")
+            
         else:
             lm.trader_id = 0    
         

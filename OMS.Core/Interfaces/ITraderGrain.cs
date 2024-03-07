@@ -20,5 +20,6 @@ public interface ITraderGrain : IGrainWithStringKey
     Task<ScoreCard> UpdateScoreCard(string profile_key);
     Task<List<LiveOrder>> GetLiveOrders(string profile_key);
     Task<ClosedTrade> GetLastClosedTrade(string profile_key);
+    Task<ClosedTrade> GetLastClosedTradeByOpenPlatformID(string profile_key, int platform_id);
 
 }

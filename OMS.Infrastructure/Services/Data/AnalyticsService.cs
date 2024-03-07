@@ -20,16 +20,25 @@ public class AnalyticsService : IAnalyticsService
         _logger = logger;
     }
 
-    public async Task<int> UpdateScoreCard(UserInfo userInfo)
+    public async Task<int> UpdateScoreCard(LiveOrder order)
     {
-        List<ClosedTrade> trades = await _unitOfWork.OrderRepository.Get_XXX_ClosedOrdersByTrader(userInfo.UserID, userInfo.GroupID,-1);
+        List<ClosedTrade> trades = await _unitOfWork.OrderRepository.Get_XXX_ClosedOrdersByTrader(order.UserID, order.GroupID,-1);
+        ClosedTrade lastClosed = trades.Find(x => x.ClosePlatformOrderID == order.PlatformOrderID);
+
+        while(trades.Count == 0 ||  lastClosed == null)    
+        {
+            trades = await _unitOfWork.OrderRepository.Get_XXX_ClosedOrdersByTrader(order.UserID, order.GroupID,-1);
+            lastClosed = trades.Find(x => x.ClosePlatformOrderID == order.PlatformOrderID);
+        }
 
         try {
 
-            ScoreCard scoreCard = TradeStatisticsGenerator.GenerateScoreCard(userInfo.UserID, userInfo.GroupID, trades);
+            ScoreCard scoreCard = TradeStatisticsGenerator.GenerateScoreCard(order.UserID, order.GroupID, trades);
+
+
             if (scoreCard != null)
             {
-                ScoreCard sc = await _unitOfWork.AnalyticsRepository.GetTraderScoreCard(userInfo.UserID, userInfo.GroupID);
+                ScoreCard sc = await _unitOfWork.AnalyticsRepository.GetTraderScoreCard(order.UserID, order.GroupID);
 
                 if (sc == null)
                 {
@@ -40,8 +49,12 @@ public class AnalyticsService : IAnalyticsService
                 {
                     await _unitOfWork.AnalyticsRepository.UpdateTraderScoreCard(scoreCard);
                     _unitOfWork.Commit();  
-                    
+                    //await _unitOfWork.AnalyticsRepository.UpdateTraderScoreCard(scoreCard);
+                    //_unitOfWork.Commit();  
                 }   
+            }else
+            {
+                Console.WriteLine("No trades found for user " + order.UserID);
             }
 
 

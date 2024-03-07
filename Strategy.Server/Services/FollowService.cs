@@ -17,51 +17,50 @@ namespace Strategy.Server.Services;
 
 public class FollowService : BackgroundService
 {  
-    private string algo_to_load = "NG2.json";
-    private readonly StrategyOrderQueue _algoOrderQueue;
+    private string strategy_to_load = "NG2.json";
+    private readonly StrategyOrderQueue _strategyOrderQueue;
     private readonly ILogger<FollowService> _logger;
-    private StrategyAccount _algoData; 
+    private StrategyAccount _strategyData; 
     ChannelReader<LiveOrder> _reader;
     private readonly IClusterClient _client;
 
     public FollowService(ILogger<FollowService> logger, 
-            StrategyOrderQueue algoOrderQueue,
+            StrategyOrderQueue strategyOrderQueue,
             IClusterClient client)
     {
-        _algoOrderQueue = algoOrderQueue;
+        _strategyOrderQueue = strategyOrderQueue;
         _logger = logger;
         _client = client;
 
-        _algoData = new StrategyAccount();
-        _reader = _algoOrderQueue.Subscribe();
+        _strategyData = new StrategyAccount();
+        _reader = _strategyOrderQueue.Subscribe();
 
     }
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        StrategyConfig configLoader = new StrategyConfig(algo_to_load, _client);
-        _algoData = configLoader.GetStrategyData().Result;
+        StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _client);
+        _strategyData = configLoader.GetStrategyData().Result;
         await base.StartAsync(cancellationToken);
     }
 
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
        await Task.Run(async () =>
         {
-            BaseFollowStrategy strategy = new BaseFollowStrategy(_client, _algoData);
+            BaseFollowStrategy strategy = new BaseFollowStrategy(_client, _strategyData);
 
-            await foreach (var newOrderInfo in _reader.ReadAllAsync(stoppingToken))
+            await foreach (LiveOrder newLiveOrder in _reader.ReadAllAsync(stoppingToken))
             {
                 try
                 {
-                    NewOrder n_order = await strategy.OnNewOrder(newOrderInfo);
-
+                    NewOrder n_order = await strategy.OnNewOrder(newLiveOrder);
                     if(n_order.OrderAction != OrderAction.NoAction)
                     {
-                        IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.strategy_grain_key());     
+                        IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_strategyData.strategy_grain_key());     
                         await orderGrain.ProcessOrder(n_order);
                     }
+                    
                 }
                 catch (Exception ex)
                 {

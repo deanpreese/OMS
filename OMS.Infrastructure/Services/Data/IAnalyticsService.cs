@@ -3,5 +3,5 @@
 namespace OMS.Infrastructure.Services.Data;
 public interface IAnalyticsService
 {
-    Task<int> UpdateScoreCard(UserInfo userInfo);
+    Task<int> UpdateScoreCard(LiveOrder order);
 }

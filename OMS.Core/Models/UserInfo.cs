@@ -1,4 +1,6 @@
 ﻿
+using OMS.Core.Common;
+
 namespace OMS.Core.Models;
 
 [GenerateSerializer]
@@ -23,5 +25,5 @@ public class UserInfo
     public string Password { get; set; }
     [Id(2)]
     public int GroupID { get; set; }
-
+   
 }

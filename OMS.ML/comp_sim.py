@@ -24,9 +24,9 @@ def load_models(exp_id, n_models):
     model_loader = ModelLoader()
     return model_loader.load_composite_models( experiment_id, num_models)
 
-def run_sim(exp_id, n_models):
+def run_sim(exp_id, n_models, file):
 
-    file = "data/lucky13_oos.csv"
+
     data = pd.read_csv(file)   
     num_columns = len(data.axes[1]) 
     input_features =  num_columns -2
@@ -41,8 +41,8 @@ def run_sim(exp_id, n_models):
     order_total = 0
     start = time.time()
 
-
     for i in range(len(y)):
+           
 
             for m in range(len(models)):
                 
@@ -52,6 +52,8 @@ def run_sim(exp_id, n_models):
 
             total += 1        
             order_manager.process_tick(y[i])
+        
+            #time.sleep(1)
         
             if total > 500:
                 break    
@@ -69,8 +71,11 @@ def run_sim(exp_id, n_models):
     
 exp_idx = ["6"]
 num_models = 1
-
-run_sim(exp_idx, num_models)    
+file = "data/lucky13_short.csv"
+    
+#file = "data/lucky13_oos.csv"    
+    
+run_sim(exp_idx, num_models, file)    
 
 
 """

@@ -148,5 +148,12 @@ public class TraderGrain : Grain, ITraderGrain
         return await _unitOfWork.OrderRepository.GetLastClosedTrade(userId, groupNum);
     }
 
+    public async Task<ClosedTrade> GetLastClosedTradeByOpenPlatformID(string profile_key, int platform_id)
+    {
+        string[] profile_key_parts = profile_key.Split('_');
+        int userId = int.Parse(profile_key_parts[0]);
+        int groupNum = int.Parse(profile_key_parts[1]);
+        return await _unitOfWork.OrderRepository.GetLastClosedTradeByOpenPlatformID(userId, groupNum, platform_id);
+    }
 
 }

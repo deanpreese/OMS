@@ -69,6 +69,8 @@ public class AnalyticsRepository : IAnalyticsRepository
             sc.PNL_Last21 = scData.PNL_Last21;
             sc.PNL_Last34 = scData.PNL_Last34;
 
+            Console.WriteLine("Updating ScoreCard " + sc.UserID + " " + scData.GroupID + "  " + scData.Winners + "  " + scData.Losers   );
+
             _context.ScoreCard.Update(sc);
         }
 

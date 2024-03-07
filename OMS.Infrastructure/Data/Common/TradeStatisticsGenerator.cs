@@ -68,50 +68,56 @@ public static class TradeStatisticsGenerator
         scoreCard.LargestWinningStreak = largestWinningStreak;
         scoreCard.LargestLosingStreak = largestLosingStreak;
 
-        scoreCard.AveTradeDuration = closedTrades.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds);
+        try
+        {
+            scoreCard.AveTradeDuration = closedTrades.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds);
 
-        // Calculate average time in winners
-        var winners_list = closedTrades.Where(trade => trade.PNL > 0);
-        scoreCard.AveWinDuration = winners_list.Any() ? winners_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds) : 0;
+            // Calculate average time in winners
+            var winners_list = closedTrades.Where(trade => trade.PNL > 0);
+            scoreCard.AveWinDuration = winners_list.Any() ? winners_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds) : 0;
 
-        // Calculate average time in losers
-        var losers_list = closedTrades.Where(trade => trade.PNL <= 0);
-        scoreCard.AveLossDuration = losers_list.Any() ? losers_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds) : 0;
+            // Calculate average time in losers
+            var losers_list = closedTrades.Where(trade => trade.PNL <= 0);
+            scoreCard.AveLossDuration = losers_list.Any() ? losers_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds) : 0;
 
-        // Standard Deviation of P&L
-        double meanProfit = closedTrades.Average(trade => trade.PNL);
-        double variance = closedTrades.Sum(trade => Math.Pow(trade.PNL - meanProfit, 2)) / closedTrades.Count;
-        scoreCard.StdDevAllTrades = Math.Sqrt(variance);
+            // Standard Deviation of P&L
+            double meanProfit = closedTrades.Average(trade => trade.PNL);
+            double variance = closedTrades.Sum(trade => Math.Pow(trade.PNL - meanProfit, 2)) / closedTrades.Count;
+            scoreCard.StdDevAllTrades = Math.Sqrt(variance);
 
-        // Standard Deviation for Winners
-        double meanProfitWinners = winners_list.Any() ? winners_list.Average(trade => trade.PNL) : 0;
-        double varianceWinners = winners_list.Sum(trade => Math.Pow(trade.PNL - meanProfitWinners, 2)) / winners_list.Count();
-        scoreCard.StdDevWinTrades = Math.Sqrt(varianceWinners);
+            // Standard Deviation for Winners
+            double meanProfitWinners = winners_list.Any() ? winners_list.Average(trade => trade.PNL) : 0;
+            double varianceWinners = winners_list.Sum(trade => Math.Pow(trade.PNL - meanProfitWinners, 2)) / winners_list.Count();
+            scoreCard.StdDevWinTrades = Math.Sqrt(varianceWinners);
 
-        // Standard Deviation for Losers
-        double meanProfitLosers = losers_list.Any() ? losers_list.Average(trade => trade.PNL) : 0;
-        double varianceLosers = losers_list.Sum(trade => Math.Pow(trade.PNL - meanProfitLosers, 2)) / losers_list.Count();
-        scoreCard.StdDevLossTrades = Math.Sqrt(varianceLosers);
+            // Standard Deviation for Losers
+            double meanProfitLosers = losers_list.Any() ? losers_list.Average(trade => trade.PNL) : 0;
+            double varianceLosers = losers_list.Sum(trade => Math.Pow(trade.PNL - meanProfitLosers, 2)) / losers_list.Count();
+            scoreCard.StdDevLossTrades = Math.Sqrt(varianceLosers);
 
-        // Sharpe Ratio
-        double riskFreeRate = 0.01; // Assuming a 1% risk-free rate. Adjust as needed.
-        scoreCard.SharpRatio = (meanProfit - riskFreeRate) / scoreCard.StdDevAllTrades;
+            // Sharpe Ratio
+            double riskFreeRate = 0.01; // Assuming a 1% risk-free rate. Adjust as needed.
+            scoreCard.SharpRatio = (meanProfit - riskFreeRate) / scoreCard.StdDevAllTrades;
 
-        // Sortino Ratio
-        var negativeProfits = closedTrades.Where(trade => trade.PNL < 0).Select(trade => trade.PNL).ToList();
-        double meanNegativeProfits = negativeProfits.Any() ? negativeProfits.Average() : 0;
-        double downsideVariance = negativeProfits.Sum(profit => Math.Pow(profit - meanNegativeProfits, 2)) / negativeProfits.Count;
-        double downsideDeviation = Math.Sqrt(downsideVariance);
-        scoreCard.SortinoRatio = (meanProfit - riskFreeRate) / downsideDeviation;
-
-
+            // Sortino Ratio
+            var negativeProfits = closedTrades.Where(trade => trade.PNL < 0).Select(trade => trade.PNL).ToList();
+            double meanNegativeProfits = negativeProfits.Any() ? negativeProfits.Average() : 0;
+            double downsideVariance = negativeProfits.Sum(profit => Math.Pow(profit - meanNegativeProfits, 2)) / negativeProfits.Count;
+            double downsideDeviation = Math.Sqrt(downsideVariance);
+            scoreCard.SortinoRatio = (meanProfit - riskFreeRate) / downsideDeviation;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+        }
+        
         scoreCard.PNL_Last3 = CalculatePNLByDuration(closedTrades, 3);
         scoreCard.PNL_Last5 = CalculatePNLByDuration(closedTrades, 5);
         scoreCard.PNL_Last8 = CalculatePNLByDuration(closedTrades, 8);
         scoreCard.PNL_Last13 = CalculatePNLByDuration(closedTrades, 13);
         scoreCard.PNL_Last21 = CalculatePNLByDuration(closedTrades, 21);
         scoreCard.PNL_Last34 = CalculatePNLByDuration(closedTrades, 34);
-
+        
         return scoreCard;
     }
 

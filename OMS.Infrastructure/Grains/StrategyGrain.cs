@@ -64,7 +64,8 @@ public class StrategyGrain : Grain, IStrategyGrain
         int userId = int.Parse(profile_key_parts[0]);
         int groupNum = int.Parse(profile_key_parts[1]);
      
-        OpenOrders = await _unitOfWork.OrderRepository.GetOrdersByTraderAsync(userId, groupNum);
-        return OpenOrders;
+        List<LiveOrder> orders = await _unitOfWork.OrderRepository.GetOrdersByTraderAsync(userId, groupNum);
+        OpenOrders = orders;
+        return orders;
     }
 }

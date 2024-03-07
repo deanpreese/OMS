@@ -52,7 +52,6 @@ public class FadeService : BackgroundService
                 try
                 {
                     NewOrder n_order = await strategy.OnNewOrder(newOrderInfo);
-
                     if(n_order.OrderAction != OrderAction.NoAction)
                     {
                         IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_algoData.strategy_grain_key());     

@@ -197,9 +197,6 @@ public class OrderRepository : IOrderRepository
     }
 
 
-
-
-
     public Task<List<ClosedTrade>> GetClosedTrades(int GroupNumber)
     {
         throw new NotImplementedException();
@@ -233,4 +230,14 @@ public class OrderRepository : IOrderRepository
 
     }
 
+    public Task<ClosedTrade> GetLastClosedTradeByOpenPlatformID(int UserID, int GroupNumber, int platform_id)
+    {
+        ClosedTrade trade = (from o in _context.ClosedTrades
+                      where o.UserID == UserID
+                      && o.GroupID == GroupNumber
+                      && o.OpenPlatformOrderID == platform_id
+                      select o).FirstOrDefault();
+
+        return Task.FromResult(trade);
+    }
 }

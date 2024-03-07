@@ -42,41 +42,13 @@ public class ClosedOrderProcessorService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
-        var _timer = new System.Threading.Timer(
-            callback: async state => { 
-                await RunSync(stoppingToken);
-                 },
-            state: null,
-            dueTime: TimeSpan.Zero,  // Start immediately
-            period: TimeSpan.FromSeconds(10));
-        
-        await Task.CompletedTask;
-    }
-
-    private async Task RunSync(CancellationToken stoppingToken)
-    {
         Console.WriteLine("Syncing Closed Orders ... " );
 
-        await foreach (var userInfo in _closedChannelService.ReadAllAsync(stoppingToken))
+        await foreach (var liveOrder in _closedChannelService.ReadAllAsync(stoppingToken))
         {
-            // Add a HashSet to keep track of distinct user IDs
-            HashSet<int> distinctUserIds = new HashSet<int>();
-
-            // Check if the user ID is already processed
-            if (distinctUserIds.Contains(userInfo.UserID))
-            {
-                Console.WriteLine("User already processed: " + userInfo.UserID);
-                continue; // Skip processing if already processed
-            }
-
-            // Add the user ID to the HashSet
-            distinctUserIds.Add(userInfo.UserID);
-
-            // Process the closed order for the distinct user ID
             try
             {
-                await ProcessClosedOrderAsync(userInfo, stoppingToken);
+                await ProcessClosedOrderAsync(liveOrder, stoppingToken);
             }
             catch (Exception ex)
             {
@@ -89,7 +61,7 @@ public class ClosedOrderProcessorService : BackgroundService
 
 
 
-    private async Task ProcessClosedOrderAsync(UserInfo userInfo, CancellationToken cancellationToken)
+    private async Task ProcessClosedOrderAsync(LiveOrder liveOrder, CancellationToken cancellationToken)
     {
             using (var scope = _scopeFactory.CreateScope())
             {
@@ -101,9 +73,9 @@ public class ClosedOrderProcessorService : BackgroundService
                     ILogger<AnalyticsService> logger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
                     AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, logger);   
 
-                    await _analytics_service.UpdateScoreCard(userInfo);
+                    await _analytics_service.UpdateScoreCard(liveOrder);
 
-                    Console.WriteLine("Order Processed by Stats For user " + userInfo.UserID  );
+                    Console.WriteLine("Order Processed by Stats For user " + liveOrder.UserID  );
 
                 }catch (Exception ex)
                 {

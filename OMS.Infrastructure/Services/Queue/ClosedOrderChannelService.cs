@@ -5,12 +5,12 @@ namespace OMS.Infrastructure.Services.Queue;
 
 public class ClosedOrderChannelService
 {
- private readonly Channel<UserInfo> _channel;
+ private readonly Channel<LiveOrder> _channel;
 
     public ClosedOrderChannelService()
     {
         // Create a bounded channel with a capacity limit to prevent out-of-memory issues in case of high load
-        _channel = Channel.CreateBounded<UserInfo>(new BoundedChannelOptions(10000)
+        _channel = Channel.CreateBounded<LiveOrder>(new BoundedChannelOptions(10000)
         {
             FullMode = BoundedChannelFullMode.Wait,
             SingleReader = true, // Set to true if only one consumer will read from the channel
@@ -18,12 +18,12 @@ public class ClosedOrderChannelService
         });
     }
 
-    public async Task WriteAsync(UserInfo userInfo, CancellationToken cancellationToken = default)
+    public async Task WriteAsync(LiveOrder liveOrder, CancellationToken cancellationToken = default)
     {
-        await _channel.Writer.WriteAsync(userInfo, cancellationToken);
+        await _channel.Writer.WriteAsync(liveOrder, cancellationToken);
     }
 
-    public IAsyncEnumerable<UserInfo> ReadAllAsync(CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<LiveOrder> ReadAllAsync(CancellationToken cancellationToken = default)
     {
         return _channel.Reader.ReadAllAsync(cancellationToken);
     }
