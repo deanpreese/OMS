@@ -35,8 +35,8 @@ public class StrategyServerStartUp
 
     public IServiceCollection ConfigureServices(IServiceCollection services)
     {
-        //services.AddHostedService<BasicService>();
-        //services.AddHostedService<FadeService>();
+        services.AddHostedService<BasicService>();
+        services.AddHostedService<FadeService>();
         services.AddHostedService<FollowService>();
 
         services.AddSingleton<StrategyOrderQueue>();

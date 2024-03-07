@@ -32,7 +32,7 @@ public class AdminGrain : Grain, IAdminGrain
         return await _unitOfWork.TraderRepository.GetUserProfileListAsync(userGroup);
     }
 
-    public async Task<int> VerifyByDisplayName(NewTrader newTrader)
+    public async Task<int> VerifyAndAddByDisplayName(NewTrader newTrader)
     {
         int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(newTrader);
         if (t_v == 0)

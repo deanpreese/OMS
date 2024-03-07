@@ -20,13 +20,12 @@ public class OrderRepository : IOrderRepository
 
 
     // *****************************************************************
-    public Task AddLiveOrderAsync(LiveOrder o)
+    public async Task AddLiveOrderAsync(LiveOrder o)
     {
-        _context.LiveOrder.Add(o);
-        return Task.CompletedTask;
+        await _context.LiveOrder.AddAsync(o);
+        return ;
     }
 
-    // FIXME: Figure out of this is needed
     public Task<int> UpdateOrder(LiveOrder o)
     {
         throw new NotImplementedException();
@@ -62,7 +61,7 @@ public class OrderRepository : IOrderRepository
 
 
 
-    public Task DeleteOrderAsyncByOrderManagerID(int orderManagerID)
+    public async Task DeleteOrderAsyncByOrderManagerID(int orderManagerID)
     {
         List<LiveOrder> orders = (from o in _context.LiveOrder
                                   where o.OrderManagerID == orderManagerID
@@ -73,42 +72,43 @@ public class OrderRepository : IOrderRepository
             _context.LiveOrder.Remove(ord);
         }
 
-        return Task.CompletedTask;
+        await Task.CompletedTask;
     }
 
     // *****************************************************************
-    public Task<List<LiveOrder>> GetLiveOrders(int GroupNumber)
+    public async Task<List<LiveOrder>> GetLiveOrders(int GroupNumber)
     {
         List<LiveOrder> orders = (from o in _context.LiveOrder
                             where o.GroupID == GroupNumber
                             select o).ToList();
-         return Task.FromResult(orders);
+
+         return await Task.FromResult(orders);
     }
 
 
-    public Task<List<LiveOrder>> GetOrdersByExecutionIDAsync(int executionID)
+    public async Task<List<LiveOrder>> GetOrdersByExecutionIDAsync(int executionID)
     {
         List<LiveOrder> orders = (from o in _context.LiveOrder
                             where o.ExecutedOrderID == executionID
                             select o).ToList();
-         return Task.FromResult(orders);
+         return await Task.FromResult(orders);
     }
 
-    public Task<List<LiveOrder>> GetOrdersByGroupAsync(int groupNumber)
+    public async Task<List<LiveOrder>> GetOrdersByGroupAsync(int groupNumber)
     {
         List<LiveOrder> orders =(from o in _context.LiveOrder
                                 where o.GroupID == groupNumber
                                 select o).ToList();
-        return Task.FromResult(orders);
+        return await Task.FromResult(orders);
     }
 
-    public Task<List<LiveOrder>> GetOrdersByInstrumentAsync(string instrument)
+    public async Task<List<LiveOrder>> GetOrdersByInstrumentAsync(string instrument)
     {
         List<LiveOrder> orders = (from o in _context.LiveOrder
                                     where o.Instrument.StartsWith( instrument)
                                 select o).ToList();
 
-        return Task.FromResult(orders);
+        return await Task.FromResult(orders);
     }
 
     public Task<List<NewOrder>> GetOrdersByInstrumentByGroupAsync(string instrument, int group)
@@ -116,16 +116,16 @@ public class OrderRepository : IOrderRepository
         throw new NotImplementedException();
     }
 
-    public Task<List<LiveOrder>> GetOrdersByPlatformIDAsync(int platformID)
+    public async Task<List<LiveOrder>> GetOrdersByPlatformIDAsync(int platformID)
     {
         List<LiveOrder> orders = (from o in _context.LiveOrder
                                 where o.PlatformOrderID == platformID
                                 select o).ToList();
-        return Task.FromResult(orders);
+        return await Task.FromResult(orders);
     }
 
 
-    public Task<List<LiveOrder>> GetOrdersByTraderAsync(int UserID, int GroupNumber)
+    public async Task<List<LiveOrder>> GetOrdersByTraderAsync(int UserID, int GroupNumber)
     {
         List<LiveOrder> orders = (from c in _context.LiveOrder
                             where c.UserID == UserID
@@ -133,23 +133,23 @@ public class OrderRepository : IOrderRepository
                             orderby c.OrderTime
                             select c).ToList();
 
-        return Task.FromResult(orders);
+        return await Task.FromResult(orders);
     }
 
 
-    public Task<List<LiveOrder>> GetOrdersByTrader(int UserID, string instrument)
+    public async Task<List<LiveOrder>> GetOrdersByTrader(int UserID, string instrument)
     {
         List<LiveOrder> orders = (from c in _context.LiveOrder
                                 where c.Instrument == instrument 
                                 && c.UserID == UserID
                                 orderby c.OrderTime
                                 select c).ToList();
-        return Task.FromResult(orders);
+        return await Task.FromResult(orders);
     }
 
 
 
-    public Task<List<LiveOrder>> GetOrdersByTrader(int UserID, string instrument, OrderAction orderAction)
+    public async Task<List<LiveOrder>> GetOrdersByTrader(int UserID, string instrument, OrderAction orderAction)
     {
         List<LiveOrder> orders = (from c in _context.LiveOrder
                                 where c.Instrument == instrument 
@@ -157,28 +157,28 @@ public class OrderRepository : IOrderRepository
                                 && c.OrderAction == orderAction
                                 orderby c.OrderTime
                                 select c).ToList();
-        return Task.FromResult(orders);
+        return await Task.FromResult(orders);
     }
 
 
 
     // *****************************************************************
-    public Task AddClosedOrder(ClosedTrade o)
+    public async Task AddClosedOrder(ClosedTrade o)
     {
-        _context.ClosedTrades.Add(o);
-        return Task.CompletedTask;
+        await _context.ClosedTrades.AddAsync(o);
+        await Task.CompletedTask;
     }
 
-    public Task<List<LiveOrder>> GetOrdersByRelatedOrderIDAsync(int relatedOrderID)
+    public async Task<List<LiveOrder>> GetOrdersByRelatedOrderIDAsync(int relatedOrderID)
     {
          List<LiveOrder> orders = ((from o in _context.LiveOrder
                                    where o.RelatedOrderID == relatedOrderID
                                    select o)).ToList();
 
-         return Task.FromResult(orders);                                   
+         return await Task.FromResult(orders);                                   
     }
 
-    public Task<ClosedTrade> GetLastClosedTrade(int UserID, int GroupNumber)
+    public async Task<ClosedTrade> GetLastClosedTrade(int UserID, int GroupNumber)
     {
         ClosedTrade closedTrade = new ClosedTrade();
 
@@ -192,7 +192,7 @@ public class OrderRepository : IOrderRepository
             closedTrade = trades.Last();
         }
     
-        return Task.FromResult(closedTrade);
+        return await Task.FromResult(closedTrade);
 
     }
 
@@ -203,13 +203,13 @@ public class OrderRepository : IOrderRepository
     }
 
 
-    public Task<List<ClosedTrade>> GetClosedOrdersByTraderAsync(int UserID, int GroupNumber)
+    public async Task<List<ClosedTrade>> GetClosedOrdersByTraderAsync(int UserID, int GroupNumber)
     {
-       return Get_XXX_ClosedOrdersByTrader(UserID, GroupNumber, -1);
+       return await Get_XXX_ClosedOrdersByTrader(UserID, GroupNumber, -1);
     }
 
 
-    public Task<List<ClosedTrade>> Get_XXX_ClosedOrdersByTrader(int UserID, int GroupNumber, int numOrders )
+    public async Task<List<ClosedTrade>> Get_XXX_ClosedOrdersByTrader(int UserID, int GroupNumber, int numOrders )
     {
         List<ClosedTrade> histOrders = new List<ClosedTrade>();
 
@@ -226,11 +226,11 @@ public class OrderRepository : IOrderRepository
                       && o.GroupID == GroupNumber
                       select o).OrderByDescending(x => x.CloseOrderTime).Take(ordToTake).ToList();
 
-        return Task.FromResult(orders);
+        return await Task.FromResult(orders);
 
     }
 
-    public Task<ClosedTrade> GetLastClosedTradeByOpenPlatformID(int UserID, int GroupNumber, int platform_id)
+    public async Task<ClosedTrade> GetLastClosedTradeByOpenPlatformID(int UserID, int GroupNumber, int platform_id)
     {
         ClosedTrade trade = (from o in _context.ClosedTrades
                       where o.UserID == UserID
@@ -238,6 +238,6 @@ public class OrderRepository : IOrderRepository
                       && o.OpenPlatformOrderID == platform_id
                       select o).FirstOrDefault();
 
-        return Task.FromResult(trade);
+        return await Task.FromResult(trade);
     }
 }

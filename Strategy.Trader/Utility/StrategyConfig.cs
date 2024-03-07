@@ -3,6 +3,7 @@
 using System.Text;
 using OMS.Core.WebAPIClient;
 using Strategy.Trader.Models;
+using OMS.Core.Interfaces;
 
 namespace Strategy.Trader.Utility;
 
@@ -53,8 +54,12 @@ public class StrategyConfig
         int t_v = 0;
         await Task.Run(async () =>
         {
-            t_v = await OMSClient.VerifyModelTrader(n_trader);
+            //t_v = await OMSClient.VerifyModelTrader(n_trader);
+            IAdminGrain adminGrain = _clusterClient.GetGrain<IAdminGrain>("A"+_strategyData.group);     
             Thread.Sleep(2000);
+            t_v = await adminGrain.VerifyAndAddByDisplayName(n_trader);
+            Thread.Sleep(2000);
+
         });
 
 

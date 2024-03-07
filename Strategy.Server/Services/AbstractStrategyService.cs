@@ -46,11 +46,11 @@ public class AbstractStrategyService : BackgroundService
             {
                 try
                 {
-                    Thread.Sleep(25);
+                    await Task.Delay(25);
                     NewOrder n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
                     if(n_order.OrderAction != OrderAction.NoAction)
                     {
-                        IOrderGrain orderGrain = clusterClient.GetGrain<IOrderGrain>(strategyAccount.strategy_grain_key());     
+                        IOrderGrain orderGrain = clusterClient.GetGrain<IOrderGrain>("0");     
                         await orderGrain.ProcessOrder(n_order);
                     }
                     

@@ -13,47 +13,53 @@ public class TraderRepository : ITraderRepository
         _context = context;
     }
 
-    public Task AddLogEntryAsync(ActivityLog log)
+    public async Task AddLogEntryAsync(ActivityLog log)
     {
-        _context.ActivityLogs.Add(log);
-        return Task.CompletedTask;
+        await _context.ActivityLogs.AddAsync(log);
+        await Task.CompletedTask;
     }
 
-    public Task<int> AddTraderAsync(NewTrader addedTrader)
+    public async Task<int> AddTraderAsync(NewTrader addedTrader)
     {
-        UserProfile user = new UserProfile();    
-        user.UserID =  GetNewTraderID(addedTrader.GroupID);
-        user.DisplayName = addedTrader.DisplayName;
-        user.UserPwd = addedTrader.UserPwd;
-        user.Email = addedTrader.Email;
-        user.FirstName = addedTrader.FirstName;
-        user.LastName = addedTrader.LastName;
-        user.DateRegistered = DateTime.Now;
-        user.Enabled = 1;
-        user.EnabledLive = 0;
-        user.Leverage = 1;
-        user.IsOpposite = 0;
-        user.GroupRank = 0;
-        user.GroupID = addedTrader.GroupID;
-        user.TraderRole = 1;
-        
-        ScoreCard scd = new ScoreCard();
-        scd.UserID  = user.UserID;
-        scd.TradeXML = " ";
-        scd.GroupID = addedTrader.GroupID;
+        UserProfile user = new UserProfile
+        {
+            UserID = await GetNewTraderID(addedTrader.GroupID),
+            DisplayName = addedTrader.DisplayName,
+            UserPwd = addedTrader.UserPwd,
+            Email = addedTrader.Email,
+            FirstName = addedTrader.FirstName,
+            LastName = addedTrader.LastName,
+            DateRegistered = DateTime.Now,
+            Enabled = 1,
+            EnabledLive = 0,
+            Leverage = 1,
+            IsOpposite = 0,
+            GroupRank = 0,
+            GroupID = addedTrader.GroupID,
+            TraderRole = 1
+        };
+
+        ScoreCard scd = new ScoreCard
+        {
+            UserID = user.UserID,
+            TradeXML = " ",
+            GroupID = addedTrader.GroupID
+        };
         _context.Add(scd);
         _context.UserProfiles.Add(user);
-        return Task.FromResult(user.UserID);
+        await _context.AddAsync(scd);
+        await _context.UserProfiles.AddAsync(user);
+        return user.UserID;
 
     }
 
-    public Task<int> AuthenticateTraderAsync(int userID, string password, int groupNumber)
+    public async Task<int> AuthenticateTraderAsync(int userID, string password, int groupNumber)
     {
         Guid g = Guid.NewGuid();
         byte[] gb = g.ToByteArray();
         int auth_token = Math.Abs(BitConverter.ToInt32(gb, 0));
 
-        List<UserProfile> userList = GetUserProfile(userID ,groupNumber);
+        List<UserProfile> userList = await GetUserProfile(userID ,groupNumber);
 
         if (userList.Count > 0)
         {
@@ -64,11 +70,11 @@ public class TraderRepository : ITraderRepository
             }
         }
 
-        return Task.FromResult(auth_token);
+        return await Task.FromResult(auth_token);
 
     }
 
-    public Task<List<ActivityLog>> GetActivityLogEntriesAsync(int UserID)
+    public async Task<List<ActivityLog>> GetActivityLogEntriesAsync(int UserID)
     {
         List<ActivityLog> dataList = new List<ActivityLog>(); 
         
@@ -76,50 +82,51 @@ public class TraderRepository : ITraderRepository
                                 where logs.UserID == UserID
                                 select logs).ToList();
 
-        return Task.FromResult(dataList);
+        return await Task.FromResult(dataList);
     }
 
-    public Task<List<UserProfile>> GetUserProfileAsync(int TraderID, int GroupNumber)
+    public async Task<List<UserProfile>> GetUserProfileAsync(int TraderID, int GroupNumber)
     {
         var profile =  (from u in _context.UserProfiles
                               where u.UserID == TraderID
                                     && u.GroupID == GroupNumber
                               select u).ToList();
 
-        return Task.FromResult(profile);
+        return await Task.FromResult(profile);
 
     }
 
-    public Task<List<UserProfile>> GetUserProfileListAsync(int GroupNumber)
+    public async Task<List<UserProfile>> GetUserProfileListAsync(int GroupNumber)
     {
         List<UserProfile> ups = (from u in _context.UserProfiles
                                     where u.GroupID== GroupNumber
                                         select u).ToList();
-        return Task.FromResult(ups);
+        return await Task.FromResult(ups);
 
 
     }
 
-    public Task<List<ScoreCard>> GetScoreCardAsync(int TraderID , int GroupNumber)
+    public async Task<List<ScoreCard>> GetScoreCardAsync(int TraderID , int GroupNumber)
     {
         var scorecard = (from sc in _context.ScoreCard
                             where sc.UserID == TraderID
                                 && sc.GroupID == GroupNumber
                             select sc).ToList();
 
-        return Task.FromResult(scorecard);
+        return await Task.FromResult(scorecard);
     }
 
 
-    public List<UserProfile> GetUserProfile(int TraderID , int GroupNumber)
+    public async Task<List<UserProfile>> GetUserProfile(int TraderID , int GroupNumber)
     {
-        return (from u in _context.UserProfiles
+        var profile = (from u in _context.UserProfiles
                             where u.UserID == TraderID
                                 && u.GroupID == GroupNumber
                             select u).ToList();
+        return await Task.FromResult(profile);                            
     }
 
-    private int GetNewTraderID(int GroupNumber)
+    private async Task<int> GetNewTraderID(int GroupNumber)
     {
         bool newNumber = false;
         Random random = new Random();
@@ -127,13 +134,13 @@ public class TraderRepository : ITraderRepository
 
         while (!newNumber)
         {
-            if ( GetUserProfile(sixDigitRandomNumber,GroupNumber).Count() == 0 ) 
+            if ( (await GetUserProfile(sixDigitRandomNumber,GroupNumber)).Count() == 0 ) 
                 newNumber = true;  
             else
                 sixDigitRandomNumber = random.Next(100000, 999999);    
         }
 
-        return sixDigitRandomNumber;
+        return await Task.FromResult(sixDigitRandomNumber);
     }
 
     public async Task<int> VerifyModelTrader(NewTrader user)
