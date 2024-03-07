@@ -23,14 +23,10 @@ namespace Testing
     public class StandardOrderTests
     {
         private TestingDataService _dataService;    
-        private readonly IClusterClient _client;
-        private readonly bool _usingGrains; 
-
-        public StandardOrderTests(IClusterClient client, bool useGrain)
+        
+        public StandardOrderTests()
         {
-            _client = client;
-            _usingGrains = useGrain;                
-            _dataService = new TestingDataService(_client, _usingGrains);
+            _dataService = new TestingDataService();
         }
 
         UserInfo uInfo = new(999999,"abc", 0 );

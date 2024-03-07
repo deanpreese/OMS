@@ -11,17 +11,17 @@ public class OrderBackgroundService : BackgroundService
 {
     private readonly IClusterClient _client;
     private readonly ILogger<OrderBackgroundService> _logger;
-    private readonly StrategyOrderQueue _algoOrderQueue;
+    private readonly StrategyOrderQueue _strategyOrderQueue;
     private IAsyncStream<LiveOrder>? openOrderStreamProvider;
 
 
     public OrderBackgroundService(IClusterClient client, 
-        StrategyOrderQueue algoOrderQueue, 
+        StrategyOrderQueue strategyOrderQueue, 
         ILogger<OrderBackgroundService> logger)
     {
         _client = client;
         _logger = logger;
-        _algoOrderQueue = algoOrderQueue;
+        _strategyOrderQueue = strategyOrderQueue;
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
@@ -37,7 +37,7 @@ public class OrderBackgroundService : BackgroundService
         await openOrderStreamProvider.SubscribeAsync(
             async (newLiveOrder, token) =>
             {
-                await _algoOrderQueue.WriteAsync(newLiveOrder);
+                await _strategyOrderQueue.WriteAsync(newLiveOrder);
             });
     }
 }

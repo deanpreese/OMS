@@ -11,67 +11,29 @@ namespace Testing;
 
 public class TestingDataService
 {
-     IClusterClient _client;
-    bool _usingGrains = false;
-
-    public TestingDataService(IClusterClient client, bool usingGrains) 
-    {
-        _client = client;
-        _usingGrains = usingGrains;
-    }
 
     
     public async Task<int> SendOrderAsync(NewOrder order)
     {
-        if (_usingGrains)
-        {
-            string o_s = order.UserID+"_"+order.GroupID;
-            Console.WriteLine($"Grain: {o_s}");
-            var order_grain = _client.GetGrain<IOrderGrain>(o_s);
-            int rtn_code = await order_grain.ProcessOrder(order);
-            return rtn_code;
-        }else
-        {
             int sendOrderResult = await OMSClient.SendOrderAsync(order);
             //Thread.Sleep(1000);    
             return sendOrderResult;
-        }
     }
 
 
 
     public async Task<int> AddTraderToPlatform(NewTrader newTrader)
     {
-        if (_usingGrains)
-        {
-            string n_t = "new_trader";
-            Console.WriteLine($"AdminGrain: {n_t}");
-            var admin_grain = _client.GetGrain<IAdminGrain>(n_t);
-            int rtn_code = await admin_grain.AddNewTrader(newTrader);
-            return rtn_code;
-        }else
-        {
             int trader_id = await OMSClient.AddTraderAsync(newTrader);
             return trader_id;
-        }
+     
     }
 
 
     public  async Task<int> VerifyTraderToPlatform(UserInfo trader)
     {
-        if (_usingGrains)
-        {
-            string n_t = "new_trader";
-            Console.WriteLine($"AdminGrain: {n_t}");
-            var admin_grain = _client.GetGrain<IAdminGrain>(n_t);
-
-            int rtn_code = await admin_grain.AuthenticateTrader(trader);
-            return rtn_code;
-        }else
-        {
             int trader_id = await OMSClient.AuthenticateTraderAsync(trader);
             return trader_id;
-        }
     }
 
 

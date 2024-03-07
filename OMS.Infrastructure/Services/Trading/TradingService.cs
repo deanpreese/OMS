@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using OMS.Infrastructure.Services.Queue;
 using OMS.Infrastructure.Services.Common;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 
 namespace OMS.Infrastructure.Services.Trading;
@@ -32,7 +33,7 @@ public class TradingService : ITradingService
     {
         LiveOrder newLiveOrder = MapAndAddOrderManagerID(newOrder);
         await _unitOfWork.UnderCoverRepository.AddToOrderFlowAsync(newLiveOrder);
-        _unitOfWork.Commit();
+        await _unitOfWork.CommitAsync();
 
         IOrderRepository orderRepository = _unitOfWork.OrderRepository;
 
@@ -47,6 +48,7 @@ public class TradingService : ITradingService
             {
                 newLiveOrder.OrderType = OrderType.OPEN;
                 await ProcessNewPosition(newLiveOrder, orderRepository );
+                await _unitOfWork.CommitAsync();
                 
                 
             }
@@ -59,6 +61,7 @@ public class TradingService : ITradingService
                     //Console.WriteLine("Closing an existing position "  +  existingOrder.OrderManagerID);
                     newLiveOrder.OrderType = OrderType.CLOSE;
                     await CloseOrder(existingOrder, newLiveOrder, orderRepository);
+                    await _unitOfWork.CommitAsync();
 
                     await _closedOrderChannelService.WriteAsync(newLiveOrder);
                 }
@@ -69,9 +72,10 @@ public class TradingService : ITradingService
         {
             newLiveOrder.OrderType = OrderType.OPEN;
             await ProcessNewPosition(newLiveOrder, orderRepository);
+            await _unitOfWork.CommitAsync();
         }
 
-        _unitOfWork.Commit();
+        //_unitOfWork.Commit();
         return newLiveOrder;
     }
 

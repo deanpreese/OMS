@@ -43,12 +43,12 @@ public class AnalyticsService : IAnalyticsService
                 if (sc == null)
                 {
                     await _unitOfWork.AnalyticsRepository.AddTraderScoreCard(scoreCard);
-                     _unitOfWork.Commit();  
+                    await _unitOfWork.CommitAsync();
                 }
                 else
                 {
                     await _unitOfWork.AnalyticsRepository.UpdateTraderScoreCard(scoreCard);
-                    _unitOfWork.Commit();  
+                    await _unitOfWork.CommitAsync(); 
                     //await _unitOfWork.AnalyticsRepository.UpdateTraderScoreCard(scoreCard);
                     //_unitOfWork.Commit();  
                 }   

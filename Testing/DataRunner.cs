@@ -16,15 +16,11 @@ namespace Testing;
 
 public class DataRunner
     {
-        IClusterClient _client;
-        bool _usingGrains = false;
         private TestingDataService  _dataService;  
 
-        public DataRunner(IClusterClient client, bool usingGrains) 
+        public DataRunner() 
         {
-            _client = client;
-            _usingGrains = usingGrains;
-            _dataService = new TestingDataService(_client, _usingGrains);
+            _dataService = new TestingDataService();
         }
 
 
@@ -117,21 +113,9 @@ public class DataRunner
             List<NewTrader> newTraders = new List<NewTrader>();
             List<UserProfile> trader_list = new List<UserProfile>();
 
-            if (_usingGrains)
-            {
-                string n_t = "newtrader";
-                Console.WriteLine($"AdminGrain: {n_t}");
-                var admin_grain = _client.GetGrain<IAdminGrain>(n_t);
-                List<UserProfile> full_list = await admin_grain.GetTraders(groupNumber);
-
-                int x = new Random().Next(0, traders);
-                trader_list = full_list.OrderBy(t => Guid.NewGuid()).Take(x).ToList();
-
-            }else
-            {
-                trader_list = await OMSClient.GetTraders(groupNumber);
-            }
-
+            
+            trader_list = await OMSClient.GetTraders(groupNumber);
+            
             if (trader_list.Count > 0)
             {
                 

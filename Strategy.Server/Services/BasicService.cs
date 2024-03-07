@@ -15,64 +15,23 @@ using Strategy.Trader;
 
 namespace Strategy.Server.Services;
 
-public class BasicService : BackgroundService
-{  
-    private string strategy_to_load = "NG1.json";
-    private readonly StrategyOrderQueue _strategyOrderQueue;
-    private readonly ILogger<BasicService> _logger;
-    private StrategyAccount _strategyAccount; 
-    ChannelReader<LiveOrder> _reader;
-    private readonly IClusterClient _client;
 
-    IStrategy _strategy = new NStrategy();
-
-    public BasicService(ILogger<BasicService> logger, 
-            StrategyOrderQueue strategyOrderQueue,
-            IClusterClient client)
+public class BasicService : AbstractStrategyService
+{
+    public BasicService(ILogger<AbstractStrategyService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
+    : base(logger, strategyOrderQueue, client)
     {
-        _strategyOrderQueue = strategyOrderQueue;
-        _logger = logger;
-        _client = client;
-
-        _strategyAccount = new StrategyAccount();
-        _reader = _strategyOrderQueue.Subscribe();
-
     }
+
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _client);
-        _strategyAccount = configLoader.GetStrategyData().Result;
+        string strategy_to_load = "NG1.json";
+        StrategyConfig configLoader = new StrategyConfig(strategy_to_load, clusterClient);
+        strategyAccount= configLoader.GetStrategyData().Result;
+
+        loadedStrategy = new OpenCloseStrategy(clusterClient, strategyAccount);
+
         await base.StartAsync(cancellationToken);
-        _strategy = new OpenCloseStrategy(_client, _strategyAccount);
-    }
-
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-       await Task.Run(async () =>
-        {
-            await foreach (var newOrderInfo in _reader.ReadAllAsync(stoppingToken))
-            {
-                try
-                {
-                    NewOrder n_order = await _strategy.OnNewOrder(newOrderInfo);
-
-                    if(n_order.OrderAction != OrderAction.NoAction)
-                    {
-                        IOrderGrain orderGrain = _client.GetGrain<IOrderGrain>(_strategyAccount.strategy_grain_key());     
-                        await orderGrain.ProcessOrder(n_order);
-                    }
-
-
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.Message);
-                }
-            }
-        });
-        
-        await Task.CompletedTask;
     }
 
 }

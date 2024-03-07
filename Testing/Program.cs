@@ -17,26 +17,6 @@ namespace Testing
     {
             static async Task Main(string[] args)
             {
-                using IHost host = new HostBuilder()
-                    .UseOrleansClient(clientBuilder =>
-                    {
-                        clientBuilder.Configure<ClusterOptions>(options =>
-                        {
-                            options.ClusterId = "dev";
-                            options.ServiceId = "OrleansBasics";
-                        });
-
-                       clientBuilder.UseAdoNetClustering(options =>
-                        {
-                            options.Invariant = "Npgsql";
-                            options.ConnectionString = "host=10.0.0.147;database=orleans;password=abc;username=orleansuser";
-                        });
-                    })
-                    .Build();
-
-
-                var client = host.Services.GetRequiredService<IClusterClient>();
-
                 Console.WriteLine(" ");
                 Console.WriteLine("TestRunner");
                 Console.WriteLine(" ");
@@ -44,26 +24,13 @@ namespace Testing
                 Console.WriteLine("1 - Run Standard Order Tests");
                 Console.WriteLine("2 - Read from CSV");
                 Console.WriteLine("3 - Pull Traders from DB");
-
                 int opt = 0;
-                bool useGrain = false;
 
                 try
                 {
                     string input = Console.ReadLine();
                     opt = input != null ? int.Parse(input) : 0;
-                    Console.WriteLine(" ");
-                    Console.WriteLine("1   Use Grains");
-                    Console.WriteLine("2   WebAPI");
-                    string grains_input = Console.ReadLine();
-                    Console.WriteLine(" ");
 
-                    int g_yes = grains_input != null ? int.Parse(grains_input) : 0; 
-
-                    if (g_yes == 1)
-                    {
-                        useGrain = true;
-                    }
 
                 }
                 catch (Exception)
@@ -85,7 +52,7 @@ namespace Testing
                             int[] nums = Array.ConvertAll(input.Split(','), int.Parse);
 
                             await Task.Run(async () => {
-                                DataRunner dataRunner = new DataRunner(client, useGrain);
+                                DataRunner dataRunner = new DataRunner();
                                 await dataRunner.DataRunnerAuto(nums[0], nums[1], nums[2]);
                             });
                         }
@@ -93,7 +60,7 @@ namespace Testing
 
                     case 1:
                         await Task.Run(async () => {
-                            StandardOrderTests stdOrderTests = new StandardOrderTests(client, useGrain);
+                            StandardOrderTests stdOrderTests = new StandardOrderTests();
                             await stdOrderTests.RunAll(200);
                         });
 
@@ -107,7 +74,7 @@ namespace Testing
                         if (filename != null)
                         {
                             await Task.Run(async () => {
-                                DataRunner dataRunner = new DataRunner(client, useGrain);
+                                DataRunner dataRunner = new DataRunner();
                                 await dataRunner.ExecuteOrdersFromCsv(filename);
                             });
                         }
@@ -122,7 +89,7 @@ namespace Testing
                             int[] nums = Array.ConvertAll(input_db.Split(','), int.Parse);                                
 
                             await Task.Run(async () => {
-                                DataRunner dataRunner = new DataRunner(client, useGrain);
+                                DataRunner dataRunner = new DataRunner();
                                 await dataRunner.DataRunnerFromDB(nums[0], nums[1], nums[2]);
                             });
                         }

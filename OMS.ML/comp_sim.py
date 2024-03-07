@@ -71,9 +71,9 @@ def run_sim(exp_id, n_models, file):
     
 exp_idx = ["6"]
 num_models = 1
-file = "data/lucky13_short.csv"
+#file = "data/lucky13_short.csv"
     
-#file = "data/lucky13_oos.csv"    
+file = "data/lucky13_oos.csv"    
     
 run_sim(exp_idx, num_models, file)    
 

@@ -27,10 +27,16 @@ public abstract class AbstractStrategy : IStrategy
         _filters = AddFilters();                
     }
 
-    public abstract Task<int> EvaluateFilters(string trader_key, string strategy_key,ITraderGrain traderGrain, IStrategyGrain strategyGrain);
-    public abstract List<IStrategyFilter>  AddFilters();
+    public virtual async Task<int> EvaluateFilters(string trader_key, string strategy_key,ITraderGrain traderGrain, IStrategyGrain strategyGrain)
+    {
+        await Task.CompletedTask;
+        return 0;
+    }
+    public virtual List<IStrategyFilter>  AddFilters()
+    {
+        return new List<IStrategyFilter>();
+    }
     
-
     public async Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order)
     {
         Console.WriteLine("           ----  ");
