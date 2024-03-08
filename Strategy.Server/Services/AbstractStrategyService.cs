@@ -17,23 +17,15 @@ public class AbstractStrategyService : BackgroundService
 {
     private ChannelReader<LiveOrder> _reader;
     private StrategyOrderQueue _strategyOrderQueue;
-    private ILogger<AbstractStrategyService> _logger;
-
-    public  IClusterClient clusterClient { get; set; }
-    public StrategyAccount strategyAccount { get; set; }   
-
+    ILogger<AbstractStrategyService> _logger;
     public IStrategy loadedStrategy = new NStrategy(); 
 
     public AbstractStrategyService(ILogger<AbstractStrategyService> logger, 
-            StrategyOrderQueue strategyOrderQueue,
-            IClusterClient client)
+            StrategyOrderQueue strategyOrderQueue)
     {
         _strategyOrderQueue = strategyOrderQueue;
-        _logger = logger;
-        clusterClient = client;
-
-        strategyAccount = new StrategyAccount();
         _reader = _strategyOrderQueue.Subscribe();
+        _logger = logger;
 
     }
 

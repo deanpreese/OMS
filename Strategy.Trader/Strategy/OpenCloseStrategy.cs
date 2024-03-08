@@ -41,8 +41,7 @@ public class OpenCloseStrategy : AbstractStrategy
             includeExclude = filter.IsInFilter();
         }
 
-        //return includeExclude;
-        return 1;
+        return includeExclude;
     }
 
     public async override Task ProcessOrderForStrategy(string strategy_key, NewOrder order)

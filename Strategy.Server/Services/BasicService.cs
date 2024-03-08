@@ -18,21 +18,22 @@ namespace Strategy.Server.Services;
 
 public class BasicService : AbstractStrategyService
 {
-    IClusterClient newClusterClient;
+    IClusterClient _clusterClient;
+    StrategyAccount _strategyAccount;
 
     public BasicService(ILogger<AbstractStrategyService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
-    : base(logger, strategyOrderQueue, client)
+    : base(logger, strategyOrderQueue)
     {
-        newClusterClient = client;
+        _clusterClient = client;
+        _strategyAccount = new StrategyAccount();
     }
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
         string strategy_to_load = "NG1.json";
-        StrategyConfig configLoader = new StrategyConfig(strategy_to_load, newClusterClient);
-        strategyAccount= configLoader.GetStrategyData().Result;
-
-        loadedStrategy = new OpenCloseStrategy(newClusterClient, strategyAccount);
+        StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _clusterClient);
+        _strategyAccount= configLoader.GetStrategyData().Result;
+        loadedStrategy = new OpenCloseStrategy(_clusterClient, _strategyAccount);
 
         await base.StartAsync(cancellationToken);
     }

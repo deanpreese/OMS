@@ -49,8 +49,6 @@ public class AnalyticsService : IAnalyticsService
                 {
                     await _unitOfWork.AnalyticsRepository.UpdateTraderScoreCard(scoreCard);
                     await _unitOfWork.CommitAsync(); 
-                    //await _unitOfWork.AnalyticsRepository.UpdateTraderScoreCard(scoreCard);
-                    //_unitOfWork.Commit();  
                 }   
             }else
             {
