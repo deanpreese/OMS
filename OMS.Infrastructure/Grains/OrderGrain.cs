@@ -18,10 +18,7 @@ public class OrderGrain : Grain, IOrderGrain
 
     public async Task<int> ProcessOrder(NewOrder order)
     {
-        if (order.OrderAction != Core.Common.OrderAction.NoAction)    
-        {
-            await _newOrderChannelService.WriteAsync(order);
-        }
+        await _newOrderChannelService.WriteAsync(order);
         return 0;
     }
 }

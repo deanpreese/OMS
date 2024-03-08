@@ -54,20 +54,14 @@ public class StrategyConfig
         int t_v = 0;
         await Task.Run(async () =>
         {
-            //t_v = await OMSClient.VerifyModelTrader(n_trader);
+            //await Task.Delay(2000);
             IAdminGrain adminGrain = _clusterClient.GetGrain<IAdminGrain>("A"+_strategyData.group);     
-            Thread.Sleep(2000);
             t_v = await adminGrain.VerifyAndAddByDisplayName(n_trader);
-            Thread.Sleep(2000);
-
+           // await Task.Delay(2000);
         });
 
-
-
         _strategyData.strategy_traderId = t_v;
-
         Console.WriteLine("Trader " + t_v);
-
         return _strategyData;
     }
 

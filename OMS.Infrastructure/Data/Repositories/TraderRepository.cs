@@ -45,13 +45,28 @@ public class TraderRepository : ITraderRepository
             TradeXML = " ",
             GroupID = addedTrader.GroupID
         };
-        _context.Add(scd);
-        _context.UserProfiles.Add(user);
-        await _context.AddAsync(scd);
+        //_context.Add(scd);
+        //_context.UserProfiles.Add(user);
+        //await _context.ScoreCard.AddAsync(scd);
         await _context.UserProfiles.AddAsync(user);
         return user.UserID;
 
     }
+
+
+    public async Task<int> AddNewTraderScorecard(int userID, int groupID)
+    {
+        ScoreCard scd = new ScoreCard
+        {
+            UserID = userID,
+            TradeXML = " ",
+            GroupID = groupID
+        };
+
+        await _context.ScoreCard.AddAsync(scd);
+        return userID;
+    }
+
 
     public async Task<int> AuthenticateTraderAsync(int userID, string password, int groupNumber)
     {

@@ -14,15 +14,15 @@ namespace Strategy.Trader.Abstractions;
 
 public abstract class AbstractStrategy : IStrategy 
 {
-    public IGrainFactory _grainFactory;
+    public IClusterClient _clusterClient;
     public StrategyAccount _strategyData;
     private string _strategy_key;
     public List<IStrategyFilter> _filters = new List<IStrategyFilter>();
 
-    public AbstractStrategy(IGrainFactory grainFactory, StrategyAccount strategyData) 
+    public AbstractStrategy(IClusterClient clusterClient, StrategyAccount strategyData) 
     {
-        _grainFactory = grainFactory;
         _strategyData = strategyData;
+        _clusterClient = clusterClient;
         _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
         _filters = AddFilters();                
     }
@@ -36,28 +36,38 @@ public abstract class AbstractStrategy : IStrategy
     {
         return new List<IStrategyFilter>();
     }
+
+    public virtual async Task ProcessOrderForStrategy(string strategy_key, NewOrder order)
+    {
+        await Task.CompletedTask;
+    }
     
     public async Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order)
     {
         Console.WriteLine("           ----  ");
 
         LiveOrder strategy_order = await GenerateOrderAction( _strategy_key, _orig_live_order);
-        NewOrder _mapped_new_order = OrderMapping.MapOrderLiveToNew(_orig_live_order);
+        NewOrder _mapped_new_order = await OrderMapping.MapOrderLiveToNew(_orig_live_order);
 
         if(strategy_order.OrderAction != OrderAction.NoAction)
         {
-            _mapped_new_order = OrderMapping.MapOrderLiveToNew(strategy_order);
+            _mapped_new_order = await OrderMapping.MapOrderLiveToNew(strategy_order);
             _mapped_new_order.GroupID = _strategyData.group;
             _mapped_new_order.UserID = _strategyData.strategy_traderId;
             _mapped_new_order.Quantity =strategy_order.Quantity;
             _mapped_new_order.RelatedOrderID = _orig_live_order.PlatformOrderID;
+
+            if(_mapped_new_order.OrderAction != OrderAction.NoAction)
+            {
+                await ProcessOrderForStrategy(_strategy_key, _mapped_new_order);
+            }
+
         }else
         {
             _mapped_new_order.OrderAction = OrderAction.NoAction;
         }
 
         return _mapped_new_order;
-
     }
 
     public async Task<LiveOrder> GenerateOrderAction(string strategy_key, LiveOrder order)
@@ -66,8 +76,8 @@ public abstract class AbstractStrategy : IStrategy
         string _trader_key = order.UserID + "_" + order.GroupID;
         Console.WriteLine(_strategyData.strategy_name + " New Order " + _trader_key + "  " + order.OrderAction + "  " + order.OrderType) ;
 
-        ITraderGrain _trader_grain = _grainFactory.GetGrain<ITraderGrain>(_trader_key);
-        IStrategyGrain  _strategy_grain = _grainFactory.GetGrain<IStrategyGrain>(_strategy_key);
+        ITraderGrain _trader_grain = _clusterClient.GetGrain<ITraderGrain>(_trader_key);
+        IStrategyGrain  _strategy_grain = _clusterClient.GetGrain<IStrategyGrain>(_strategy_key);
 
         if (order.OrderType == OrderType.OPEN)
         {
@@ -78,6 +88,7 @@ public abstract class AbstractStrategy : IStrategy
             {
                 order.OrderAction = OrderAction.NoAction;
                 await ShowOrderInfo(order, OrderType.NONE); 
+                return order;
             }else
             {
                 if (filterAction == 0)
@@ -109,6 +120,8 @@ public abstract class AbstractStrategy : IStrategy
                         await ShowOrderInfo(order, OrderType.OPEN);
                     }
                 }
+
+                return order;
             }
 
         }

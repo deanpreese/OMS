@@ -16,7 +16,6 @@ namespace Strategy.Server.Services;
 public class AbstractStrategyService : BackgroundService
 {
     private ChannelReader<LiveOrder> _reader;
-    
     private StrategyOrderQueue _strategyOrderQueue;
     private ILogger<AbstractStrategyService> _logger;
 
@@ -48,12 +47,6 @@ public class AbstractStrategyService : BackgroundService
                 {
                     await Task.Delay(25);
                     NewOrder n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
-                    if(n_order.OrderAction != OrderAction.NoAction)
-                    {
-                        IOrderGrain orderGrain = clusterClient.GetGrain<IOrderGrain>("0");     
-                        await orderGrain.ProcessOrder(n_order);
-                    }
-                    
                 }
                 catch (Exception ex)
                 {

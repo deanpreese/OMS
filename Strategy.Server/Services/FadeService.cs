@@ -15,18 +15,21 @@ namespace Strategy.Server.Services;
 
 public class FadeService : AbstractStrategyService
 {
+     IClusterClient newClusterClient;
+
     public FadeService(ILogger<AbstractStrategyService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
     : base(logger, strategyOrderQueue, client)
     {
+        newClusterClient = client;
     }
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
         string strategy_to_load = "NG3.json";
-        StrategyConfig configLoader = new StrategyConfig(strategy_to_load, clusterClient);
+        StrategyConfig configLoader = new StrategyConfig(strategy_to_load, newClusterClient);
         strategyAccount= configLoader.GetStrategyData().Result;
 
-        loadedStrategy = new BaseFadeStrategy(clusterClient, strategyAccount);
+        loadedStrategy = new BaseFadeStrategy(newClusterClient, strategyAccount);
 
         await base.StartAsync(cancellationToken);
     }

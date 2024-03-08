@@ -31,7 +31,7 @@ public class TradingService : ITradingService
 
     public async Task<LiveOrder> ProcessNewOrderAsync(NewOrder newOrder)
     {
-        LiveOrder newLiveOrder = MapAndAddOrderManagerID(newOrder);
+        LiveOrder newLiveOrder = await MapAndAddOrderManagerID(newOrder);
         await _unitOfWork.UnderCoverRepository.AddToOrderFlowAsync(newLiveOrder);
         await _unitOfWork.CommitAsync();
 
@@ -94,7 +94,7 @@ public class TradingService : ITradingService
     // ******************************************************************************************* /
     public async Task<double> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, IOrderRepository orderRepository)
     {
-        ClosedTrade histOrder = OrderMapping.MapClosedOrder(orderToClose, orderToStore);       
+        ClosedTrade histOrder = await OrderMapping.MapClosedOrder(orderToClose, orderToStore);       
 
         histOrder.MAE = orderToClose.MAE; 
         histOrder.MFE = orderToClose.MFE;
@@ -123,7 +123,7 @@ public class TradingService : ITradingService
 
 
 
-    private LiveOrder MapAndAddOrderManagerID(NewOrder newOrder)
+    private async Task<LiveOrder> MapAndAddOrderManagerID(NewOrder newOrder)
     {
         newOrder.PlatformOrderID = _platformOrderIDGen.GetNextOrderID();
 
@@ -135,9 +135,10 @@ public class TradingService : ITradingService
             om_id = BitConverter.ToInt32(salt, 0);
         }
 
-        LiveOrder liveOrder = OrderMapping.MapOrderNewToLive(newOrder);
+        LiveOrder liveOrder = await OrderMapping.MapOrderNewToLive(newOrder);
         liveOrder.OrderManagerID = om_id;
-        return liveOrder;
+
+        return await Task.FromResult(liveOrder);
     }
 
 

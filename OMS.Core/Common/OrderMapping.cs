@@ -5,7 +5,7 @@ namespace OMS.Core.Common;
 
 public class OrderMapping
 {
-    public static ClosedTrade MapClosedOrder(LiveOrder orderToClose, LiveOrder orderToStore)
+    public static async Task<ClosedTrade> MapClosedOrder(LiveOrder orderToClose, LiveOrder orderToStore)
     {
         ClosedTrade histOrder = new ClosedTrade()
         {
@@ -37,11 +37,11 @@ public class OrderMapping
             CloseOrderAction = orderToStore.OrderAction
         };
 
-        return histOrder;
+        return await Task.FromResult(histOrder);
     }
 
 
-    public static LiveOrder MapOrderNewToLive(NewOrder newOrder)
+    public static async Task<LiveOrder> MapOrderNewToLive(NewOrder newOrder)
     {
         LiveOrder liveOrder = new LiveOrder();
         liveOrder.OrderPX = newOrder.OrderPX;  
@@ -57,12 +57,13 @@ public class OrderMapping
         liveOrder.Leverage = 1;
         liveOrder.Opposite = 0;
         liveOrder.RelatedOrderID = newOrder.RelatedOrderID;
-        return liveOrder;
+
+        return await Task.FromResult(liveOrder);
     }
 
 
 
-    public static NewOrder MapOrderLiveToNew(LiveOrder liveOrder)
+    public async static Task<NewOrder> MapOrderLiveToNew(LiveOrder liveOrder)
     {
         NewOrder newOrder = new NewOrder {
             OrderPX = liveOrder.OrderPX , 
@@ -75,7 +76,8 @@ public class OrderMapping
             UserID = 0,
             GroupID = 0,
         };
-            return newOrder;
+        return await Task.FromResult(newOrder);
+
     }
 }
 

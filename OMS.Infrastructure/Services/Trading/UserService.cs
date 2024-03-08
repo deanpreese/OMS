@@ -35,11 +35,12 @@ public class UserService : IUserService
         try
         {
             _logger.LogInformation("Adding new trader...");
-            // Use TraderRepository to add a new trader
             traderID = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
-            // Commit transaction
             _unitOfWork.Commit();
 
+            traderID = await _unitOfWork.TraderRepository.AddNewTraderScorecard(traderID, newTrader.GroupID);
+            _unitOfWork.Commit();
+            
         }
         catch (Exception ex)
         {
