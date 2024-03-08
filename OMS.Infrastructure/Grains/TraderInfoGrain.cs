@@ -4,7 +4,7 @@ using OMS.Infrastructure.Data.Repositories;
 
 namespace OMS.Infrastructure;
 
-public class TraderInfoGrain : ITraderInfoGrain
+public class TraderInfoGrain : Grain, ITraderInfoGrain
 {
     private string _key_string ;
     private IUnitOfWork _unitOfWork;
@@ -22,5 +22,21 @@ public class TraderInfoGrain : ITraderInfoGrain
         int userId = int.Parse(profile_key_parts[0]);
         int groupNum = int.Parse(profile_key_parts[1]);
         return await _unitOfWork.OrderRepository.GetLastClosedTradeByOpenPlatformID(userId, groupNum, platform_id);
+    }
+
+    public async Task<ScoreCard> GetScoreCardAsync(string profile_key)
+    {
+        string[] profile_key_parts = profile_key.Split('_');
+        int userId = int.Parse(profile_key_parts[0]);
+        int groupNum = int.Parse(profile_key_parts[1]);
+        
+        var sc_from_db = await _unitOfWork.TraderRepository.GetScoreCardAsync(userId, groupNum);
+
+        ScoreCard sc = new ScoreCard();
+        if (sc_from_db.Count > 0)
+        {
+            sc = sc_from_db.First();        
+        }
+       return sc;
     }
 }

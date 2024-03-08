@@ -10,18 +10,12 @@ namespace Strategy.Trader.Filters;
 
 public class TwoSidedFilter : IStrategyFilter
 {
-    UserProfile _userProfile;
     ScoreCard _scoreCard;
 
-    public void UpdateFilter(UserProfile userProfile, ScoreCard scoreCard)
+
+    public int IsInFilter(ScoreCard scoreCard)
     {
-        _userProfile = userProfile;
         _scoreCard = scoreCard;
-    }
-
-
-    public int IsInFilter()
-    {
         return IsInAlgoFilter104();
     }
 

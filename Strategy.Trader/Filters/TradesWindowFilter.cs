@@ -13,16 +13,9 @@ namespace Strategy.Trader.Filters;
 
 public class TradesWindowFilter : IStrategyFilter
 {
-    private UserProfile _userProfile;
     private ScoreCard _scoreCard;
 
-
-    public void UpdateFilter(UserProfile userProfile, ScoreCard scoreCard)
-    {
-        _userProfile = userProfile;
-        _scoreCard = scoreCard;
-    }
-    public int IsInFilter()
+    public int IsInFilter(ScoreCard scoreCard)
     {
         int includeExclude = 0;
 

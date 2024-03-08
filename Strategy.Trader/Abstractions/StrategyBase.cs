@@ -1,52 +1,33 @@
-﻿
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using Microsoft.Extensions.DependencyModel.Resolution;
 using OMS.Core.Common;
 using OMS.Core.Interfaces;
 using OMS.Core.Models;
-
-
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Models;
 
-
 namespace Strategy.Trader.Abstractions;
 
-public abstract class AbstractStrategy : IStrategy 
+public abstract class StrategyBase 
 {
-    public IClusterClient _clusterClient;
-    public StrategyAccount _strategyData;
-    private string _strategy_key;
+    public StrategyAccount _strategyData {get; set;}
+    public string _strategy_key {get; set;}
+
     public List<IStrategyFilter> _filters = new List<IStrategyFilter>();
 
-    public AbstractStrategy(IClusterClient clusterClient, StrategyAccount strategyData) 
-    {
-        _strategyData = strategyData;
-        _clusterClient = clusterClient;
-        _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
-        _filters = AddFilters();                
-    }
+    public abstract Task<int> EvaluateFilters(string trader_key, string strategy_key, 
+        ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain);
+   
+    public abstract Task ProcessOrderForStrategy(string strategy_key, NewOrder order);
 
-    public virtual async Task<int> EvaluateFilters(string trader_key, string strategy_key,ITraderGrain traderGrain, IStrategyGrain strategyGrain)
-    {
-        await Task.CompletedTask;
-        return 0;
-    }
-    public virtual List<IStrategyFilter>  AddFilters()
-    {
-        return new List<IStrategyFilter>();
-    }
+    public abstract Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order);
 
-    public virtual async Task ProcessOrderForStrategy(string strategy_key, NewOrder order)
-    {
-        await Task.CompletedTask;
-    }
-    
-    public async Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order)
+    public async Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order,
+        ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
     {
         Console.WriteLine("           ----  ");
 
-        LiveOrder strategy_order = await GenerateOrderAction( _strategy_key, _orig_live_order);
+        LiveOrder strategy_order = await GenerateOrderAction( _strategy_key, _orig_live_order, traderGrain, strategyGrain);
         NewOrder _mapped_new_order = await OrderMapping.MapOrderLiveToNew(_orig_live_order);
 
         if(strategy_order.OrderAction != OrderAction.NoAction)
@@ -70,14 +51,15 @@ public abstract class AbstractStrategy : IStrategy
         return _mapped_new_order;
     }
 
-    public async Task<LiveOrder> GenerateOrderAction(string strategy_key, LiveOrder order)
+    public async Task<LiveOrder> GenerateOrderAction(string strategy_key, LiveOrder order, 
+        ITraderInfoGrain _trader_grain, IStrategyGrain _strategy_grain)
     {
 
         string _trader_key = order.UserID + "_" + order.GroupID;
         Console.WriteLine(_strategyData.strategy_name + " New Order " + _trader_key + "  " + order.OrderAction + "  " + order.OrderType) ;
 
-        ITraderGrain _trader_grain = _clusterClient.GetGrain<ITraderGrain>(_trader_key);
-        IStrategyGrain  _strategy_grain = _clusterClient.GetGrain<IStrategyGrain>(_strategy_key);
+        //ITraderGrain _trader_grain = _clusterClient.GetGrain<ITraderGrain>(_trader_key);
+        //IStrategyGrain  _strategy_grain = _clusterClient.GetGrain<IStrategyGrain>(_strategy_key);
 
         if (order.OrderType == OrderType.OPEN)
         {
@@ -172,7 +154,7 @@ public abstract class AbstractStrategy : IStrategy
         return order;
     }
 
-    private async Task<bool> OkToOpenNewPosition(IStrategyGrain strategyGrain, LiveOrder order)
+    public async Task<bool> OkToOpenNewPosition(IStrategyGrain strategyGrain, LiveOrder order)
     {   
         bool newPosition = true;
         
@@ -197,7 +179,7 @@ public abstract class AbstractStrategy : IStrategy
     }
 
 
-    private async Task ShowOrderInfo(LiveOrder order, OrderType orderType)
+    public async Task ShowOrderInfo(LiveOrder order, OrderType orderType)
     {
         await Task.Run(() =>
         {

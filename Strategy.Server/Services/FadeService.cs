@@ -18,7 +18,7 @@ public class FadeService : AbstractStrategyService
     IClusterClient _clusterClient;
     StrategyAccount _strategyAccount;
 
-    public FadeService(ILogger<AbstractStrategyService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
+    public FadeService(ILogger<FadeService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
     : base(logger, strategyOrderQueue)
     {
         _clusterClient = client;

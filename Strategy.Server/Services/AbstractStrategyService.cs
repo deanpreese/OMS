@@ -18,7 +18,7 @@ public class AbstractStrategyService : BackgroundService
     private ChannelReader<LiveOrder> _reader;
     private StrategyOrderQueue _strategyOrderQueue;
     ILogger<AbstractStrategyService> _logger;
-    public IStrategy loadedStrategy = new NStrategy(); 
+    public IStrategy loadedStrategy ;
 
     public AbstractStrategyService(ILogger<AbstractStrategyService> logger, 
             StrategyOrderQueue strategyOrderQueue)
@@ -26,6 +26,7 @@ public class AbstractStrategyService : BackgroundService
         _strategyOrderQueue = strategyOrderQueue;
         _reader = _strategyOrderQueue.Subscribe();
         _logger = logger;
+        loadedStrategy = new NStrategy(null, null);
 
     }
 

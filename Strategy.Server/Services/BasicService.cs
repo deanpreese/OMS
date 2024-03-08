@@ -21,7 +21,7 @@ public class BasicService : AbstractStrategyService
     IClusterClient _clusterClient;
     StrategyAccount _strategyAccount;
 
-    public BasicService(ILogger<AbstractStrategyService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
+    public BasicService(ILogger<BasicService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
     : base(logger, strategyOrderQueue)
     {
         _clusterClient = client;

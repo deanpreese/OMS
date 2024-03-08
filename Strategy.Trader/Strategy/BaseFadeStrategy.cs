@@ -7,43 +7,41 @@ using Strategy.Trader.Models;
 
 namespace Strategy.Trader.Strategy;
 
-
-public class BaseFadeStrategy : AbstractStrategy
+public class BaseFadeStrategy : StrategyBase , IStrategy
 {
-
     IClusterClient newClusterClient;
     int orderCount = 1;
 
     public BaseFadeStrategy(IClusterClient clusterClient,  StrategyAccount strategyData) 
-    : base(clusterClient,  strategyData)
     {
         newClusterClient = clusterClient;
-    }
-
-    public override List<IStrategyFilter> AddFilters()
-    {
-        List<IStrategyFilter> _filters = new List<IStrategyFilter>
+        _filters = new List<IStrategyFilter>
         {
             new AllFadeFilter()
         };
 
-        return _filters;
     }
 
-    public override Task<int> EvaluateFilters(string trader_key, string strategy_key, ITraderGrain traderGrain, IStrategyGrain strategyGrain)
+    public override Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async override Task<int> EvaluateFilters(string trader_key, string strategy_key, 
+        ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
     {
         int includeExclude = 0;
+        ScoreCard _scoreCard = await traderGrain.GetScoreCardAsync(trader_key);    
         foreach (IStrategyFilter filter in _filters)
         {
-            includeExclude = filter.IsInFilter();
+            includeExclude = filter.IsInFilter(_scoreCard);
         }
-        return Task.FromResult(includeExclude);
+        return includeExclude;
     }
 
 
     public async override Task ProcessOrderForStrategy(string strategy_key, NewOrder order)
     {
-        if(order.OrderAction != OrderAction.NoAction)
         if(order.OrderAction != OrderAction.NoAction)
         {
             IOrderGrain orderGrain = newClusterClient.GetGrain<IOrderGrain>("T"+_strategyData.strategy_traderId + "-"+ orderCount);

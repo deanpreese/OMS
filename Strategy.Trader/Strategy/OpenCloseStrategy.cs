@@ -7,42 +7,49 @@ using Strategy.Trader.Models;
 
 namespace Strategy.Trader.Strategy;
 
-public class OpenCloseStrategy : AbstractStrategy
+public class OpenCloseStrategy : StrategyBase , IStrategy
 {
-   IClusterClient newClusterClient;
+    IClusterClient newClusterClient;
 
-   int orderCount = 1;
+    int orderCount = 1;
+
+
 
     public OpenCloseStrategy(IClusterClient clusterClient, StrategyAccount strategyData) 
-    : base(clusterClient, strategyData)
     {
         newClusterClient = clusterClient;
-    }
-
-    public override List<IStrategyFilter> AddFilters()
-    {
-        List<IStrategyFilter> _filters = new List<IStrategyFilter>
+        _filters = new List<IStrategyFilter>
         {
             new TwoSidedFilter()
         };
-        return _filters;
+
+        _strategyData = strategyData;
     }
 
-    public override async Task<int> EvaluateFilters(string trader_key, string strategy_key, ITraderGrain traderGrain, IStrategyGrain strategyGrain)
+
+
+    public override Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order)
+    {
+        throw new NotImplementedException();
+    }
+
+
+
+    public override async Task<int> EvaluateFilters(string trader_key, string strategy_key, 
+        ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
     {
         int includeExclude = 0;
 
-        UserProfile _userProfile = await traderGrain.GetProfileAsync(trader_key);
         ScoreCard _scoreCard = await traderGrain.GetScoreCardAsync(trader_key);            
 
         foreach (IStrategyFilter filter in _filters)
         {
-            filter.UpdateFilter(_userProfile, _scoreCard);
-            includeExclude = filter.IsInFilter();
+            includeExclude = filter.IsInFilter(_scoreCard);
         }
 
         return includeExclude;
     }
+
 
     public async override Task ProcessOrderForStrategy(string strategy_key, NewOrder order)
     {
