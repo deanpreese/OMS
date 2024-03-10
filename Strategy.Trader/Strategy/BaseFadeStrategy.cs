@@ -19,12 +19,18 @@ public class BaseFadeStrategy : StrategyBase , IStrategy
         {
             new AllFadeFilter()
         };
-
+        _strategyData = strategyData;
     }
 
     public override Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order)
     {
-        throw new NotImplementedException();
+         string _trader_key = _orig_live_order.UserID + "_" + _orig_live_order.GroupID;
+        _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
+
+        ITraderInfoGrain traderInfoGrain = newClusterClient.GetGrain<ITraderInfoGrain>(_trader_key);
+        IStrategyGrain strategyGrain = newClusterClient.GetGrain<IStrategyGrain>(_strategy_key);
+
+        return OnNewOrder(_orig_live_order, traderInfoGrain, strategyGrain);
     }
 
     public async override Task<int> EvaluateFilters(string trader_key, string strategy_key, 

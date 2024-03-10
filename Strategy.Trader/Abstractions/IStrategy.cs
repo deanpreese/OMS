@@ -8,7 +8,6 @@ namespace Strategy.Trader.Abstractions;
 public interface IStrategy
 {
    Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order);     
-
 }
 
 

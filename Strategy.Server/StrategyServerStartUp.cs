@@ -39,7 +39,8 @@ public class StrategyServerStartUp
         services.AddHostedService<OrderBackgroundService>();
 
         //services.AddHostedService<BasicService>();
-        services.AddHostedService<FollowService>();
+        //services.AddHostedService<FollowService>();
+        services.AddHostedService<CounterService>();
         //services.AddHostedService<FadeService>();
 
         return services;

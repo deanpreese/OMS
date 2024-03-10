@@ -24,7 +24,7 @@ def load_models(exp_id, n_models):
     model_loader = ModelLoader()
     return model_loader.load_composite_models( experiment_id, num_models)
 
-def run_sim(exp_id, n_models, file):
+def run_sim(exp_id, n_models, file, trades, delay):
 
 
     data = pd.read_csv(file)   
@@ -49,13 +49,13 @@ def run_sim(exp_id, n_models, file):
                 predict = models[m].do_predict(X.iloc[i])
                 order_manager.process_model(models[m], y[i], predict)            
                 order_total += 1
+                
+                time.sleep(delay)
 
             total += 1        
             order_manager.process_tick(y[i])
-        
-            #time.sleep(1)
-        
-            if total > 500:
+
+            if total > trades:
                 break    
 
 
@@ -69,13 +69,16 @@ def run_sim(exp_id, n_models, file):
     print(" ") 
     
     
-exp_idx = ["6"]
-num_models = 1
+exp_idx = ["4"]
+num_models = 15
+trades = 1000
+sim_delay = 0.15
+
 #file = "data/lucky13_short.csv"
     
 file = "data/lucky13_oos.csv"    
     
-run_sim(exp_idx, num_models, file)    
+run_sim(exp_idx, num_models, file, trades, sim_delay)    
 
 
 """

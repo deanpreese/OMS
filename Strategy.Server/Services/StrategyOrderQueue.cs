@@ -50,12 +50,13 @@ public class StrategyOrderQueue
             lock (_subscribers)
             {
                 subscribersSnapshot = new List<Channel<LiveOrder>>(_subscribers);
-
-                foreach (var subscriber in subscribersSnapshot)
-                {
-                    subscriber.Writer.WriteAsync(item);
-                }
             }
+
+            foreach (var subscriber in subscribersSnapshot)
+            {
+                await subscriber.Writer.WriteAsync(item);
+            }
+
         }
     }
 }

@@ -16,12 +16,12 @@ public class TwoSidedFilter : IStrategyFilter
     public int IsInFilter(ScoreCard scoreCard)
     {
         _scoreCard = scoreCard;
-        return IsInAlgoFilter104();
+        return IsInAlgoFilter1();
     }
 
 
 
-    public int IsInAlgoFilter104()
+    public int IsInAlgoFilter1()
     {
         int includeExclude = 0;
 
@@ -53,7 +53,7 @@ public class TwoSidedFilter : IStrategyFilter
 
             }
 
-            if (_scoreCard.WinLossRatio > .5)
+            if (_scoreCard.WinLossRatio > .55)
             {
                 // 5 SMA > 13 SMA -->>  Winning
                 if (Set5 > Set13 && Set3 > Set5)
@@ -280,9 +280,7 @@ public class TwoSidedFilter : IStrategyFilter
                     }
                 }
             }
-
         }
-
 
         return includeExclude;
     }

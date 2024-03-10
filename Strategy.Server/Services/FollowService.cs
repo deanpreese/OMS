@@ -12,22 +12,38 @@ using Strategy.Trader.Models;
 using Strategy.Trader.Utility;
 using Strategy.Trader.Strategy;
 using OMS.Core.Interfaces;
+using Strategy.Trader.Abstractions;
+using Strategy.Trader;
+using System.Threading.Tasks.Dataflow;
 
 namespace Strategy.Server.Services;
 
-public class FollowService : AbstractStrategyService
+public class FollowService : BackgroundService
 {  
+    private ChannelReader<LiveOrder> _reader;
+    private StrategyOrderQueue _strategyOrderQueue;
+    ILogger<FollowService> _logger;
+    private IStrategy loadedStrategy ;
     IClusterClient _clusterClient;
     StrategyAccount _strategyAccount;
     
+    BufferBlock<LiveOrder> flowBuffer;
+    
     public FollowService(ILogger<FollowService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
-            : base(logger, strategyOrderQueue)
     {
+        _strategyOrderQueue = strategyOrderQueue;
+        _reader = _strategyOrderQueue.Subscribe();
+        _logger = logger;
         _clusterClient = client;
+
         _strategyAccount = new StrategyAccount();
+        loadedStrategy = new NStrategy();
+
+        flowBuffer = new BufferBlock<LiveOrder>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        Task.Run(async () => await Distribute());
     }
     
-    public override async Task StartAsync(CancellationToken cancellationToken)
+    public override Task StartAsync(CancellationToken cancellationToken)
     {
         string strategy_to_load = "NG2.json";
         StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _clusterClient);
@@ -35,6 +51,42 @@ public class FollowService : AbstractStrategyService
 
         loadedStrategy = new BaseFollowStrategy(_clusterClient, _strategyAccount);
 
-        await base.StartAsync(cancellationToken);
+        return base.StartAsync(cancellationToken);
     }
+
+
+    
+   protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+       await Task.Run(async () =>
+       {
+            await foreach (LiveOrder newLiveOrder in _reader.ReadAllAsync(stoppingToken))
+            {
+                try
+                {
+                    await flowBuffer.SendAsync(newLiveOrder); 
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                }
+            }
+        });
+        await Task.CompletedTask;
+    }
+
+
+
+    private async Task Distribute()    
+    {
+         while (await flowBuffer.OutputAvailableAsync()) 
+        {
+            int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
+            await Task.Delay(25);       
+            LiveOrder newLiveOrder = flowBuffer.Receive();
+            NewOrder n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
+        }
+    }
+
+
 }

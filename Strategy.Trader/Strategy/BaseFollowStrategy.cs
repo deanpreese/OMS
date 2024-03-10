@@ -19,7 +19,6 @@ public class BaseFollowStrategy : StrategyBase , IStrategy
         {
             new AllFollowFilter()
         };
-        
         _strategyData = strategyData;
     }
 
@@ -27,6 +26,8 @@ public class BaseFollowStrategy : StrategyBase , IStrategy
     {
         string _trader_key = _orig_live_order.UserID + "_" + _orig_live_order.GroupID;
         _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
+
+        //Console.WriteLine("New Order: " + _strategy_key + "  " + _trader_key + "  " + _orig_live_order.OrderAction + "  " + _orig_live_order.OrderType);
 
         ITraderInfoGrain traderInfoGrain = newClusterClient.GetGrain<ITraderInfoGrain>(_trader_key);
         IStrategyGrain strategyGrain = newClusterClient.GetGrain<IStrategyGrain>(_strategy_key);

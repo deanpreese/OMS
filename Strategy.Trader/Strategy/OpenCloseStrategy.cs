@@ -10,10 +10,7 @@ namespace Strategy.Trader.Strategy;
 public class OpenCloseStrategy : StrategyBase , IStrategy
 {
     IClusterClient newClusterClient;
-
     int orderCount = 1;
-
-
 
     public OpenCloseStrategy(IClusterClient clusterClient, StrategyAccount strategyData) 
     {
@@ -22,7 +19,6 @@ public class OpenCloseStrategy : StrategyBase , IStrategy
         {
             new TwoSidedFilter()
         };
-
         _strategyData = strategyData;
     }
 
@@ -30,7 +26,13 @@ public class OpenCloseStrategy : StrategyBase , IStrategy
 
     public override Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order)
     {
-        throw new NotImplementedException();
+         string _trader_key = _orig_live_order.UserID + "_" + _orig_live_order.GroupID;
+        _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
+
+        ITraderInfoGrain traderInfoGrain = newClusterClient.GetGrain<ITraderInfoGrain>(_trader_key);
+        IStrategyGrain strategyGrain = newClusterClient.GetGrain<IStrategyGrain>(_strategy_key);
+
+        return OnNewOrder(_orig_live_order, traderInfoGrain, strategyGrain);
     }
 
 
@@ -39,14 +41,12 @@ public class OpenCloseStrategy : StrategyBase , IStrategy
         ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
     {
         int includeExclude = 0;
-
         ScoreCard _scoreCard = await traderGrain.GetScoreCardAsync(trader_key);            
 
         foreach (IStrategyFilter filter in _filters)
         {
             includeExclude = filter.IsInFilter(_scoreCard);
         }
-
         return includeExclude;
     }
 

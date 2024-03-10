@@ -192,8 +192,35 @@ datafile = [
 
 dtx = pd.read_csv(datafile[4])
 
-#est_list = [ TunableCatBoostRegressor(), TunableLGBMRegressor(), TunableXGBRegressor()]
-est_list = [ TunableXGBRegressor(), TunableXGBRegressor(), TunableLGBMRegressor(), TunableLGBMRegressor()]
+#6
+#est_list = [ TunableXGBRegressor(),  TunableLGBMRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+
+#8
+#est_list = [ TunableCatBoostRegressor(),  TunableLGBMRegressor(), TunableXGBRegressor() ]
+
+# 10 
+#est_list = [ TunableCatBoostRegressor(),  TunableXGBRegressor() ]
+
+#12
+#est_list = [ TunableXGBRegressor(),  TunableLGBMRegressor() ]
+
+#14
+#est_list = [ TunableCatBoostRegressor(),  TunableLGBMRegressor() ]
+
+
+##mlflow2
+#2
+#est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+#            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+
+#4
+#est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+#            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+#            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+
+#6
+est_list = [ TunableCatBoostRegressor(),  TunableLGBMRegressor(), TunableXGBRegressor() ]
+
 
 to_file = False
 randomize_features = True
@@ -201,9 +228,9 @@ randomize_features = True
 split_test_size_value = 0.2          
 
 min_features_used = 2
-max_features_used = 11
+max_features_used = 6
 step_features_used = 1
-total_cycles_used = 3
+total_cycles_used = 10
 
 
 p_df, experiment_id_parent = run_models(dtx, to_file, randomize_features, est_list, 

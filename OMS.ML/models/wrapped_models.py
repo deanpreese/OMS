@@ -4,14 +4,7 @@ from catboost import CatBoostClassifier, CatBoostRegressor
 from common.common_func import calc_reg_streaks, show_stats, create_param_list
 
 import mlflow.onnx
-from onnx import onnx_pb
-import skl2onnx
-from skl2onnx.common.data_types import FloatTensorType, Int64TensorType
 
-import onnxruntime as rt
-import onnxmltools
-from onnxconverter_common.data_types import FloatTensorType
-from onnxmltools.convert import convert_xgboost
 
 
 import pandas as pd
@@ -348,14 +341,14 @@ class TunableCatBoostRegressor(CatBoostRegressor):
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
                         
             self.run_id = mlflow.active_run().info.run_id                        
-            #modelx =  CatBoostRegressor(**self.param_set())
+            modelx =  CatBoostRegressor(**self.param_set())
             model.fit(X_train, y_train)
-            #modelx.fit(X_train, y_train)
+            modelx.fit(X_train, y_train)
             
             y_pred = model.predict(X_test)
             mlflow.log_params( self.used_params )
-            mlflow.catboost.log_model(model, "model")
-            #mlflow.catboost.log_model(modelx, "TunableCatBoostRegressor")
+            mlflow.catboost.log_model(modelx, "model")
+            mlflow.catboost.log_model(model, "TunableCatBoostRegressor")
             mlflow.log_table(data=pd.DataFrame(self.features_used), artifact_file="features_used.json")                 
             perf, tot, mse, rmse, r2, score, mae = gen_regressor_data(model, X_train, y_train, X_test, y_test, y_pred)
         

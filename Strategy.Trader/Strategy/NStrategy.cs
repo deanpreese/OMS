@@ -10,6 +10,8 @@ public class NStrategy : StrategyBase, IStrategy
 {
     IClusterClient newClusterClient;
 
+    public NStrategy() { }
+
     public NStrategy(IClusterClient clusterClient, StrategyAccount strategyData) 
     {
         newClusterClient = clusterClient;        

@@ -25,11 +25,13 @@ public abstract class StrategyBase
     public async Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order,
         ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
     {
-        Console.WriteLine("           ----  ");
+        Console.WriteLine("  ----  ");
+        //Console.WriteLine("New Order2222: " + _strategy_key + "  " + traderGrain.GetGrainId() + "  " + _orig_live_order.OrderAction + "  " + _orig_live_order.OrderType);
 
         LiveOrder strategy_order = await GenerateOrderAction( _strategy_key, _orig_live_order, traderGrain, strategyGrain);
         NewOrder _mapped_new_order = await OrderMapping.MapOrderLiveToNew(_orig_live_order);
 
+        
         if(strategy_order.OrderAction != OrderAction.NoAction)
         {
             _mapped_new_order = await OrderMapping.MapOrderLiveToNew(strategy_order);
@@ -47,20 +49,16 @@ public abstract class StrategyBase
         {
             _mapped_new_order.OrderAction = OrderAction.NoAction;
         }
-
+        
         return _mapped_new_order;
     }
 
     public async Task<LiveOrder> GenerateOrderAction(string strategy_key, LiveOrder order, 
         ITraderInfoGrain _trader_grain, IStrategyGrain _strategy_grain)
     {
-
         string _trader_key = order.UserID + "_" + order.GroupID;
-        Console.WriteLine(_strategyData.strategy_name + " New Order " + _trader_key + "  " + order.OrderAction + "  " + order.OrderType) ;
-
-        //ITraderGrain _trader_grain = _clusterClient.GetGrain<ITraderGrain>(_trader_key);
-        //IStrategyGrain  _strategy_grain = _clusterClient.GetGrain<IStrategyGrain>(_strategy_key);
-
+        //Console.WriteLine("New Order3333: " + _strategy_key + "  " + _trader_grain.GetGrainId() + "  " + order.OrderAction + "  " + order.OrderType);
+        
         if (order.OrderType == OrderType.OPEN)
         {
             int filterAction = await EvaluateFilters(_trader_key, strategy_key, _trader_grain, _strategy_grain );
@@ -70,7 +68,6 @@ public abstract class StrategyBase
             {
                 order.OrderAction = OrderAction.NoAction;
                 await ShowOrderInfo(order, OrderType.NONE); 
-                return order;
             }else
             {
                 if (filterAction == 0)
@@ -102,17 +99,14 @@ public abstract class StrategyBase
                         await ShowOrderInfo(order, OrderType.OPEN);
                     }
                 }
-
-                return order;
             }
-
         }
 
         if (order.OrderType == OrderType.CLOSE)
         {
             order.OrderAction = OrderAction.NoAction;
             List<LiveOrder> liveOrders = await _strategy_grain.GetLiveOrders(_strategy_key);
-
+            
             if(liveOrders.Count == 0)
             {
                 liveOrders = await _strategy_grain.GetLiveOrders(_strategy_key);
@@ -125,11 +119,11 @@ public abstract class StrategyBase
                 LiveOrder liveStrategyOrder = liveOrders.FirstOrDefault();
                 ClosedTrade lastClosedTraderTrade = await _trader_grain.GetLastClosedTradeByOpenPlatformID(_trader_key, liveStrategyOrder.RelatedOrderID);
 
-                while (lastClosedTraderTrade == null)
-                {
-                    lastClosedTraderTrade = await _trader_grain.GetLastClosedTradeByOpenPlatformID(_trader_key, liveStrategyOrder.PlatformOrderID);
-                    Console.WriteLine(_strategyData.strategy_name +  " Strategy Last Order: " + liveStrategyOrder.OrderAction + "  " + liveStrategyOrder.OrderType);
-                }
+                //while (lastClosedTraderTrade == null)
+                //{
+                //    lastClosedTraderTrade = await _trader_grain.GetLastClosedTradeByOpenPlatformID(_trader_key, liveStrategyOrder.PlatformOrderID);
+                //    Console.WriteLine(_strategyData.strategy_name +  " Strategy Last Order: " + liveStrategyOrder.OrderAction + "  " + liveStrategyOrder.OrderType);
+                //}
 
                 if(liveStrategyOrder != null && lastClosedTraderTrade != null)
                 {
@@ -150,7 +144,6 @@ public abstract class StrategyBase
                 Console.WriteLine(_strategyData.strategy_name +  " NULL ORDER: " + liveOrders.Count);
             }            
         }
-
         return order;
     }
 
