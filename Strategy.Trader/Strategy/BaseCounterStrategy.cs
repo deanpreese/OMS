@@ -47,7 +47,7 @@ public class BaseCounterStrategy : StrategyBase , IStrategy
         
         int netPositions  = await ProcessCounter(_orig_live_order);
 
-        if(netPositions < 3 && netPositions > -3) 
+        if(netPositions > 9 || netPositions < -9) 
         {
             ITraderInfoGrain traderInfoGrain = newClusterClient.GetGrain<ITraderInfoGrain>(_trader_key);
             IStrategyGrain strategyGrain = newClusterClient.GetGrain<IStrategyGrain>(_strategy_key);
@@ -119,17 +119,6 @@ public class BaseCounterStrategy : StrategyBase , IStrategy
         double netAve = netList.Take(aveCount).Average();
         
         Console.WriteLine("NET: " + netPositions + "  AvePos10  " + netAve + "      Long: " + longCount + "  Short: " + shortCount + "       LongAve: " + longAve + "     ShortAve: " + shortAve);
-
-        if (netPositions > 3)
-        {
-            Console.WriteLine("--------Long NET: " + netPositions ); 
-        }
-
-        if (netPositions < -3)
-        {
-            Console.WriteLine("---Short NET: " + netPositions );
-        }
-
 
         return await Task.FromResult(netPositions);
 

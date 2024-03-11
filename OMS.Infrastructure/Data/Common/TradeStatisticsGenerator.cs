@@ -70,15 +70,15 @@ public static class TradeStatisticsGenerator
 
         try
         {
-            scoreCard.AveTradeDuration = closedTrades.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds);
+            scoreCard.AveTradeDuration = closedTrades.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalMinutes);
 
             // Calculate average time in winners
             var winners_list = closedTrades.Where(trade => trade.PNL > 0);
-            scoreCard.AveWinDuration = winners_list.Any() ? winners_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds) : 0;
+            scoreCard.AveWinDuration = winners_list.Any() ? winners_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalMinutes) : 0;
 
             // Calculate average time in losers
             var losers_list = closedTrades.Where(trade => trade.PNL <= 0);
-            scoreCard.AveLossDuration = losers_list.Any() ? losers_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalSeconds) : 0;
+            scoreCard.AveLossDuration = losers_list.Any() ? losers_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalMinutes) : 0;
 
             // Standard Deviation of P&L
             double meanProfit = closedTrades.Average(trade => trade.PNL);

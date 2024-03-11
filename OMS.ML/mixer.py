@@ -218,8 +218,11 @@ dtx = pd.read_csv(datafile[4])
 #            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
 #            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
 
-#6
-est_list = [ TunableCatBoostRegressor(),  TunableLGBMRegressor(), TunableXGBRegressor() ]
+#7
+est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
 
 
 to_file = False
