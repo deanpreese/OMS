@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Threading.Channels;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.Extensions.Logging;
 using OMS.Core.Models;
 
 namespace OMS.DataServer;
