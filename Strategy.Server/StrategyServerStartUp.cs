@@ -38,8 +38,8 @@ public class StrategyServerStartUp
         services.AddSingleton<StrategyOrderQueue>();
         services.AddHostedService<OrderBackgroundService>();
 
-        //services.AddHostedService<BasicService>();
-        services.AddHostedService<FollowService>();
+        services.AddHostedService<BasicService>();
+        //services.AddHostedService<FollowService>();
         //services.AddHostedService<CounterService>();
         //services.AddHostedService<FadeService>();
 
