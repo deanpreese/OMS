@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
-using Strategy.Server;
+
+using Strategy.Trader;
 
 StrategyServerStartUp  algoServerStartUp = new StrategyServerStartUp();
 

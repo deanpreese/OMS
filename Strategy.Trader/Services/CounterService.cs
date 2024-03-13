@@ -16,20 +16,20 @@ using Strategy.Trader.Abstractions;
 using Strategy.Trader;
 using System.Threading.Tasks.Dataflow;
 
-namespace Strategy.Server.Services;
+namespace Strategy.Trader.Services;
 
-public class FollowService : BackgroundService
+public class CounterService : BackgroundService
 {  
     private ChannelReader<LiveOrder> _reader;
     private StrategyOrderQueue _strategyOrderQueue;
-    ILogger<FollowService> _logger;
+    ILogger<CounterService> _logger;
     private IStrategy loadedStrategy ;
     IClusterClient _clusterClient;
     StrategyAccount _strategyAccount;
     
     BufferBlock<LiveOrder> flowBuffer;
     
-    public FollowService(ILogger<FollowService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
+    public CounterService(ILogger<CounterService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
     {
         _strategyOrderQueue = strategyOrderQueue;
         _reader = _strategyOrderQueue.Subscribe();
@@ -45,11 +45,11 @@ public class FollowService : BackgroundService
     
     public override Task StartAsync(CancellationToken cancellationToken)
     {
-        string strategy_to_load = "NG2.json";
+        string strategy_to_load = "NG0.json";
         StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _clusterClient);
         _strategyAccount= configLoader.GetStrategyData().Result;
 
-        loadedStrategy = new BaseFollowStrategy(_clusterClient, _strategyAccount);
+        loadedStrategy = new BaseCounterStrategy(_clusterClient, _strategyAccount);
 
         return base.StartAsync(cancellationToken);
     }

@@ -6,9 +6,9 @@ using Orleans.Configuration;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Strategy.Server.Services;
+using Strategy.Trader.Services;
 
-namespace Strategy.Server;
+namespace Strategy.Trader;
 
 public class StrategyServerStartUp
 {

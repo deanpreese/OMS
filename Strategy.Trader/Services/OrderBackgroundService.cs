@@ -5,14 +5,14 @@ using Orleans.Streams;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Strategy.Server.Services;
+namespace Strategy.Trader.Services;
 
 public class OrderBackgroundService : BackgroundService
 {
     private readonly IClusterClient _client;
     private readonly ILogger<OrderBackgroundService> _logger;
     private readonly StrategyOrderQueue _strategyOrderQueue;
-    private IAsyncStream<LiveOrder>? openOrderStreamProvider;
+    private IAsyncStream<LiveOrder> openOrderStreamProvider;
 
 
     public OrderBackgroundService(IClusterClient client, 

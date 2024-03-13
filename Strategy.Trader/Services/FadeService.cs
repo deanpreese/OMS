@@ -12,7 +12,7 @@ using Strategy.Trader.Abstractions;
 using Strategy.Trader;
 using System.Threading.Tasks.Dataflow;
 
-namespace Strategy.Server.Services;
+namespace Strategy.Trader.Services;
 
 public class FadeService : BackgroundService
 {

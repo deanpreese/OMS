@@ -11,7 +11,7 @@ using OMS.Core.Interfaces;
 using Strategy.Trader.Abstractions;
 using Strategy.Trader;
 
-namespace Strategy.Server.Services;
+namespace Strategy.Trader.Services;
 
 public class AbstractStrategyService : BackgroundService
 {
