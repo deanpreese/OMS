@@ -1,6 +1,0 @@
-@OMS.MT4Relay_HostAddress = http://localhost:5162
-
-GET {{OMS.MT4Relay_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
