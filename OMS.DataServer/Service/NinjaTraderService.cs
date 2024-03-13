@@ -17,6 +17,18 @@ public class NinjaTraderService : BackgroundService
 
     public NinjaTraderService()
     {
+
+        
+    }
+
+    public override  Task StopAsync(CancellationToken cancellationToken)
+    {
+
+        myClient.UnsubscribeMarketData(instrumentReceive);
+		myClient.TearDown();
+        Console.WriteLine("Shutting Down...");
+
+        return base.StopAsync(cancellationToken);
     }
 
 
@@ -35,27 +47,19 @@ public class NinjaTraderService : BackgroundService
         timerReceive =  new System.Threading.Timer(MarketDataTimerElapsed, null, 0, 2000);
 
         int connect = myClient.Connected(1);
-        myClient.SubscribeMarketData(instrumentReceive);
-
         Console.WriteLine(string.Format("{0} | connect: {1}", DateTime.Now, connect.ToString()));
-
-        Console.WriteLine("Press any key to continue...");
-        Console.ReadLine();
-
-    	myClient.UnsubscribeMarketData(instrumentReceive);
-		myClient.TearDown();
-        Console.WriteLine("Shutting Down...");
+        myClient.SubscribeMarketData(instrumentReceive);
+        
+    	
 
         return base.StartAsync(cancellationToken);
     }
 
     private void MarketDataTimerElapsed(object? state)
     {
-        
         askPriceReceive		= myClient.MarketData(instrumentReceive, 2);
         bidPriceReceive		= myClient.MarketData(instrumentReceive, 1);
         lastPriceReceive	= myClient.MarketData(instrumentReceive, 0);
-        
         Console.WriteLine(string.Format( "{0} | {1} | Last: {2}, Ask: {3}, Bid: {4}", DateTime.Now, instrumentReceive, lastPriceReceive, askPriceReceive, bidPriceReceive ));
     }
 

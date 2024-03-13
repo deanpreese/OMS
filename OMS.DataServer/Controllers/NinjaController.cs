@@ -6,27 +6,20 @@ namespace OMS.DataServer;
 
 [ApiController]
 [Route("api/data")]
-public class DataController : ControllerBase
+public class NinjaController : ControllerBase
 {
-    private ILogger<DataController> _logger;
+    private ILogger<NinjaController> _logger;
     private OrderManagementDbContext _context;
     private DataQueue _dataQueue;
 
 
-    public DataController(ILogger<DataController> logger, OrderManagementDbContext context, DataQueue dataQueue)
+    public NinjaController(ILogger<NinjaController> logger, OrderManagementDbContext context, DataQueue dataQueue)
     {
         _logger = logger;
         _context = context;
         _dataQueue = dataQueue;
     }
 
-
-    [HttpPost("add-tick")]
-    public async Task<int> AddTick([FromBody] LastTick lastTick)
-    {
-        return await Task.FromResult(0);
-        
-    }
 
     [HttpPost("add-feature-data")]
     public async Task<string> AddFeatureData([FromBody] FeatureData featureData)
