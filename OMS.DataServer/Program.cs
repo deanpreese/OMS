@@ -40,6 +40,9 @@ builder.Services.AddScoped<IDataService, DataService>();
 
 builder.Services.AddSingleton<DataQueue>();
 builder.Services.AddHostedService<DataProcessor>();
+builder.Services.AddHostedService<NinjaTraderService>();
+
+
 
 builder.Services.AddMvc();
 builder.Services.AddEndpointsApiExplorer();
@@ -61,8 +64,8 @@ app.UseCors(x => x
 // app.UseHttpsRedirection();
 
 app.UseRouting();
-app.UseAuthorization();
-app.UseStaticFiles();
+//app.UseAuthorization();
+//app.UseStaticFiles();
 
 app.MapControllerRoute(
     name: "default",

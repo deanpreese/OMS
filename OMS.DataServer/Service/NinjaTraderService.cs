@@ -44,11 +44,33 @@ public class NinjaTraderService : BackgroundService
         mdSubscribed = 0;
         size = 1; 
 
-        timerReceive =  new System.Threading.Timer(MarketDataTimerElapsed, null, 0, 2000);
+        
 
         int connect = myClient.Connected(1);
         Console.WriteLine(string.Format("{0} | connect: {1}", DateTime.Now, connect.ToString()));
-        myClient.SubscribeMarketData(instrumentReceive);
+
+        if (connect != 0)
+        {
+            Console.WriteLine("Error: Could not connect to NinjaTrader.");
+            myClient.UnsubscribeMarketData(instrumentReceive);
+		    myClient.TearDown();
+            return Task.CompletedTask;
+        }
+        
+        try
+        {
+            myClient.SubscribeMarketData(instrumentReceive);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message  + "Error: Could not subscribe to market data.");
+            myClient.UnsubscribeMarketData(instrumentReceive);
+		    myClient.TearDown();
+            return Task.CompletedTask;
+        }
+        
+
+        timerReceive =  new System.Threading.Timer(MarketDataTimerElapsed, null, 0, 2000);
         
     	
 
@@ -57,14 +79,15 @@ public class NinjaTraderService : BackgroundService
 
     private void MarketDataTimerElapsed(object? state)
     {
-        askPriceReceive		= myClient.MarketData(instrumentReceive, 2);
-        bidPriceReceive		= myClient.MarketData(instrumentReceive, 1);
-        lastPriceReceive	= myClient.MarketData(instrumentReceive, 0);
-        Console.WriteLine(string.Format( "{0} | {1} | Last: {2}, Ask: {3}, Bid: {4}", DateTime.Now, instrumentReceive, lastPriceReceive, askPriceReceive, bidPriceReceive ));
+        askPriceReceive = myClient.MarketData(instrumentReceive, 2);
+        bidPriceReceive = myClient.MarketData(instrumentReceive, 1);
+        lastPriceReceive = myClient.MarketData(instrumentReceive, 0);
+        Console.WriteLine(string.Format("{0} | {1} | Last: {2}, Ask: {3}, Bid: {4}", DateTime.Now, instrumentReceive, lastPriceReceive, askPriceReceive, bidPriceReceive));
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        throw new NotImplementedException();
+        Console.WriteLine("NinjaTraderService is starting.");
+        return Task.CompletedTask;
     }
 }
