@@ -5,9 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using System.Data;
-
-namespace OMS.Relay.Queue;
+namespace Strategy.Trader;
 
 public class NewOrderProcessor : BackgroundService
 {
@@ -55,9 +53,9 @@ public class NewOrderProcessor : BackgroundService
         if (list.Count > 0)
         {
                 NewOrder orderFromList = list.First();
-                LiveOrder orderToMatch = OrderMapping.MapOrderNewToLive(orderFromList);
-                LiveOrder orderToStore = OrderMapping.MapOrderNewToLive(newOrder);
-                ClosedTrade histOrder = OrderMapping.MapClosedOrder(orderToMatch, orderToStore);     
+                LiveOrder orderToMatch = await OrderMapping.MapOrderNewToLive(orderFromList);
+                LiveOrder orderToStore = await OrderMapping.MapOrderNewToLive(newOrder);
+                ClosedTrade histOrder = await OrderMapping.MapClosedOrder(orderToMatch, orderToStore);     
 
                 await _orderChannelService.AddToClosedOrdersList(histOrder);
                 await _orderChannelService.RemoveFromNewOrdersList(orderFromList.PlatformOrderID);

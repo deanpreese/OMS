@@ -35,9 +35,10 @@ public class TradingService : ITradingService
         await _unitOfWork.UnderCoverRepository.AddToOrderFlowAsync(newLiveOrder);
         await _unitOfWork.CommitAsync();
 
-        IOrderRepository orderRepository = _unitOfWork.OrderRepository;
+        ILiveOrderRepository liveOrderRepository = _unitOfWork.LiveOrderRepository;
+        IClosedOrderRepository closedOrderRepository = _unitOfWork.ClosedOrderRepository;
 
-        List<LiveOrder> orders = await orderRepository.GetOrdersByTrader(newOrder.UserID, newOrder.Instrument);
+        List<LiveOrder> orders = await liveOrderRepository.GetOrdersByTrader(newOrder.UserID, newOrder.Instrument);
 
         if (orders.Any())
         {
@@ -47,7 +48,7 @@ public class TradingService : ITradingService
                     (existingOrder.OrderAction == OrderAction.Sell && newOrder.OrderAction == OrderAction.Sell))
             {
                 newLiveOrder.OrderType = OrderType.OPEN;
-                await ProcessNewPosition(newLiveOrder, orderRepository );
+                await ProcessNewPosition(newLiveOrder, liveOrderRepository );
                 await _unitOfWork.CommitAsync();
                 
                 
@@ -60,7 +61,7 @@ public class TradingService : ITradingService
                 {
                     //Console.WriteLine("Closing an existing position "  +  existingOrder.OrderManagerID);
                     newLiveOrder.OrderType = OrderType.CLOSE;
-                    await CloseOrder(existingOrder, newLiveOrder, orderRepository);
+                    await CloseOrder(existingOrder, newLiveOrder, liveOrderRepository, closedOrderRepository);
                     await _unitOfWork.CommitAsync();
 
                     await _closedOrderChannelService.WriteAsync(newLiveOrder);
@@ -71,7 +72,7 @@ public class TradingService : ITradingService
         else
         {
             newLiveOrder.OrderType = OrderType.OPEN;
-            await ProcessNewPosition(newLiveOrder, orderRepository);
+            await ProcessNewPosition(newLiveOrder, liveOrderRepository);
             await _unitOfWork.CommitAsync();
         }
 
@@ -83,16 +84,17 @@ public class TradingService : ITradingService
 
 
 
-    public async Task ProcessNewPosition(LiveOrder order, IOrderRepository orderRepository)
+    public async Task ProcessNewPosition(LiveOrder order, ILiveOrderRepository liveOrderRepository)
     {
         //Console.WriteLine("OM -- Processing New Position "  +  order.OrderManagerID);
-        await orderRepository.AddLiveOrderAsync(order);
+        await liveOrderRepository.AddLiveOrderAsync(order);
         await Task.CompletedTask;            
     }
 
 
     // ******************************************************************************************* /
-    public async Task<double> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, IOrderRepository orderRepository)
+    public async Task<double> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, 
+        ILiveOrderRepository liveOrderRepository, IClosedOrderRepository closedOrderRepository)
     {
         ClosedTrade histOrder = await OrderMapping.MapClosedOrder(orderToClose, orderToStore);       
 
@@ -111,8 +113,8 @@ public class TradingService : ITradingService
 
         try 
         {
-            await orderRepository.AddClosedOrder(histOrder);
-            await orderRepository.DeleteOrderAsyncByOrderManagerID(orderToClose.OrderManagerID);
+            await closedOrderRepository.AddClosedOrder(histOrder);
+            await liveOrderRepository.DeleteOrderAsyncByOrderManagerID(orderToClose.OrderManagerID);
 
         }catch (Exception fail)
         {

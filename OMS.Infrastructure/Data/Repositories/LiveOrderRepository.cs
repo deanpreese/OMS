@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace OMS.Infrastructure.Data.Repositories;
 
-public class OrderRepository : IOrderRepository
+public class LiveOrderRepository : ILiveOrderRepository
 {
     private readonly OrderManagementDbContext _context;
 
-    public OrderRepository(OrderManagementDbContext context)
+    public LiveOrderRepository(OrderManagementDbContext context)
     {
         _context = context;
         

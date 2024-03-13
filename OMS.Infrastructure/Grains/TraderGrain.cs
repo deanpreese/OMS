@@ -99,7 +99,7 @@ public class TraderGrain : Grain, ITraderGrain
         int userId = int.Parse(profile_key_parts[0]);
         int groupNum = int.Parse(profile_key_parts[1]);
      
-        Orders = await _unitOfWork.OrderRepository.GetOrdersByTraderAsync(userId, groupNum);
+        Orders = await _unitOfWork.LiveOrderRepository.GetOrdersByTraderAsync(userId, groupNum);
         return Orders;
     }
 
@@ -108,7 +108,7 @@ public class TraderGrain : Grain, ITraderGrain
         string[] profile_key_parts = profile_key.Split('_');
         int userId = int.Parse(profile_key_parts[0]);
         int groupNum = int.Parse(profile_key_parts[1]);
-        return await _unitOfWork.OrderRepository.GetLastClosedTradeByOpenPlatformID(userId, groupNum, platform_id);
+        return await _unitOfWork.ClosedOrderRepository.GetLastClosedTradeByOpenPlatformID(userId, groupNum, platform_id);
     }
 
 }

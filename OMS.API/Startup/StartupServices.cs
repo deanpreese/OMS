@@ -32,7 +32,8 @@ public class StartupServices
         },ServiceLifetime.Scoped);
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<ILiveOrderRepository, LiveOrderRepository>();
+        services.AddScoped<IClosedOrderRepository, ClosedOrderRepository>();
         services.AddScoped<ITradingService, TradingService>();
         services.AddScoped<IDataService, DataService>();
         services.AddScoped<IUserService, UserService>();

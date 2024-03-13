@@ -12,5 +12,4 @@ public interface IDataService
     Task<List<ClosedTrade>> GetClosedOrdersByTrader(int user, int group);
     Task<List<UserInfo>> GetActiveTraders(int group);
     Task<List<LiveOrder>> GetAllLiveOrders(int group);
-    Task<List<ClosedTrade>> GetAllClosedTrades(int group);
 }
