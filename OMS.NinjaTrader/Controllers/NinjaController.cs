@@ -3,7 +3,8 @@ using Microsoft.Extensions.Logging;
 using OMS.Core.Models;
 using OMS.Infrastructure.Data;
 
-namespace OMS.DataServer;
+
+namespace OMS.NinjaTrader.Controllers;
 
 [ApiController]
 [Route("api/data")]
@@ -28,6 +29,15 @@ public class NinjaController : ControllerBase
         await _dataQueue.WriteAsync(featureData);
 
         return await Task.FromResult(featureData.TimeTicks.ToString());
+    }
+
+
+    [HttpPost("process-order")]
+    public async Task<LiveOrder> ProcessOrder([FromBody] NewOrder newOrder)
+    {
+        
+
+
     }
 
 

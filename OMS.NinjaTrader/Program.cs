@@ -1,7 +1,7 @@
 using OMS.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
-using OMS.DataServer;
+using OMS.NinjaTrader;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Data.Repositories;
 using OMS.Infrastructure.Services.Data;
