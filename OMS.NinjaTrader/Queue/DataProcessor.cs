@@ -10,7 +10,7 @@ using System.Text;
 using OMS.Core.WebAPIClient;
 
 
-namespace OMS.DataServer;
+namespace OMS.NinjaTrader;
 
 public class DataProcessor : BackgroundService
 {

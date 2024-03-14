@@ -22,17 +22,11 @@ public class DataService : IDataService
         throw new NotImplementedException();
     }
 
-    public async Task<List<ClosedTrade>> GetAllClosedTrades(int groupNumber)
-    {
-        List<ClosedTrade> closedTrades = new List<ClosedTrade>();    
-        closedTrades = await _unitOfWork.OrderRepository.GetClosedTrades(groupNumber);
-        return closedTrades;
-    }
-
+    
     public async Task<List<LiveOrder>> GetAllLiveOrders(int groupNumber)
     {
         List<LiveOrder> liveOrders = new List<LiveOrder>();    
-        liveOrders = await _unitOfWork.OrderRepository.GetLiveOrders(groupNumber);
+        liveOrders = await _unitOfWork.LiveOrderRepository.GetLiveOrders(groupNumber);
         return liveOrders;
     }
 

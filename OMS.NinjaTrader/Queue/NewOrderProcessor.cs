@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 using System.Data;
 
-namespace OMS.Relay.Queue;
+namespace OMS.NinjaTrader;
 
 public class NewOrderProcessor : BackgroundService
 {

@@ -2,8 +2,7 @@
 using OMS.Core.Models;
 using OMS.Relay.Services;
 
-namespace OMS.Relay.Queue;
-
+namespace OMS.NinjaTrader;
 public class NewOrderQueue
 {
     private readonly Channel<NewOrder> _channel;

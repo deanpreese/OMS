@@ -11,13 +11,15 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(OrderManagementDbContext context)
     {
         _context = context;
-        OrderRepository = new OrderRepository(_context);
+        LiveOrderRepository = new LiveOrderRepository(_context);
+        ClosedOrderRepository = new ClosedOrderRepository(_context);
         TraderRepository = new TraderRepository(_context);
         UnderCoverRepository = new UnderCoverRepository(_context);
         AnalyticsRepository = new AnalyticsRepository(_context);
     }
 
-    public IOrderRepository OrderRepository { get; private set; }
+    public ILiveOrderRepository LiveOrderRepository { get; private set; }
+    public IClosedOrderRepository ClosedOrderRepository { get; private set; }
     public ITraderRepository TraderRepository { get; private set; }
     public IUnderCoverRepository UnderCoverRepository { get; private set; }
     public IAnalyticsRepository AnalyticsRepository { get; private set; }

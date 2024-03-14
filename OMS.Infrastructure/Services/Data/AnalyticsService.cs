@@ -22,12 +22,12 @@ public class AnalyticsService : IAnalyticsService
 
     public async Task<int> UpdateScoreCard(LiveOrder order)
     {
-        List<ClosedTrade> trades = await _unitOfWork.OrderRepository.Get_XXX_ClosedOrdersByTrader(order.UserID, order.GroupID,-1);
+        List<ClosedTrade> trades = await _unitOfWork.ClosedOrderRepository.Get_XXX_ClosedOrdersByTrader(order.UserID, order.GroupID,-1);
         ClosedTrade lastClosed = trades.Find(x => x.ClosePlatformOrderID == order.PlatformOrderID);
 
         while(trades.Count == 0 ||  lastClosed == null)    
         {
-            trades = await _unitOfWork.OrderRepository.Get_XXX_ClosedOrdersByTrader(order.UserID, order.GroupID,-1);
+            trades = await _unitOfWork.ClosedOrderRepository.Get_XXX_ClosedOrdersByTrader(order.UserID, order.GroupID,-1);
             lastClosed = trades.Find(x => x.ClosePlatformOrderID == order.PlatformOrderID);
         }
 
