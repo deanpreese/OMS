@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Logging;
 using OMS.Core.Models;
 
+
 namespace OMS.NinjaTrader;
 public class DataQueue
 {
