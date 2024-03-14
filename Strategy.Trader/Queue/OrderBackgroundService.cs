@@ -5,7 +5,7 @@ using Orleans.Streams;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Strategy.Trader.Services;
+namespace Strategy.Trader;
 
 public class OrderBackgroundService : BackgroundService
 {

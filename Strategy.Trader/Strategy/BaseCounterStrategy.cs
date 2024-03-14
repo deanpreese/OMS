@@ -7,7 +7,7 @@ using Strategy.Trader.Models;
 
 namespace Strategy.Trader.Strategy;
 
-public class BaseCounterStrategy : StrategyBase , IStrategy
+public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
 {
     IClusterClient newClusterClient;
    

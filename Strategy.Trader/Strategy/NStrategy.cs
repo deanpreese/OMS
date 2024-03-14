@@ -6,7 +6,7 @@ using Strategy.Trader.Models;
 
 namespace Strategy.Trader;
 
-public class NStrategy : StrategyBase, IStrategy
+public class NStrategy : AbstractStrategyBase, IStrategy
 {
     IClusterClient newClusterClient;
 

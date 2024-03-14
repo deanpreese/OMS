@@ -7,7 +7,7 @@ using Strategy.Trader.Models;
 
 namespace Strategy.Trader.Strategy;
 
-public class BaseFadeStrategy : StrategyBase , IStrategy
+public class BaseFadeStrategy : AbstractStrategyBase , IStrategy
 {
     IClusterClient newClusterClient;
     int orderCount = 1;

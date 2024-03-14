@@ -1,7 +1,7 @@
 ﻿using System.Threading.Channels;
 using OMS.Core.Models;
 
-namespace Strategy.Trader.Services;
+namespace Strategy.Trader;
 
 public class StrategyOrderQueue
 {

@@ -7,7 +7,7 @@ using Strategy.Trader.Models;
 
 namespace Strategy.Trader.Strategy;
 
-public class OpenCloseStrategy : StrategyBase , IStrategy
+public class OpenCloseStrategy : AbstractStrategyBase , IStrategy
 {
     IClusterClient newClusterClient;
     int orderCount = 1;

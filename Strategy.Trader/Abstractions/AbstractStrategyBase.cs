@@ -8,7 +8,7 @@ using Strategy.Trader.Models;
 
 namespace Strategy.Trader.Abstractions;
 
-public abstract class StrategyBase 
+public abstract class AbstractStrategyBase 
 {
     public StrategyAccount _strategyData {get; set;}
     public string _strategy_key {get; set;}
