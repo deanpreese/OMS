@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using OMS.Core.Common;
 
 namespace OMS.Core.Models;
-
 
 [GenerateSerializer]
 [Alias("LiveOrder")]

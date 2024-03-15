@@ -4,6 +4,7 @@ using OMS.Core.Models;
 using OMS.Core.Interfaces;
 using OMS.Core.Common;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
 
 namespace OMS.Infrastructure.Data.Repositories;
 
@@ -71,12 +72,11 @@ public class ClosedOrderRepository : IClosedOrderRepository
 
     public async Task<ClosedTrade> GetLastClosedTradeByOpenPlatformID(int UserID, int GroupNumber, int platform_id)
     {
-        ClosedTrade trade = (from o in _context.ClosedTrades
-                      where o.UserID == UserID
-                      && o.GroupID == GroupNumber
-                      && o.OpenPlatformOrderID == platform_id
-                      select o).FirstOrDefault();
+        var closedTrade = (from c in _context.ClosedTrades
+                            where c.UserID == UserID && c.GroupID == GroupNumber && c.OpenPlatformOrderID == platform_id
+                            select c).OrderByDescending(x => x.CloseOrderTime).FirstOrDefault();
 
-        return await Task.FromResult(trade);
+        return await Task.FromResult(closedTrade);
+
     }
 }

@@ -10,17 +10,17 @@ using System.Text;
 using OMS.Core.WebAPIClient;
 
 
-namespace OMS.NinjaTrader;
+namespace OMS.Infrastructure.Services.Queue;
 
-public class DataProcessor : BackgroundService
+public class FeatureDataProcessor : BackgroundService
 {
-    private readonly DataQueue _dataChannelService;
+    private readonly FeatureDataDataQueue _dataChannelService;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<DataQueue> _logger;
+    private readonly ILogger<FeatureDataProcessor> _logger;
     
-    public DataProcessor( ILogger<DataQueue> logger, 
-            DataQueue dataChannelService,
+    public FeatureDataProcessor( ILogger<FeatureDataProcessor> logger, 
+            FeatureDataDataQueue dataChannelService,
             IServiceScopeFactory scopeFactory,
                 IServiceProvider serviceProvider
               )
@@ -58,11 +58,11 @@ public class DataProcessor : BackgroundService
 
         if (featureData.TimeTicks < DateTime.UtcNow.Ticks - 150000000 )
         {
-            await OMSClient.SendToMLForPrediction(csv_data, "http://localhost:8888/predict");    
+            //await OMSClient.SendToMLForPrediction(csv_data, "http://localhost:8888/predict");    
             Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks));        
         }else
         {
-            await OMSClient.SendToMLForPrediction(csv_data, "http://localhost:8888/predict");        
+            //await OMSClient.SendToMLForPrediction(csv_data, "http://localhost:8888/predict");        
             Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +new DateTime(featureData.TimeTicks) );    
         }
         

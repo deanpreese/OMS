@@ -16,18 +16,15 @@ public class DataController : ControllerBase
 
     private ILogger<DataController> _logger;
     private OrderManagementDbContext _context;
-    private ITradingService _trader_service;
-    private readonly NewOrderChannelService _newOrderChannelService;
-
+    private FeatureDataDataQueue _featureDataQueue;
 
     public DataController(ITradingService tradingService,
         ILogger<DataController> logger, OrderManagementDbContext context, 
-         NewOrderChannelService newOrderChannelService )
+         FeatureDataDataQueue featureDataDataQueue)
     {
         _logger = logger;
-        _trader_service = tradingService;
         _context = context;
-        _newOrderChannelService = newOrderChannelService;
+        _featureDataQueue = featureDataDataQueue;
         
     }
 
@@ -40,37 +37,11 @@ public class DataController : ControllerBase
     }
 
     [HttpPost("add-feature-data")]
-    public async Task<int> AddFeatureData([FromBody] FeatureData featureData)
+    public async Task<string> AddFeatureData([FromBody] FeatureData featureData)
     {
-        return await Task.FromResult(0);
+        await _featureDataQueue.WriteAsync(featureData);
+
+        return await Task.FromResult(featureData.TimeTicks.ToString());
     }
-
-
-    [HttpPost("get-live-orders")]
-    public async Task<List<LiveOrder>> GetLiveOrders([FromBody] UserInfo user)
-    {
-  
-        return await Task.FromResult(new List<LiveOrder>());
-        
-    }
-    
-    [HttpPost("get-traders")]
-    public async Task<List<UserProfile>> GetTraders([FromBody] int userGroup)
-    {
-        var users = ((from u in _context.UserProfiles
-                                where u.GroupID == userGroup
-                                select u).Take(50)).ToList();
-        
-        return await Task.FromResult(users);
-    }
-
-
-    [HttpPost("get-closed-trades")]
-    public async Task<List<ClosedTrade>> GetClosedTrades([FromBody] UserInfo userInfo)
-    {
-        return await Task.FromResult(new List<ClosedTrade>());
-        
-    }
-
 
 }

@@ -73,6 +73,8 @@ public class NewOrderProcessorService : BackgroundService
 
             ClosedOrderChannelService closedOrderChannel = scope.ServiceProvider.GetRequiredService<ClosedOrderChannelService>();
             TradingService _trader_service = new TradingService(unitOfWork, logger, closedOrderChannel, _platformOrderIDGen);
+
+            
             Task<LiveOrder> live = _trader_service.ProcessNewOrderAsync(newOrder);
 
             int om_id = live.Result.OrderManagerID;

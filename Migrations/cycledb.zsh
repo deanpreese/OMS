@@ -2,7 +2,7 @@
 DB_NAME="orders"
 DB_USER="dean"
 DB_PASSWORD="abc"
-MIGRATIONS_DIR="../OMS.Infrastructure/Data/Migrations" # e.g., ./Data/Migrations
+MIGRATIONS_DIR="../OMS.Infrastructure/Migrations" # e.g., ./Data/Migrations
 PROJECT_DIR="../OMS.Infrastructure" # e.g., ./MyApp
 PROJECT_FILE="../OMS.Infrastructure/OMS.Infrastructure.csproj" # e.g., ./MyApp
 DB_CONTEXT="OrderManagementDbContext" #

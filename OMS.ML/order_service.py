@@ -6,6 +6,8 @@ import pandas as pd
 from io import StringIO
 import cProfile
 from io import BytesIO
+import time as mytime
+
 
 from ModelLoader import ModelLoader
 from OrderManager import OrderManager
@@ -16,12 +18,23 @@ models = []
 
 import logging
 logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
+logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
+
+
 
 def LoadModels():
     m = []
    
-    experiment_id = ["6"]
-    m = model_loader.load_random_models(experiment_id, 2)
+    experiment_id = ["2"]
+    num_models = 10    
+
+    # USed for base models
+    #m = model_loader.load_random_models(experiment_id, 5)
+    
+    #used for comp models
+    m = model_loader.load_composite_models( experiment_id, num_models)
+    
+    
     return m
 
 def init_app():
@@ -43,7 +56,17 @@ def init_app():
         
         for m in range(len(models)):
             loaded_prediction = models[m].do_predict(data_df)
-            order_manager.process_model(models[m], px[0], loaded_prediction[0])
+            
+            print(f"Model-{m}    {loaded_prediction}")
+            
+            # used for base models
+            #order_manager.process_model(models[m], px[0], loaded_prediction[0])
+            
+            #used for comp models
+            order_manager.process_model(models[m], px[0], loaded_prediction)
+            
+            mytime.sleep(0.15)
+            
             
         order_manager.process_tick_rt(px[0],time[0])
         

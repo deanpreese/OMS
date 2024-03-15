@@ -1,4 +1,5 @@
-﻿using System.Data.Entity.Core.Metadata.Edm;
+﻿using System.Data.Entity;
+using System.Data.Entity.Core.Metadata.Edm;
 using OMS.Core.Interfaces;
 using OMS.Core.Models;
 
@@ -21,7 +22,9 @@ public class AnalyticsRepository : IAnalyticsRepository
 
     public async Task UpdateTraderScoreCard(ScoreCard scData)
     {
-        ScoreCard sc = _context.ScoreCard.FirstOrDefault(s => s.UserID == scData.UserID && s.GroupID == scData.GroupID) ?? new ScoreCard { UserID = -13 };
+        //ScoreCard sc = _context.ScoreCard.FirstOrDefault(s => s.UserID == scData.UserID && s.GroupID == scData.GroupID) ?? new ScoreCard { UserID = -13 };
+
+        ScoreCard sc = await GetTraderScoreCard(scData.UserID, scData.GroupID);    
 
         if (sc != null)
         {
@@ -80,7 +83,7 @@ public class AnalyticsRepository : IAnalyticsRepository
 
     public async Task<ScoreCard> GetTraderScoreCard(int UserID, int GroupNumber)
     {
-        var scoreCard = _context.ScoreCard.FirstOrDefault(s => s.UserID == UserID && s.GroupID == GroupNumber) ?? new ScoreCard { UserID = -13 };
+        var scoreCard = _context.ScoreCard.AsNoTracking().FirstOrDefault(s => s.UserID == UserID && s.GroupID == GroupNumber) ?? new ScoreCard { UserID = -13 };
         await Task.FromResult(scoreCard);
         return scoreCard;
     }

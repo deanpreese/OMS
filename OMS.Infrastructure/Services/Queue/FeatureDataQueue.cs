@@ -6,14 +6,15 @@ using Microsoft.Extensions.Logging;
 using OMS.Core.Models;
 
 
-namespace OMS.NinjaTrader;
-public class DataQueue
+namespace OMS.Infrastructure.Services.Queue;
+
+public class FeatureDataDataQueue
 {
     private readonly Channel<FeatureData> _channel;
-    private ILogger<DataQueue> _logger;
+    private ILogger<FeatureDataDataQueue> _logger;
 
 
-public DataQueue(ILogger<DataQueue> logger)
+    public FeatureDataDataQueue(ILogger<FeatureDataDataQueue> logger)
     {
         _logger = logger;
 
