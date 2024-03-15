@@ -14,6 +14,18 @@ class OrderManager():
         self.tick_dte = dt(1, 1, 1)
         
         self.com_cli = CommonCli()
+
+
+    def is_sim(self, is_sim_yn):
+        self.is_sim_yn = is_sim_yn
+        
+        if is_sim_yn is True:
+            self.px = 5000
+        
+
+    def process_tick(self, tick):
+        self.px += tick    
+        self.tick_dte = self.tick_dte + timedelta(minutes=5)
         
 
     def process_tick_rt(self, tick, ticks):
@@ -40,8 +52,10 @@ class OrderManager():
 
     def send_order(self, new_order):
 
-        dte_iso = self.tick_dte
-        new_order['orderTime']  = dte_iso
+        new_order['orderTime']  = self.tick_dte
+
+        if self.is_sim_yn is True:
+            new_order['orderTime']  = self.tick_dte.isoformat()
                 
         if self.px > 0:
         

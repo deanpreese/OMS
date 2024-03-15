@@ -13,6 +13,8 @@ from ModelLoader import ModelLoader
 from OrderManager import OrderManager
 
 order_manager = OrderManager()
+order_manager.is_sim(False)
+
 model_loader = ModelLoader()
 models = []
 
