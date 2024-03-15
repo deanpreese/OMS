@@ -15,9 +15,17 @@ public class AnalyticsRepository : IAnalyticsRepository
         _context = context;
     }
 
-    public Task AddTraderScoreCard(ScoreCard scoreCard)
+    public async Task<int> AddNewTraderScorecard(int userID, int groupID)
     {
-        throw new NotImplementedException();
+        ScoreCard scd = new ScoreCard
+        {
+            UserID = userID,
+            TradeXML = " ",
+            GroupID = groupID
+        };
+
+        await _context.ScoreCard.AddAsync(scd);
+        return userID;
     }
 
     public async Task UpdateTraderScoreCard(ScoreCard scData)

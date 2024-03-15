@@ -38,7 +38,7 @@ public class UserService : IUserService
             traderID = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
             _unitOfWork.Commit();
 
-            traderID = await _unitOfWork.TraderRepository.AddNewTraderScorecard(traderID, newTrader.GroupID);
+            traderID = await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(traderID, newTrader.GroupID);
             _unitOfWork.Commit();
             
         }
