@@ -13,6 +13,7 @@ logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
 from models import wrapped_models
 from ModelLoader import ModelLoader
 from OrderManager import OrderManager
+from SimOrderManager import SimOrderManager
 from  common.CommonCli import CommonCli as common_cli
 from CompositeStrategy import CompositeStrategy    
 
@@ -34,9 +35,9 @@ def run_sim(exp_id, n_models, file, trades, delay):
     
     models = load_models(exp_id, n_models)
 
-    order_manager = OrderManager()
-    order_manager.is_sim(True)
-
+    #order_manager = OrderManager()
+    order_manager = SimOrderManager()
+    
     total = 0
     order_total = 0
     start = time.time()

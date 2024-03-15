@@ -56,14 +56,16 @@ public class FeatureDataProcessor : BackgroundService
 
         string csv_data = iso8601String + "," + featureData.FeatureSetData;
 
+        string o_s = featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks) + "  " + featureData.Close + "  " + featureData.FeatureSetData;        
+
         if (featureData.TimeTicks < DateTime.UtcNow.Ticks - 150000000 )
         {
             //await OMSClient.SendToMLForPrediction(csv_data, "http://localhost:8888/predict");    
-            Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks));        
+            Console.WriteLine("Hist: " + o_s);        
         }else
         {
             //await OMSClient.SendToMLForPrediction(csv_data, "http://localhost:8888/predict");        
-            Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +new DateTime(featureData.TimeTicks) );    
+            Console.WriteLine("RT: " + o_s);        
         }
         
         await Task.CompletedTask; 
