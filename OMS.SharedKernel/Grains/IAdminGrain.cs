@@ -2,7 +2,7 @@
 using OMS.SharedKernel.DTO;
 using Orleans;
 
-namespace OMS.Core.Interfaces;
+namespace OMS.SharedKernel.Grains;
 
 [Alias("IAdminGrain")]
 public interface IAdminGrain : IGrainWithStringKey

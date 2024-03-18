@@ -1,19 +1,16 @@
 using Strategy.Trader.Abstractions;
-using OMS.Core.Models;
-//
-//   Group 89
-//
 
+using OMS.SharedKernel.DTO;
 
 
 namespace Strategy.Trader.Filters;
 
 public class TwoSidedFilter : IStrategyFilter
 {
-    ScoreCard _scoreCard;
+    ScoreCardDTO _scoreCard;
 
 
-    public int IsInFilter(ScoreCard scoreCard)
+    public int IsInFilter(ScoreCardDTO scoreCard)
     {
         _scoreCard = scoreCard;
         return IsInAlgoFilter114();

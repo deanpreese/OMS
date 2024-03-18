@@ -1,11 +1,12 @@
 
-using OMS.Core.Models;
 
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
 
 namespace Strategy.Trader.Abstractions;
 
 
 public interface IStrategyFilter
 {
-    public int IsInFilter(ScoreCard scoreCard);
+    public int IsInFilter(ScoreCardDTO scoreCard);
 }

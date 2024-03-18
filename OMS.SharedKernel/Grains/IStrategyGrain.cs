@@ -1,8 +1,8 @@
 ﻿
-using OMS.Core.Models;
+
 using OMS.SharedKernel.DTO;
 
-namespace OMS.Core.Interfaces;
+namespace OMS.SharedKernel.Grains;
 
 
 [Alias("IAlgoGrain")]

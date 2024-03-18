@@ -1,12 +1,12 @@
-﻿using OMS.Core.Models;
-using OMS.SharedKernel.Common;
+﻿
 using OMS.SharedKernel.DTO;
+using OMS.SharedKernel.Grains;
 
 using OMS.Core.Interfaces;
 using OMS.Infrastructure.Services.Queue;
 
-
 namespace OMS.Infrastructure.Grains;
+
 public class OrderGrain : Grain, IOrderGrain
 {
     private readonly NewOrderChannelService _newOrderChannelService;

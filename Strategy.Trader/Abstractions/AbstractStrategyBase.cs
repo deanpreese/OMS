@@ -8,7 +8,7 @@ using Strategy.Trader.Models;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
-
+using OMS.SharedKernel.Grains;
 
 
 namespace Strategy.Trader.Abstractions;

@@ -7,6 +7,7 @@ using Strategy.Trader.Models;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
+using OMS.SharedKernel.Grains;
 
 namespace Strategy.Trader.Strategy;
 
@@ -44,7 +45,7 @@ public class OpenCloseStrategy : AbstractStrategyBase , IStrategy
         ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
     {
         int includeExclude = 0;
-        ScoreCard _scoreCard = await traderGrain.GetScoreCardAsync(trader_key);            
+        ScoreCardDTO _scoreCard = await traderGrain.GetScoreCardAsync(trader_key);            
 
         foreach (IStrategyFilter filter in _filters)
         {

@@ -1,6 +1,9 @@
-﻿using OMS.Core.Interfaces;
+﻿using OMS.Core.Common;
+using OMS.Core.Interfaces;
 using OMS.Core.Models;
 using OMS.Infrastructure.Data.Repositories;
+
+using OMS.SharedKernel.DTO;
 
 namespace OMS.Infrastructure;
 
@@ -24,7 +27,7 @@ public class TraderInfoGrain : Grain, ITraderInfoGrain
         return await _unitOfWork.ClosedOrderRepository.GetLastClosedTradeByOpenPlatformID(userId, groupNum, platform_id);
     }
 
-    public async Task<ScoreCard> GetScoreCardAsync(string profile_key)
+    public async Task<ScoreCardDTO> GetScoreCardAsync(string profile_key)
     {
         string[] profile_key_parts = profile_key.Split('_');
         int userId = int.Parse(profile_key_parts[0]);
@@ -32,10 +35,11 @@ public class TraderInfoGrain : Grain, ITraderInfoGrain
         
         var sc_from_db = await _unitOfWork.TraderRepository.GetScoreCardAsync(userId, groupNum);
 
-        ScoreCard sc = new ScoreCard();
+        ScoreCardDTO sc = new ScoreCardDTO();
         if (sc_from_db.Count > 0)
         {
-            sc = sc_from_db.First();        
+            //sc = sc_from_db.First();        
+            sc = await DTOMapping.MapScorecardToScorecardDTO(sc_from_db.First());
         }
        return sc;
     }

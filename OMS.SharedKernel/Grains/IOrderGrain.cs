@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using OMS.SharedKernel.DTO;
 
 
-namespace OMS.Core.Interfaces;
+namespace OMS.SharedKernel.Grains;
 
 public interface IOrderGrain  : IGrainWithStringKey
 {

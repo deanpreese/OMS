@@ -57,6 +57,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OMS.Core\OMS.Core.csproj" />
+    <ProjectReference Include="..\OMS.SharedKernel\OMS.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>
