@@ -16,6 +16,7 @@ using OMS.Infrastructure.Services.Common;
 using OMS.Infrastructure.Data.Repositories;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Services.Trading;
+using OMS.Infrastructure.Services.Data;
 
 namespace OMS.Infrastructure.Services.Queue;
 
@@ -77,27 +78,34 @@ public class NewOrderProcessorService : BackgroundService
             ClosedOrderChannelService closedOrderChannel = scope.ServiceProvider.GetRequiredService<ClosedOrderChannelService>();
             TradingService _trader_service = new TradingService(unitOfWork, logger, closedOrderChannel, _platformOrderIDGen);
 
+            ILogger<AnalyticsService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
+            AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, aLogger);
             
-            Task<LiveOrder> live = _trader_service.ProcessNewOrderAsync(newOrder);
+            LiveOrder live = await _trader_service.ProcessNewOrderAsync(newOrder);    
 
-            int om_id = live.Result.OrderManagerID;
+            if (live.OrderType  == OrderType.CLOSE)  
+            {
+                await _analytics_service.UpdateScoreCard(live);
+                Console.WriteLine("New Analytics For user " + live.UserID  );
+            }
+
+            int om_id = live.OrderManagerID;
 
             if (om_id != 0)
             {
-                // Add only orders for groups less than 76
-                if (newOrder.GroupID < 76)
+                if (newOrder.GroupID < 50)
                 {
                     var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
                     var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
                                 .GetStream<LiveOrder>(PlatformConstants.MemoryStreamNamespace, "/new-orders");
 
-                    await orderStreamProvider.OnNextAsync(live.Result);
+                    await orderStreamProvider.OnNextAsync(live);
                 }
 
             }
             else
             {
-                Console.WriteLine("Error Processing " + newOrder.UserID + "  " + live.Result.PlatformOrderID);
+                Console.WriteLine("Error Processing " + newOrder.UserID + "  " + live.PlatformOrderID);
             }
 
         }

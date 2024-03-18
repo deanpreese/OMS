@@ -66,8 +66,6 @@ public class TradingService : ITradingService
                     newLiveOrder.OrderType = OrderType.CLOSE;
                     await CloseOrder(existingOrder, newLiveOrder, liveOrderRepository, closedOrderRepository);
                     await _unitOfWork.CommitAsync();
-
-                    await _closedOrderChannelService.WriteAsync(newLiveOrder);
                 }
                 // Need to figure out how to close out these orders
             }
