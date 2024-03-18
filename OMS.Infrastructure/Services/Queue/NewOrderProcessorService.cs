@@ -76,7 +76,7 @@ public class NewOrderProcessorService : BackgroundService
             ILogger<TradingService> logger = scope.ServiceProvider.GetRequiredService<ILogger<TradingService>>();
 
             ClosedOrderChannelService closedOrderChannel = scope.ServiceProvider.GetRequiredService<ClosedOrderChannelService>();
-            TradingService _trader_service = new TradingService(unitOfWork, logger, closedOrderChannel, _platformOrderIDGen);
+            TradingService _trader_service = new TradingService(unitOfWork, logger, _platformOrderIDGen);
 
             ILogger<AnalyticsService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
             AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, aLogger);

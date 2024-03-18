@@ -19,15 +19,13 @@ public class TradingService : ITradingService
 {
     private readonly IUnitOfWork _unitOfWork;
     private ILogger<TradingService> _logger;
-    private readonly ClosedOrderChannelService _closedOrderChannelService;
     private IPlatformOrderIDGen _platformOrderIDGen;
     
     public TradingService(IUnitOfWork unitOfWork, ILogger<TradingService> logger, 
-        ClosedOrderChannelService closedOrderChannelService, IPlatformOrderIDGen platformOrderIDGen)
+        IPlatformOrderIDGen platformOrderIDGen)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
-        _closedOrderChannelService = closedOrderChannelService;
         _platformOrderIDGen = platformOrderIDGen;
 
     }
@@ -53,7 +51,7 @@ public class TradingService : ITradingService
                 newLiveOrder.OrderType = OrderType.OPEN;
                 await ProcessNewPosition(newLiveOrder, liveOrderRepository );
                 await _unitOfWork.CommitAsync();
-                
+                return newLiveOrder;
                 
             }
             else 
@@ -62,12 +60,11 @@ public class TradingService : ITradingService
                 // For right now we assume that the single order quantity = newOrder quantity
                 //if (orders.Count == 1)
                 {
-                    //Console.WriteLine("Closing an existing position "  +  existingOrder.OrderManagerID);
                     newLiveOrder.OrderType = OrderType.CLOSE;
                     await CloseOrder(existingOrder, newLiveOrder, liveOrderRepository, closedOrderRepository);
                     await _unitOfWork.CommitAsync();
+                    return newLiveOrder;
                 }
-                // Need to figure out how to close out these orders
             }
         }
         else
@@ -75,17 +72,14 @@ public class TradingService : ITradingService
             newLiveOrder.OrderType = OrderType.OPEN;
             await ProcessNewPosition(newLiveOrder, liveOrderRepository);
             await _unitOfWork.CommitAsync();
+            return newLiveOrder;
         }
 
-        //_unitOfWork.Commit();
-        return newLiveOrder;
+        //return newLiveOrder;
     }
 
 
-
-
-
-    public async Task ProcessNewPosition(LiveOrder order, ILiveOrderRepository liveOrderRepository)
+    private async Task ProcessNewPosition(LiveOrder order, ILiveOrderRepository liveOrderRepository)
     {
         //Console.WriteLine("OM -- Processing New Position "  +  order.OrderManagerID);
         await liveOrderRepository.AddLiveOrderAsync(order);
@@ -94,7 +88,7 @@ public class TradingService : ITradingService
 
 
     // ******************************************************************************************* /
-    public async Task<double> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, 
+    private async Task<double> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, 
         ILiveOrderRepository liveOrderRepository, IClosedOrderRepository closedOrderRepository)
     {
         ClosedTrade histOrder = await DTOMapping.MapClosedOrder(orderToClose, orderToStore);       
