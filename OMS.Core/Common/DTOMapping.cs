@@ -109,12 +109,13 @@ public class DTOMapping
 
         ClosedTradeDTO closedTradeDTO = new ClosedTradeDTO
         {
+            StorerID = closedTrade.StorerID,
             UserID = closedTrade.UserID,
             GroupID = closedTrade.GroupID,
             Instrument = closedTrade.Instrument,
             Quantity = closedTrade.Quantity,
             Leverage = closedTrade.Leverage,
-            OppositeTrader = false,
+            OppositeTrader = closedTrade.OppositeTrader,
             OpenPlatformOrderID = closedTrade.OpenPlatformOrderID,
             OpenOrderMangerID = closedTrade.OpenOrderMangerID,
             OpenAuthToken = closedTrade.OpenAuthToken,
@@ -132,25 +133,14 @@ public class DTOMapping
             CloseOrderTime = closedTrade.CloseOrderTime,
             CloseOrderPX = closedTrade.CloseOrderPX,
             CloseOrderType = closedTrade.CloseOrderType,
-            CloseOrderAction = closedTrade.CloseOrderAction
+            CloseOrderAction = closedTrade.CloseOrderAction,
+            PNL = closedTrade.PNL,
+            MAE = closedTrade.MAE,
+            MFE = closedTrade.MFE,
+            NetChange = closedTrade.NetChange
         };
         return await Task.FromResult(closedTradeDTO);
     }
-
-
-    public static async Task<UserProfileDTO> MapUserProfileToUserProfileDTO(UserProfile userProfile)
-    {
-        UserProfileDTO userProfileDTO = new UserProfileDTO
-        {
-            UserID = userProfile.UserID,
-            GroupID = userProfile.GroupID,
-            DisplayName = userProfile.DisplayName,
-            Email = userProfile.Email
-
-        };
-        return await Task.FromResult(userProfileDTO);                
-    }
-
 
 
     public static async Task<ScoreCardDTO> MapScorecardToScorecardDTO(ScoreCard scoreCard)

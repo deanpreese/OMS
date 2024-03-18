@@ -122,8 +122,8 @@ public abstract class AbstractStrategyBase
             {
                 Console.WriteLine(_strategyData.strategy_name +  " Strategy Orders Count: " + liveOrders.Count);
                 LiveOrderDTO liveStrategyOrder = liveOrders.FirstOrDefault();
-                ClosedTrade lastClosedTraderTrade = await _trader_grain.GetLastClosedTradeByOpenPlatformID(_trader_key, liveStrategyOrder.RelatedOrderID);
-
+                ClosedTradeDTO lastClosedTraderTrade = await _trader_grain.GetLastClosedTradeByOpenPlatformID(_trader_key, liveStrategyOrder.RelatedOrderID);
+                
                 //while (lastClosedTraderTrade == null)
                 //{
                 //    lastClosedTraderTrade = await _trader_grain.GetLastClosedTradeByOpenPlatformID(_trader_key, liveStrategyOrder.PlatformOrderID);
