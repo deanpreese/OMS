@@ -1,11 +1,11 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace OMS.Core.Models;
+namespace OMS.Core.DTO;
 
 [GenerateSerializer]
-[Alias("FeatureData")]
-public class FeatureData
+[Alias("FeatureDataDTO")]
+public class FeatureDataDTO
 {
     [Key]
     [Id(1)]
