@@ -4,8 +4,6 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace OMS.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -199,23 +197,15 @@ namespace OMS.Infrastructure.Migrations
                     table.PrimaryKey("PK_UserProfiles", x => x.UserID);
                 });
 
-            migrationBuilder.InsertData(
-                table: "ScoreCard",
-                columns: new[] { "ScoreCardID", "AveLoss", "AveLossDuration", "AveTradeDuration", "AveWin", "AveWinDuration", "GrossLoss", "GrossProfit", "GroupID", "LargestLoser", "LargestLosingStreak", "LargestWinner", "LargestWinningStreak", "LastUpdate", "Longs", "Losers", "NetProfitLong", "NetProfitShort", "PNL_Last13", "PNL_Last21", "PNL_Last3", "PNL_Last34", "PNL_Last5", "PNL_Last8", "SharpRatio", "Shorts", "SortinoRatio", "StdDevAllTrades", "StdDevLossTrades", "StdDevWinTrades", "TotalNetProfit", "TradeXML", "Trades", "UserID", "WinLossRatio", "Winners" },
-                values: new object[,]
-                {
-                    { 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 6, 20, 26, 58, 352, DateTimeKind.Utc).AddTicks(7130), 0, 7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 10, 999999, 0.29999999999999999, 3 },
-                    { 2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0, 0.0, 0, new DateTime(2024, 3, 6, 20, 26, 58, 352, DateTimeKind.Utc).AddTicks(7150), 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, "", 10, 999998, 0.69999999999999996, 0 }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ClosedTrades_UserID",
+                table: "ClosedTrades",
+                column: "UserID");
 
-            migrationBuilder.InsertData(
-                table: "UserProfiles",
-                columns: new[] { "UserID", "DateRegistered", "DisplayName", "Email", "Enabled", "EnabledLive", "FirstName", "GroupID", "GroupRank", "IsOpposite", "LastName", "Leverage", "TraderRole", "UserPwd" },
-                values: new object[,]
-                {
-                    { 999998, new DateTime(2024, 3, 6, 12, 26, 58, 352, DateTimeKind.Utc).AddTicks(7110), "User2", "admin", 1, 0, "User", 0, 0, 0, "One", 0.0, 0, "abc" },
-                    { 999999, new DateTime(2024, 3, 6, 12, 26, 58, 352, DateTimeKind.Utc).AddTicks(7050), "User1", "admin", 1, 0, "User", 0, 0, 0, "One", 0.0, 0, "abc" }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ScoreCard_UserID",
+                table: "ScoreCard",
+                column: "UserID");
         }
 
         /// <inheritdoc />

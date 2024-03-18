@@ -25,7 +25,7 @@ public abstract class AbstractStrategyBase
     public async Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order,
         ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
     {
-        Console.WriteLine("  ----  ");
+        //Console.WriteLine("  ----  ");
         //Console.WriteLine("New Order2222: " + _strategy_key + "  " + traderGrain.GetGrainId() + "  " + _orig_live_order.OrderAction + "  " + _orig_live_order.OrderType);
 
         LiveOrder strategy_order = await GenerateOrderAction( _strategy_key, _orig_live_order, traderGrain, strategyGrain);
@@ -111,11 +111,11 @@ public abstract class AbstractStrategyBase
             {
                 liveOrders = await _strategy_grain.GetLiveOrders(_strategy_key);
             }
-
-            Console.WriteLine(_strategyData.strategy_name +  " Strategy Orders Count: " + liveOrders.Count);
+            
 
             if(liveOrders.Count > 0)
             {
+                Console.WriteLine(_strategyData.strategy_name +  " Strategy Orders Count: " + liveOrders.Count);
                 LiveOrder liveStrategyOrder = liveOrders.FirstOrDefault();
                 ClosedTrade lastClosedTraderTrade = await _trader_grain.GetLastClosedTradeByOpenPlatformID(_trader_key, liveStrategyOrder.RelatedOrderID);
 
@@ -158,7 +158,7 @@ public abstract class AbstractStrategyBase
             liveOrders = await strategyGrain.GetLiveOrders(_strategy_key);
         }
 
-        Console.WriteLine(_strategyData.strategy_name +  " Strategy Orders Count for New: " + liveOrders.Count);
+        //Console.WriteLine(_strategyData.strategy_name +  " Strategy Orders Count for New: " + liveOrders.Count);
 
         if(liveOrders.Count > 0)
         {

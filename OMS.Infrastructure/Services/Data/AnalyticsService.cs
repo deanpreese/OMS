@@ -42,7 +42,7 @@ public class AnalyticsService : IAnalyticsService
 
                 if (sc == null)
                 {
-                    await _unitOfWork.AnalyticsRepository.AddTraderScoreCard(scoreCard);
+                    await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(order.UserID, order.GroupID);
                     await _unitOfWork.CommitAsync();
                 }
                 else

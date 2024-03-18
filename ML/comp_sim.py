@@ -6,16 +6,14 @@ import datetime as dt
 import random as rand
 import time
 
-import cProfile
-
 import logging
 logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
 logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
 
-
 from models import wrapped_models
 from ModelLoader import ModelLoader
-from SimOrderManager import SimOrderManager
+from OrderManager import OrderManager
+
 from  common.CommonCli import CommonCli as common_cli
 from CompositeStrategy import CompositeStrategy    
 
@@ -37,8 +35,10 @@ def run_sim(exp_id, n_models, file, trades, delay):
     
     models = load_models(exp_id, n_models)
 
-    order_manager = SimOrderManager()
-
+    order_manager = OrderManager()
+    order_manager.is_sim(True)
+    
+    
     total = 0
     order_total = 0
     start = time.time()
@@ -72,8 +72,8 @@ def run_sim(exp_id, n_models, file, trades, delay):
     
     
 exp_idx = ["2"]
-num_models = 10
-trades = 500
+num_models = 25
+trades = 1000
 sim_delay = 0.1
 
 #file = "data/lucky13_short.csv"
@@ -81,19 +81,4 @@ sim_delay = 0.1
 file = "data/lucky13_oos.csv"    
     
 run_sim(exp_idx, num_models, file, trades, sim_delay)    
-
-
-"""
-import pstats
-from io import StringIO
-pr = cProfile.Profile()
-pr.enable()
-run_sim(exp_idx, num_models)  # Your function call
-pr.disable()
-s = StringIO()
-sortby = 'cumtime' 
-ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-ps.print_stats(50)
-print(s.getvalue())
-"""
 

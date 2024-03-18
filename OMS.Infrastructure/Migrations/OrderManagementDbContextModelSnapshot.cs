@@ -144,6 +144,8 @@ namespace OMS.Infrastructure.Migrations
 
                     b.HasKey("StorerID");
 
+                    b.HasIndex("UserID");
+
                     b.ToTable("ClosedTrades");
                 });
 
@@ -384,87 +386,9 @@ namespace OMS.Infrastructure.Migrations
 
                     b.HasKey("ScoreCardID");
 
-                    b.ToTable("ScoreCard");
+                    b.HasIndex("UserID");
 
-                    b.HasData(
-                        new
-                        {
-                            ScoreCardID = 1,
-                            AveLoss = 0.0,
-                            AveLossDuration = 0.0,
-                            AveTradeDuration = 0.0,
-                            AveWin = 0.0,
-                            AveWinDuration = 0.0,
-                            GrossLoss = 0.0,
-                            GrossProfit = 0.0,
-                            GroupID = 0,
-                            LargestLoser = 0.0,
-                            LargestLosingStreak = 0,
-                            LargestWinner = 0.0,
-                            LargestWinningStreak = 0,
-                            LastUpdate = new DateTime(2024, 3, 6, 20, 26, 58, 352, DateTimeKind.Utc).AddTicks(7130),
-                            Longs = 0,
-                            Losers = 7,
-                            NetProfitLong = 0.0,
-                            NetProfitShort = 0.0,
-                            PNL_Last13 = 0.0,
-                            PNL_Last21 = 0.0,
-                            PNL_Last3 = 0.0,
-                            PNL_Last34 = 0.0,
-                            PNL_Last5 = 0.0,
-                            PNL_Last8 = 0.0,
-                            SharpRatio = 0.0,
-                            Shorts = 0,
-                            SortinoRatio = 0.0,
-                            StdDevAllTrades = 0.0,
-                            StdDevLossTrades = 0.0,
-                            StdDevWinTrades = 0.0,
-                            TotalNetProfit = 0.0,
-                            TradeXML = "",
-                            Trades = 10,
-                            UserID = 999999,
-                            WinLossRatio = 0.29999999999999999,
-                            Winners = 3
-                        },
-                        new
-                        {
-                            ScoreCardID = 2,
-                            AveLoss = 0.0,
-                            AveLossDuration = 0.0,
-                            AveTradeDuration = 0.0,
-                            AveWin = 0.0,
-                            AveWinDuration = 0.0,
-                            GrossLoss = 0.0,
-                            GrossProfit = 0.0,
-                            GroupID = 0,
-                            LargestLoser = 0.0,
-                            LargestLosingStreak = 0,
-                            LargestWinner = 0.0,
-                            LargestWinningStreak = 0,
-                            LastUpdate = new DateTime(2024, 3, 6, 20, 26, 58, 352, DateTimeKind.Utc).AddTicks(7150),
-                            Longs = 0,
-                            Losers = 0,
-                            NetProfitLong = 0.0,
-                            NetProfitShort = 0.0,
-                            PNL_Last13 = 0.0,
-                            PNL_Last21 = 0.0,
-                            PNL_Last3 = 0.0,
-                            PNL_Last34 = 0.0,
-                            PNL_Last5 = 0.0,
-                            PNL_Last8 = 0.0,
-                            SharpRatio = 0.0,
-                            Shorts = 0,
-                            SortinoRatio = 0.0,
-                            StdDevAllTrades = 0.0,
-                            StdDevLossTrades = 0.0,
-                            StdDevWinTrades = 0.0,
-                            TotalNetProfit = 0.0,
-                            TradeXML = "",
-                            Trades = 10,
-                            UserID = 999998,
-                            WinLossRatio = 0.69999999999999996,
-                            Winners = 0
-                        });
+                    b.ToTable("ScoreCard");
                 });
 
             modelBuilder.Entity("OMS.Core.Models.UserProfile", b =>
@@ -517,42 +441,6 @@ namespace OMS.Infrastructure.Migrations
                     b.HasKey("UserID");
 
                     b.ToTable("UserProfiles");
-
-                    b.HasData(
-                        new
-                        {
-                            UserID = 999999,
-                            DateRegistered = new DateTime(2024, 3, 6, 12, 26, 58, 352, DateTimeKind.Utc).AddTicks(7050),
-                            DisplayName = "User1",
-                            Email = "admin",
-                            Enabled = 1,
-                            EnabledLive = 0,
-                            FirstName = "User",
-                            GroupID = 0,
-                            GroupRank = 0,
-                            IsOpposite = 0,
-                            LastName = "One",
-                            Leverage = 0.0,
-                            TraderRole = 0,
-                            UserPwd = "abc"
-                        },
-                        new
-                        {
-                            UserID = 999998,
-                            DateRegistered = new DateTime(2024, 3, 6, 12, 26, 58, 352, DateTimeKind.Utc).AddTicks(7110),
-                            DisplayName = "User2",
-                            Email = "admin",
-                            Enabled = 1,
-                            EnabledLive = 0,
-                            FirstName = "User",
-                            GroupID = 0,
-                            GroupRank = 0,
-                            IsOpposite = 0,
-                            LastName = "One",
-                            Leverage = 0.0,
-                            TraderRole = 0,
-                            UserPwd = "abc"
-                        });
                 });
 #pragma warning restore 612, 618
         }

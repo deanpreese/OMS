@@ -20,7 +20,8 @@ public class AdminGrain : Grain, IAdminGrain
             int traderID = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
             await _unitOfWork.CommitAsync();
 
-            traderID = await _unitOfWork.TraderRepository.AddNewTraderScorecard(traderID, newTrader.GroupID);
+            traderID = await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(traderID, newTrader.GroupID);  
+            
             await _unitOfWork.CommitAsync();
 
         return traderID;
@@ -44,7 +45,7 @@ public class AdminGrain : Grain, IAdminGrain
             t_v = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
             await _unitOfWork.CommitAsync();
 
-            t_v = await _unitOfWork.TraderRepository.AddNewTraderScorecard(t_v, newTrader.GroupID);
+            t_v = await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(t_v, newTrader.GroupID);  
             await _unitOfWork.CommitAsync();
 
         }

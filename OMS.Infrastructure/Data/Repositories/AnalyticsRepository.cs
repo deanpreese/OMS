@@ -1,4 +1,5 @@
-﻿using System.Data.Entity.Core.Metadata.Edm;
+﻿using System.Data.Entity;
+using System.Data.Entity.Core.Metadata.Edm;
 using OMS.Core.Interfaces;
 using OMS.Core.Models;
 
@@ -14,14 +15,24 @@ public class AnalyticsRepository : IAnalyticsRepository
         _context = context;
     }
 
-    public Task AddTraderScoreCard(ScoreCard scoreCard)
+    public async Task<int> AddNewTraderScorecard(int userID, int groupID)
     {
-        throw new NotImplementedException();
+        ScoreCard scd = new ScoreCard
+        {
+            UserID = userID,
+            TradeXML = " ",
+            GroupID = groupID
+        };
+
+        await _context.ScoreCard.AddAsync(scd);
+        return userID;
     }
 
     public async Task UpdateTraderScoreCard(ScoreCard scData)
     {
-        ScoreCard sc = _context.ScoreCard.FirstOrDefault(s => s.UserID == scData.UserID && s.GroupID == scData.GroupID) ?? new ScoreCard { UserID = -13 };
+        //ScoreCard sc = _context.ScoreCard.FirstOrDefault(s => s.UserID == scData.UserID && s.GroupID == scData.GroupID) ?? new ScoreCard { UserID = -13 };
+
+        ScoreCard sc = await GetTraderScoreCard(scData.UserID, scData.GroupID);    
 
         if (sc != null)
         {
@@ -69,7 +80,7 @@ public class AnalyticsRepository : IAnalyticsRepository
             sc.PNL_Last21 = scData.PNL_Last21;
             sc.PNL_Last34 = scData.PNL_Last34;
 
-            Console.WriteLine("Updating ScoreCard " + sc.UserID + " " + scData.GroupID + "  " + scData.Winners + "  " + scData.Losers   );
+            //Console.WriteLine("Updating ScoreCard " + sc.UserID + " " + scData.GroupID + "  " + scData.Winners + "  " + scData.Losers   );
 
             _context.ScoreCard.Update(sc);
         }
@@ -80,7 +91,7 @@ public class AnalyticsRepository : IAnalyticsRepository
 
     public async Task<ScoreCard> GetTraderScoreCard(int UserID, int GroupNumber)
     {
-        var scoreCard = _context.ScoreCard.FirstOrDefault(s => s.UserID == UserID && s.GroupID == GroupNumber) ?? new ScoreCard { UserID = -13 };
+        var scoreCard = _context.ScoreCard.AsNoTracking().FirstOrDefault(s => s.UserID == UserID && s.GroupID == GroupNumber) ?? new ScoreCard { UserID = -13 };
         await Task.FromResult(scoreCard);
         return scoreCard;
     }

@@ -4,7 +4,7 @@ namespace OMS.Core.Interfaces;
 
 public interface IAnalyticsRepository
 {
-    public Task AddTraderScoreCard(ScoreCard scoreCard);
+    Task<int> AddNewTraderScorecard(int userID, int groupID);
     public Task UpdateTraderScoreCard(ScoreCard scoreCard);
     public Task<ScoreCard> GetTraderScoreCard(int UserID, int GroupNumber);
     public Task ReRankGroupAsync(int groupNumber);

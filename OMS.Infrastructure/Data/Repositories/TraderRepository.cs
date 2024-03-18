@@ -53,7 +53,7 @@ public class TraderRepository : ITraderRepository
 
     }
 
-
+    /*
     public async Task<int> AddNewTraderScorecard(int userID, int groupID)
     {
         ScoreCard scd = new ScoreCard
@@ -66,7 +66,7 @@ public class TraderRepository : ITraderRepository
         await _context.ScoreCard.AddAsync(scd);
         return userID;
     }
-
+    */
 
     public async Task<int> AuthenticateTraderAsync(int userID, string password, int groupNumber)
     {
