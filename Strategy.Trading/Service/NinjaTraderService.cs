@@ -2,7 +2,7 @@
 using NinjaTrader.Client;
 
 
-namespace OMS.NinjaTrader;
+namespace Strategy.Trading.Service;
 
 public class NinjaTraderService : BackgroundService
 {

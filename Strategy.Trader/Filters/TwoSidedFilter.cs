@@ -16,7 +16,81 @@ public class TwoSidedFilter : IStrategyFilter
     public int IsInFilter(ScoreCard scoreCard)
     {
         _scoreCard = scoreCard;
-        return IsInAlgoFilter111();
+        return IsInAlgoFilter114();
+    }
+
+
+
+    public int IsInAlgoFilter114()
+    {
+        int includeExclude = 0;
+
+        if (_scoreCard.SortinoRatio > 0.5  || _scoreCard.SharpRatio > 0.5)
+        {
+            includeExclude = 1;
+        }
+
+         return includeExclude;
+    }
+
+
+
+    public int IsInAlgoFilter117()
+    {
+       int includeExclude = 0;
+
+       if ((_scoreCard.SortinoRatio > 0.5  || _scoreCard.SharpRatio > 0.5 )
+            &&  _scoreCard.WinLossRatio > 0.6
+            )
+        {
+            includeExclude = 1;
+        }
+
+         return includeExclude;
+    }
+
+
+
+    public int IsInAlgoFilter116()
+    {
+        int includeExclude = 0;
+
+        if (_scoreCard.SortinoRatio > 0.6  || _scoreCard.SharpRatio > 0.6 )
+           
+        {
+            includeExclude = 1;
+        }
+
+         return includeExclude;
+    }
+
+
+
+    public int IsInAlgoFilter115()
+    {
+        int includeExclude = 0;
+
+        if (_scoreCard.SortinoRatio > 0.55  || _scoreCard.SharpRatio > 0.55)
+        {
+            includeExclude = 1;
+        }
+
+         return includeExclude;
+    }
+
+
+
+
+    public int IsInAlgoFilter113()
+    {
+        int includeExclude = 0;
+
+        if (_scoreCard.SortinoRatio > 0.5  || _scoreCard.SharpRatio > 0.5 || _scoreCard.WinLossRatio > 0.6)
+        {
+            includeExclude = 1;
+        }
+
+         return includeExclude;
     }
 
 
@@ -24,13 +98,18 @@ public class TwoSidedFilter : IStrategyFilter
     {
         int includeExclude = 0;
 
-        if (_scoreCard.SortinoRatio > 0.5  || _scoreCard.SharpRatio > 0.5 )
+        if (_scoreCard.SortinoRatio > 0.35  || _scoreCard.SharpRatio > 0.35 || _scoreCard.WinLossRatio > 0.6)
         {
             includeExclude = 1;
         }
-    
 
-        return includeExclude;
+        if (_scoreCard.SortinoRatio < 0  || _scoreCard.SharpRatio < 0 )
+        {
+            includeExclude = -1;
+        }
+
+
+         return includeExclude;
     }
 
 

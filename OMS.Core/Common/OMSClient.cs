@@ -19,7 +19,7 @@ public static class OMSClient
     {
             using (HttpClient client = new HttpClient())
             {
-                var jsonContent = new StringContent(JsonConvert.SerializeObject(newTrader), Encoding.UTF8, "application/json");
+                var jsonContent = new StringContent(JsonContent.SerializeObject(newTrader), Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(server_url + "/api/mt/add-new-trader", jsonContent);
 
                 if (response.IsSuccessStatusCode)
