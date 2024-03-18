@@ -2,9 +2,9 @@
 using NinjaTrader.Client;
 
 
-namespace OMS.NinjaTrader;
+namespace Strategy.Trading.Service;
 
-public class NinjaTraderService : BackgroundService
+public class NinjaTraderTickService : BackgroundService
 {
 
     private static double askPriceReceive, bidPriceReceive, lastPriceReceive, priceSend;
@@ -15,7 +15,7 @@ public class NinjaTraderService : BackgroundService
     private static System.Threading.Timer timerReceive, timerSend;
 
 
-    public NinjaTraderService()
+    public NinjaTraderTickService()
     {
 
         
