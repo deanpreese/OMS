@@ -12,6 +12,8 @@ using Strategy.Trader.Abstractions;
 using Strategy.Trader;
 using System.Threading.Tasks.Dataflow;
 
+using OMS.Core.DTO;
+
 namespace Strategy.Trader.Services;
 
 public class FadeService : BackgroundService
@@ -78,7 +80,7 @@ public class FadeService : BackgroundService
             int delay = flowBuffer.Count > 125 ? flowBuffer.Count : 125;
             await Task.Delay(delay);       
             LiveOrder newLiveOrder = flowBuffer.Receive();
-            NewOrder n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
+            NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
         }
     }
 

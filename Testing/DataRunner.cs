@@ -28,7 +28,7 @@ public class DataRunner
         {
             var lines = await File.ReadAllLinesAsync(csvFilePath);
 
-            var orders = new List<NewOrder>();
+            var orders = new List<NewOrderDTO>();
             for (int i = 1; i < lines.Length; i++)
             {
                 var values = lines[i].Split(',');
@@ -36,7 +36,7 @@ public class DataRunner
                 Random random = new Random();
                 int rndm = random.Next(1000000, 5000000);
 
-                NewOrder o = new NewOrder
+                NewOrderDTO o = new NewOrderDTO
                 {
                     AuthToken = 1111111,
                     OrderType = OrderType.MARKET,
@@ -79,8 +79,8 @@ public class DataRunner
 
         public async Task DataRunnerFromDB(int traders, int trades, int group_num)
         {
-            List<NewTrader> trader_list = await GetTraders(traders, group_num);
-            List<NewOrder> order_list = _dataService.GenerateOrders(trader_list, trades, group_num);
+            List<NewTraderDTO> trader_list = await GetTraders(traders, group_num);
+            List<NewOrderDTO> order_list = _dataService.GenerateOrders(trader_list, trades, group_num);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             await RunOrderListAsync(order_list);
@@ -94,9 +94,9 @@ public class DataRunner
         {
            
 
-            List<NewTrader> trader_list = await _dataService.GenerateTraders(traders, groups);
-            List<NewTrader> verified_traders = await _dataService.VerifyTraders(trader_list);
-            List<NewOrder> order_list = _dataService.GenerateOrders(verified_traders, trades, groups);
+            List<NewTraderDTO> trader_list = await _dataService.GenerateTraders(traders, groups);
+            List<NewTraderDTO> verified_traders = await _dataService.VerifyTraders(trader_list);
+            List<NewOrderDTO> order_list = _dataService.GenerateOrders(verified_traders, trades, groups);
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -107,10 +107,10 @@ public class DataRunner
         }
 
 
-        public async Task<List<NewTrader>> GetTraders(int traders, int groupNumber)
+        public async Task<List<NewTraderDTO>> GetTraders(int traders, int groupNumber)
         {
 
-            List<NewTrader> newTraders = new List<NewTrader>();
+            List<NewTraderDTO> newTraders = new List<NewTraderDTO>();
             List<UserProfile> trader_list = new List<UserProfile>();
 
             
@@ -121,7 +121,7 @@ public class DataRunner
                 
                 foreach (var trader in trader_list)
                 {
-                    newTraders.Add(new NewTrader
+                    newTraders.Add(new NewTraderDTO
                     {
                         UserID = trader.UserID,
                         GroupID = trader.GroupID,
@@ -137,7 +137,7 @@ public class DataRunner
         }
 
 
-        public async Task RunOrderListAsync(List<NewOrder> orderList)
+        public async Task RunOrderListAsync(List<NewOrderDTO> orderList)
         {
             await Task.Run(async () =>
             {

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using OMS.Core.Interfaces;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Services.Queue;
+using OMS.Core.DTO;
 
 
 namespace OMS.Infrastructure.Services.Trading;
@@ -28,7 +29,7 @@ public class UserService : IUserService
 
     }
 
-    public async Task<int> AddNewTrader(NewTrader newTrader)
+    public async Task<int> AddNewTrader(NewTraderDTO newTrader)
     {
         int traderID = 0;
 
@@ -51,7 +52,7 @@ public class UserService : IUserService
         return traderID;
     }
 
-    public async Task<int> AuthenticateTrader(UserInfo userInfo)
+    public async Task<int> AuthenticateTrader(UserInfoDTO userInfo)
     {
         int auth_code = 0;
 
@@ -64,7 +65,7 @@ public class UserService : IUserService
         return auth_code;
     }
 
-    public async Task<int> VerifyAndAddByDisplayName(NewTrader newTrader)
+    public async Task<int> VerifyAndAddByDisplayName(NewTraderDTO newTrader)
     {
         int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(newTrader);
 

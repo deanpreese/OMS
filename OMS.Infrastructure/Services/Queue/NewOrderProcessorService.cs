@@ -3,6 +3,8 @@ using OMS.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using OMS.Core.Common;
 using Orleans.Streams;
+using OMS.Core.DTO;
+
 
 
 using Microsoft.Extensions.Hosting;
@@ -63,7 +65,7 @@ public class NewOrderProcessorService : BackgroundService
         }
     }
 
-    private async Task ProcessLiveOrderAsync(NewOrder newOrder, CancellationToken cancellationToken)
+    private async Task ProcessLiveOrderAsync(NewOrderDTO newOrder, CancellationToken cancellationToken)
     {
         using (var scope = _scopeFactory.CreateScope())
         {

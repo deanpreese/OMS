@@ -14,6 +14,10 @@ using Strategy.Trader.Abstractions;
 using Strategy.Trader;
 using System.Threading.Tasks.Dataflow;
 
+using OMS.Core.DTO;
+
+
+
 namespace Strategy.Trader.Services;
 
 
@@ -83,7 +87,7 @@ private ChannelReader<LiveOrder> _reader;
             int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
             await Task.Delay(25);       
             LiveOrder newLiveOrder = flowBuffer.Receive();
-            NewOrder n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
+            NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
         }
     }
 

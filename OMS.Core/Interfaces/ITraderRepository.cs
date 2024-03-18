@@ -1,11 +1,12 @@
-﻿using OMS.Core.Models;
+﻿using OMS.Core.DTO;
+using OMS.Core.Models;
 
 namespace OMS.Core.Interfaces;
 
 public interface ITraderRepository
 {
-    Task<int> VerifyModelTrader(NewTrader user);
-    Task<int> AddTraderAsync(NewTrader user);
+    Task<int> VerifyModelTrader(NewTraderDTO user);
+    Task<int> AddTraderAsync(NewTraderDTO user);
     //Task<int> AddNewTraderScorecard(int userID, int groupID);
     Task<int> AuthenticateTraderAsync(int userID, string password, int groupNumber);
     Task<List<UserProfile>> GetUserProfileListAsync(int GroupNumber);

@@ -1,5 +1,6 @@
 ﻿using OMS.Core.Models;
 using OMS.Core.Interfaces;
+using OMS.Core.DTO;
 
 namespace OMS.Infrastructure.Grains;
 
@@ -15,7 +16,7 @@ public class AdminGrain : Grain, IAdminGrain
     }
 
 
-    public async Task<int> AddNewTrader(NewTrader newTrader)
+    public async Task<int> AddNewTrader(NewTraderDTO newTrader)
     {
             int traderID = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
             await _unitOfWork.CommitAsync();
@@ -27,7 +28,7 @@ public class AdminGrain : Grain, IAdminGrain
         return traderID;
     }
 
-    public async Task<int> AuthenticateTrader(UserInfo userInfo)
+    public async Task<int> AuthenticateTrader(UserInfoDTO userInfo)
     {
         return await _unitOfWork.TraderRepository.AuthenticateTraderAsync(userInfo.UserID, "abc", userInfo.GroupID);
     }
@@ -37,7 +38,7 @@ public class AdminGrain : Grain, IAdminGrain
         return await _unitOfWork.TraderRepository.GetUserProfileListAsync(userGroup);
     }
 
-    public async Task<int> VerifyAndAddByDisplayName(NewTrader newTrader)
+    public async Task<int> VerifyAndAddByDisplayName(NewTraderDTO newTrader)
     {
         int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(newTrader);
         if (t_v == 0)
@@ -53,7 +54,7 @@ public class AdminGrain : Grain, IAdminGrain
     }
 
 
-    public async Task<int> AuthByDisplayName(NewTrader newTrader)
+    public async Task<int> AuthByDisplayName(NewTraderDTO newTrader)
     {
         return await _unitOfWork.TraderRepository.VerifyModelTrader(newTrader);
     }

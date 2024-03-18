@@ -13,7 +13,7 @@ public class TestingDataService
 {
 
     
-    public async Task<int> SendOrderAsync(NewOrder order)
+    public async Task<int> SendOrderAsync(NewOrderDTO order)
     {
             int sendOrderResult = await OMSClient.SendOrderAsync(order);
             //Thread.Sleep(1000);    
@@ -22,7 +22,7 @@ public class TestingDataService
 
 
 
-    public async Task<int> AddTraderToPlatform(NewTrader newTrader)
+    public async Task<int> AddTraderToPlatform(NewTraderDTO newTrader)
     {
             int trader_id = await OMSClient.AddTraderAsync(newTrader);
             return trader_id;
@@ -30,7 +30,7 @@ public class TestingDataService
     }
 
 
-    public  async Task<int> VerifyTraderToPlatform(UserInfo trader)
+    public  async Task<int> VerifyTraderToPlatform(UserInfoDTO trader)
     {
             int trader_id = await OMSClient.AuthenticateTraderAsync(trader);
             return trader_id;
@@ -38,12 +38,12 @@ public class TestingDataService
 
 
     // -------------------------------------------------------------
-    public  async Task<List<NewTrader>> GenerateTraders(int traders, int group)
+    public  async Task<List<NewTraderDTO>> GenerateTraders(int traders, int group)
     {
-        List<NewTrader> generated_traders = new List<NewTrader>();
+        List<NewTraderDTO> generated_traders = new List<NewTraderDTO>();
         for (int i = 0; i < traders; i++)
         {
-            NewTrader newTrader = new NewTrader
+            NewTraderDTO newTrader = new NewTraderDTO
             {
                 UserID = 0,
                 GroupID = group,
@@ -63,14 +63,14 @@ public class TestingDataService
 
 
     // -------------------------------------------------------------
-    public async Task<List<NewTrader>> VerifyTraders(List<NewTrader> traders)
+    public async Task<List<NewTraderDTO>> VerifyTraders(List<NewTraderDTO> traders)
     {
-        List<NewTrader> verified_traders = new List<NewTrader>();
+        List<NewTraderDTO> verified_traders = new List<NewTraderDTO>();
 
         foreach (var trader in traders)
         {
 
-            UserInfo u = new UserInfo();
+            UserInfoDTO u = new UserInfoDTO();
             u.UserID = trader.UserID;
             u.GroupID = trader.GroupID;
             u.Password = trader.UserPwd;
@@ -92,19 +92,19 @@ public class TestingDataService
 
 
     // -------------------------------------------------------------
-    public  List<NewOrder> GenerateOrders(List<NewTrader> newTraders, int trades, int groups)
+    public  List<NewOrderDTO> GenerateOrders(List<NewTraderDTO> newTraders, int trades, int groups)
     {
         Random random = new Random();
-        List<NewOrder> generated_orders = new List<NewOrder>();
+        List<NewOrderDTO> generated_orders = new List<NewOrderDTO>();
 
-        foreach (NewTrader trader in newTraders)
+        foreach (NewTraderDTO trader in newTraders)
         {
             for (int groupNumber = 0; groupNumber <= groups; groupNumber++)
             {
                 for (int i = 0; i < trades; i++)
                 {
 
-                    NewOrder BuyOrder = new NewOrder
+                    NewOrderDTO BuyOrder = new NewOrderDTO
                     {
                         AuthToken = 1111111,
                         OrderType = OrderType.MARKET,
@@ -118,7 +118,7 @@ public class TestingDataService
                         Quantity = 100
                     };
 
-                    NewOrder SellOrder = new NewOrder
+                    NewOrderDTO SellOrder = new NewOrderDTO
                     {
                         AuthToken = 1111111,
                         OrderType = OrderType.MARKET,
@@ -146,13 +146,13 @@ public class TestingDataService
         {
             n--;
             int k = rng.Next(n + 1);
-            NewOrder value = generated_orders[k];
+            NewOrderDTO value = generated_orders[k];
             generated_orders[k] = generated_orders[n];
             generated_orders[n] = value;
         }
         
         
-        foreach (NewOrder no in generated_orders)
+        foreach (NewOrderDTO no in generated_orders)
         {
             Console.WriteLine("Order: " + no.UserID + " " + no.OrderAction + " " + no.OrderPX + " " + no.Quantity);
         }

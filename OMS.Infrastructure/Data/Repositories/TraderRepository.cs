@@ -1,6 +1,7 @@
 ﻿using OMS.Core.Interfaces;
 using OMS.Core.Models;
 using OMS.Core.Common;
+using OMS.Core.DTO;
 
 namespace OMS.Infrastructure.Data.Repositories;
 
@@ -19,7 +20,7 @@ public class TraderRepository : ITraderRepository
         await Task.CompletedTask;
     }
 
-    public async Task<int> AddTraderAsync(NewTrader addedTrader)
+    public async Task<int> AddTraderAsync(NewTraderDTO addedTrader)
     {
         UserProfile user = new UserProfile
         {
@@ -158,7 +159,7 @@ public class TraderRepository : ITraderRepository
         return await Task.FromResult(sixDigitRandomNumber);
     }
 
-    public async Task<int> VerifyModelTrader(NewTrader user)
+    public async Task<int> VerifyModelTrader(NewTraderDTO user)
     {
         int rtn_val = 0;
 

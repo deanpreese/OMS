@@ -3,6 +3,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using OMS.Core.DTO;
+
+
 using System.Threading.Channels;
 using System.Text.Json;
 
@@ -84,7 +87,7 @@ public class CounterService : BackgroundService
             int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
             await Task.Delay(25);       
             LiveOrder newLiveOrder = flowBuffer.Receive();
-            NewOrder n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
+            NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
         }
     }
 

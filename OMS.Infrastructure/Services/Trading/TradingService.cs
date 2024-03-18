@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using OMS.Infrastructure.Services.Queue;
 using OMS.Infrastructure.Services.Common;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using OMS.Core.DTO;
 
 
 namespace OMS.Infrastructure.Services.Trading;
@@ -29,7 +30,7 @@ public class TradingService : ITradingService
 
     }
 
-    public async Task<LiveOrder> ProcessNewOrderAsync(NewOrder newOrder)
+    public async Task<LiveOrder> ProcessNewOrderAsync(NewOrderDTO newOrder)
     {
         LiveOrder newLiveOrder = await MapAndAddOrderManagerID(newOrder);
         await _unitOfWork.UnderCoverRepository.AddToOrderFlowAsync(newLiveOrder);
@@ -96,7 +97,7 @@ public class TradingService : ITradingService
     public async Task<double> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, 
         ILiveOrderRepository liveOrderRepository, IClosedOrderRepository closedOrderRepository)
     {
-        ClosedTrade histOrder = await OrderMapping.MapClosedOrder(orderToClose, orderToStore);       
+        ClosedTrade histOrder = await DTOMapping.MapClosedOrder(orderToClose, orderToStore);       
 
         histOrder.MAE = orderToClose.MAE; 
         histOrder.MFE = orderToClose.MFE;
@@ -125,7 +126,7 @@ public class TradingService : ITradingService
 
 
 
-    private async Task<LiveOrder> MapAndAddOrderManagerID(NewOrder newOrder)
+    private async Task<LiveOrder> MapAndAddOrderManagerID(NewOrderDTO newOrder)
     {
         newOrder.PlatformOrderID = _platformOrderIDGen.GetNextOrderID();
 
@@ -137,7 +138,7 @@ public class TradingService : ITradingService
             om_id = BitConverter.ToInt32(salt, 0);
         }
 
-        LiveOrder liveOrder = await OrderMapping.MapOrderNewToLive(newOrder);
+        LiveOrder liveOrder = await DTOMapping.MapOrderNewToLive(newOrder);
         liveOrder.OrderManagerID = om_id;
 
         return await Task.FromResult(liveOrder);

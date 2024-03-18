@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
 using OMS.Core.Models;
+using OMS.Core.DTO;
 
 namespace OMS.Core.WebAPIClient;
 
@@ -15,7 +16,7 @@ public static class OMSClient
 {
 
     // -------------------------------------------------------------
-    public static async Task<int> AddTraderAsync(NewTrader newTrader, string server_url = "http://localhost:8786")
+    public static async Task<int> AddTraderAsync(NewTraderDTO newTrader, string server_url = "http://localhost:8786")
     {
             using (HttpClient client = new HttpClient())
             {
@@ -37,7 +38,7 @@ public static class OMSClient
     }
 
 
-    public static async Task<int> VerifyModelTrader(NewTrader newTrader, string server_url = "http://localhost:8786")
+    public static async Task<int> VerifyModelTrader(NewTraderDTO newTrader, string server_url = "http://localhost:8786")
     {
             using (HttpClient client = new HttpClient())
             {
@@ -61,7 +62,7 @@ public static class OMSClient
 
 
     // -------------------------------------------------------------
-    public static async Task<int> AuthenticateTraderAsync(UserInfo newTrader, string server_url = "http://localhost:8786")
+    public static async Task<int> AuthenticateTraderAsync(UserInfoDTO newTrader, string server_url = "http://localhost:8786")
     {
             using (HttpClient client = new HttpClient())
             {
@@ -85,7 +86,7 @@ public static class OMSClient
 
 
     // -------------------------------------------------------------
-    public static async Task<int> SendOrderAsync(NewOrder newOrder, string server_url = "http://localhost:8786")
+    public static async Task<int> SendOrderAsync(NewOrderDTO newOrder, string server_url = "http://localhost:8786")
     {
         using (HttpClient client = new HttpClient())
         {
@@ -102,7 +103,7 @@ public static class OMSClient
 
 
     // -------------------------------------------------------------
-    public static int SendMLOrderAsync(NewOrder newOrder, string server_url = "http://localhost:8786")
+    public static int SendMLOrderAsync(NewOrderDTO newOrder, string server_url = "http://localhost:8786")
     {
         using (HttpClient client = new HttpClient())
         {

@@ -3,6 +3,7 @@ using OMS.Core.Models;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Services.Queue;
 using OMS.Infrastructure.Services.Trading;
+using OMS.Core.DTO;
 
 
 namespace OMS.API;
@@ -32,7 +33,7 @@ public class MLController : ControllerBase
 
 
     [HttpPost("process-order")]
-    public async Task<ActionResult> ProcessOrder([FromBody] NewOrder order)
+    public async Task<ActionResult> ProcessOrder([FromBody] NewOrderDTO order)
     {
         //Console.WriteLine("ML Order Info: " + order.UserID + "  " + order.GroupID + "  " + order.OrderPX + "  "  + order.OrderAction);
         int om_id = 0;
@@ -48,7 +49,7 @@ public class MLController : ControllerBase
     }
 
     [HttpPost("verify-model-trader")]
-    public async Task<IActionResult> VerifyModelTrader([FromBody] NewTrader newTrader)
+    public async Task<IActionResult> VerifyModelTrader([FromBody] NewTraderDTO newTrader)
     {
         int oid = await _user_service.VerifyAndAddByDisplayName(newTrader);
         return Ok(oid);

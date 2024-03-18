@@ -1,4 +1,5 @@
 ﻿using OMS.Core.Models;
+using OMS.Core.DTO;
 
 using OMS.Core.Interfaces;
 using OMS.Infrastructure.Services.Queue;
@@ -16,7 +17,7 @@ public class OrderGrain : Grain, IOrderGrain
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<int> ProcessOrder(NewOrder order)
+    public async Task<int> ProcessOrder(NewOrderDTO order)
     {
         await _newOrderChannelService.WriteAsync(order);
         return 0;

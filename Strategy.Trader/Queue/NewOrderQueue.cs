@@ -2,16 +2,19 @@
 using Microsoft.Extensions.Logging;
 using OMS.Core.Models;
 
+using OMS.Core.DTO;
+
+
 namespace Strategy.Trader;
 
 public class NewOrderQueue
 {
-    private readonly Channel<NewOrder> _channel;
+    private readonly Channel<NewOrderDTO> _channel;
     private ILogger<NewOrderQueue> _logger;
     //private readonly BlockingCollection<NewOrder> _LiveOrderCollection = new BlockingCollection<NewOrder>(2000);
     //private readonly BlockingCollection<ClosedTrade> _ClosedOrderCollection = new BlockingCollection<ClosedTrade>(2000);
 
-    private  List<NewOrder> _liveOrderCollection = new List<NewOrder>();
+    private  List<NewOrderDTO> _liveOrderCollection = new List<NewOrderDTO>();
     private  List<ClosedTrade> _closedOrderCollection = new List<ClosedTrade>();
     private readonly object _lock = new object();
 
@@ -20,7 +23,7 @@ public NewOrderQueue(ILogger<NewOrderQueue> logger)
         _logger = logger;
 
         // Create a bounded channel with a capacity limit to prevent out-of-memory issues in case of high load
-        _channel = Channel.CreateBounded<NewOrder>(new BoundedChannelOptions(1000)
+        _channel = Channel.CreateBounded<NewOrderDTO>(new BoundedChannelOptions(1000)
         {
             FullMode = BoundedChannelFullMode.Wait,
             SingleReader = true, // Set to true if only one consumer will read from the channel
@@ -28,7 +31,7 @@ public NewOrderQueue(ILogger<NewOrderQueue> logger)
         });
     }
 
-    public async Task<int> WriteAsync(NewOrder order, CancellationToken cancellationToken = default)
+    public async Task<int> WriteAsync(NewOrderDTO order, CancellationToken cancellationToken = default)
     {
         int om_id = 0;
         order.PlatformOrderID = om_id;
@@ -39,12 +42,12 @@ public NewOrderQueue(ILogger<NewOrderQueue> logger)
         return om_id;
     }
 
-    public IAsyncEnumerable<NewOrder> ReadAllAsync(CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<NewOrderDTO> ReadAllAsync(CancellationToken cancellationToken = default)
     {
         return _channel.Reader.ReadAllAsync(cancellationToken);
     }
 
-    public async Task AddToNewOrdersList(NewOrder order)
+    public async Task AddToNewOrdersList(NewOrderDTO order)
     {
         ArgumentNullException.ThrowIfNull(order);
         lock (_lock)
@@ -89,7 +92,7 @@ public NewOrderQueue(ILogger<NewOrderQueue> logger)
         }
     }
 
-    public Task<List<NewOrder>> GetNewOrdersList()
+    public Task<List<NewOrderDTO>> GetNewOrdersList()
     {
         lock (_lock)
         {
@@ -97,7 +100,7 @@ public NewOrderQueue(ILogger<NewOrderQueue> logger)
         }
     }
 
-    public Task<List<NewOrder>> GetOrdersList(NewOrder order)
+    public Task<List<NewOrderDTO>> GetOrdersList(NewOrderDTO order)
     {
         lock (_lock)
         {

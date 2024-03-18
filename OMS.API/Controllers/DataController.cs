@@ -5,6 +5,7 @@ using OMS.Core.Models;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Services.Queue;
 using OMS.Infrastructure.Services.Trading;
+using OMS.Core.DTO;
 
 
 namespace OMS.API;
@@ -30,14 +31,14 @@ public class DataController : ControllerBase
 
 
     [HttpPost("add-tick")]
-    public async Task<int> AddTick([FromBody] LastTick lastTick)
+    public async Task<int> AddTick([FromBody] LastTickDTO lastTick)
     {
         return await Task.FromResult(0);
         
     }
 
     [HttpPost("add-feature-data")]
-    public async Task<string> AddFeatureData([FromBody] FeatureData featureData)
+    public async Task<string> AddFeatureData([FromBody] FeatureDataDTO featureData)
     {
         await _featureDataQueue.WriteAsync(featureData);
 

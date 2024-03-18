@@ -1,14 +1,16 @@
 ﻿using OMS.Core.Models;
+using OMS.Core.DTO;
+
 
 namespace OMS.Core.Interfaces;
 
 [Alias("IAdminGrain")]
 public interface IAdminGrain : IGrainWithStringKey
 {
-    Task<int> AddNewTrader(NewTrader newTrader);
-    Task<int> AuthenticateTrader(UserInfo userInfo);
+    Task<int> AddNewTrader(NewTraderDTO newTrader);
+    Task<int> AuthenticateTrader(UserInfoDTO userInfo);
     Task<List<UserProfile>> GetTraders(int userGroup);
-    Task<int> VerifyAndAddByDisplayName(NewTrader newTrader);
-    Task<int> AuthByDisplayName(NewTrader newTrader);
+    Task<int> VerifyAndAddByDisplayName(NewTraderDTO newTrader);
+    Task<int> AuthByDisplayName(NewTraderDTO newTrader);
 
 }

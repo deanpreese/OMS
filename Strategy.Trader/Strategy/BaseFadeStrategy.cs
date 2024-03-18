@@ -4,6 +4,8 @@ using OMS.Core.Models;
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Filters;
 using Strategy.Trader.Models;
+using OMS.Core.DTO;
+
 
 namespace Strategy.Trader.Strategy;
 
@@ -22,7 +24,7 @@ public class BaseFadeStrategy : AbstractStrategyBase , IStrategy
         _strategyData = strategyData;
     }
 
-    public override Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order)
+    public override Task<NewOrderDTO> OnNewOrder(LiveOrder _orig_live_order)
     {
          string _trader_key = _orig_live_order.UserID + "_" + _orig_live_order.GroupID;
         _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
@@ -46,7 +48,7 @@ public class BaseFadeStrategy : AbstractStrategyBase , IStrategy
     }
 
 
-    public async override Task ProcessOrderForStrategy(string strategy_key, NewOrder order)
+    public async override Task ProcessOrderForStrategy(string strategy_key, NewOrderDTO order)
     {
         if(order.OrderAction != OrderAction.NoAction)
         {

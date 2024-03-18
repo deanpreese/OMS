@@ -72,14 +72,15 @@ public class DTOMapping
             Instrument = liveOrder.Instrument,
             OrderAction = liveOrder.OrderAction,
             OrderType = liveOrder.OrderType,
-            PlatformOrderID = liveOrder.PlatformOrderID,
+            PlatformOrderID = 0,
             Quantity = liveOrder.Quantity,
-            UserID = liveOrder.UserID,
-            GroupID = liveOrder.GroupID,
+            UserID = 0,
+            GroupID = 0,
         };
         return await Task.FromResult(newOrder);
 
     }
+
 
 
     public static async Task<LiveOrderDTO> MapOrderLiveToLiveDTO(LiveOrder newOrder)
@@ -193,8 +194,6 @@ public class DTOMapping
 
 
     }
-
-
 
 
 }

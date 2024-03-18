@@ -18,46 +18,32 @@ public class ClosedTradeDTO
     private DateTime _openOrderTime;
     [Id(1)]
     private DateTime _closeOrderTime;
-
-
     [Key]
     [Id(2)]
     public int StorerID { get; set; }
-
     [Id(3)]
     public int UserID { get; set; }
-
     [Id(4)]
     public int GroupID { get; set; }
-
     [Id(5)]
     public string Instrument { get; set; }
-
     [Id(6)]
     public int Quantity { get; set; }
-
     [Id(7)]
     public double Leverage { get; set; }
-
     [Id(8)]
     public bool OppositeTrader { get; set; }
-
     [Id(9)]
     public int OpenPlatformOrderID { get; set; }
-
     [Id(28)]
     public int OpenOrderMangerID { get; set; }
-
     // Trader Token
     [Id(10)]
     public int OpenAuthToken { get; set; }
-
     // Order ID used to capture ID from Execution 
     [Id(11)]
     public int OpenExecutionID { get; set; }
-
     // ID used for order matching
-
     [Id(12)]
     public int OpenRelatedOrderID { get; set; }
     public DateTime OpenOrderTime

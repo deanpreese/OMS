@@ -29,15 +29,15 @@ namespace Testing
             _dataService = new TestingDataService();
         }
 
-        UserInfo uInfo = new(999999,"abc", 0 );
+        UserInfoDTO uInfo = new(999999,"abc", 0 );
 
         // -------------------------------------------------------------
-        private NewOrder GenerateBaseOrder()
+        private NewOrderDTO GenerateBaseOrder()
         {
             Random random = new Random();
             int rndm = random.Next(1000000, 5000000);
 
-            NewOrder order = new NewOrder
+            NewOrderDTO order = new NewOrderDTO
             {
                 AuthToken = 1111111,
                 OrderType = OrderType.MARKET,
@@ -155,7 +155,7 @@ namespace Testing
         public async Task BuyOrder(int qty, double px)
         {
             //Thread.Sleep(500);
-            NewOrder o = GenerateBaseOrder();
+            NewOrderDTO o = GenerateBaseOrder();
             o.Quantity = qty;
             o.OrderAction = OrderAction.Buy;
             o.OrderPX = px;
@@ -167,7 +167,7 @@ namespace Testing
         public async Task SellOrder(int qty, double px)
         {
             //Thread.Sleep(500);
-            NewOrder so = GenerateBaseOrder();
+            NewOrderDTO so = GenerateBaseOrder();
             so.OrderAction = OrderAction.Sell;
             so.Quantity = qty;
             so.OrderPX = px;

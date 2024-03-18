@@ -9,6 +9,9 @@ using System.Data;
 using System.Text;
 using OMS.Core.WebAPIClient;
 
+using OMS.Core.DTO;
+
+
 
 namespace OMS.Infrastructure.Services.Queue;
 
@@ -49,7 +52,7 @@ public class FeatureDataProcessor : BackgroundService
         });
     }
 
-    private async Task ProcessDataAsync(FeatureData featureData, CancellationToken cancellationToken)
+    private async Task ProcessDataAsync(FeatureDataDTO featureData, CancellationToken cancellationToken)
     {
         DateTime time = new DateTime(featureData.TimeTicks);
         string iso8601String = time.ToString("o");

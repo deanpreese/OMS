@@ -3,6 +3,8 @@ using OMS.Core.Interfaces;
 using OMS.Core.Models;
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Models;
+using OMS.Core.DTO;
+
 
 namespace Strategy.Trader;
 
@@ -24,9 +26,9 @@ public class NStrategy : AbstractStrategyBase, IStrategy
         return Task.FromResult(0);
     }
 
-    public override Task<NewOrder> OnNewOrder(LiveOrder order)
+    public override Task<NewOrderDTO> OnNewOrder(LiveOrder order)
     {
-        NewOrder newOrder = new NewOrder
+        NewOrderDTO newOrder = new NewOrderDTO
         {
             Instrument = order.Instrument,
             OrderAction = OrderAction.NoAction
@@ -38,7 +40,7 @@ public class NStrategy : AbstractStrategyBase, IStrategy
     }
 
 
-    public override Task ProcessOrderForStrategy(string strategy_key, NewOrder order)
+    public override Task ProcessOrderForStrategy(string strategy_key, NewOrderDTO order)
     {
         throw new NotImplementedException();
     }

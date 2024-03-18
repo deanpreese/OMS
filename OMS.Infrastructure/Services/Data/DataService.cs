@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using OMS.Core.Interfaces;
 
+using OMS.Core.DTO;
+
 using OMS.Core.Models;
 using System.Security.Cryptography;
 using OMS.Infrastructure.Services.Data;
@@ -17,7 +19,7 @@ public class DataService : IDataService
         _unitOfWork = unitOfWork;
     }   
 
-    public Task<List<UserInfo>> GetActiveTraders(int groupNumber)
+    public Task<List<UserInfoDTO>> GetActiveTraders(int groupNumber)
     {
         throw new NotImplementedException();
     }

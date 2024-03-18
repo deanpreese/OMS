@@ -1,4 +1,5 @@
 ﻿using OMS.Core.Models;
+using OMS.Core.DTO;
 
 using System.Text;
 using OMS.Core.WebAPIClient;
@@ -40,7 +41,7 @@ public class StrategyConfig
     private async Task<StrategyAccount> VerifyStrategyTraders()
     {
 
-        NewTrader n_trader = new NewTrader
+        NewTraderDTO n_trader = new NewTraderDTO
         {
             UserID = 0,
             DisplayName = _strategyData.strategy_name,

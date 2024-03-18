@@ -4,6 +4,8 @@ using OMS.Core.Models;
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Filters;
 using Strategy.Trader.Models;
+using OMS.Core.DTO;
+
 
 namespace Strategy.Trader.Strategy;
 
@@ -36,13 +38,13 @@ public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
         _strategyData = strategyData;
     }
 
-    public override async Task<NewOrder> OnNewOrder(LiveOrder _orig_live_order)
+    public override async Task<NewOrderDTO> OnNewOrder(LiveOrder _orig_live_order)
     {
 
         string _trader_key = _orig_live_order.UserID + "_" + _orig_live_order.GroupID;
         _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
 
-        NewOrder _mapped_new_order = await OrderMapping.MapOrderLiveToNew(_orig_live_order);    
+        NewOrderDTO _mapped_new_order = await DTOMapping.MapOrderLiveToNew(_orig_live_order);    
         _mapped_new_order.OrderAction = OrderAction.NoAction;
         
         int netPositions  = await ProcessCounter(_orig_live_order);
@@ -52,7 +54,7 @@ public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
             ITraderInfoGrain traderInfoGrain = newClusterClient.GetGrain<ITraderInfoGrain>(_trader_key);
             IStrategyGrain strategyGrain = newClusterClient.GetGrain<IStrategyGrain>(_strategy_key);
 
-            NewOrder newOrder = await OnNewOrder(_orig_live_order, traderInfoGrain, strategyGrain);
+            NewOrderDTO newOrder = await OnNewOrder(_orig_live_order, traderInfoGrain, strategyGrain);
             _mapped_new_order  = newOrder;
         }
 
@@ -67,7 +69,7 @@ public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
 
 
 
-    public async override Task ProcessOrderForStrategy(string strategy_key, NewOrder order)
+    public async override Task ProcessOrderForStrategy(string strategy_key, NewOrderDTO order)
     {
        if(order.OrderAction != OrderAction.NoAction)
         {

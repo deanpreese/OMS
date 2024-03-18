@@ -5,6 +5,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using OMS.Core.DTO;
+
+
 namespace Strategy.Trader;
 
 public class NewOrderProcessor : BackgroundService
@@ -46,16 +49,16 @@ public class NewOrderProcessor : BackgroundService
         });
     }
 
-    private async Task ProcessLiveOrderAsync(NewOrder newOrder, CancellationToken cancellationToken)
+    private async Task ProcessLiveOrderAsync(NewOrderDTO newOrder, CancellationToken cancellationToken)
     {
-        List<NewOrder> list = await _orderChannelService.GetOrdersList(newOrder);
+        List<NewOrderDTO> list = await _orderChannelService.GetOrdersList(newOrder);
 
         if (list.Count > 0)
         {
-                NewOrder orderFromList = list.First();
-                LiveOrder orderToMatch = await OrderMapping.MapOrderNewToLive(orderFromList);
-                LiveOrder orderToStore = await OrderMapping.MapOrderNewToLive(newOrder);
-                ClosedTrade histOrder = await OrderMapping.MapClosedOrder(orderToMatch, orderToStore);     
+                NewOrderDTO orderFromList = list.First();
+                LiveOrder orderToMatch = await DTOMapping.MapOrderNewToLive(orderFromList);
+                LiveOrder orderToStore = await DTOMapping.MapOrderNewToLive(newOrder);
+                ClosedTrade histOrder = await DTOMapping.MapClosedOrder(orderToMatch, orderToStore);     
 
                 await _orderChannelService.AddToClosedOrdersList(histOrder);
                 await _orderChannelService.RemoveFromNewOrdersList(orderFromList.PlatformOrderID);
@@ -77,10 +80,10 @@ public class NewOrderProcessor : BackgroundService
         await Task.Run(async () =>
         {
             Console.WriteLine(" ");
-            List<NewOrder> openOrders = await _orderChannelService.GetNewOrdersList();
+            List<NewOrderDTO> openOrders = await _orderChannelService.GetNewOrdersList();
             Console.WriteLine( DateTime.UtcNow  + " Open Orders " +  openOrders.Count);
             
-            foreach (NewOrder order in openOrders)
+            foreach (NewOrderDTO order in openOrders)
             {
                 if (order.OrderAction > 0 )
                 {
