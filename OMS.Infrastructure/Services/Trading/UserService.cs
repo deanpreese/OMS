@@ -3,7 +3,8 @@ using Microsoft.Extensions.Logging;
 using OMS.Core.Interfaces;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Services.Queue;
-using OMS.Core.DTO;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
 
 
 namespace OMS.Infrastructure.Services.Trading;

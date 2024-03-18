@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using OMS.Core.Common;
 
+using OMS.SharedKernel.Common;
 
-namespace OMS.Core.DTO;
+namespace OMS.SharedKernel.DTO;
 
 [GenerateSerializer]
 [Alias("ClosedTradeDTO")]

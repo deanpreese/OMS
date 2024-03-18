@@ -5,6 +5,9 @@ using Orleans.Configuration;
 using Strategy.Trader;
 using Strategy.Trader.Services;
 
+using OMS.SharedKernel.Common;
+
+
 using IHost host = Host.CreateDefaultBuilder(args)
     .UseOrleansClient(client =>
     {

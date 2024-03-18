@@ -1,6 +1,7 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 using OMS.Core.Models;
-using OMS.Core.DTO;
+
+using OMS.SharedKernel.DTO;
 
 namespace OMS.Core.Common;
 

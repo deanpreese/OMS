@@ -4,7 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
-namespace OMS.Core.DTO;
+
+namespace OMS.SharedKernel.DTO;
 
 [GenerateSerializer]
 [Alias("UserProfileDTO")]

@@ -1,5 +1,4 @@
-namespace OMS.Core.Common;
-
+namespace OMS.SharedKernel.Common;
 public enum OrderType : int
 {
     MARKET = 2,

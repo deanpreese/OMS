@@ -2,6 +2,8 @@ using System.Xml.Serialization;
 using OMS.Core.Common;
 using OMS.Core.Models;
 
+using OMS.SharedKernel.Common;
+
 namespace OMS.Infrastructure.Data.Common;
 
 public static class TradeStatisticsGenerator

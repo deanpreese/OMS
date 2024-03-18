@@ -8,6 +8,9 @@ using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
+using OMS.SharedKernel.Common;
+
+
 namespace OMS.API.Startup;
 
 public class OrleansStartup

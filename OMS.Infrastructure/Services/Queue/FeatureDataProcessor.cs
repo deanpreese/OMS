@@ -9,7 +9,9 @@ using System.Data;
 using System.Text;
 using OMS.Core.WebAPIClient;
 
-using OMS.Core.DTO;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
+
 
 
 

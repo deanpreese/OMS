@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using OMS.Core.Interfaces;
 
-using OMS.Core.DTO;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
 
 using OMS.Core.Models;
 using System.Security.Cryptography;

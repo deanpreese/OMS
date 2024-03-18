@@ -1,4 +1,4 @@
-﻿namespace OMS.Core.Common;
+﻿namespace OMS.SharedKernel.Common;
 
 public class PlatformConstants
 {

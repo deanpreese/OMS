@@ -1,5 +1,6 @@
 
-namespace OMS.Core.Common;
+namespace OMS.SharedKernel.Common;
+
 
 public enum OrderAction : int
 {

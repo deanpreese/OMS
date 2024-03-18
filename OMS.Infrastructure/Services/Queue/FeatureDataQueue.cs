@@ -4,7 +4,9 @@ using System.Threading.Channels;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Logging;
 using OMS.Core.Models;
-using OMS.Core.DTO;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
+
 
 
 

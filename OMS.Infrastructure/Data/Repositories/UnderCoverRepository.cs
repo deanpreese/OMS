@@ -3,6 +3,10 @@ using OMS.Core.Models;
 using OMS.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
+
+
 namespace OMS.Infrastructure.Data.Repositories;
 
 public class UnderCoverRepository : IUnderCoverRepository

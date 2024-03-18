@@ -8,7 +8,9 @@ using Microsoft.Extensions.Logging;
 using OMS.Infrastructure.Services.Queue;
 using OMS.Infrastructure.Services.Common;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
-using OMS.Core.DTO;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
+
 
 
 namespace OMS.Infrastructure.Services.Trading;

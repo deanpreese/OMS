@@ -1,7 +1,10 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace OMS.Core.DTO;
+using OMS.SharedKernel.Common;
+
+namespace OMS.SharedKernel.DTO;
+
 
 [GenerateSerializer]
 [Alias("FeatureDataDTO")]

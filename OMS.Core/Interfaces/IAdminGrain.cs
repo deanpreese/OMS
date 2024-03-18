@@ -1,6 +1,6 @@
 ﻿using OMS.Core.Models;
-using OMS.Core.DTO;
-
+using OMS.SharedKernel.DTO;
+using Orleans;
 
 namespace OMS.Core.Interfaces;
 

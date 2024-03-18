@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using OMS.Core.Common;
 
+using OMS.SharedKernel.Common;
+
 namespace OMS.Core.Models;
 
 [GenerateSerializer]

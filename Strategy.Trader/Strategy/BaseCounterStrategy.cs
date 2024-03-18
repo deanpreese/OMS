@@ -4,8 +4,9 @@ using OMS.Core.Models;
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Filters;
 using Strategy.Trader.Models;
-using OMS.Core.DTO;
 
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
 
 namespace Strategy.Trader.Strategy;
 

@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using OMS.Core.Common;
 
-namespace OMS.Core.DTO;
+
+using OMS.SharedKernel.Common;
+
+namespace OMS.SharedKernel.DTO;
+
 
 [GenerateSerializer]
 [Alias("LiveOrderDTO")]

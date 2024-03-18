@@ -1,6 +1,7 @@
 ﻿
 
-namespace OMS.Core.DTO;
+namespace OMS.SharedKernel.DTO;
+
 
 [GenerateSerializer]
 [Alias("NewTraderDTO")]

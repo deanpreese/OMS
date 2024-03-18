@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using OMS.Core.Common;
 
+using OMS.SharedKernel.Common;
 
 namespace OMS.Core.Models;
 

@@ -1,5 +1,6 @@
 ﻿using OMS.Core.Models;
-using OMS.Core.DTO;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
 
 using OMS.Core.Interfaces;
 using OMS.Infrastructure.Services.Queue;

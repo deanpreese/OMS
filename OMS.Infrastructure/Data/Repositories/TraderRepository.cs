@@ -1,7 +1,10 @@
 ﻿using OMS.Core.Interfaces;
 using OMS.Core.Models;
 using OMS.Core.Common;
-using OMS.Core.DTO;
+
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
+
 
 namespace OMS.Infrastructure.Data.Repositories;
 

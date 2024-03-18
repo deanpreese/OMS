@@ -8,7 +8,8 @@ using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
 using OMS.Core.Models;
-using OMS.Core.DTO;
+
+using OMS.SharedKernel.DTO;
 
 namespace OMS.Core.WebAPIClient;
 

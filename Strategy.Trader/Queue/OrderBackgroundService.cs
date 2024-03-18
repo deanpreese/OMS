@@ -1,5 +1,8 @@
-﻿using OMS.Core.Models;
-using OMS.Core.Common;
+﻿using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
+
+using OMS.Core.Models;
+
 using Orleans.Streams;
 
 using Microsoft.Extensions.Hosting;

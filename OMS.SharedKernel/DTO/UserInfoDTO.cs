@@ -1,7 +1,8 @@
 ﻿
-using OMS.Core.Common;
 
-namespace OMS.Core.DTO;
+
+namespace OMS.SharedKernel.DTO;
+
 
 [GenerateSerializer]
 [Alias("UserInfoDTO")]

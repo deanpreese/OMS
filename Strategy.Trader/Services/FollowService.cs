@@ -16,7 +16,8 @@ using Strategy.Trader.Abstractions;
 using Strategy.Trader;
 using System.Threading.Tasks.Dataflow;
 
-using OMS.Core.DTO;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
 
 
 namespace Strategy.Trader.Services;

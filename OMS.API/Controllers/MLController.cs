@@ -3,7 +3,8 @@ using OMS.Core.Models;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Services.Queue;
 using OMS.Infrastructure.Services.Trading;
-using OMS.Core.DTO;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
 
 
 namespace OMS.API;
