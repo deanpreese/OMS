@@ -1,7 +1,6 @@
 ﻿using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 using OMS.Core.Models;
-using OMS.Relay.Services;
-
 
 namespace OMS.NinjaTrader;
 public class NewOrderQueue
@@ -13,13 +12,13 @@ public class NewOrderQueue
 
     private  List<NewOrder> _liveOrderCollection = new List<NewOrder>();
     private  List<ClosedTrade> _closedOrderCollection = new List<ClosedTrade>();
-    private IRelayPlatformOrderIDGen _platformOrderIDGen;
+   
     private readonly object _lock = new object();
 
-public NewOrderQueue(ILogger<NewOrderQueue> logger, IRelayPlatformOrderIDGen id_gen)
+public NewOrderQueue(ILogger<NewOrderQueue> logger)
     {
         _logger = logger;
-        _platformOrderIDGen = id_gen;
+       
 
         // Create a bounded channel with a capacity limit to prevent out-of-memory issues in case of high load
         _channel = Channel.CreateBounded<NewOrder>(new BoundedChannelOptions(1000)
@@ -33,7 +32,7 @@ public NewOrderQueue(ILogger<NewOrderQueue> logger, IRelayPlatformOrderIDGen id_
     public async Task<int> WriteAsync(NewOrder order, CancellationToken cancellationToken = default)
     {
         int om_id = 0;
-        om_id = _platformOrderIDGen.GetNextOrderID();
+     
         order.PlatformOrderID = om_id;
 
         await _channel.Writer.WriteAsync(order, cancellationToken);

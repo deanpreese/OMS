@@ -36,7 +36,7 @@ public class NinjaController : ControllerBase
     public async Task<LiveOrder> ProcessOrder([FromBody] NewOrder newOrder)
     {
         
-
+        return await Task.FromResult(new LiveOrder());
 
     }
 
