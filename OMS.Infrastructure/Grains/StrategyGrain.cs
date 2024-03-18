@@ -1,6 +1,8 @@
 ﻿using OMS.Core.Models;
+using OMS.SharedKernel.DTO;
 
 using OMS.Core.Interfaces;
+using OMS.Core.Common;
 
 
 namespace OMS.Infrastructure.Grains;
@@ -22,13 +24,19 @@ public class StrategyGrain : Grain, IStrategyGrain
         await base.OnActivateAsync(cancellationToken);
     }
 
-    public async  Task<List<LiveOrder>> GetLiveOrders(string profile_key)
+    public async  Task<List<LiveOrderDTO>> GetLiveOrders(string profile_key)
     {
          string[] profile_key_parts = profile_key.Split('_');
         int userId = int.Parse(profile_key_parts[0]);
         int groupNum = int.Parse(profile_key_parts[1]);
      
         List<LiveOrder> orders = await _unitOfWork.LiveOrderRepository.GetOrdersByTraderAsync(userId, groupNum);
-        return orders;
+
+        List<LiveOrderDTO> ordersDTO = new List<LiveOrderDTO>();
+        foreach (LiveOrder order in orders)
+        {
+            ordersDTO.Add( await DTOMapping.MapOrderLiveToLiveDTO(order))  ;
+        }
+        return ordersDTO;
     }
 }

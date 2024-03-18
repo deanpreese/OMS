@@ -110,7 +110,7 @@ public abstract class AbstractStrategyBase
         if (order.OrderType == OrderType.CLOSE)
         {
             order.OrderAction = OrderAction.NoAction;
-            List<LiveOrder> liveOrders = await _strategy_grain.GetLiveOrders(_strategy_key);
+            List<LiveOrderDTO> liveOrders = await _strategy_grain.GetLiveOrders(_strategy_key);
             
             if(liveOrders.Count == 0)
             {
@@ -121,7 +121,7 @@ public abstract class AbstractStrategyBase
             if(liveOrders.Count > 0)
             {
                 Console.WriteLine(_strategyData.strategy_name +  " Strategy Orders Count: " + liveOrders.Count);
-                LiveOrder liveStrategyOrder = liveOrders.FirstOrDefault();
+                LiveOrderDTO liveStrategyOrder = liveOrders.FirstOrDefault();
                 ClosedTrade lastClosedTraderTrade = await _trader_grain.GetLastClosedTradeByOpenPlatformID(_trader_key, liveStrategyOrder.RelatedOrderID);
 
                 //while (lastClosedTraderTrade == null)
@@ -156,7 +156,7 @@ public abstract class AbstractStrategyBase
     {   
         bool newPosition = true;
         
-        List<LiveOrder> liveOrders = await strategyGrain.GetLiveOrders(_strategy_key);
+        List<LiveOrderDTO> liveOrders = await strategyGrain.GetLiveOrders(_strategy_key);
 
         for (int i = 0; i < 10; i++)
         {
