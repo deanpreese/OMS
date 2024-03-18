@@ -60,21 +60,12 @@ public class FeatureDataProcessor : BackgroundService
 
         if (featureData.TimeTicks < DateTime.UtcNow.Ticks - 150000000 )
         {
-<<<<<<< HEAD:OMS.NinjaTrader/Queue/DataProcessor.cs
             await OMSClient.SendToMLForPrediction(csv_data, "http://10.0.147:8888/predict");    
             Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks));        
         }else
         {
            await OMSClient.SendToMLForPrediction(csv_data, "http://10.0.0.147:8888/predict");        
             Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +new DateTime(featureData.TimeTicks) );    
-=======
-            //await OMSClient.SendToMLForPrediction(csv_data, "http://localhost:8888/predict");    
-            Console.WriteLine("Hist: " + o_s);        
-        }else
-        {
-            //await OMSClient.SendToMLForPrediction(csv_data, "http://localhost:8888/predict");        
-            Console.WriteLine("RT: " + o_s);        
->>>>>>> 1785b034a2e02d13ef13fc59dc7fde4f86159b15:OMS.Infrastructure/Services/Queue/FeatureDataProcessor.cs
         }
         
         await Task.CompletedTask; 
