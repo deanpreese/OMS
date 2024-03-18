@@ -17,11 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrations", "Migrations\Mi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ML", "ML\ML.csproj", "{33765EDB-A54E-4926-92F5-E8D0B11CB58E}"
 EndProject
-<<<<<<< HEAD
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy.Ninja", "Strategy.Ninja\Strategy.Ninja.csproj", "{B0489F9E-16BD-4C41-BF24-966756C97652}"
-=======
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy.Trading", "Strategy.Trading\Strategy.Trading.csproj", "{04747588-AC46-4A55-A9BA-06232620A8D3}"
->>>>>>> origin/main
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
