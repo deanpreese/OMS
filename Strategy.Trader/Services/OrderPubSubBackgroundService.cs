@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks.Dataflow;
 
-namespace Strategy.Trader;
+namespace Strategy.Trader.Services;
 
 public class OrderPubSubBackgroundService : BackgroundService
 {

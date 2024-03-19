@@ -2,7 +2,7 @@
 using System.Threading.Tasks.Dataflow;
 using OMS.Core.Models;
 
-namespace Strategy.Trader;
+namespace Strategy.Trader.Services;
 
 public class IncomingOrderQueue
 {
@@ -82,6 +82,7 @@ public class IncomingOrderQueue
             foreach (Channel<LiveOrder> subscriber in subscribersSnapshot)
             {
                 LiveOrder order = newLiveOrder;
+                
                 await subscriber.Writer.WriteAsync(order);
                 await Task.Delay(10);    
                 

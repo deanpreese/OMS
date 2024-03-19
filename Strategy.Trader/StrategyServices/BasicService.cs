@@ -1,34 +1,36 @@
 ﻿using OMS.Core.Models;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-
-using System.Threading.Channels;
-using OMS.Core.Common;
-using Strategy.Trader.Strategy;
-using Strategy.Trader.Utility;
-using Strategy.Trader.Models;
-using OMS.Core.Interfaces;
-using Strategy.Trader.Abstractions;
-using Strategy.Trader;
 using System.Threading.Tasks.Dataflow;
+using System.Threading.Channels;
 
-using OMS.SharedKernel.Common;
+using Strategy.Trader.Services;
+using Strategy.Trader.Models;
+using Strategy.Trader.Utility;
+using Strategy.Trader.Strategy;
+using Strategy.Trader.Abstractions;
+
 using OMS.SharedKernel.DTO;
 
-namespace Strategy.Trader.Services;
 
-public class FadeService : BackgroundService
+namespace Strategy.Trader.StrategyServices;
+
+
+
+public class BasicService : BackgroundService
 {
-    private ChannelReader<LiveOrder> _reader;
+private ChannelReader<LiveOrder> _reader;
     private IncomingOrderQueue _strategyOrderQueue;
-    ILogger<FadeService> _logger;
+    ILogger<BasicService> _logger;
     private IStrategy loadedStrategy ;
 
     IClusterClient _clusterClient;
     StrategyAccount _strategyAccount;
+
     BufferBlock<LiveOrder> flowBuffer;
 
-    public FadeService(ILogger<FadeService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
+    public BasicService(ILogger<BasicService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
     {
         _strategyOrderQueue = strategyOrderQueue;
         _reader = _strategyOrderQueue.Subscribe();
@@ -39,21 +41,19 @@ public class FadeService : BackgroundService
 
         flowBuffer = new BufferBlock<LiveOrder>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
         Task.Run(async () => await Distribute());
+        
     }
 
     public override  Task StartAsync(CancellationToken cancellationToken)
     {
-        string strategy_to_load = "NG3.json";
+        string strategy_to_load = "NG1.json";
         StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _clusterClient);
         _strategyAccount= configLoader.GetStrategyData().Result;
-
-        loadedStrategy = new BaseFadeStrategy(_clusterClient, _strategyAccount);
-
+        loadedStrategy = new OpenCloseStrategy(_clusterClient, _strategyAccount);
         return base.StartAsync(cancellationToken);
     }
 
 
-    
    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
        await Task.Run(async () =>
@@ -73,18 +73,18 @@ public class FadeService : BackgroundService
         await Task.CompletedTask;
     }
 
-    
+
     private async Task Distribute()    
     {
         while (await flowBuffer.OutputAvailableAsync()) 
         {
-            int delay = flowBuffer.Count > 125 ? flowBuffer.Count : 125;
-            await Task.Delay(delay);  
-                 
+            int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
+            await Task.Delay(25);   
+                
             LiveOrder newLiveOrder = flowBuffer.Receive();
             NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
         }
     }
 
-}
 
+}

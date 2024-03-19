@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OMS.Core.Common;
 using Orleans.Configuration;
-using Strategy.Trader;
 using Strategy.Trader.Services;
-
+using Strategy.Trader.StrategyServices;
 using OMS.SharedKernel.Common;
 
 
