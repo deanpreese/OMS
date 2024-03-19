@@ -1,4 +1,4 @@
-﻿namespace OMS.Infrastructure.Services.Common;
+﻿namespace OMS.Infrastructure.Interfaces;
 
 public interface IPlatformOrderIDGen
 {

@@ -1,5 +1,7 @@
 ﻿using System.Security.Cryptography;
 
+using OMS.Infrastructure.Interfaces;
+
 namespace OMS.Infrastructure.Services.Common;
 
 public class PlatformOrderIDGen : IPlatformOrderIDGen

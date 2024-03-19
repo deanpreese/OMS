@@ -26,10 +26,10 @@ using IHost host = Host.CreateDefaultBuilder(args)
     })
     .UseConsoleLifetime().ConfigureServices(services =>
     {
-        services.AddSingleton<StrategyOrderQueue>();
-        services.AddHostedService<OrderBackgroundService>();
+        services.AddSingleton<IncomingOrderQueue>();
+        services.AddHostedService<OrderPubSubBackgroundService>();
 
-        services.AddHostedService<BasicService>();
+        //services.AddHostedService<BasicService>();
         services.AddHostedService<FollowService>();
         //services.AddHostedService<CounterService>();
         services.AddHostedService<FadeService>();

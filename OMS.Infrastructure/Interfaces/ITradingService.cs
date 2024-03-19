@@ -3,7 +3,7 @@ using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
 
-namespace OMS.Infrastructure.Services.Trading;
+namespace OMS.Infrastructure.Interfaces;
 
 public interface ITradingService
 {

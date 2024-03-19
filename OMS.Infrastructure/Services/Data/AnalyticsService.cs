@@ -5,6 +5,7 @@ using OMS.Core.Models;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using OMS.Infrastructure.Data.Common;
+using OMS.Infrastructure.Interfaces;
 
 namespace OMS.Infrastructure.Services.Data;
 
@@ -18,6 +19,11 @@ public class AnalyticsService : IAnalyticsService
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
+    }
+
+    public async Task<int> AddNewTraderScoreCard(int traderID, int groupID)
+    {
+        return await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(traderID, groupID);
     }
 
     public async Task<int> UpdateScoreCard(LiveOrder order)

@@ -8,7 +8,8 @@ using OMS.SharedKernel.DTO;
 
 
 
-namespace OMS.Infrastructure.Services.Data;
+namespace OMS.Infrastructure.Interfaces;
+
 
 public interface IDataService
 {

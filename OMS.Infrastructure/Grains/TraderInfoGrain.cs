@@ -51,12 +51,12 @@ public class TraderInfoGrain : Grain, ITraderInfoGrain
         int userId = int.Parse(profile_key_parts[0]);
         int groupNum = int.Parse(profile_key_parts[1]);
         
-        var sc_from_db = await _unitOfWork.TraderRepository.GetScoreCardAsync(userId, groupNum);
+        var sc_from_db = await _unitOfWork.AnalyticsRepository.GetTraderScoreCard(userId, groupNum);
 
         ScoreCardDTO sc = new ScoreCardDTO();
-        if (sc_from_db.Count > 0)
+        if (sc_from_db != null)
         {
-            sc = await DTOMapping.MapScorecardToScorecardDTO(sc_from_db.First());
+            sc = await DTOMapping.MapScorecardToScorecardDTO(sc_from_db);
         }
        return sc;
     }

@@ -20,7 +20,7 @@ namespace Strategy.Trader.Services;
 public class FadeService : BackgroundService
 {
     private ChannelReader<LiveOrder> _reader;
-    private StrategyOrderQueue _strategyOrderQueue;
+    private IncomingOrderQueue _strategyOrderQueue;
     ILogger<FadeService> _logger;
     private IStrategy loadedStrategy ;
 
@@ -28,7 +28,7 @@ public class FadeService : BackgroundService
     StrategyAccount _strategyAccount;
     BufferBlock<LiveOrder> flowBuffer;
 
-    public FadeService(ILogger<FadeService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
+    public FadeService(ILogger<FadeService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
     {
         _strategyOrderQueue = strategyOrderQueue;
         _reader = _strategyOrderQueue.Subscribe();

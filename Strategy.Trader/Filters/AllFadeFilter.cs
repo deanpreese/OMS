@@ -5,13 +5,10 @@ using Strategy.Trader.Abstractions;
 
 namespace Strategy.Trader.Filters;
 
-public class AllFadeFilter :  IStrategyFilter
+public class AllFadeFilter : IStrategyFilter
 {
-    ScoreCardDTO _scoreCard;
-
     public int IsInFilter(ScoreCardDTO scoreCard)
     {
         return -1;
     }
-
 }

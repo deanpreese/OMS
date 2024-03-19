@@ -7,7 +7,7 @@ using OMS.Infrastructure.Services.Queue;
 using OMS.Infrastructure.Services.Trading;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
-
+using OMS.Infrastructure.Interfaces;
 
 
 namespace OMS.API;

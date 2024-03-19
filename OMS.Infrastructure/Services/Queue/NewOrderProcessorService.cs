@@ -18,6 +18,8 @@ using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Services.Trading;
 using OMS.Infrastructure.Services.Data;
 
+using OMS.Infrastructure.Interfaces;
+
 namespace OMS.Infrastructure.Services.Queue;
 
 public class NewOrderProcessorService : BackgroundService

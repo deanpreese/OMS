@@ -6,8 +6,6 @@ namespace Strategy.Trader.Filters;
 
 public class AllFollowFilter : IStrategyFilter
 {
-    ScoreCardDTO _scoreCard;
-
     public int IsInFilter(ScoreCardDTO scoreCard)
     {
         return 1;

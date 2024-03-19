@@ -7,24 +7,25 @@ using Orleans.Streams;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks.Dataflow;
 
 namespace Strategy.Trader;
 
-public class OrderBackgroundService : BackgroundService
+public class OrderPubSubBackgroundService : BackgroundService
 {
     private readonly IClusterClient _client;
-    private readonly ILogger<OrderBackgroundService> _logger;
-    private readonly StrategyOrderQueue _strategyOrderQueue;
+    private readonly ILogger<OrderPubSubBackgroundService> _logger;
+    private readonly IncomingOrderQueue _strategyOrderQueue;
     private IAsyncStream<LiveOrder> openOrderStreamProvider;
 
-
-    public OrderBackgroundService(IClusterClient client, 
-        StrategyOrderQueue strategyOrderQueue, 
-        ILogger<OrderBackgroundService> logger)
+    public OrderPubSubBackgroundService(IClusterClient client, 
+        IncomingOrderQueue strategyOrderQueue, 
+        ILogger<OrderPubSubBackgroundService> logger)
     {
         _client = client;
         _logger = logger;
         _strategyOrderQueue = strategyOrderQueue;
+
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
@@ -43,4 +44,6 @@ public class OrderBackgroundService : BackgroundService
                 await _strategyOrderQueue.WriteAsync(newLiveOrder);
             });
     }
+
+
 }

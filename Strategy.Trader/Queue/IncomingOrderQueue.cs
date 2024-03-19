@@ -4,14 +4,14 @@ using OMS.Core.Models;
 
 namespace Strategy.Trader;
 
-public class StrategyOrderQueue
+public class IncomingOrderQueue
 {
     private readonly Channel<LiveOrder> _channel;
     private readonly List<Channel<LiveOrder>> _subscribers = new List<Channel<LiveOrder>>();
 
     BufferBlock<LiveOrder> flowBuffer;
 
-    public StrategyOrderQueue()
+    public IncomingOrderQueue()
     {
         flowBuffer = new BufferBlock<LiveOrder>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
 

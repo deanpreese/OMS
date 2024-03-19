@@ -5,7 +5,7 @@ using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Services.Queue;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
-
+using OMS.Infrastructure.Interfaces;
 
 namespace OMS.Infrastructure.Services.Trading;
 
@@ -33,24 +33,28 @@ public class UserService : IUserService
     public async Task<int> AddNewTrader(NewTraderDTO newTrader)
     {
         int traderID = 0;
-
         try
         {
             _logger.LogInformation("Adding new trader...");
             traderID = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
             _unitOfWork.Commit();
-
-            traderID = await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(traderID, newTrader.GroupID);
-            _unitOfWork.Commit();
-            
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
         }
-
         _logger.LogInformation($"Trader added  {traderID}  ");
         return traderID;
+    }
+
+    public async Task<int> AddNewTraderScoreCard(int traderID, int groupID)
+    {
+         traderID = await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(traderID, groupID);
+         _unitOfWork.Commit();
+        _logger.LogInformation($"Trader Scorecard added  {traderID} {groupID} ");
+
+        return traderID;
+
     }
 
     public async Task<int> AuthenticateTrader(UserInfoDTO userInfo)

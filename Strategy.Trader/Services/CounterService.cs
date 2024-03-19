@@ -25,7 +25,7 @@ namespace Strategy.Trader.Services;
 public class CounterService : BackgroundService
 {  
     private ChannelReader<LiveOrder> _reader;
-    private StrategyOrderQueue _strategyOrderQueue;
+    private IncomingOrderQueue _strategyOrderQueue;
     ILogger<CounterService> _logger;
     private IStrategy loadedStrategy ;
     IClusterClient _clusterClient;
@@ -33,7 +33,7 @@ public class CounterService : BackgroundService
     
     BufferBlock<LiveOrder> flowBuffer;
     
-    public CounterService(ILogger<CounterService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
+    public CounterService(ILogger<CounterService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
     {
         _strategyOrderQueue = strategyOrderQueue;
         _reader = _strategyOrderQueue.Subscribe();
@@ -85,7 +85,7 @@ public class CounterService : BackgroundService
     {
          while (await flowBuffer.OutputAvailableAsync()) 
         {
-            int delay = flowBuffer.Count > 125 ? flowBuffer.Count : 125;
+            int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
             await Task.Delay(delay);         
             
              

@@ -51,17 +51,23 @@ public class StrategyConfig
         int t_v = 0;
         await Task.Run(async () =>
         {
-            await Task.Delay(1000);
-            IAdminGrain adminGrain = _clusterClient.GetGrain<IAdminGrain>("A"+_strategyData.group);     
-            t_v = await adminGrain.VerifyAndAddByDisplayName(n_trader);
-
-            if (t_v == 0)
-            {
-                await Task.Delay(1000);
-                t_v = await adminGrain.VerifyAndAddByDisplayName(n_trader);
-            }
-
             
+            IAdminGrain adminGrain = _clusterClient.GetGrain<IAdminGrain>("A"+_strategyData.group);     
+            t_v = await adminGrain.AuthByDisplayName(n_trader);
+
+            if(t_v == 0)
+            {
+                t_v = await adminGrain.AddNewTrader(n_trader);
+                await Task.Delay(1000);
+                
+                if (t_v != 0)
+                {
+                    n_trader.UserID = t_v;
+                    await adminGrain.AddScoreCardForTrader(n_trader);   
+                }
+            }            
+
+            await Task.Delay(1000);
         });
 
         _strategyData.strategy_traderId = t_v;

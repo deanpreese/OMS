@@ -26,7 +26,7 @@ namespace Strategy.Trader.Services;
 public class BasicService : BackgroundService
 {
 private ChannelReader<LiveOrder> _reader;
-    private StrategyOrderQueue _strategyOrderQueue;
+    private IncomingOrderQueue _strategyOrderQueue;
     ILogger<BasicService> _logger;
     private IStrategy loadedStrategy ;
 
@@ -35,7 +35,7 @@ private ChannelReader<LiveOrder> _reader;
 
     BufferBlock<LiveOrder> flowBuffer;
 
-    public BasicService(ILogger<BasicService> logger, StrategyOrderQueue strategyOrderQueue, IClusterClient client) 
+    public BasicService(ILogger<BasicService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
     {
         _strategyOrderQueue = strategyOrderQueue;
         _reader = _strategyOrderQueue.Subscribe();

@@ -6,7 +6,7 @@ using OMS.Infrastructure.Services.Common;
 using OMS.Infrastructure.Services.Data;
 using OMS.Infrastructure.Services.Queue;
 using OMS.Infrastructure.Services.Trading;
-
+using OMS.Infrastructure.Interfaces;
 
 namespace OMS.API.Startup;
 
