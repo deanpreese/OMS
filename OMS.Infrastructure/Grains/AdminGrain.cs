@@ -45,11 +45,17 @@ public class AdminGrain : Grain, IAdminGrain
         int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(newTrader);
         if (t_v == 0)
         {
-            t_v = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
-            await _unitOfWork.CommitAsync();
+            await Task.Run(async () =>
+            {
+                t_v = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
+                await _unitOfWork.CommitAsync();
 
-            t_v = await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(t_v, newTrader.GroupID);  
-            await _unitOfWork.CommitAsync();
+                t_v = await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(t_v, newTrader.GroupID);  
+                await _unitOfWork.CommitAsync();
+
+            });
+
+           
 
         }
         return t_v;

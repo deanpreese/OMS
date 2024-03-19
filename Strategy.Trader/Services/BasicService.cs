@@ -54,9 +54,7 @@ private ChannelReader<LiveOrder> _reader;
         string strategy_to_load = "NG1.json";
         StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _clusterClient);
         _strategyAccount= configLoader.GetStrategyData().Result;
-
         loadedStrategy = new OpenCloseStrategy(_clusterClient, _strategyAccount);
-
         return base.StartAsync(cancellationToken);
     }
 
@@ -86,7 +84,8 @@ private ChannelReader<LiveOrder> _reader;
         while (await flowBuffer.OutputAvailableAsync()) 
         {
             int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
-            await Task.Delay(25);       
+            await Task.Delay(25);   
+                
             LiveOrder newLiveOrder = flowBuffer.Receive();
             NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
         }

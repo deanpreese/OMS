@@ -30,9 +30,9 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<OrderBackgroundService>();
 
         services.AddHostedService<BasicService>();
-        //services.AddHostedService<FollowService>();
+        services.AddHostedService<FollowService>();
         //services.AddHostedService<CounterService>();
-        //services.AddHostedService<FadeService>();
+        services.AddHostedService<FadeService>();
     })
     .Build();
 

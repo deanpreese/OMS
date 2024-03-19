@@ -37,7 +37,6 @@ public class StrategyConfig
 
     private async Task<StrategyAccount> VerifyStrategyTraders()
     {
-
         NewTraderDTO n_trader = new NewTraderDTO
         {
             UserID = 0,
@@ -52,10 +51,17 @@ public class StrategyConfig
         int t_v = 0;
         await Task.Run(async () =>
         {
-            //await Task.Delay(2000);
+            await Task.Delay(1000);
             IAdminGrain adminGrain = _clusterClient.GetGrain<IAdminGrain>("A"+_strategyData.group);     
             t_v = await adminGrain.VerifyAndAddByDisplayName(n_trader);
-           // await Task.Delay(2000);
+
+            if (t_v == 0)
+            {
+                await Task.Delay(1000);
+                t_v = await adminGrain.VerifyAndAddByDisplayName(n_trader);
+            }
+
+            
         });
 
         _strategyData.strategy_traderId = t_v;
