@@ -1,5 +1,6 @@
 SELECT 
     UP."DisplayName",
+    UP."UserID",
     SC."ScoreCardID",
     SC."GroupID",
     SC."Trades",

@@ -14,7 +14,7 @@ namespace Strategy.Trader.Strategy;
 public class OpenCloseStrategy : AbstractStrategyBase , IStrategy
 {
     IClusterClient newClusterClient;
-    int orderCount = 1;
+    
 
     public OpenCloseStrategy(IClusterClient clusterClient, StrategyAccount strategyData) 
     {

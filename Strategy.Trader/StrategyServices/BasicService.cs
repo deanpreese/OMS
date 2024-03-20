@@ -21,7 +21,7 @@ namespace Strategy.Trader.StrategyServices;
 public class BasicService : BackgroundService
 {
 private ChannelReader<LiveOrder> _reader;
-    private IncomingOrderQueue _strategyOrderQueue;
+    private IncomingOrderQueue _incomingOrderQueue;
     ILogger<BasicService> _logger;
     private IStrategy loadedStrategy ;
 
@@ -30,10 +30,10 @@ private ChannelReader<LiveOrder> _reader;
 
     BufferBlock<LiveOrder> flowBuffer;
 
-    public BasicService(ILogger<BasicService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
+    public BasicService(ILogger<BasicService> logger, IncomingOrderQueue incomingOrderQueue, IClusterClient client) 
     {
-        _strategyOrderQueue = strategyOrderQueue;
-        _reader = _strategyOrderQueue.Subscribe();
+        _incomingOrderQueue = incomingOrderQueue;
+        _reader = _incomingOrderQueue.Subscribe();
         _logger = logger;
         _clusterClient = client;
         _strategyAccount = new StrategyAccount();
@@ -78,9 +78,11 @@ private ChannelReader<LiveOrder> _reader;
     {
         while (await flowBuffer.OutputAvailableAsync()) 
         {
-            int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
-            await Task.Delay(25);   
-                
+            //int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
+            //await Task.Delay(25);   
+            if(flowBuffer.Count > 10)
+                Console.WriteLine(_strategyAccount.strategy_name + " Buffer Count: " + flowBuffer.Count);
+ 
             LiveOrder newLiveOrder = flowBuffer.Receive();
             NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
         }

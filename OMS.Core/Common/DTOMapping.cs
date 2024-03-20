@@ -65,6 +65,8 @@ public class DTOMapping
 
 
 
+
+
     public async static Task<NewOrderDTO> MapOrderLiveToNew(LiveOrder liveOrder)
     {
         NewOrderDTO newOrder = new NewOrderDTO {

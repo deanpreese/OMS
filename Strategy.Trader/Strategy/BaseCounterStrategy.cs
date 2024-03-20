@@ -15,7 +15,6 @@ public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
 {
     IClusterClient newClusterClient;
    
-    int orderCount = 1;
     int longCount = 0;
     int shortCount = 0;
     int netPositions = 0;

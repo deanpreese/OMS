@@ -14,7 +14,7 @@ namespace Strategy.Trader.Strategy;
 public class BaseFadeStrategy : AbstractStrategyBase , IStrategy
 {
     IClusterClient newClusterClient;
-    int orderCount = 1;
+
 
     public BaseFadeStrategy(IClusterClient clusterClient,  StrategyAccount strategyData) 
     {

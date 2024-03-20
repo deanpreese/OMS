@@ -83,9 +83,13 @@ public class FollowService : BackgroundService
     {
          while (await flowBuffer.OutputAvailableAsync()) 
         {
-            int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
-            await Task.Delay(delay);     
-            
+            //int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
+            //await Task.Delay(delay);     
+
+            if(flowBuffer.Count > 10)
+                Console.WriteLine(_strategyAccount.strategy_name + " Buffer Count: " + flowBuffer.Count);
+
+
             LiveOrder newLiveOrder = flowBuffer.Receive();
             NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
         }

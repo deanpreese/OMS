@@ -1,7 +1,9 @@
-﻿using System.Data.Entity;
-using System.Data.Entity.Core.Metadata.Edm;
-using OMS.Core.Interfaces;
+﻿using System.Security.Cryptography;
 using OMS.Core.Models;
+using OMS.Core.Interfaces;
+using OMS.Core.Common;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Update;
 
 namespace OMS.Infrastructure.Data.Repositories;
 
@@ -91,7 +93,19 @@ public class AnalyticsRepository : IAnalyticsRepository
 
     public async Task<ScoreCard> GetTraderScoreCard(int UserID, int GroupNumber)
     {
-        var scoreCard = _context.ScoreCard.AsNoTracking().FirstOrDefault(s => s.UserID == UserID && s.GroupID == GroupNumber) ?? new ScoreCard { UserID = -13 };
+        //var scoreCard = _context.ScoreCard.AsNoTracking().FirstOrDefault(s => s.UserID == UserID && s.GroupID == GroupNumber) ?? new ScoreCard { UserID = -13 };
+        
+        //var scoreCard = _context.ScoreCard
+        //    .AsNoTracking()
+        //    .Where(s => s.UserID == UserID && s.GroupID == GroupNumber)
+        //    .FirstOrDefault();
+        
+        var scoreCard = await _context.ScoreCard
+            .FromSqlInterpolated($"SELECT * FROM \"ScoreCard\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber}" )
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
+
+
         await Task.FromResult(scoreCard);
         return scoreCard;
     }

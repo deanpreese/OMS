@@ -1,12 +1,10 @@
-﻿using System.Data.Entity;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using OMS.Core.Models;
 using OMS.Core.Interfaces;
 using OMS.Core.Common;
 using Microsoft.EntityFrameworkCore;
-using System.Data.SqlClient;
-
-namespace OMS.Infrastructure.Data.Repositories;
+using Microsoft.EntityFrameworkCore.Update;
+using OMS.Infrastructure.Data;
 
 public class ClosedOrderRepository : IClosedOrderRepository
 {
@@ -72,9 +70,15 @@ public class ClosedOrderRepository : IClosedOrderRepository
 
     public async Task<ClosedTrade> GetLastClosedTradeByOpenPlatformID(int UserID, int GroupNumber, int platform_id)
     {
-        var closedTrade = (from c in _context.ClosedTrades
-                            where c.UserID == UserID && c.GroupID == GroupNumber && c.OpenPlatformOrderID == platform_id
-                            select c).OrderByDescending(x => x.CloseOrderTime).FirstOrDefault();
+        //var closedTrade = (from c in _context.ClosedTrades
+        //                    where c.UserID == UserID && c.GroupID == GroupNumber && c.OpenPlatformOrderID == platform_id
+        //                    select c).OrderByDescending(x => x.CloseOrderTime).FirstOrDefault();
+
+        var closedTrade = await _context.ClosedTrades
+        .FromSqlInterpolated($"SELECT * FROM \"ClosedTrades\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} AND \"OpenPlatformOrderID\" = {platform_id} ORDER BY \"CloseOrderTime\" DESC")
+        .AsNoTracking()
+        .FirstOrDefaultAsync();
+
 
         return await Task.FromResult(closedTrade);
 

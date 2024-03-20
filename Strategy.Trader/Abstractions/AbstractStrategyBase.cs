@@ -15,6 +15,8 @@ namespace Strategy.Trader.Abstractions;
 
 public abstract class AbstractStrategyBase 
 {
+    public int orderCount = 1;
+
     public StrategyAccount _strategyData {get; set;}
     public string _strategy_key {get; set;}
 

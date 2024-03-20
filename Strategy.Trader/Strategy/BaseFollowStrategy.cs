@@ -14,7 +14,7 @@ namespace Strategy.Trader.Strategy;
 public class BaseFollowStrategy : AbstractStrategyBase , IStrategy
 {
     IClusterClient newClusterClient;
-    int orderCount = 1;
+
 
     public BaseFollowStrategy(IClusterClient clusterClient, StrategyAccount strategyData) 
     {

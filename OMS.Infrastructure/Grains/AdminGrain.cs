@@ -3,6 +3,11 @@ using OMS.Core.Interfaces;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Grains;
+
+using OMS.Infrastructure.Data.Repositories;
+using OMS.Infrastructure.Data;
+
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace OMS.Infrastructure.Grains;
@@ -29,8 +34,15 @@ public class AdminGrain : Grain, IAdminGrain
 
     public async Task<int> AddScoreCardForTrader(NewTraderDTO newTrader)
     {
-            int traderID = await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(newTrader.UserID, newTrader.GroupID);
-            await _unitOfWork.CommitAsync();
+        int traderID = 0;
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var scopedContext = scope.ServiceProvider.GetRequiredService<OrderManagementDbContext>();
+            UnitOfWork unitOfWork = new UnitOfWork(scopedContext);
+
+            traderID = await unitOfWork.AnalyticsRepository.AddNewTraderScorecard(newTrader.UserID, newTrader.GroupID);
+            await unitOfWork.CommitAsync();
+        }            
         return traderID;
     }
 

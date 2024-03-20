@@ -58,7 +58,7 @@ public class StrategyConfig
             if(t_v == 0)
             {
                 t_v = await adminGrain.AddNewTrader(n_trader);
-                await Task.Delay(1000);
+                await Task.Delay(1500);
                 
                 if (t_v != 0)
                 {
@@ -66,8 +66,7 @@ public class StrategyConfig
                     await adminGrain.AddScoreCardForTrader(n_trader);   
                 }
             }            
-
-            await Task.Delay(1000);
+            
         });
 
         _strategyData.strategy_traderId = t_v;
