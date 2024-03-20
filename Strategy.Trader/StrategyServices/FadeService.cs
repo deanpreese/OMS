@@ -1,4 +1,4 @@
-﻿using OMS.Core.Models;
+﻿
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading.Channels;
@@ -16,14 +16,14 @@ namespace Strategy.Trader.StrategyServices;
 
 public class FadeService : BackgroundService
 {
-    private ChannelReader<LiveOrder> _reader;
+    private ChannelReader<LiveOrderDTO> _reader;
     private IncomingOrderQueue _strategyOrderQueue;
     ILogger<FadeService> _logger;
     private IStrategy loadedStrategy ;
 
     IClusterClient _clusterClient;
     StrategyAccount _strategyAccount;
-    BufferBlock<LiveOrder> flowBuffer;
+    BufferBlock<LiveOrderDTO> flowBuffer;
 
     public FadeService(ILogger<FadeService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
     {
@@ -34,7 +34,7 @@ public class FadeService : BackgroundService
         _strategyAccount = new StrategyAccount();
         loadedStrategy = new NStrategy();
 
-        flowBuffer = new BufferBlock<LiveOrder>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        flowBuffer = new BufferBlock<LiveOrderDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
         Task.Run(async () => await Distribute());
     }
 
@@ -55,7 +55,7 @@ public class FadeService : BackgroundService
     {
        await Task.Run(async () =>
        {
-            await foreach (LiveOrder newLiveOrder in _reader.ReadAllAsync(stoppingToken))
+            await foreach (LiveOrderDTO newLiveOrder in _reader.ReadAllAsync(stoppingToken))
             {
                 try
                 {
@@ -80,7 +80,7 @@ public class FadeService : BackgroundService
             if(flowBuffer.Count > 10)
                 Console.WriteLine(_strategyAccount.strategy_name + " Buffer Count: " + flowBuffer.Count);
 
-            LiveOrder newLiveOrder = flowBuffer.Receive();
+            LiveOrderDTO newLiveOrder = flowBuffer.Receive();
             NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
         }
     }

@@ -1,4 +1,4 @@
-﻿using OMS.Core.Models;
+﻿
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -7,11 +7,11 @@ using System.Threading.Channels;
 using System.Text.Json;
 
 using System.Text;
-using OMS.Core.Common;
+
 using Strategy.Trader.Models;
 using Strategy.Trader.Utility;
 using Strategy.Trader.Strategy;
-using OMS.Core.Interfaces;
+
 using Strategy.Trader.Abstractions;
 using Strategy.Trader;
 using OMS.SharedKernel.Common;
@@ -22,14 +22,14 @@ namespace Strategy.Trader.StrategyServices;
 
 public class FollowService : BackgroundService
 {  
-    private ChannelReader<LiveOrder> _reader;
+    private ChannelReader<LiveOrderDTO> _reader;
     private IncomingOrderQueue _strategyOrderQueue;
     ILogger<FollowService> _logger;
     private IStrategy loadedStrategy ;
     IClusterClient _clusterClient;
     StrategyAccount _strategyAccount;
     
-    BufferBlock<LiveOrder> flowBuffer;
+    BufferBlock<LiveOrderDTO> flowBuffer;
     
     public FollowService(ILogger<FollowService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
     {
@@ -41,7 +41,7 @@ public class FollowService : BackgroundService
         _strategyAccount = new StrategyAccount();
         loadedStrategy = new NStrategy();
 
-        flowBuffer = new BufferBlock<LiveOrder>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        flowBuffer = new BufferBlock<LiveOrderDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
         Task.Run(async () => await Distribute());
     }
     
@@ -62,7 +62,7 @@ public class FollowService : BackgroundService
     {
        await Task.Run(async () =>
        {
-            await foreach (LiveOrder newLiveOrder in _reader.ReadAllAsync(stoppingToken))
+            await foreach (LiveOrderDTO newLiveOrder in _reader.ReadAllAsync(stoppingToken))
             {
                 try
                 {
@@ -90,7 +90,7 @@ public class FollowService : BackgroundService
                 Console.WriteLine(_strategyAccount.strategy_name + " Buffer Count: " + flowBuffer.Count);
 
 
-            LiveOrder newLiveOrder = flowBuffer.Receive();
+            LiveOrderDTO newLiveOrder = flowBuffer.Receive();
             NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
         }
     }

@@ -1,14 +1,12 @@
 ﻿using System.Security.Cryptography;
 using Microsoft.Extensions.DependencyModel.Resolution;
-using OMS.Core.Common;
-using OMS.Core.Interfaces;
-using OMS.Core.Models;
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Models;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Grains;
+using OMS.SharedKernel;
 
 
 namespace Strategy.Trader.Abstractions;
@@ -27,21 +25,21 @@ public abstract class AbstractStrategyBase
    
     public abstract Task ProcessOrderForStrategy(string strategy_key, NewOrderDTO order);
 
-    public abstract Task<NewOrderDTO> OnNewOrder(LiveOrder _orig_live_order);
+    public abstract Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order);
 
-    public async Task<NewOrderDTO> OnNewOrder(LiveOrder _orig_live_order,
+    public async Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order,
         ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
     {
         //Console.WriteLine("  ----  ");
         //Console.WriteLine("New Order2222: " + _strategy_key + "  " + traderGrain.GetGrainId() + "  " + _orig_live_order.OrderAction + "  " + _orig_live_order.OrderType);
 
-        LiveOrder strategy_order = await GenerateOrderAction( _strategy_key, _orig_live_order, traderGrain, strategyGrain);
-        NewOrderDTO _mapped_new_order = await DTOMapping.MapOrderLiveToNew(_orig_live_order);
+        LiveOrderDTO strategy_order = await GenerateOrderAction( _strategy_key, _orig_live_order, traderGrain, strategyGrain);
+        NewOrderDTO _mapped_new_order = await SharedMapping.MapLiveOrderDTOLiveToNewDTO(_orig_live_order);
 
         
         if(strategy_order.OrderAction != OrderAction.NoAction)
         {
-            _mapped_new_order = await DTOMapping.MapOrderLiveToNew(strategy_order);
+            _mapped_new_order = await SharedMapping.MapLiveOrderDTOLiveToNewDTO(strategy_order);
             _mapped_new_order.GroupID = _strategyData.group;
             _mapped_new_order.UserID = _strategyData.strategy_traderId;
             _mapped_new_order.Quantity =strategy_order.Quantity;
@@ -60,7 +58,7 @@ public abstract class AbstractStrategyBase
         return _mapped_new_order;
     }
 
-    public async Task<LiveOrder> GenerateOrderAction(string strategy_key, LiveOrder order, 
+    public async Task<LiveOrderDTO> GenerateOrderAction(string strategy_key, LiveOrderDTO order, 
         ITraderInfoGrain _trader_grain, IStrategyGrain _strategy_grain)
     {
         string _trader_key = order.UserID + "_" + order.GroupID;
@@ -154,7 +152,7 @@ public abstract class AbstractStrategyBase
         return order;
     }
 
-    public async Task<bool> OkToOpenNewPosition(IStrategyGrain strategyGrain, LiveOrder order)
+    public async Task<bool> OkToOpenNewPosition(IStrategyGrain strategyGrain, LiveOrderDTO order)
     {   
         bool newPosition = true;
         
@@ -179,7 +177,7 @@ public abstract class AbstractStrategyBase
     }
 
 
-    public async Task ShowOrderInfo(LiveOrder order, OrderType orderType)
+    public async Task ShowOrderInfo(LiveOrderDTO order, OrderType orderType)
     {
         await Task.Run(() =>
         {

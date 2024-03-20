@@ -1,4 +1,4 @@
-﻿using OMS.Core.Models;
+﻿
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,7 +20,7 @@ namespace Strategy.Trader.StrategyServices;
 
 public class BasicService : BackgroundService
 {
-private ChannelReader<LiveOrder> _reader;
+private ChannelReader<LiveOrderDTO> _reader;
     private IncomingOrderQueue _incomingOrderQueue;
     ILogger<BasicService> _logger;
     private IStrategy loadedStrategy ;
@@ -28,7 +28,7 @@ private ChannelReader<LiveOrder> _reader;
     IClusterClient _clusterClient;
     StrategyAccount _strategyAccount;
 
-    BufferBlock<LiveOrder> flowBuffer;
+    BufferBlock<LiveOrderDTO> flowBuffer;
 
     public BasicService(ILogger<BasicService> logger, IncomingOrderQueue incomingOrderQueue, IClusterClient client) 
     {
@@ -39,7 +39,7 @@ private ChannelReader<LiveOrder> _reader;
         _strategyAccount = new StrategyAccount();
         loadedStrategy = new NStrategy();
 
-        flowBuffer = new BufferBlock<LiveOrder>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        flowBuffer = new BufferBlock<LiveOrderDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
         Task.Run(async () => await Distribute());
         
     }
@@ -58,7 +58,7 @@ private ChannelReader<LiveOrder> _reader;
     {
        await Task.Run(async () =>
        {
-            await foreach (LiveOrder newLiveOrder in _reader.ReadAllAsync(stoppingToken))
+            await foreach (LiveOrderDTO newLiveOrder in _reader.ReadAllAsync(stoppingToken))
             {
                 try
                 {
@@ -83,7 +83,7 @@ private ChannelReader<LiveOrder> _reader;
             if(flowBuffer.Count > 10)
                 Console.WriteLine(_strategyAccount.strategy_name + " Buffer Count: " + flowBuffer.Count);
  
-            LiveOrder newLiveOrder = flowBuffer.Receive();
+            LiveOrderDTO newLiveOrder = flowBuffer.Receive();
             NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
         }
     }

@@ -1,8 +1,6 @@
 ﻿using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
-using OMS.Core.Models;
-
 using Orleans.Streams;
 
 using Microsoft.Extensions.Hosting;
@@ -16,7 +14,7 @@ public class OrderPubSubBackgroundService : BackgroundService
     private readonly IClusterClient _client;
     private readonly ILogger<OrderPubSubBackgroundService> _logger;
     private readonly IncomingOrderQueue _strategyOrderQueue;
-    private IAsyncStream<LiveOrder> openOrderStreamProvider;
+    private IAsyncStream<LiveOrderDTO> openOrderStreamProvider;
 
     public OrderPubSubBackgroundService(IClusterClient client, 
         IncomingOrderQueue strategyOrderQueue, 
@@ -31,7 +29,7 @@ public class OrderPubSubBackgroundService : BackgroundService
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         openOrderStreamProvider = _client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
-                    .GetStream<LiveOrder>(PlatformConstants.MemoryStreamNamespace, "/new-orders");
+                    .GetStream<LiveOrderDTO>(PlatformConstants.MemoryStreamNamespace, "/new-orders");
 
         return base.StartAsync(cancellationToken);
     }

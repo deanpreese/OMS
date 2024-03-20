@@ -99,11 +99,12 @@ public class NewOrderProcessorService : BackgroundService
                 {
                     var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
                     var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
-                                .GetStream<LiveOrder>(PlatformConstants.MemoryStreamNamespace, "/new-orders");
+                                .GetStream<LiveOrderDTO>(PlatformConstants.MemoryStreamNamespace, "/new-orders");
 
-                    await orderStreamProvider.OnNextAsync(live);
+                    LiveOrderDTO liveDTO = await DTOMapping.MapOrderLiveToLiveDTO(live); 
+
+                    await orderStreamProvider.OnNextAsync(liveDTO);
                 }
-
             }
             else
             {

@@ -1,22 +1,26 @@
 ﻿using System.Threading.Channels;
 using System.Threading.Tasks.Dataflow;
-using OMS.Core.Models;
+
+
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
+using OMS.SharedKernel.Grains;
 
 namespace Strategy.Trader.Services;
 
 public class IncomingOrderQueue
 {
-    private readonly Channel<LiveOrder> _channel;
-    private readonly List<Channel<LiveOrder>> _subscribers = new List<Channel<LiveOrder>>();
+    private readonly Channel<LiveOrderDTO> _channel;
+    private readonly List<Channel<LiveOrderDTO>> _subscribers = new List<Channel<LiveOrderDTO>>();
 
-    BufferBlock<LiveOrder> flowBuffer;
+    BufferBlock<LiveOrderDTO> flowBuffer;
 
     public IncomingOrderQueue()
     {
-        flowBuffer = new BufferBlock<LiveOrder>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        flowBuffer = new BufferBlock<LiveOrderDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
 
         // Create a bounded channel with a capacity limit to prevent out-of-memory issues in case of high load
-        _channel = Channel.CreateBounded<LiveOrder>(new BoundedChannelOptions(10000)
+        _channel = Channel.CreateBounded<LiveOrderDTO>(new BoundedChannelOptions(10000)
         {
             FullMode = BoundedChannelFullMode.Wait,
             SingleReader = true, // Set to true if only one consumer will read from the channel
@@ -24,16 +28,16 @@ public class IncomingOrderQueue
         });
 
 
-        flowBuffer = new BufferBlock<LiveOrder>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        flowBuffer = new BufferBlock<LiveOrderDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
         Task.Run(async () => await OrderCapture());
         Task.Run(async () => await OrderBroadcast());
 
         //Task.Run(async () => await Distribute());
     }
 
-    public ChannelReader<LiveOrder> Subscribe()
+    public ChannelReader<LiveOrderDTO> Subscribe()
     {
-        var channel = Channel.CreateUnbounded<LiveOrder>();
+        var channel = Channel.CreateUnbounded<LiveOrderDTO>();
         lock (_subscribers)
         {
             _subscribers.Add(channel);
@@ -43,12 +47,12 @@ public class IncomingOrderQueue
     }
 
 
-    public async Task WriteAsync(LiveOrder orderInfo, CancellationToken cancellationToken = default)
+    public async Task WriteAsync(LiveOrderDTO orderInfo, CancellationToken cancellationToken = default)
     {
         await _channel.Writer.WriteAsync(orderInfo, cancellationToken);
     }
 
-    public IAsyncEnumerable<LiveOrder> ReadAllAsync(CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<LiveOrderDTO> ReadAllAsync(CancellationToken cancellationToken = default)
     {
         return _channel.Reader.ReadAllAsync(cancellationToken);
     }
@@ -58,7 +62,7 @@ public class IncomingOrderQueue
     {
         await Task.Run(async () =>
         {
-            await foreach (LiveOrder item in _channel.Reader.ReadAllAsync())
+            await foreach (LiveOrderDTO item in _channel.Reader.ReadAllAsync())
             {
                 await flowBuffer.SendAsync(item); 
             }
@@ -71,17 +75,17 @@ public class IncomingOrderQueue
         while (await flowBuffer.OutputAvailableAsync()) 
         {
             await Task.Delay(5);       
-            LiveOrder newLiveOrder = flowBuffer.Receive();
-            List<Channel<LiveOrder>> subscribersSnapshot;
+            LiveOrderDTO newLiveOrder = flowBuffer.Receive();
+            List<Channel<LiveOrderDTO>> subscribersSnapshot;
 
             lock (_subscribers)
             {
-                subscribersSnapshot = new List<Channel<LiveOrder>>(_subscribers);
+                subscribersSnapshot = new List<Channel<LiveOrderDTO>>(_subscribers);
             }
             
-            foreach (Channel<LiveOrder> subscriber in subscribersSnapshot)
+            foreach (Channel<LiveOrderDTO> subscriber in subscribersSnapshot)
             {
-                LiveOrder order = newLiveOrder;
+                LiveOrderDTO order = newLiveOrder;
                 await subscriber.Writer.WriteAsync(order);
                 await Task.Delay(5);    
             }

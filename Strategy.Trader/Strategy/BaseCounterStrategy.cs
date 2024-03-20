@@ -1,6 +1,4 @@
-﻿using OMS.Core.Common;
-using OMS.Core.Interfaces;
-using OMS.Core.Models;
+﻿
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Filters;
 using Strategy.Trader.Models;
@@ -8,6 +6,7 @@ using Strategy.Trader.Models;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Grains;
+using OMS.SharedKernel;
 
 namespace Strategy.Trader.Strategy;
 
@@ -39,13 +38,13 @@ public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
         _strategyData = strategyData;
     }
 
-    public override async Task<NewOrderDTO> OnNewOrder(LiveOrder _orig_live_order)
+    public override async Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order)
     {
 
         string _trader_key = _orig_live_order.UserID + "_" + _orig_live_order.GroupID;
         _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
 
-        NewOrderDTO _mapped_new_order = await DTOMapping.MapOrderLiveToNew(_orig_live_order);    
+        NewOrderDTO _mapped_new_order = await SharedMapping.MapLiveOrderDTOLiveToNewDTO(_orig_live_order);    
         _mapped_new_order.OrderAction = OrderAction.NoAction;
         
         int netPositions  = await ProcessCounter(_orig_live_order);
@@ -83,7 +82,7 @@ public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
     }
 
 
-    public async  Task<int> ProcessCounter(LiveOrder order)
+    public async  Task<int> ProcessCounter(LiveOrderDTO order)
     {
 
         switch (order.OrderAction)

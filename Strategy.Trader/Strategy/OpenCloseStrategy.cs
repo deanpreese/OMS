@@ -1,6 +1,4 @@
-﻿using OMS.Core.Common;
-using OMS.Core.Interfaces;
-using OMS.Core.Models;
+﻿
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Filters;
 using Strategy.Trader.Models;
@@ -28,7 +26,7 @@ public class OpenCloseStrategy : AbstractStrategyBase , IStrategy
 
 
 
-    public override Task<NewOrderDTO> OnNewOrder(LiveOrder _orig_live_order)
+    public override Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order)
     {
          string _trader_key = _orig_live_order.UserID + "_" + _orig_live_order.GroupID;
         _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
