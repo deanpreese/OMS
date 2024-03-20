@@ -22,7 +22,8 @@ public class OrleansStartup
                 .UseAdoNetClustering(options =>
                 {
                     options.Invariant = "Npgsql";
-                    options.ConnectionString = "Host=127.0.0.1;Database=orleans;Username=orleansuser;Password=abc";
+                    //options.ConnectionString = "Host=127.0.0.1;Database=orleans;Username=orleansuser;Password=abc";
+                    options.ConnectionString = "Server=127.0.0.1;Database=orleans;Username=orleansuser;Password=abc";
                 })
                 .Configure<ClusterOptions>(options =>
                 {
@@ -32,12 +33,14 @@ public class OrleansStartup
                 .UseAdoNetReminderService(options =>
                 {
                     options.Invariant = "Npgsql";
-                    options.ConnectionString = "Host=127.0.0.1;Database=orleans;Username=orleansuser;Password=abc";
+                    //options.ConnectionString = "Host=127.0.0.1;Database=orleans;Username=orleansuser;Password=abc";
+                    options.ConnectionString = "Server=127.0.0.1;Database=orleans;Username=orleansuser;Password=abc";
                 })
                 .AddAdoNetGrainStorage("GrainStorage", options =>
                 {
                     options.Invariant = "Npgsql";
-                    options.ConnectionString = "Host=127.0.0.1;Database=orleans;Username=orleansuser;Password=abc";
+                    //options.ConnectionString = "Host=127.0.0.1;Database=orleans;Username=orleansuser;Password=abc";
+                    options.ConnectionString = "Server=127.0.0.1;Database=orleans;Username=orleansuser;Password=abc";
                 })
                 
                 .AddMemoryGrainStorage(PlatformConstants.OrderMemoryStreamStore)

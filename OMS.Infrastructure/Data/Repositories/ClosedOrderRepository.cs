@@ -5,6 +5,9 @@ using OMS.Core.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update;
 using OMS.Infrastructure.Data;
+using System.Data.SqlClient;
+using Dapper;
+using Npgsql;
 
 public class ClosedOrderRepository : IClosedOrderRepository
 {
@@ -23,24 +26,6 @@ public class ClosedOrderRepository : IClosedOrderRepository
         await Task.CompletedTask;
     }
 
-    public async Task<ClosedTrade> GetLastClosedTrade(int UserID, int GroupNumber)
-    {
-        ClosedTrade closedTrade = new ClosedTrade();
-
-
-        List<ClosedTrade> trades = ((from o in _context.ClosedTrades
-                                   where o.UserID == UserID 
-                                    && o.GroupID == GroupNumber 
-                                   select o)).ToList();
-        if (trades.Count() > 0)
-        {
-            closedTrade = trades.Last();
-        }
-    
-        return await Task.FromResult(closedTrade);
-
-    }
-
     public async Task<List<ClosedTrade>> GetClosedOrdersByTraderAsync(int UserID, int GroupNumber)
     {
        return await Get_XXX_ClosedOrdersByTrader(UserID, GroupNumber, -1);
@@ -57,30 +42,41 @@ public class ClosedOrderRepository : IClosedOrderRepository
             ordToTake = 1111111111;
         }
 
-        List<ClosedTrade> orders = new List<ClosedTrade>();
-        
-        orders = (from o in _context.ClosedTrades
-                      where o.UserID == UserID
-                      && o.GroupID == GroupNumber
-                      select o).OrderByDescending(x => x.CloseOrderTime).Take(ordToTake).ToList();
+        IEnumerable<ClosedTrade> trades = new List<ClosedTrade>();
 
-        return await Task.FromResult(orders);
+        var sql = $"SELECT * FROM \"ClosedTrades\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} ORDER BY \"CloseOrderTime\" DESC LIMIT {ordToTake}";
+
+        //trades = _context.ClosedTrades
+        //    .Where(c => c.UserID == UserID && c.GroupID == GroupNumber)
+        //    .OrderByDescending(c => c.CloseOrderTime)
+        //    .Take(ordToTake)
+        //    .ToList();
+
+        using (NpgsqlConnection connection = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+        {
+            trades = await connection.QueryAsync<ClosedTrade>(sql);
+        }
+
+        return await Task.FromResult(trades.ToList());
 
     }
 
     public async Task<ClosedTrade> GetLastClosedTradeByOpenPlatformID(int UserID, int GroupNumber, int platform_id)
     {
-        //var closedTrade = (from c in _context.ClosedTrades
-        //                    where c.UserID == UserID && c.GroupID == GroupNumber && c.OpenPlatformOrderID == platform_id
-        //                    select c).OrderByDescending(x => x.CloseOrderTime).FirstOrDefault();
+        ClosedTrade closedTrade = new ClosedTrade();
+        var sql = $"SELECT * FROM \"ClosedTrades\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} AND \"OpenPlatformOrderID\" = {platform_id} ORDER BY \"CloseOrderTime\" DESC";
 
-        var closedTrade = await _context.ClosedTrades
-        .FromSqlInterpolated($"SELECT * FROM \"ClosedTrades\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} AND \"OpenPlatformOrderID\" = {platform_id} ORDER BY \"CloseOrderTime\" DESC")
-        .AsNoTracking()
-        .FirstOrDefaultAsync();
+        //var closedTrade =  _context.ClosedTrades
+        //                    .Where(c=> c.UserID == UserID && c.GroupID == GroupNumber && c.OpenPlatformOrderID == platform_id)
+        //                    .OrderByDescending(x => x.CloseOrderTime)
+         //                   .AsNoTracking()
+         //                   .FirstOrDefault();
 
-
-        return await Task.FromResult(closedTrade);
+        using (NpgsqlConnection connection = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+        {
+            closedTrade = await connection.QueryFirstOrDefaultAsync<ClosedTrade>(sql);
+        }
+        return closedTrade;
 
     }
 }

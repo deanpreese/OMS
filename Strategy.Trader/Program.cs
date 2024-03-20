@@ -17,7 +17,8 @@ using IHost host = Host.CreateDefaultBuilder(args)
         client.UseAdoNetClustering(options =>
         {
             options.Invariant = "Npgsql";
-            options.ConnectionString = "host=10.0.0.147;database=orleans;password=abc;username=orleansuser";
+            //options.ConnectionString = "host=10.0.0.147;database=orleans;password=abc;username=orleansuser";
+            options.ConnectionString = "Server=10.0.0.147;database=orleans;password=abc;username=orleansuser";
         });
 
         client.AddMemoryStreams(PlatformConstants.OrderStreamProvider);

@@ -23,7 +23,8 @@ builder.Host.UseOrleans((ctx, siloBuilder) =>
 
  builder.Services.AddDbContext<OrderManagementDbContext>(options =>
         {
-            string conn =  "Host=127.0.0.1;Database=orders;Username=trading;Password=abc";
+            //string conn =  "Host=127.0.0.1;Database=orders;Username=trading;Password=abc";
+            string conn =  "Server=127.0.0.1;Database=orders;Username=trading;Password=abc";
             options.UseNpgsql(conn);
 
         },ServiceLifetime.Scoped);

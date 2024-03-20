@@ -70,7 +70,7 @@ public class IncomingOrderQueue
     {
         while (await flowBuffer.OutputAvailableAsync()) 
         {
-            await Task.Delay(25);       
+            await Task.Delay(5);       
             LiveOrder newLiveOrder = flowBuffer.Receive();
             List<Channel<LiveOrder>> subscribersSnapshot;
 
@@ -82,31 +82,10 @@ public class IncomingOrderQueue
             foreach (Channel<LiveOrder> subscriber in subscribersSnapshot)
             {
                 LiveOrder order = newLiveOrder;
-                
                 await subscriber.Writer.WriteAsync(order);
-                await Task.Delay(10);    
-                
+                await Task.Delay(5);    
             }
         }
     }
 
-
-    private async Task Distribute()
-    {
-        await foreach (LiveOrder item in _channel.Reader.ReadAllAsync())
-        {
-            List<Channel<LiveOrder>> subscribersSnapshot;
-            lock (_subscribers)
-            {
-                subscribersSnapshot = new List<Channel<LiveOrder>>(_subscribers);
-            }
-            
-            foreach (Channel<LiveOrder> subscriber in subscribersSnapshot)
-            {
-                LiveOrder order = item;
-                await subscriber.Writer.WriteAsync(order);
-                await Task.Delay(10);    
-            }
-        }
-    }
 }

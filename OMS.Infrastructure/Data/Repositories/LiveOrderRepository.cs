@@ -4,7 +4,9 @@ using OMS.Core.Interfaces;
 using OMS.Core.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update;
-
+using System.Data.SqlClient;
+using Dapper;
+using Npgsql;
 
 namespace OMS.Infrastructure.Data.Repositories;
 
@@ -52,33 +54,54 @@ public class LiveOrderRepository : ILiveOrderRepository
 
     public async Task<List<LiveOrder>> GetOrdersByTraderAsync(int UserID, int GroupNumber)
     {
-        /*
-        var result1 = await _context.LiveOrder
-            .AsNoTracking()
-            .Where(c => c.UserID == UserID && c.GroupID == GroupNumber)
-            .OrderBy(c => c.OrderTime)
-            .ToListAsync();
-        */
+        IEnumerable<LiveOrder> orders = new List<LiveOrder>();
+        var sql = $"SELECT * FROM \"LiveOrder\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} ORDER BY \"OrderTime\"";
 
-        // Using FromSqlInterpolated
-        var result3 = await _context.LiveOrder
-            .FromSqlInterpolated($"SELECT * FROM \"LiveOrder\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} ORDER BY \"OrderTime\"")
-            .AsNoTracking()
-            .ToListAsync();
+        //var result = await _context.LiveOrder
+        //    .AsNoTracking()
+        //    .Where(c => c.UserID == UserID && c.GroupID == GroupNumber)
+        //    .OrderBy(c => c.OrderTime)
+        //    .ToListAsync();
 
-        return result3;
+        //var result = await _context.LiveOrder
+        //    .FromSqlInterpolated()
+        //   .FromSqlRaw(sql)
+        //    .AsNoTracking()
+        //    .ToListAsync();
+
+
+        using (NpgsqlConnection connection = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+        {
+            orders = await connection.QueryAsync<LiveOrder>(sql);
+        }
+        return orders.ToList();
 
     }
 
 
     public async Task<List<LiveOrder>> GetOrdersByTrader(int UserID, string instrument)
     {
-        return await _context.LiveOrder
+
+        IEnumerable<LiveOrder> orders = new List<LiveOrder>();
+        var sql = $"SELECT * FROM \"LiveOrder\" WHERE \"UserID\" = {UserID} AND \"Instrument\" = \'{instrument}\' ORDER BY \"OrderTime\"";
+
+        /*
+        orders = await _context.LiveOrder
             .AsNoTracking()
             .Where(c => c.Instrument == instrument && c.UserID == UserID)
             .OrderBy(c => c.OrderTime)
             .ToListAsync();
         
+        
+        */
+
+        using (NpgsqlConnection connection = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+        {
+            orders = await connection.QueryAsync<LiveOrder>(sql);
+        }
+        
+        return orders.ToList();
+
     }
 
 }
