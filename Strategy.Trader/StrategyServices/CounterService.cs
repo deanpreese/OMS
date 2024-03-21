@@ -9,7 +9,6 @@ using System.Threading.Tasks.Dataflow;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
-
 using Strategy.Trader.Models;
 using Strategy.Trader.Utility;
 using Strategy.Trader.Strategy;
@@ -84,7 +83,7 @@ public class CounterService : BackgroundService
             //int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
             //await Task.Delay(delay);         
             if(flowBuffer.Count > 10)
-                Console.WriteLine(_strategyAccount.strategy_name + " Buffer Count: " + flowBuffer.Count);
+                Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);
                 
             LiveOrderDTO newLiveOrder = flowBuffer.Receive();
             NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);

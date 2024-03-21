@@ -2,10 +2,10 @@
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Filters;
 using Strategy.Trader.Models;
-
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Grains;
+using System.Threading.Tasks.Dataflow;
 
 namespace Strategy.Trader.Strategy;
 
@@ -22,6 +22,8 @@ public class OpenCloseStrategy : AbstractStrategyBase , IStrategy
             new TwoSidedFilter()
         };
         _strategyData = strategyData;
+        flowBuffer = new BufferBlock<string>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        Task.Run(async () => await ProcessLogBuffer());
     }
 
 

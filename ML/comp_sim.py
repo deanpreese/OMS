@@ -75,7 +75,7 @@ exp_idx = ["2"]
 num_models = 10
 #num_models = 2
 trades = 250
-sim_delay = 0.05
+sim_delay = 0.005
 
 #file = "data/lucky13_short.csv"
     

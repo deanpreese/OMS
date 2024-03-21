@@ -10,7 +10,6 @@ using Strategy.Trader.Models;
 using Strategy.Trader.Utility;
 using Strategy.Trader.Strategy;
 using Strategy.Trader.Abstractions;
-
 using OMS.SharedKernel.DTO;
 
 
@@ -81,7 +80,7 @@ private ChannelReader<LiveOrderDTO> _reader;
             //int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
             //await Task.Delay(25);   
             if(flowBuffer.Count > 10)
-                Console.WriteLine(_strategyAccount.strategy_name + " Buffer Count: " + flowBuffer.Count);
+                Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);
  
             LiveOrderDTO newLiveOrder = flowBuffer.Receive();
             NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);

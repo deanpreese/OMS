@@ -1,12 +1,10 @@
-﻿
-using Strategy.Trader.Abstractions;
+﻿using Strategy.Trader.Abstractions;
 using Strategy.Trader.Filters;
 using Strategy.Trader.Models;
-
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Grains;
-using OMS.SharedKernel;
+using System.Threading.Tasks.Dataflow;
 
 namespace Strategy.Trader.Strategy;
 
@@ -36,6 +34,8 @@ public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
             new AllFollowFilter()
         };
         _strategyData = strategyData;
+        flowBuffer = new BufferBlock<string>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        Task.Run(async () => await ProcessLogBuffer());
     }
 
     public override async Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order)
@@ -120,11 +120,10 @@ public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
         netList.Reverse();
         double netAve = netList.Take(aveCount).Average();
         
-        Console.WriteLine("NET: " + netPositions + "  AvePos10  " + netAve + "      Long: " + longCount + "  Short: " + shortCount + "       LongAve: " + longAve + "     ShortAve: " + shortAve);
+        await AddToLogBuffer("NET: " + netPositions + "  AvePos10  " + netAve + "      Long: " + longCount + "  Short: " + shortCount + "       LongAve: " + longAve + "     ShortAve: " + shortAve);
 
         return await Task.FromResult(netPositions);
 
     }
-
 
 }

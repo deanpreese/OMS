@@ -78,7 +78,7 @@ public class FadeService : BackgroundService
             //int delay = flowBuffer.Count > 125 ? flowBuffer.Count : 125;
             //await Task.Delay(delay); 
             if(flowBuffer.Count > 10)
-                Console.WriteLine(_strategyAccount.strategy_name + " Buffer Count: " + flowBuffer.Count);
+                Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);
 
             LiveOrderDTO newLiveOrder = flowBuffer.Receive();
             NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);

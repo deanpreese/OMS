@@ -87,7 +87,7 @@ public class IncomingOrderQueue
             {
                 LiveOrderDTO order = newLiveOrder;
                 await subscriber.Writer.WriteAsync(order);
-                await Task.Delay(5);    
+                await Task.Delay(10);    
             }
         }
     }

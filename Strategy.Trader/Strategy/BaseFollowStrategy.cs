@@ -2,10 +2,10 @@
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Filters;
 using Strategy.Trader.Models;
-
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Grains;
+using System.Threading.Tasks.Dataflow;
 
 namespace Strategy.Trader.Strategy;
 
@@ -22,6 +22,8 @@ public class BaseFollowStrategy : AbstractStrategyBase , IStrategy
             new AllFollowFilter()
         };
         _strategyData = strategyData;
+        flowBuffer = new BufferBlock<string>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        Task.Run(async () => await ProcessLogBuffer());
     }
 
     public override Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order)
@@ -29,7 +31,7 @@ public class BaseFollowStrategy : AbstractStrategyBase , IStrategy
         string _trader_key = _orig_live_order.UserID + "_" + _orig_live_order.GroupID;
         _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
 
-        //Console.WriteLine("New Order: " + _strategy_key + "  " + _trader_key + "  " + _orig_live_order.OrderAction + "  " + _orig_live_order.OrderType);
+        //await AddToLogBuffer("New Order: " + _strategy_key + "  " + _trader_key + "  " + _orig_live_order.OrderAction + "  " + _orig_live_order.OrderType);
 
         ITraderInfoGrain traderInfoGrain = newClusterClient.GetGrain<ITraderInfoGrain>(_trader_key);
         IStrategyGrain strategyGrain = newClusterClient.GetGrain<IStrategyGrain>(_strategy_key);

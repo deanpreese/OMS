@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks.Dataflow;
 using System.Threading.Channels;
 using System.Text.Json;
-
 using System.Text;
 
 using Strategy.Trader.Models;
@@ -87,7 +86,7 @@ public class FollowService : BackgroundService
             //await Task.Delay(delay);     
 
             if(flowBuffer.Count > 10)
-                Console.WriteLine(_strategyAccount.strategy_name + " Buffer Count: " + flowBuffer.Count);
+                Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);
 
 
             LiveOrderDTO newLiveOrder = flowBuffer.Receive();

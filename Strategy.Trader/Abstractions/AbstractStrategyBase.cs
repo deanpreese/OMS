@@ -1,13 +1,14 @@
 ﻿using System.Security.Cryptography;
 using Microsoft.Extensions.DependencyModel.Resolution;
+using System.Threading.Tasks.Dataflow;
+
 using Strategy.Trader.Abstractions;
 using Strategy.Trader.Models;
-
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Grains;
 using OMS.SharedKernel;
-
+using Strategy.Trader.Filters;
 
 namespace Strategy.Trader.Abstractions;
 
@@ -27,15 +28,17 @@ public abstract class AbstractStrategyBase
 
     public abstract Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order);
 
+    public BufferBlock<string> flowBuffer;
+   
+
     public async Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order,
         ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
     {
-        //Console.WriteLine("  ----  ");
-        //Console.WriteLine("New Order2222: " + _strategy_key + "  " + traderGrain.GetGrainId() + "  " + _orig_live_order.OrderAction + "  " + _orig_live_order.OrderType);
+        //await AddToLogBuffer("  ----  ");
+        //await AddToLogBuffer("New Order2222: " + _strategy_key + "  " + traderGrain.GetGrainId() + "  " + _orig_live_order.OrderAction + "  " + _orig_live_order.OrderType);
 
         LiveOrderDTO strategy_order = await GenerateOrderAction( _strategy_key, _orig_live_order, traderGrain, strategyGrain);
         NewOrderDTO _mapped_new_order = await SharedMapping.MapLiveOrderDTOLiveToNewDTO(_orig_live_order);
-
         
         if(strategy_order.OrderAction != OrderAction.NoAction)
         {
@@ -62,30 +65,30 @@ public abstract class AbstractStrategyBase
         ITraderInfoGrain _trader_grain, IStrategyGrain _strategy_grain)
     {
         string _trader_key = order.UserID + "_" + order.GroupID;
-        //Console.WriteLine("New Order3333: " + _strategy_key + "  " + _trader_grain.GetGrainId() + "  " + order.OrderAction + "  " + order.OrderType);
+        //await AddToLogBuffer("New Order: " + _strategy_key + "  " + _trader_grain.GetGrainId() + "  " + order.OrderAction + "  " + order.OrderType);
         
         if (order.OrderType == OrderType.OPEN)
         {
             int filterAction = await EvaluateFilters(_trader_key, strategy_key, _trader_grain, _strategy_grain );
-            Console.WriteLine(_strategyData.strategy_name +  " __Filter Action Result: " + filterAction);
+            //await AddToLogBuffer(_strategyData.strategy_name +  " __Filter Action Result: " + filterAction);
     
             if(!await OkToOpenNewPosition(_strategy_grain, order))
             {
                 order.OrderAction = OrderAction.NoAction;
-                await ShowOrderInfo(order, OrderType.NONE); 
+                await ShowStrategyInfo(order, OrderType.NONE); 
             }else
             {
                 if (filterAction == 0)
                 {
                     order.OrderAction = OrderAction.NoAction;
-                    await ShowOrderInfo(order, OrderType.NONE);
+                    await ShowStrategyInfo(order, OrderType.NONE);
                 }    
 
                 // FilterAction > 0 means FOLLOW -- do the same 
                 // Nothing Changes
                 if (filterAction > 0 )
                 {
-                    await ShowOrderInfo(order, OrderType.OPEN);
+                    await ShowStrategyInfo(order, OrderType.OPEN);
                 }
 
                 //  filterAction < 0 means FADE -- do the opposite
@@ -95,13 +98,13 @@ public abstract class AbstractStrategyBase
                     if (order.OrderAction == OrderAction.Buy)
                     {
                         order.OrderAction = OrderAction.Sell;
-                        await ShowOrderInfo(order, OrderType.OPEN);
+                        await ShowStrategyInfo(order, OrderType.OPEN);
                     }
 
                     if (order.OrderAction == OrderAction.Sell)
                     {
                         order.OrderAction = OrderAction.Buy;
-                        await ShowOrderInfo(order, OrderType.OPEN);
+                        await ShowStrategyInfo(order, OrderType.OPEN);
                     }
                 }
             }
@@ -120,14 +123,14 @@ public abstract class AbstractStrategyBase
 
             if(liveOrders.Count > 0)
             {
-                Console.WriteLine(_strategyData.strategy_name +  " Strategy Orders Count: " + liveOrders.Count);
+                await AddToLogBuffer(_strategyData.strategy_name +  " Strategy Orders Count: " + liveOrders.Count);
                 LiveOrderDTO liveStrategyOrder = liveOrders.FirstOrDefault();
                 ClosedTradeDTO lastClosedTraderTrade = await _trader_grain.GetLastClosedTradeByOpenPlatformID(_trader_key, liveStrategyOrder.RelatedOrderID);
                 
                 //while (lastClosedTraderTrade == null)
                 //{
                 //    lastClosedTraderTrade = await _trader_grain.GetLastClosedTradeByOpenPlatformID(_trader_key, liveStrategyOrder.PlatformOrderID);
-                //    Console.WriteLine(_strategyData.strategy_name +  " Strategy Last Order: " + liveStrategyOrder.OrderAction + "  " + liveStrategyOrder.OrderType);
+                //    await AddToLogBuffer(_strategyData.strategy_name +  " Strategy Last Order: " + liveStrategyOrder.OrderAction + "  " + liveStrategyOrder.OrderType);
                 //}
 
                 if(liveStrategyOrder != null && lastClosedTraderTrade != null)
@@ -135,18 +138,18 @@ public abstract class AbstractStrategyBase
                     if (liveStrategyOrder.OrderAction == OrderAction.Buy)
                     {
                         order.OrderAction = OrderAction.Sell;
-                        await ShowOrderInfo(order, OrderType.CLOSE);
+                        await ShowStrategyInfo(order, OrderType.CLOSE);
                     }
                     if (liveStrategyOrder.OrderAction == OrderAction.Sell)
                     {
                         order.OrderAction = OrderAction.Buy;
-                        await ShowOrderInfo(order, OrderType.CLOSE);
+                        await ShowStrategyInfo(order, OrderType.CLOSE);
                     }
                 }
             }else
             {
-                await ShowOrderInfo(order, OrderType.NONE);
-                Console.WriteLine(_strategyData.strategy_name +  " NULL ORDER: " + liveOrders.Count);
+                await ShowStrategyInfo(order, OrderType.NONE);
+                await AddToLogBuffer(_strategyData.strategy_name +  " NULL ORDER: " + liveOrders.Count);
             }            
         }
         return order;
@@ -163,7 +166,7 @@ public abstract class AbstractStrategyBase
             liveOrders = await strategyGrain.GetLiveOrders(_strategy_key);
         }
 
-        //Console.WriteLine(_strategyData.strategy_name +  " Strategy Orders Count for New: " + liveOrders.Count);
+        //await AddToLogBuffer(_strategyData.strategy_name +  " Strategy Orders Count for New: " + liveOrders.Count);
 
         if(liveOrders.Count > 0)
         {
@@ -177,14 +180,26 @@ public abstract class AbstractStrategyBase
     }
 
 
-    public async Task ShowOrderInfo(LiveOrderDTO order, OrderType orderType)
+    public async Task ShowStrategyInfo(LiveOrderDTO order, OrderType orderType)
     {
-        await Task.Run(() =>
-        {
-            Console.WriteLine(_strategyData.strategy_name +  " Strategy Order: " + _strategy_key + "  " + order.OrderAction + "  " + orderType  + "  " + order.OrderType);
-        });           
+        string data = order.OrderTime + " " + _strategyData.strategy_name +  "  " + _strategy_key + "  " + order.OrderAction + "  " + orderType  + "  " + order.OrderType;
+        await flowBuffer.SendAsync(data); 
     }
 
+    public async Task AddToLogBuffer(string strData)
+    {
+        await flowBuffer.SendAsync(strData); 
+    }
+
+    public async Task ProcessLogBuffer()
+    {
+        
+        while (await flowBuffer.OutputAvailableAsync()) 
+        {
+            string logData = flowBuffer.Receive();
+            Console.WriteLine(logData);
+        }
+    }
 
     
 }
