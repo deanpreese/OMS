@@ -28,7 +28,7 @@ public class IncomingOrderQueue
         });
 
 
-        flowBuffer = new BufferBlock<LiveOrderDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        //flowBuffer = new BufferBlock<LiveOrderDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
         Task.Run(async () => await OrderCapture());
         Task.Run(async () => await OrderBroadcast());
 
@@ -72,24 +72,29 @@ public class IncomingOrderQueue
 
     private async Task OrderBroadcast()
     {
-        while (await flowBuffer.OutputAvailableAsync()) 
+        while (await flowBuffer.OutputAvailableAsync())
         {
-            await Task.Delay(5);       
-            LiveOrderDTO newLiveOrder = flowBuffer.Receive();
-            List<Channel<LiveOrderDTO>> subscribersSnapshot;
-
-            lock (_subscribers)
+            while (flowBuffer.TryReceive(out LiveOrderDTO newLiveOrder))
             {
-                subscribersSnapshot = new List<Channel<LiveOrderDTO>>(_subscribers);
-            }
-            
-            foreach (Channel<LiveOrderDTO> subscriber in subscribersSnapshot)
-            {
-                LiveOrderDTO order = newLiveOrder;
-                await subscriber.Writer.WriteAsync(order);
-                await Task.Delay(10);    
+            //LiveOrderDTO newLiveOrder = flowBuffer.Receive();
+                foreach (Channel<LiveOrderDTO> subscriber in _subscribers)
+                {
+                    LiveOrderDTO order = newLiveOrder;
+                    await subscriber.Writer.WriteAsync(order);
+                    await Task.Delay(12);    
+                }
             }
         }
     }
 
 }
+
+
+/*
+
+                await Task.Delay(5); 
+                LiveOrderDTO order = newLiveOrder;
+                await subscriber.Writer.WriteAsync(order);
+                await Task.Delay(10);    
+
+*/

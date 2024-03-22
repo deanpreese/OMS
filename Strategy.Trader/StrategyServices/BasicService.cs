@@ -83,7 +83,7 @@ private ChannelReader<LiveOrderDTO> _reader;
                 Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);
  
             LiveOrderDTO newLiveOrder = flowBuffer.Receive();
-            NewOrderDTO n_order = await loadedStrategy.OnNewOrder(newLiveOrder);
+            await loadedStrategy.OnNewOrder(newLiveOrder);
         }
     }
 

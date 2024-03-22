@@ -23,7 +23,6 @@ public class OrderPubSubBackgroundService : BackgroundService
         _client = client;
         _logger = logger;
         _strategyOrderQueue = strategyOrderQueue;
-
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
