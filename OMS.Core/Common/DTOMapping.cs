@@ -48,7 +48,7 @@ public class DTOMapping
         LiveOrder liveOrder = new LiveOrder();
         liveOrder.OrderPX = newOrder.OrderPX;  
         liveOrder.OrderTime = newOrder.OrderTime;
-        liveOrder.OrderManagerID = 0 ;
+        liveOrder.OrderManagerID = 0;
         liveOrder.Instrument = newOrder.Instrument;
         liveOrder.OrderAction = newOrder.OrderAction;
         liveOrder.OrderType = newOrder.OrderType;

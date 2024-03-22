@@ -73,9 +73,8 @@ def run_sim(exp_id, n_models, file, trades, delay):
     
 exp_idx = ["2"]
 num_models = 10
-#num_models = 2
 trades = 250
-sim_delay = 0.005
+sim_delay = 0.05
 
 #file = "data/lucky13_short.csv"
     

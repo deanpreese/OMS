@@ -32,7 +32,11 @@ class CommonStrategy :
       self.bars_since = 0
       
       self.perf = 0
-    
+      
+      self.predict_data = ""
+   
+   def set_predict_data(self, data):
+      self.predict_data = data      
 
    def check_for_orders(self, prediction, px):
       
@@ -176,6 +180,7 @@ class CommonStrategy :
          "orderAction": int(new_order_action.value),
          "quantity": 1,
          "orderTime": dte_iso,
+         "modelFeatureData" :  self.predict_data.to_json()
       }    
    
       return new_order

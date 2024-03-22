@@ -18,6 +18,7 @@ UPDATE public."ScoreCard"
 
     Delete from "public"."LiveOrder";
     delete from "public"."ClosedTrades";
+    delete from public."ModelOrderLog";
 
     delete from "public"."ScoreCard" where "GroupID" < 50;
     delete from "public"."UserProfiles" where "GroupID" < 50;

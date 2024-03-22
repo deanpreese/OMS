@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 using OMS.Infrastructure.Data.Repositories;
 using OMS.Infrastructure.Services.Data;
 using OMS.Infrastructure.Data;
+using System.Security.Cryptography.X509Certificates;
+using OMS.Core;
 
 
 namespace OMS.Infrastructure.Services.Queue;
@@ -22,8 +24,11 @@ public class ClosedOrderProcessorService : BackgroundService
     private readonly ILogger<ClosedOrderProcessorService> _logger;
     private readonly IClusterClient _clusterClient;
     private readonly IGrainFactory _grainFactory;
+    private readonly TimeSpan _interval = TimeSpan.FromSeconds(10); 
+    Timer timer;
 
-    private readonly TimeSpan _interval = TimeSpan.FromSeconds(30); // Setting the interval to 30 seconds
+    List<LiveOrder> orders = new List<LiveOrder>();
+
 
 
     public ClosedOrderProcessorService(ILogger<ClosedOrderProcessorService> logger, 
@@ -37,18 +42,22 @@ public class ClosedOrderProcessorService : BackgroundService
         _logger = logger;
         _clusterClient = clusterClient;
         _grainFactory = grainFactory;
+
+        timer = new Timer(ProcessScorecardUpdatesAsync, null, _interval, _interval);
        
     }
 
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine("Syncing Closed Orders ... " );
 
-        await foreach (var liveOrder in _closedChannelService.ReadAllAsync(stoppingToken))
+        await foreach (var logDataDTO in _closedChannelService.ReadAllAsync(stoppingToken))
         {
             try
-            {
-                await ProcessClosedOrderAsync(liveOrder, stoppingToken);
+            {   if (logDataDTO.liveOrder.GroupID >= 50)
+                    orders.Add(logDataDTO.liveOrder);
+
+                await ProcessLogDataAsync(logDataDTO);
             }
             catch (Exception ex)
             {
@@ -60,30 +69,59 @@ public class ClosedOrderProcessorService : BackgroundService
     }
 
 
-
-    private async Task ProcessClosedOrderAsync(LiveOrder liveOrder, CancellationToken cancellationToken)
+    private async Task ProcessLogDataAsync(LogDataDTO logData)
     {
-            using (var scope = _scopeFactory.CreateScope())
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            try 
             {
+                var scopedContext = scope.ServiceProvider.GetRequiredService<OrderManagementDbContext>();
+                UnitOfWork unitOfWork = new UnitOfWork(scopedContext);
+                ILogger<AnalyticsService> logger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
+                AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, logger);   
+                await _analytics_service.LogModelOrderData(logData.liveOrder, logData.newOrderDTO);  
 
-                try 
-                {
-                    var scopedContext = scope.ServiceProvider.GetRequiredService<OrderManagementDbContext>();
-                    UnitOfWork unitOfWork = new UnitOfWork(scopedContext);
-                    ILogger<AnalyticsService> logger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
-                    AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, logger);   
-
-                    await _analytics_service.UpdateScoreCard(liveOrder);
-
-                    Console.WriteLine("Order Processed by Stats For user " + liveOrder.UserID  );
-
-                }catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-                
-                    
+            }catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
-        await Task.CompletedTask; 
+        }
+    }
+
+
+    private async void ProcessScorecardUpdatesAsync(object state)
+    {
+        if (orders.Count > 0)
+        {
+            Console.WriteLine("Updating Scorecards ... " );
+            var userGroupPairs = orders.Select(o => (userID: o.UserID, groupID: o.GroupID)).Distinct().ToList();
+
+            foreach ((int userID, int groupID) in userGroupPairs)
+            {
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    try 
+                    {
+                        var scopedContext = scope.ServiceProvider.GetRequiredService<OrderManagementDbContext>();
+                        UnitOfWork unitOfWork = new UnitOfWork(scopedContext);
+                        ILogger<AnalyticsService> logger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
+                        AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, logger);   
+                        await _analytics_service.UpdateTraderScoreCard(userID, groupID);
+                        Console.WriteLine("Stats UpdatedFor Strategy" + userID + " " + groupID);
+
+                    }catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+                }
+            }
+
+            orders.Clear();            
+        }else
+        {
+            Console.WriteLine("No New Scorecard Updates  " );
+        }
+
+     await Task.CompletedTask; 
     }
 }

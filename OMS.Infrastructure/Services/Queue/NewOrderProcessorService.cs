@@ -19,6 +19,7 @@ using OMS.Infrastructure.Services.Trading;
 using OMS.Infrastructure.Services.Data;
 
 using OMS.Infrastructure.Interfaces;
+using OMS.Core;
 
 namespace OMS.Infrastructure.Services.Queue;
 
@@ -83,20 +84,35 @@ public class NewOrderProcessorService : BackgroundService
             ILogger<AnalyticsService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
             AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, aLogger);
             
-            LiveOrder live = await _trader_service.ProcessNewOrderAsync(newOrder);    
+            LiveOrder live = await _trader_service.ProcessNewOrderAsync(newOrder); 
 
-            if (live.OrderType  == OrderType.CLOSE)  
-            {
-                await _analytics_service.UpdateScoreCard(live);
-                Console.WriteLine("New Analytics For user " + live.UserID  );
-            }
+            //if (live.OrderType  == OrderType.CLOSE && live.GroupID < 50)  
+            //{
+            //    await _analytics_service.UpdateTraderScoreCard(live);
+            //    Console.WriteLine("New Analytics For Trader " + live.UserID  ); 
+            //}
+            
+            //if (live.OrderType  == OrderType.CLOSE && live.GroupID >= 50)  
+            //{
+                LogDataDTO logData = new LogDataDTO();
+                logData.liveOrder = live;
+                logData.newOrderDTO = newOrder;
+
+                await closedOrderChannel.WriteAsync(logData);
+            //}
+            //await _analytics_service.LogModelOrderData(live, newOrder);  
 
             int om_id = live.OrderManagerID;
-
             if (om_id != 0)
             {
                 if (newOrder.GroupID < 50)
                 {
+                    if (live.OrderType  == OrderType.CLOSE )  
+                    {
+                        await _analytics_service.UpdateTraderScoreCard(live);
+                        Console.WriteLine("New Analytics For Trader " + live.UserID  ); 
+                    }
+
                     var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
                     var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
                                 .GetStream<LiveOrderDTO>(PlatformConstants.MemoryStreamNamespace, "/new-orders");

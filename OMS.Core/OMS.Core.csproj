@@ -30,4 +30,12 @@
     <ProjectReference Include="..\OMS.SharedKernel\OMS.SharedKernel.csproj" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="Common/" />
+    <Folder Include="Interfaces/" />
+    <Folder Include="Models/" />
+  </ItemGroup>
+
+
 </Project>

@@ -39,6 +39,7 @@ public class OrderManagementDbContext : DbContext
     public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<OrderFlow> OrderFlow { get; set; }
     public DbSet<ScoreCard> ScoreCard { get; set; }
+    public DbSet<ModelOrderLog> ModelOrderLog { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

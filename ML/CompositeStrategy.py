@@ -39,6 +39,8 @@ class CompositeStrategy (CommonStrategy):
         agg_weighted_predict = 0    
         return_predict = 0
         
+        self.set_predict_data(data) 
+        
         for m in range(len(self.strategy_models)):
             
             perf = self.strategy_models[m].metrics["Perf"]

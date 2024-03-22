@@ -67,5 +67,7 @@ public class NewOrderDTO
     [Id(13)]
     // used by the strategy to connect original order from trader to algo order
     public int RelatedOrderID { get; set; }
-    
+
+    [Id(14)]
+    public string ModelFeatureData { get; set; }
 }
