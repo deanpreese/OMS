@@ -35,4 +35,9 @@
     <PackageReference Include="ThreadSafeDbContext" Version="1.0.7" />  
   </ItemGroup>
 
+
+<ItemGroup>
+  <ProjectReference Include="..\OMS.SharedKernel\OMS.SharedKernel.csproj" />
+</ItemGroup>
+
 </Project>

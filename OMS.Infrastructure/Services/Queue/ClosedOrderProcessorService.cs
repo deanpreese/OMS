@@ -57,7 +57,7 @@ public class ClosedOrderProcessorService : BackgroundService
             {   if (logDataDTO.liveOrder.GroupID >= 50)
                     orders.Add(logDataDTO.liveOrder);
 
-                await ProcessLogDataAsync(logDataDTO);
+                //await ProcessLogDataAsync(logDataDTO);
             }
             catch (Exception ex)
             {

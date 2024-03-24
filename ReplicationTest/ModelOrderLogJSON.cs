@@ -1,6 +1,9 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using OMS.SharedKernel;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
 
 namespace ReplicationTest;
 
@@ -18,8 +21,8 @@ public class ModelOrderLogJSON
     public long RelatedOrderID { get; set; }
     public string Instrument { get; set; }
     public double OrderPX { get; set; }
-    public int OrderType { get; set; }
-    public int OrderAction { get; set; }
+    public OrderType OrderType { get; set; }
+    public OrderAction OrderAction { get; set; }
     public int Quantity { get; set; }
     public int Leverage { get; set; }
     public int Opposite { get; set; }
@@ -33,7 +36,7 @@ public class ModelOrderLogJSON
     [JsonIgnore]
     public Dictionary<string, double> ModelFeatureDataDeserialized => JsonSerializer.Deserialize<Dictionary<string, double>>(ModelFeatureData);
     [JsonIgnore]
-    public ScoreCardJSONData ScoreCardDeserialized => JsonSerializer.Deserialize<ScoreCardJSONData>(ScoreCardJSON);
+    public ScoreCardDTO ScoreCardDeserialized => JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJSON);
 }
 
 

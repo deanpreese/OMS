@@ -105,6 +105,8 @@ public class NewOrderProcessorService : BackgroundService
                             Console.WriteLine("New Analytics For Trader " + liveOrder.UserID  ); 
                         }
 
+                        await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO);  
+
                         var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
                         var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
                                     .GetStream<LiveOrderDTO>(PlatformConstants.MemoryStreamNamespace, "/new-orders");

@@ -10,6 +10,7 @@ using Npgsql.Replication.PgOutput;
 using Npgsql.Replication.PgOutput.Messages;
 using PgOutput2Json;
 using ReplicationTest;
+using OMS.SharedKernel.DTO;
 
 public class TestWatcher : BackgroundService
 {
@@ -33,36 +34,11 @@ public class TestWatcher : BackgroundService
             {
                 if( table == "public.ModelOrderLog")
                 {
-
                     var orderModelResult = JsonSerializer.Deserialize<ModelOrderLogJSON>(json, options);
-
-                    Console.WriteLine($"ModelOrderLog {orderModelResult._ct}   UserID: {orderModelResult.UserID}  {orderModelResult.ModelOrderLogID}  ");
-
-                    Console.WriteLine(orderModelResult.ModelFeatureData);
-                    Console.WriteLine(orderModelResult.ScoreCardJSON);
-                    
-                }
-
-                if( table == "public.LiveOrder")
-                {
-                    var liveResult = JsonSerializer.Deserialize<LiveOrderJSON>(json, options);
-                    //Console.WriteLine($"LiveOrder Action {liveResult._ct}   UserID: {liveResult.UserID}");
-
-                    if(liveResult._ct == "I")
-                    {
-                        //Console.WriteLine($" +++++++ LiveOrder New {liveResult._ct}   UserID: {liveResult.UserID}");
-                    }
-
-                    if(liveResult._ct == "D")
-                    {
-                        //Console.WriteLine($" ------- LiveOrder Delete {liveResult._ct} ");
-                    }
-                }
-
-                if( table == "public.ScoreCard")
-                {
-                    var scoreCardResult = JsonSerializer.Deserialize<ScoreCardJSONData>(json, options);
-                    //Console.WriteLine($" ^^^^ ScoreCard Action {scoreCardResult._ct}   UserID: {scoreCardResult.UserID}");
+                    Console.WriteLine($"ModelOrderLog {orderModelResult._ct}   UserID: {orderModelResult.UserID}  {orderModelResult.ModelOrderLogID} {orderModelResult.OrderType} ");
+                    //Console.WriteLine(orderModelResult.ModelFeatureData);
+                    //Console.WriteLine(orderModelResult.ScoreCardJSON);
+                   
                 }
 
                 if( table == "public.ClosedTrades")
