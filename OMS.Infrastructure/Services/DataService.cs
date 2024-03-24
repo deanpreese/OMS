@@ -7,10 +7,9 @@ using OMS.SharedKernel.DTO;
 
 using OMS.Core.Models;
 using System.Security.Cryptography;
-using OMS.Infrastructure.Services.Data;
 using OMS.Infrastructure.Interfaces;
 
-namespace OMS.Infrastructure.Services.Data;
+namespace OMS.Infrastructure.Services;
 
 public class DataService : IDataService
 {

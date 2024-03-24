@@ -7,14 +7,14 @@ using Orleans.Streams;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using OMS.Infrastructure.Data.Repositories;
-using OMS.Infrastructure.Services.Data;
+
 using OMS.Infrastructure.Data;
 using System.Security.Cryptography.X509Certificates;
 using OMS.Core;
+using OMS.Infrastructure.Services;
 
 
-namespace OMS.Infrastructure.Services.Queue;
+namespace OMS.Infrastructure.Queue;
 
 public class ClosedOrderProcessorService : BackgroundService
 {  

@@ -13,15 +13,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using OMS.Infrastructure.Services.Common;
-using OMS.Infrastructure.Data.Repositories;
+
 using OMS.Infrastructure.Data;
-using OMS.Infrastructure.Services.Trading;
-using OMS.Infrastructure.Services.Data;
+using OMS.Infrastructure.Services;
 
 using OMS.Infrastructure.Interfaces;
 using OMS.Core;
 
-namespace OMS.Infrastructure.Services.Queue;
+namespace OMS.Infrastructure.Queue;
 
 public class NewOrderProcessorService : BackgroundService
 {

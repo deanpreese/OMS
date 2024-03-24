@@ -9,6 +9,8 @@ using System.Data.SqlClient;
 using Dapper;
 using Npgsql;
 
+namespace OMS.Infrastructure.Data;
+
 public class ClosedOrderRepository : IClosedOrderRepository
 {
     private readonly OrderManagementDbContext _context;

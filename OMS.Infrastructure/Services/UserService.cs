@@ -2,12 +2,12 @@
 using Microsoft.Extensions.Logging;
 using OMS.Core.Interfaces;
 using OMS.Infrastructure.Data;
-using OMS.Infrastructure.Services.Queue;
+using OMS.Infrastructure.Queue;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.Infrastructure.Interfaces;
 
-namespace OMS.Infrastructure.Services.Trading;
+namespace OMS.Infrastructure.Services;
 
 public class UserService : IUserService
 {

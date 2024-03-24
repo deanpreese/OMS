@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 using Dapper;
 using Npgsql;
 
-namespace OMS.Infrastructure.Data.Repositories;
+namespace OMS.Infrastructure.Data;
 
 public class AnalyticsRepository : IAnalyticsRepository
 {

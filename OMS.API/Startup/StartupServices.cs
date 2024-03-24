@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OMS.Core.Interfaces;
 using OMS.Infrastructure.Data;
-using OMS.Infrastructure.Data.Repositories;
 using OMS.Infrastructure.Services.Common;
-using OMS.Infrastructure.Services.Data;
-using OMS.Infrastructure.Services.Queue;
-using OMS.Infrastructure.Services.Trading;
+using OMS.Infrastructure.Services;
+using OMS.Infrastructure.Queue;
 using OMS.Infrastructure.Interfaces;
 
 namespace OMS.API.Startup;

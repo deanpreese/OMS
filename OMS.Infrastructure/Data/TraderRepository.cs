@@ -6,7 +6,7 @@ using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
 
-namespace OMS.Infrastructure.Data.Repositories;
+namespace OMS.Infrastructure.Data;
 
 public class TraderRepository : ITraderRepository
 {

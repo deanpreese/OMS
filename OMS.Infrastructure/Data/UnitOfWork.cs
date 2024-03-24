@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;   
 using OMS.Core.Interfaces;
 
-namespace OMS.Infrastructure.Data.Repositories;
+namespace OMS.Infrastructure.Data;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly OrderManagementDbContext _context;

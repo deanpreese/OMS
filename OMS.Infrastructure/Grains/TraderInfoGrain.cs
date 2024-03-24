@@ -2,7 +2,7 @@
 using OMS.Core.Interfaces;
 using OMS.Core.Models;
 
-using OMS.Infrastructure.Data.Repositories;
+using OMS.Infrastructure.Data;
 
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Grains;

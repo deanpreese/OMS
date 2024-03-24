@@ -5,14 +5,14 @@ using OMS.Core.Common;
 using OMS.Core.Models;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
-using OMS.Infrastructure.Services.Queue;
+using OMS.Infrastructure.Queue;
 using OMS.Infrastructure.Services.Common;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.Infrastructure.Interfaces;
 
-namespace OMS.Infrastructure.Services.Trading;
+namespace OMS.Infrastructure.Services;
 
 public class TradingService : ITradingService
 {

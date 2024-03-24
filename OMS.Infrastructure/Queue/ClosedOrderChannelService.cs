@@ -2,7 +2,7 @@
 using OMS.Core;
 using OMS.Core.Models;
 
-namespace OMS.Infrastructure.Services.Queue;
+namespace OMS.Infrastructure.Queue;
 
 public class ClosedOrderChannelService
 {

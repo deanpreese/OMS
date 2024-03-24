@@ -4,12 +4,12 @@ using OMS.Core.Interfaces;
 using OMS.Core.Models;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
-using OMS.Infrastructure.Data.Common;
+using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Interfaces;
 using OMS.SharedKernel.DTO;
 using System.Text.Json;
 
-namespace OMS.Infrastructure.Services.Data;
+namespace OMS.Infrastructure.Services;
 
 public class AnalyticsService : IAnalyticsService
 {

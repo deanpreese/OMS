@@ -4,7 +4,7 @@ using OMS.Core.Models;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
-namespace OMS.Infrastructure.Services.Queue;
+namespace OMS.Infrastructure.Queue;
 
 
 public class NewOrderChannelService 

@@ -4,7 +4,7 @@ using OMS.Core.Models;
 
 using OMS.SharedKernel.Common;
 
-namespace OMS.Infrastructure.Data.Common;
+namespace OMS.Infrastructure.Data;
 
 public static class TradeStatisticsGenerator
 {
