@@ -66,6 +66,7 @@ public class FollowService : BackgroundService
                 try
                 {
                     await flowBuffer.SendAsync(newLiveOrder); 
+                    //await loadedStrategy.OnNewOrder(newLiveOrder);
                 }
                 catch (Exception ex)
                 {
@@ -82,8 +83,6 @@ public class FollowService : BackgroundService
     {
          while (await flowBuffer.OutputAvailableAsync()) 
         {
-            //int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
-            //await Task.Delay(delay);     
 
             if(flowBuffer.Count > 10)
                 Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);

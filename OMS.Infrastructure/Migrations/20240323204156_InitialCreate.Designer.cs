@@ -12,7 +12,7 @@ using OMS.Infrastructure.Data;
 namespace OMS.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderManagementDbContext))]
-    [Migration("20240322001204_InitialCreate")]
+    [Migration("20240323204156_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -110,6 +110,9 @@ namespace OMS.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("OpenExecutionID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OpenLiveOrderID")
                         .HasColumnType("integer");
 
                     b.Property<int>("OpenOrderAction")

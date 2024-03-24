@@ -16,7 +16,7 @@ public class NewOrderChannelService
         // Create a bounded channel with a capacity limit to prevent out-of-memory issues in case of high load
         _channel = Channel.CreateBounded<NewOrderDTO>(new BoundedChannelOptions(10000)
         {
-            FullMode = BoundedChannelFullMode.Wait,
+            //FullMode = BoundedChannelFullMode.Wait,
             SingleReader = true, // Set to true if only one consumer will read from the channel
             SingleWriter = false  // Set to true if only one producer will write to the channel
         });

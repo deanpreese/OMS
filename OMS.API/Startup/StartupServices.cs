@@ -46,11 +46,9 @@ public class StartupServices
         services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();        
         services.AddSingleton<NewOrderChannelService>();
         services.AddSingleton<ClosedOrderChannelService>();
-        services.AddSingleton<FeatureDataDataQueue>();
         
         services.AddHostedService<NewOrderProcessorService>();
         services.AddHostedService<ClosedOrderProcessorService>();
-        services.AddHostedService<FeatureDataProcessor>();
 
         return services;
 

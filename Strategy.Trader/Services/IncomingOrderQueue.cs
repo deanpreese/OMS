@@ -27,12 +27,13 @@ public class IncomingOrderQueue
             SingleWriter = true  // Set to true if only one producer will write to the channel
         });
 
-
-        //flowBuffer = new BufferBlock<LiveOrderDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
+        // OrderCapture and OrderBroadcast will run in parallel using flowbuffer
         Task.Run(async () => await OrderCapture());
         Task.Run(async () => await OrderBroadcast());
 
+        // Distribute will is a straight through process
         //Task.Run(async () => await Distribute());
+
     }
 
     public ChannelReader<LiveOrderDTO> Subscribe()
@@ -58,6 +59,26 @@ public class IncomingOrderQueue
     }
 
 
+    private async Task Distribute()
+    {
+        await Task.Run(async () =>
+        {
+            await foreach (LiveOrderDTO newLiveOrder in _channel.Reader.ReadAllAsync())
+            {
+                foreach (Channel<LiveOrderDTO> subscriber in _subscribers)
+                {
+                    LiveOrderDTO order = newLiveOrder;
+                    await subscriber.Writer.WriteAsync(order);
+                    await Task.Delay(10);    
+                }
+            }
+        });
+        await Task.CompletedTask;
+    }
+
+
+
+
     private async Task OrderCapture()
     {
         await Task.Run(async () =>
@@ -72,29 +93,28 @@ public class IncomingOrderQueue
 
     private async Task OrderBroadcast()
     {
-        while (await flowBuffer.OutputAvailableAsync())
+        while (await flowBuffer.OutputAvailableAsync()) 
         {
-            while (flowBuffer.TryReceive(out LiveOrderDTO newLiveOrder))
+            //await Task.Delay(5);       
+            LiveOrderDTO newLiveOrder = flowBuffer.Receive();
+            List<Channel<LiveOrderDTO>> subscribersSnapshot;
+
+            lock (_subscribers)
             {
-            //LiveOrderDTO newLiveOrder = flowBuffer.Receive();
-                foreach (Channel<LiveOrderDTO> subscriber in _subscribers)
-                {
-                    LiveOrderDTO order = newLiveOrder;
-                    await subscriber.Writer.WriteAsync(order);
-                    await Task.Delay(12);    
-                }
+                subscribersSnapshot = new List<Channel<LiveOrderDTO>>(_subscribers);
+            }
+            
+            foreach (Channel<LiveOrderDTO> subscriber in subscribersSnapshot)
+            {
+                LiveOrderDTO order = newLiveOrder;
+                await subscriber.Writer.WriteAsync(order);
+                //await Task.Delay(10);    
             }
         }
     }
 
+
+
+
 }
 
-
-/*
-
-                await Task.Delay(5); 
-                LiveOrderDTO order = newLiveOrder;
-                await subscriber.Writer.WriteAsync(order);
-                await Task.Delay(10);    
-
-*/

@@ -148,7 +148,7 @@ public abstract class AbstractStrategyBase
                 }
             }else
             {
-                await ShowStrategyInfo(order, OrderType.NONE);
+                //await ShowStrategyInfo(order, OrderType.NONE);
                 await AddToLogBuffer(_strategyData.strategy_name +  " NULL ORDER: " + liveOrders.Count);
             }            
         }
@@ -183,7 +183,13 @@ public abstract class AbstractStrategyBase
     public async Task ShowStrategyInfo(LiveOrderDTO order, OrderType orderType)
     {
         string data = order.OrderTime + " " + _strategyData.strategy_name +  "  " + _strategy_key + "  " + order.OrderAction + "  " + orderType  + "  " + order.OrderType;
-        await flowBuffer.SendAsync(data); 
+
+         await Task.Run(() =>
+        {
+            Console.WriteLine(data);
+        });    
+
+        //await flowBuffer.SendAsync(data); 
     }
 
     public async Task AddToLogBuffer(string strData)

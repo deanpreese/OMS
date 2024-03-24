@@ -41,6 +41,7 @@ namespace OMS.Infrastructure.Migrations
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     Leverage = table.Column<double>(type: "double precision", nullable: false),
                     OppositeTrader = table.Column<bool>(type: "boolean", nullable: false),
+                    OpenLiveOrderID = table.Column<int>(type: "integer", nullable: false),
                     OpenPlatformOrderID = table.Column<int>(type: "integer", nullable: false),
                     OpenOrderMangerID = table.Column<int>(type: "integer", nullable: false),
                     OpenAuthToken = table.Column<int>(type: "integer", nullable: false),

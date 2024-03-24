@@ -43,6 +43,9 @@ public class ClosedTrade
     [Id(8)]
     public bool OppositeTrader { get; set; }
 
+    [Id(30)]
+    public int OpenLiveOrderID { get; set; }
+
     [Id(9)]
     public int OpenPlatformOrderID { get; set; }
 

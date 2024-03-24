@@ -70,7 +70,7 @@ public class NewOrderProcessorService : BackgroundService
         }
     }
 
-    private async Task ProcessLiveOrderAsync(NewOrderDTO newOrder, CancellationToken cancellationToken)
+    private async Task ProcessLiveOrderAsync(NewOrderDTO newOrderDTO, CancellationToken cancellationToken)
     {
         using (var scope = _scopeFactory.CreateScope())
         {
@@ -81,39 +81,42 @@ public class NewOrderProcessorService : BackgroundService
             ClosedOrderChannelService closedOrderChannel = scope.ServiceProvider.GetRequiredService<ClosedOrderChannelService>();
             TradingService _trader_service = new TradingService(unitOfWork, logger, _platformOrderIDGen);
 
-            ILogger<AnalyticsService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
-            AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, aLogger);
+            //ILogger<AnalyticsService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
+            //AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, aLogger);
             
             await Task.Run(async () =>
             {
-                LiveOrder live = await _trader_service.ProcessNewOrderAsync(newOrder);
-                LogDataDTO logData = new LogDataDTO { liveOrder = live, newOrderDTO = newOrder };
+                LiveOrder liveOrder = await _trader_service.ProcessNewOrderAsync(newOrderDTO);
+                LogDataDTO logData = new LogDataDTO { liveOrder = liveOrder, newOrderDTO = newOrderDTO };
+
+                ILogger<AnalyticsService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
+                AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, aLogger);
 
                 await closedOrderChannel.WriteAsync(logData);
                 
-                int om_id = live.OrderManagerID;
+                int om_id = liveOrder.OrderManagerID;
                 if (om_id != 0)
                 {
-                    if (newOrder.GroupID < 50)
+                    if (newOrderDTO.GroupID < 50)
                     {
-                        if (live.OrderType  == OrderType.CLOSE )  
+                        if (liveOrder.OrderType  == OrderType.CLOSE )  
                         {
-                            await _analytics_service.UpdateTraderScoreCard(live);
-                            Console.WriteLine("New Analytics For Trader " + live.UserID  ); 
+                            await _analytics_service.UpdateTraderScoreCard(liveOrder);
+                            Console.WriteLine("New Analytics For Trader " + liveOrder.UserID  ); 
                         }
 
                         var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
                         var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
                                     .GetStream<LiveOrderDTO>(PlatformConstants.MemoryStreamNamespace, "/new-orders");
 
-                        LiveOrderDTO liveDTO = await DTOMapping.MapOrderLiveToLiveDTO(live); 
+                        LiveOrderDTO liveDTO = await DTOMapping.MapOrderLiveToLiveDTO(liveOrder); 
 
                         await orderStreamProvider.OnNextAsync(liveDTO);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Error Processing " + newOrder.UserID + "  " + live.PlatformOrderID);
+                    Console.WriteLine("Error Processing " + newOrderDTO.UserID + "  " + liveOrder.PlatformOrderID);
                 }
 
             });

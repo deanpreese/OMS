@@ -62,6 +62,7 @@ private ChannelReader<LiveOrderDTO> _reader;
                 try
                 {
                     await flowBuffer.SendAsync(newLiveOrder); 
+                    //await loadedStrategy.OnNewOrder(newLiveOrder);
                 }
                 catch (Exception ex)
                 {
@@ -77,8 +78,7 @@ private ChannelReader<LiveOrderDTO> _reader;
     {
         while (await flowBuffer.OutputAvailableAsync()) 
         {
-            //int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
-            //await Task.Delay(25);   
+              
             if(flowBuffer.Count > 10)
                 Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);
  

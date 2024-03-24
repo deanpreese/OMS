@@ -60,6 +60,7 @@ public class FadeService : BackgroundService
                 try
                 {
                     await flowBuffer.SendAsync(newLiveOrder); 
+                    //await loadedStrategy.OnNewOrder(newLiveOrder);
                 }
                 catch (Exception ex)
                 {
@@ -75,8 +76,6 @@ public class FadeService : BackgroundService
     {
         while (await flowBuffer.OutputAvailableAsync()) 
         {
-            //int delay = flowBuffer.Count > 125 ? flowBuffer.Count : 125;
-            //await Task.Delay(delay); 
             if(flowBuffer.Count > 10)
                 Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);
 

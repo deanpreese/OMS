@@ -18,6 +18,7 @@ public class DTOMapping
             Leverage = orderToClose.Leverage,
             OppositeTrader = false,
 
+            OpenLiveOrderID = orderToClose.LiveOrderID,
             OpenPlatformOrderID = orderToClose.PlatformOrderID,
             OpenOrderMangerID = orderToClose.OrderManagerID,
             OpenAuthToken = orderToClose.AuthToken,

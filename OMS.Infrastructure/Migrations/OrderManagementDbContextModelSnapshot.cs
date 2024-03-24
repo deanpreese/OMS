@@ -109,6 +109,9 @@ namespace OMS.Infrastructure.Migrations
                     b.Property<int>("OpenExecutionID")
                         .HasColumnType("integer");
 
+                    b.Property<int>("OpenLiveOrderID")
+                        .HasColumnType("integer");
+
                     b.Property<int>("OpenOrderAction")
                         .HasColumnType("integer");
 
