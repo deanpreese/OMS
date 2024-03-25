@@ -1,7 +1,7 @@
 ﻿
 namespace Strategy.Server.Models;
 
-
+/*
 public class OrderData
 {
     // Order Id from Platform if possible
@@ -40,3 +40,4 @@ public int RTOrderID { get; set; }
 
 }
 
+*/

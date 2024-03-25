@@ -1,11 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using OMS.SharedKernel;
-using OMS.SharedKernel.Common;
-using OMS.SharedKernel.DTO;
-
-namespace Strategy.Server.Models;
+namespace OMS.SharedKernel.DTO;
 
 public class ModelOrderLogDTO
 {

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyModel.Resolution;
 using System.Threading.Tasks.Dataflow;
 
 using Strategy.Trader.Abstractions;
-using Strategy.Trader.Models;
+
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Grains;

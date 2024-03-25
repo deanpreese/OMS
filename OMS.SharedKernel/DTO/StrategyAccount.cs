@@ -1,5 +1,4 @@
-﻿
-namespace Strategy.Server.Models;
+﻿namespace OMS.SharedKernel.DTO;
 
 
 public class StrategyAccount
