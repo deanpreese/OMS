@@ -21,10 +21,11 @@ public class TestWatcher : BackgroundService
         _loggerFactory = loggerFactory;
     }
 
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var options = new JsonSerializerOptions{PropertyNameCaseInsensitive = true};
-        string publication = "liveupdatespub";
+        string publication = "liveupdates";
 
         using var pgOutput2Json = PgOutput2JsonBuilder.Create()
             .WithLoggerFactory(_loggerFactory)
@@ -34,18 +35,43 @@ public class TestWatcher : BackgroundService
             {
                 if( table == "public.ModelOrderLog")
                 {
-                    var orderModelResult = JsonSerializer.Deserialize<ModelOrderLogJSON>(json, options);
-                    Console.WriteLine($"ModelOrderLog {orderModelResult._ct}   UserID: {orderModelResult.UserID}  {orderModelResult.ModelOrderLogID} {orderModelResult.OrderType} ");
+
+                    //Console.WriteLine(json);    
+                    var orderModelResult = JsonSerializer.Deserialize<ModelOrderLogDTO>(json, options);
+                    Console.WriteLine($"ModelOrderLog {orderModelResult._ct}    UserID: {orderModelResult.UserID}  ModelOrderLogID: {orderModelResult.ModelOrderLogID} LiveOrderIDReference {orderModelResult.LiveOrderIDReference}  ScorecardID  {orderModelResult.ScoreCardDeserialized.ScoreCardID}  OrderType {orderModelResult.LiveOrderDeserialized.OrderType} ");
                     //Console.WriteLine(orderModelResult.ModelFeatureData);
                     //Console.WriteLine(orderModelResult.ScoreCardJSON);
-                   
+                
+                    //lastID = orderModelResult.ModelOrderLogID;
                 }
 
+                /*
                 if( table == "public.ClosedTrades")
                 {
                     var closedTradeJSON = JsonSerializer.Deserialize<ClosedTradeJSON>(json, options);
-                    //Console.WriteLine($" xxxx ClosedTrades Action {closedTradeJSON._ct}   UserID: {closedTradeJSON.UserID}  {closedTradeJSON.OpenLiveOrderID}  ");
+                    Console.WriteLine($" xxxxxxxxxxxx ClosedTrades Action {closedTradeJSON._ct}   UserID: {closedTradeJSON.UserID}  {closedTradeJSON.OpenLiveOrderID}  ");
                 }
+
+                 if( table == "public.LiveOrder")
+                {
+
+                    Console.WriteLine(json);
+                    
+                    //var liveResult = JsonSerializer.Deserialize<LiveOrderDTO>(json, options);
+                    //Console.WriteLine($"LiveOrder Action {liveResult._ct}   UserID: {liveResult.UserID}");
+
+                    if(liveResult._ct == "I")
+                    {
+                        //Console.WriteLine($" +++++++ LiveOrder New {liveResult._ct}   UserID: {liveResult.UserID}");
+                    }
+
+                    if(liveResult._ct == "D")
+                    {
+                        //Console.WriteLine($" ------- LiveOrder Delete {liveResult._ct} ");
+                    }
+                    
+                }
+                */
                 
             })
             .Build();

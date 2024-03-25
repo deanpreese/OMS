@@ -9,12 +9,41 @@ namespace OMS.Core.Models;
 
 [GenerateSerializer]
 [Alias("ModelOrderLog")]
+
+public class ModelOrderLog
+{
+     [Key]
+    [Id(0)]
+    public int ModelOrderLogID { get; set; }
+    [Id(1)]
+    public int UserID { get; set; }
+    [Id(2)]
+    public int GroupID { get; set; }
+    [Id(3)]
+    public int LiveOrderIDReference { get; set; }
+    [Id(4)]
+    public OrderType OrderType { get; set; }
+    [Id(5)]
+    public OrderAction OrderAction { get; set; }
+    [Id(6)]
+    public string LiveOrderJSON { get; set; }
+    [Id(7)]
+    public string ModelFeatureData { get; set; }
+    [Id(8)]
+    public string ScoreCardJSON { get; set; }
+}
+
+
+/*
 public class ModelOrderLog
 {
     [Id(0)]
     private DateTime _createdDate;
     [Id(1)]
     private DateTime _orderTime;
+
+    [Id(17)]
+    public int LiveOrderIDReference { get; set; }
 
     [Key]
     [Id(2)]
@@ -65,3 +94,4 @@ public class ModelOrderLog
 
 
 }
+*/

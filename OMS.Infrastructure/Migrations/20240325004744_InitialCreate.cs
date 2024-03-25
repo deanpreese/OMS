@@ -105,20 +105,12 @@ namespace OMS.Infrastructure.Migrations
                 {
                     ModelOrderLogID = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    OrderManagerID = table.Column<int>(type: "integer", nullable: false),
                     UserID = table.Column<int>(type: "integer", nullable: false),
                     GroupID = table.Column<int>(type: "integer", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PlatformOrderID = table.Column<int>(type: "integer", nullable: false),
-                    RelatedOrderID = table.Column<int>(type: "integer", nullable: false),
-                    Instrument = table.Column<string>(type: "text", nullable: true),
-                    OrderPX = table.Column<double>(type: "double precision", nullable: false),
+                    LiveOrderIDReference = table.Column<int>(type: "integer", nullable: false),
                     OrderType = table.Column<int>(type: "integer", nullable: false),
                     OrderAction = table.Column<int>(type: "integer", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false),
-                    Leverage = table.Column<double>(type: "double precision", nullable: false),
-                    Opposite = table.Column<int>(type: "integer", nullable: false),
-                    OrderTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LiveOrderJSON = table.Column<string>(type: "text", nullable: true),
                     ModelFeatureData = table.Column<string>(type: "text", nullable: true),
                     ScoreCardJSON = table.Column<string>(type: "text", nullable: true)
                 },

@@ -3,6 +3,7 @@ using OMS.SharedKernel.DTO;
 
 namespace OMS.SharedKernel.Grains;
 
+/*
 [Alias("ITraderInfoGrain")]
 public interface ITraderInfoGrain : IGrainWithStringKey
 {
@@ -10,3 +11,4 @@ public interface ITraderInfoGrain : IGrainWithStringKey
 
     Task<ScoreCardDTO> GetScoreCardAsync(string profile_key);
 }
+*/

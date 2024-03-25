@@ -2,13 +2,15 @@
 using OMS.Core.Interfaces;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
-using OMS.SharedKernel.Grains;
+//using OMS.SharedKernel.Grains;
 using OMS.Infrastructure.Data;
 
 using Microsoft.Extensions.DependencyInjection;
 
 namespace OMS.Infrastructure.Grains;
 
+
+/*
 public class AdminGrain : Grain, IAdminGrain
 {
     private IUnitOfWork _unitOfWork;
@@ -58,3 +60,4 @@ public class AdminGrain : Grain, IAdminGrain
 
 
 }
+*/

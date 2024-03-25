@@ -1,12 +1,14 @@
 ﻿using OMS.Core.Models;
 using OMS.SharedKernel.DTO;
-using OMS.SharedKernel.Grains;
+//using OMS.SharedKernel.Grains;
 using OMS.Core.Interfaces;
 using OMS.Core.Common;
 
 
 namespace OMS.Infrastructure.Grains;
 
+
+/*
 public class StrategyGrain : Grain, IStrategyGrain
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -40,3 +42,5 @@ public class StrategyGrain : Grain, IStrategyGrain
         return ordersDTO;
     }
 }
+
+*/

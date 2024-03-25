@@ -1,9 +1,8 @@
 ﻿using OMS.SharedKernel.DTO;
 using System.Text;
-using Strategy.Trader.Models;
-using OMS.SharedKernel.Grains;
+using Strategy.Server.Models;
 
-namespace Strategy.Trader.Utility;
+namespace Strategy.Server.Utility;
 
 
 public class StrategyConfig
@@ -51,7 +50,7 @@ public class StrategyConfig
         int t_v = 0;
         await Task.Run(async () =>
         {
-            
+            /*
             IAdminGrain adminGrain = _clusterClient.GetGrain<IAdminGrain>("A"+_strategyData.group);     
             t_v = await adminGrain.AuthByDisplayName(n_trader);
 
@@ -65,7 +64,8 @@ public class StrategyConfig
                     n_trader.UserID = t_v;
                     await adminGrain.AddScoreCardForTrader(n_trader);   
                 }
-            }            
+            } 
+            */           
             
         });
 

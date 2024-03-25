@@ -1,15 +1,11 @@
 ﻿using System;
-using OMS.Core.Common;
-using OMS.Core.Models;
-using OMS.Core.WebAPIClient;
 using System.Diagnostics;
-
 using System;
 using Microsoft.Extensions.Hosting;
-
 using System.Drawing.Printing;
-using OMS.Core.Interfaces;
 
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
 
 namespace Testing;
 

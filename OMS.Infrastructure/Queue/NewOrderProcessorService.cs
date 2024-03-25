@@ -6,8 +6,6 @@ using Orleans.Streams;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
-
-
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -32,16 +30,14 @@ public class NewOrderProcessorService : BackgroundService
     private readonly ILogger<NewOrderProcessorService> _logger;
     private IPlatformOrderIDGen _platformOrderIDGen;
 
-    private readonly IClusterClient _clusterClient;
-    private readonly IGrainFactory _grainFactory;
-
+    //private readonly IClusterClient _clusterClient;
+    
     public NewOrderProcessorService(ILogger<NewOrderProcessorService> logger,
             NewOrderChannelService newOrderChannelService,
             IServiceScopeFactory scopeFactory,
                 IServiceProvider serviceProvider,
-                IPlatformOrderIDGen platformOrderIDGen,
-                IClusterClient clusterClient,
-                IGrainFactory grainFactory
+                IPlatformOrderIDGen platformOrderIDGen
+                //IClusterClient clusterClient
               )
     {
         _orderChannelService = newOrderChannelService;
@@ -49,9 +45,7 @@ public class NewOrderProcessorService : BackgroundService
         _serviceProvider = serviceProvider;
         _logger = logger;
         _platformOrderIDGen = platformOrderIDGen;
-        _clusterClient = clusterClient;
-        _grainFactory = grainFactory;
-
+        //_clusterClient = clusterClient;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -106,6 +100,7 @@ public class NewOrderProcessorService : BackgroundService
 
                         await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO);  
 
+                        /*
                         var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();
                         var orderStreamProvider = client.GetStreamProvider(PlatformConstants.OrderStreamProvider)
                                     .GetStream<LiveOrderDTO>(PlatformConstants.MemoryStreamNamespace, "/new-orders");
@@ -113,6 +108,7 @@ public class NewOrderProcessorService : BackgroundService
                         LiveOrderDTO liveDTO = await DTOMapping.MapOrderLiveToLiveDTO(liveOrder); 
 
                         await orderStreamProvider.OnNextAsync(liveDTO);
+                        */
                     }
                 }
                 else

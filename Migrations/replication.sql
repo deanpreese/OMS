@@ -2,7 +2,9 @@ select * from pg_publication;
 
 SELECT * FROM pg_replication_slots;
 
-
+CREATE PUBLICATION liveupdates
+    FOR TABLE public."LiveOrder", public."ScoreCard", public."ClosedTrades", public."ModelOrderLog"
+    WITH (publish = 'insert, update, delete, truncate', publish_via_partition_root = false);
 
 /*
 SELECT * FROM pg_create_logical_replication_slot('liveorders_slot', 'wal2json');
@@ -11,15 +13,9 @@ CREATE PUBLICATION liveupdates
     FOR TABLE public."LiveOrder", public."ScoreCard", public."ClosedTrades", public."ModelOrderLog"
     WITH (publish = 'insert, update, delete, truncate', publish_via_partition_root = false);
 
-ALTER  TABLE "LiveOrder"
-ADD COLUMN   transaction_id    xid8 NOT NULL;
-
-ALTER  TABLE "ClosedTrades"
-ADD COLUMN   transaction_id    xid8 NOT NULL;
-
-ALTER  TABLE "ScoreCard"
-ADD COLUMN   transaction_id    xid8 NOT NULL;
 */
+
+
 
 
 /*

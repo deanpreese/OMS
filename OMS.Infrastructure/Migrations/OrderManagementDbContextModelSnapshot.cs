@@ -224,46 +224,22 @@ namespace OMS.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ModelOrderLogID"));
 
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("GroupID")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Instrument")
-                        .HasColumnType("text");
+                    b.Property<int>("LiveOrderIDReference")
+                        .HasColumnType("integer");
 
-                    b.Property<double>("Leverage")
-                        .HasColumnType("double precision");
+                    b.Property<string>("LiveOrderJSON")
+                        .HasColumnType("text");
 
                     b.Property<string>("ModelFeatureData")
                         .HasColumnType("text");
 
-                    b.Property<int>("Opposite")
-                        .HasColumnType("integer");
-
                     b.Property<int>("OrderAction")
                         .HasColumnType("integer");
 
-                    b.Property<int>("OrderManagerID")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("OrderPX")
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTime>("OrderTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("OrderType")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlatformOrderID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RelatedOrderID")
                         .HasColumnType("integer");
 
                     b.Property<string>("ScoreCardJSON")

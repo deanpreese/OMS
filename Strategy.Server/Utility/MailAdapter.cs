@@ -1,6 +1,6 @@
 ﻿using System.Net.Mail;
 
-namespace Strategy.Trader.Utility;
+namespace Strategy.Server.Utility;
 
 public class MailAdapter
 {

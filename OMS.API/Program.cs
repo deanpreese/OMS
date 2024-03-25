@@ -3,12 +3,13 @@ using OMS.API.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 
+/*
 builder.Host.UseOrleans((ctx, siloBuilder) =>
 {
-    OrleansStartup orleansStartup = new OrleansStartup();
-    siloBuilder = orleansStartup.ConfigureSilo(siloBuilder); 
+    //OrleansStartup orleansStartup = new OrleansStartup();
+    //siloBuilder = orleansStartup.ConfigureSilo(siloBuilder); 
 });
-
+*/
 
 var startup_web = new StartupWeb(builder.Configuration);
 startup_web.ConfigureServices(builder.Services);

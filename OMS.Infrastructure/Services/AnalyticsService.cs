@@ -69,22 +69,17 @@ public class AnalyticsService : IAnalyticsService
             NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals
         };
 
+
+
         ModelOrderLog modelOrderLog = new ModelOrderLog
         {
-            OrderManagerID = liveOrder.OrderManagerID,
+            
             UserID = liveOrder.UserID,
             GroupID = liveOrder.GroupID,
-            DateCreated = DateTime.UtcNow,
-            PlatformOrderID = liveOrder.PlatformOrderID,
-            RelatedOrderID = liveOrder.RelatedOrderID,
-            Instrument = liveOrder.Instrument,
-            OrderPX = liveOrder.OrderPX,
+            LiveOrderIDReference = liveOrder.LiveOrderID,
             OrderType = liveOrder.OrderType,
             OrderAction = liveOrder.OrderAction,
-            Quantity = liveOrder.Quantity,
-            Leverage = liveOrder.Leverage,
-            Opposite = liveOrder.Opposite,
-            OrderTime = liveOrder.OrderTime,
+            LiveOrderJSON = JsonSerializer.Serialize(liveOrder, options),
             ModelFeatureData = orderDTO.ModelFeatureData,
             ScoreCardJSON = JsonSerializer.Serialize(sc, options)
 

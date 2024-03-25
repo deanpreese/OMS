@@ -22,27 +22,21 @@ public class ClosedOrderProcessorService : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<ClosedOrderProcessorService> _logger;
-    private readonly IClusterClient _clusterClient;
-    private readonly IGrainFactory _grainFactory;
     private readonly TimeSpan _interval = TimeSpan.FromSeconds(10); 
     Timer timer;
-
     List<LiveOrder> orders = new List<LiveOrder>();
-
 
 
     public ClosedOrderProcessorService(ILogger<ClosedOrderProcessorService> logger, 
             ClosedOrderChannelService closedOrderChannelService,
             IServiceScopeFactory scopeFactory,
-            IServiceProvider serviceProvider,IClusterClient clusterClient, IGrainFactory grainFactory)
+            IServiceProvider serviceProvider
+            )
     {
         _closedChannelService = closedOrderChannelService;
         _scopeFactory = scopeFactory;
         _serviceProvider = serviceProvider;
         _logger = logger;
-        _clusterClient = clusterClient;
-        _grainFactory = grainFactory;
-
         timer = new Timer(ProcessScorecardUpdatesAsync, null, _interval, _interval);
        
     }

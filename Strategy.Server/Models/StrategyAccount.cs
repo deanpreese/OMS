@@ -1,5 +1,5 @@
 ﻿
-namespace Strategy.Trader.Models;
+namespace Strategy.Server.Models;
 
 
 public class StrategyAccount

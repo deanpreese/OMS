@@ -31,8 +31,8 @@ removeMigrations() {
 recreateDatabase() {
     dotnet ef migrations add InitialCreate --project ${PROJECT_DIR} -c $DB_CONTEXT --startup-project ${START_UP_PROJECT} 
 
-    echo "****** Processing migration files "
-    read '?Press any key to continue.'
+    #echo "****** Processing migration files Press any key to continue ..."
+    #read " "
 
     dotnet ef database update  -p ${PROJECT_DIR} -c $DB_CONTEXT --connection $DB_CONNECTION  --startup-project  ${START_UP_PROJECT} 
 }

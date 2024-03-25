@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.Core", "OMS.Core\OMS.Core.csproj", "{04C37EEC-B2C6-4A8B-A95B-A1F3CE930B31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{D74CB954-48E2-4047-AA7F-7DDAD21EEA85}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy.Trader", "Strategy.Trader\Strategy.Trader.csproj", "{BDFC2DA1-EFEC-45F4-BC86-6EAEF0D9D590}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.API", "OMS.API\OMS.API.csproj", "{9B64655C-5DCD-4382-A403-DA819014D6CD}"
@@ -21,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy.Ninja", "Strategy.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.SharedKernel", "OMS.SharedKernel\OMS.SharedKernel.csproj", "{47E4A6F2-D84B-4ECF-A8F3-B9342C520E3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReplicationTest", "ReplicationTest\ReplicationTest.csproj", "{C27AD198-FEFD-4555-B523-549E851F4007}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy.Server", "Strategy.Server\Strategy.Server.csproj", "{E2DD47E5-7D9D-4C01-A0D7-60F8758FE902}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +31,6 @@ Global
 		{04C37EEC-B2C6-4A8B-A95B-A1F3CE930B31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04C37EEC-B2C6-4A8B-A95B-A1F3CE930B31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04C37EEC-B2C6-4A8B-A95B-A1F3CE930B31}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D74CB954-48E2-4047-AA7F-7DDAD21EEA85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D74CB954-48E2-4047-AA7F-7DDAD21EEA85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D74CB954-48E2-4047-AA7F-7DDAD21EEA85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D74CB954-48E2-4047-AA7F-7DDAD21EEA85}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BDFC2DA1-EFEC-45F4-BC86-6EAEF0D9D590}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BDFC2DA1-EFEC-45F4-BC86-6EAEF0D9D590}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDFC2DA1-EFEC-45F4-BC86-6EAEF0D9D590}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,10 +59,10 @@ Global
 		{47E4A6F2-D84B-4ECF-A8F3-B9342C520E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47E4A6F2-D84B-4ECF-A8F3-B9342C520E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47E4A6F2-D84B-4ECF-A8F3-B9342C520E3C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C27AD198-FEFD-4555-B523-549E851F4007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C27AD198-FEFD-4555-B523-549E851F4007}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C27AD198-FEFD-4555-B523-549E851F4007}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C27AD198-FEFD-4555-B523-549E851F4007}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2DD47E5-7D9D-4C01-A0D7-60F8758FE902}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2DD47E5-7D9D-4C01-A0D7-60F8758FE902}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2DD47E5-7D9D-4C01-A0D7-60F8758FE902}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2DD47E5-7D9D-4C01-A0D7-60F8758FE902}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,11 +7,36 @@ using OMS.SharedKernel.DTO;
 
 namespace ReplicationTest;
 
+public class ModelOrderLogDTO
+{
+    public string _ct { get; set; }
+    public int ModelOrderLogID { get; set; }
+    public int UserID { get; set; }
+    public int GroupID { get; set; }
+    public int LiveOrderIDReference { get; set; }
+    public int OrderType { get; set; }
+    public int OrderAction { get; set; }
+    
+    // JSON strings representing complex objects
+    public string LiveOrderJSON { get; set; }
+    public string ModelFeatureData { get; set; }
+    public string ScoreCardJSON { get; set; }
+    
+    // Properties to hold deserialized data
+    [JsonIgnore]
+    public LiveOrderDTO LiveOrderDeserialized => JsonSerializer.Deserialize<LiveOrderDTO>(LiveOrderJSON);
+    [JsonIgnore]
+    public Dictionary<string, double> ModelFeatureDataDeserialized => JsonSerializer.Deserialize<Dictionary<string, double>>(ModelFeatureData);
+    [JsonIgnore]
+    public ScoreCardDTO ScoreCardDeserialized => JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJSON);
+}
 
+/*
 public class ModelOrderLogJSON
 {
 
     public string _ct { get; set; }
+    public int LiveOrderIDReference { get; set; }
     public int ModelOrderLogID { get; set; }
     public int OrderManagerID { get; set; }
     public int UserID { get; set; }
@@ -38,6 +63,6 @@ public class ModelOrderLogJSON
     [JsonIgnore]
     public ScoreCardDTO ScoreCardDeserialized => JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJSON);
 }
-
+*/
 
 

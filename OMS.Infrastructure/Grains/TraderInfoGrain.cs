@@ -5,9 +5,11 @@ using OMS.Core.Models;
 using OMS.Infrastructure.Data;
 
 using OMS.SharedKernel.DTO;
-using OMS.SharedKernel.Grains;
+//using OMS.SharedKernel.Grains;
 
 namespace OMS.Infrastructure;
+
+/*
 
 public class TraderInfoGrain : Grain, ITraderInfoGrain
 {
@@ -61,3 +63,5 @@ public class TraderInfoGrain : Grain, ITraderInfoGrain
        return sc;
     }
 }
+
+*/

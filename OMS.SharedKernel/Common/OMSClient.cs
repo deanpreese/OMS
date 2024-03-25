@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
-using OMS.Core.Models;
+//using OMS.Core.Models;
 
 using OMS.SharedKernel.DTO;
 
@@ -127,6 +127,7 @@ public static class OMSClient
     }
 
 
+/*
 
     // -------------------------------------------------------------
     public static async Task<List<UserProfile>>  GetTraders(int numberOfTraders, string server_url = "http://localhost:8786")
@@ -156,7 +157,7 @@ public static class OMSClient
         }
        return return_list;
     }
-
+*/
 
 
     public static async Task<int> SendToMLForPrediction(string csvData, string server_url = "http://localhost:8786")

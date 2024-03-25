@@ -4,6 +4,7 @@ using Orleans;
 
 namespace OMS.SharedKernel.Grains;
 
+/*
 [Alias("IAdminGrain")]
 public interface IAdminGrain : IGrainWithStringKey
 {
@@ -13,3 +14,4 @@ public interface IAdminGrain : IGrainWithStringKey
     Task<int> AddScoreCardForTrader(NewTraderDTO newTrader);
 
 }
+*/
