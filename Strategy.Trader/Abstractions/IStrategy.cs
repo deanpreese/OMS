@@ -1,10 +1,7 @@
-﻿
-
-using OMS.SharedKernel.Common;
+﻿using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
 namespace Strategy.Trader.Abstractions;
-
 
 public interface IStrategy
 {

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 using OMS.SharedKernel.DTO;
 
-namespace OMS.Core.WebAPIClient;
+namespace OMS.Application.WebAPIClient;
 
 public static class OMSClient
 {

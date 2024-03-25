@@ -1,7 +1,7 @@
-﻿using OMS.Core.Models;
-using OMS.Core.Interfaces;
+﻿using OMS.Application.Models;
+using OMS.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using OMS.Core.Common;
+using OMS.Application.Common;
 using Orleans.Streams;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
@@ -16,7 +16,7 @@ using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Services;
 
 using OMS.Infrastructure.Interfaces;
-using OMS.Core;
+using OMS.Application;
 
 namespace OMS.Infrastructure.Queue;
 

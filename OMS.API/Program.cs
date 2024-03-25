@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using OMS.Core.Interfaces;
+using OMS.Application.Interfaces;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Interfaces;
 using OMS.Infrastructure.Queue;

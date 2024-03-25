@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using OMS.Core.Common;
+using OMS.Application.Common;
 
 using OMS.SharedKernel.Common;
 
-namespace OMS.Core.Models;
+namespace OMS.Application.Models;
 
 [GenerateSerializer]
 [Alias("ClosedTrade")]

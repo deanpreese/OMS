@@ -1,7 +1,7 @@
-﻿using OMS.Core.Models;
-using OMS.Core.Interfaces;
+﻿using OMS.Application.Models;
+using OMS.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using OMS.Core.Common;
+using OMS.Application.Common;
 using Orleans.Streams;
 
 using Microsoft.Extensions.Hosting;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 using OMS.Infrastructure.Data;
 using System.Security.Cryptography.X509Certificates;
-using OMS.Core;
+using OMS.Application;
 using OMS.Infrastructure.Services;
 
 

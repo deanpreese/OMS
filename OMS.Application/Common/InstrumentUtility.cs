@@ -5,7 +5,7 @@ using System.Text;
 
 using OMS.SharedKernel.Common;
 
-namespace OMS.Core.Common;
+namespace OMS.Application.Common;
 
 // ***************************************************
 public static class InstrumentUtility

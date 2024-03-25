@@ -1,6 +1,6 @@
-﻿using OMS.Core.Common;
-using OMS.Core.Models;
-using OMS.Core.Interfaces;
+﻿using OMS.Application.Common;
+using OMS.Application.Models;
+using OMS.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 using OMS.SharedKernel.Common;

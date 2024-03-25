@@ -1,9 +1,9 @@
 ﻿using System.Reflection.Metadata.Ecma335;
-using OMS.Core.Models;
+using OMS.Application.Models;
 
 using OMS.SharedKernel.DTO;
 
-namespace OMS.Core.Common;
+namespace OMS.Application.Common;
 
 public class DTOMapping
 {

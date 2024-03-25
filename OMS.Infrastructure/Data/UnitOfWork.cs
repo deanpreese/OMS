@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;   
-using OMS.Core.Interfaces;
+using OMS.Application.Interfaces;
 
 namespace OMS.Infrastructure.Data;
 public class UnitOfWork : IUnitOfWork

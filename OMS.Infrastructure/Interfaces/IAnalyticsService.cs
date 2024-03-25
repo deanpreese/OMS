@@ -1,4 +1,4 @@
-﻿using OMS.Core.Models;
+﻿using OMS.Application.Models;
 using OMS.SharedKernel.DTO;
 
 namespace OMS.Infrastructure.Interfaces;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using OMS.SharedKernel.Common;
 
-namespace OMS.Core.Models;
+namespace OMS.Application.Models;
 
 [GenerateSerializer]
 [Alias("ModelOrderLog")]

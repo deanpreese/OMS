@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OMS.Core.Interfaces;
-using OMS.Core.Models;
+using OMS.Application.Interfaces;
+using OMS.Application.Models;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using OMS.Infrastructure.Data;

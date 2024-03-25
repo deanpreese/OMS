@@ -1,7 +1,7 @@
-﻿using OMS.Core.Models;
-using OMS.Core.Common;
+﻿using OMS.Application.Models;
+using OMS.Application.Common;
 
-namespace OMS.Core.Interfaces;
+namespace OMS.Application.Interfaces;
 
 public interface ILiveOrderRepository
 {

@@ -1,8 +1,8 @@
-﻿using OMS.Core.Models;
+﻿using OMS.Application.Models;
 using OMS.SharedKernel.DTO;
 //using OMS.SharedKernel.Grains;
-using OMS.Core.Interfaces;
-using OMS.Core.Common;
+using OMS.Application.Interfaces;
+using OMS.Application.Common;
 
 
 namespace OMS.Infrastructure.Grains;

@@ -2,7 +2,7 @@
 using OMS.SharedKernel.DTO;
 //using OMS.SharedKernel.Grains;
 
-using OMS.Core.Interfaces;
+using OMS.Application.Interfaces;
 using OMS.Infrastructure.Queue;
 
 namespace OMS.Infrastructure.Grains;

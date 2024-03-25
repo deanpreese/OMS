@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OMS.Core.Interfaces;
+using OMS.Application.Interfaces;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
-using OMS.Core.Models;
+using OMS.Application.Models;
 using System.Security.Cryptography;
 using OMS.Infrastructure.Interfaces;
 

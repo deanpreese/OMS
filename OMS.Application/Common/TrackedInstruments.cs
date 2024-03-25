@@ -1,5 +1,5 @@
 ﻿
-namespace OMS.Core.Common;
+namespace OMS.Application.Common;
 
 public class TrackedInstruments
 {

@@ -1,7 +1,7 @@
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using OMS.Core.Models;
+using OMS.Application.Models;
 
 namespace OMS.Infrastructure.Data;
 

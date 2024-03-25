@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
-using OMS.Core.Models;
-using OMS.Core.Interfaces;
-using OMS.Core.Common;
+using OMS.Application.Models;
+using OMS.Application.Interfaces;
+using OMS.Application.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update;
 using OMS.Infrastructure.Data;

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OMS.Core.Interfaces;
+using OMS.Application.Interfaces;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Services.Common;
 using OMS.Infrastructure.Services;

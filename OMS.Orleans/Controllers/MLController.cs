@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using OMS.Core.Models;
+using OMS.Application.Models;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Queue;
 using OMS.Infrastructure.Services;

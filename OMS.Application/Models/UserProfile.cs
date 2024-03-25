@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
-namespace OMS.Core.Models;
+namespace OMS.Application.Models;
 
 [GenerateSerializer]
 [Alias("UserProfile")]

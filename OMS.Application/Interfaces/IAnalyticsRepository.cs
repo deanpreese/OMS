@@ -1,6 +1,6 @@
-﻿using OMS.Core.Models;
+﻿using OMS.Application.Models;
 
-namespace OMS.Core.Interfaces;
+namespace OMS.Application.Interfaces;
 
 public interface IAnalyticsRepository
 {

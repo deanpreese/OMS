@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OMS.Core.Common;
+namespace OMS.Application.Common;
 
 public class InstrumentData
 {

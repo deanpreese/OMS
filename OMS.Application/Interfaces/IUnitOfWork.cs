@@ -1,4 +1,4 @@
-﻿namespace OMS.Core.Interfaces;
+﻿namespace OMS.Application.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {

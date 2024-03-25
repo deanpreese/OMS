@@ -1,7 +1,7 @@
-﻿using OMS.Core.Models;
+﻿using OMS.Application.Models;
 using OMS.SharedKernel.DTO;
 
-namespace OMS.Core;
+namespace OMS.Application;
 
 public class LogDataDTO
 {

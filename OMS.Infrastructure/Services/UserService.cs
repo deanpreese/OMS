@@ -1,6 +1,6 @@
-﻿using OMS.Core.Models;
+﻿using OMS.Application.Models;
 using Microsoft.Extensions.Logging;
-using OMS.Core.Interfaces;
+using OMS.Application.Interfaces;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Queue;
 using OMS.SharedKernel.Common;

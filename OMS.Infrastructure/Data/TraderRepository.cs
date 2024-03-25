@@ -1,6 +1,6 @@
-﻿using OMS.Core.Interfaces;
-using OMS.Core.Models;
-using OMS.Core.Common;
+﻿using OMS.Application.Interfaces;
+using OMS.Application.Models;
+using OMS.Application.Common;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;

@@ -1,4 +1,4 @@
-﻿using OMS.Core.Common;
+﻿using OMS.Application.Common;
 
 using Orleans.Configuration;
 using Orleans.Hosting;

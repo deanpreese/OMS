@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using OMS.Core.Common;
+using OMS.Application.Common;
 
 using OMS.SharedKernel.Common;
 
-namespace OMS.Core.Models;
+namespace OMS.Application.Models;
 
 [GenerateSerializer]
 [Alias("LiveOrder")]

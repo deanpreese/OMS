@@ -1,6 +1,6 @@
 ﻿using System.Threading.Channels;
-using OMS.Core;
-using OMS.Core.Models;
+using OMS.Application;
+using OMS.Application.Models;
 
 namespace OMS.Infrastructure.Queue;
 

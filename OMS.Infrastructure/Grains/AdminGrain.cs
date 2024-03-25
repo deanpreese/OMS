@@ -1,5 +1,5 @@
-﻿using OMS.Core.Models;
-using OMS.Core.Interfaces;
+﻿using OMS.Application.Models;
+using OMS.Application.Interfaces;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 //using OMS.SharedKernel.Grains;

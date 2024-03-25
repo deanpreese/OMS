@@ -1,6 +1,6 @@
 using System.Xml.Serialization;
-using OMS.Core.Common;
-using OMS.Core.Models;
+using OMS.Application.Common;
+using OMS.Application.Models;
 
 using OMS.SharedKernel.Common;
 
