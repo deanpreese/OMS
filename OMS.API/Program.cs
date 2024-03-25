@@ -27,6 +27,7 @@ builder.Services.AddDbContext<OrderManagementDbContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApiDocument();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ILiveOrderRepository, LiveOrderRepository>();
@@ -49,32 +50,8 @@ builder.Services.Configure<JsonOptions>( options =>  options.SerializerOptions.C
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseOpenApi();
+app.MapMLOrdersEndpoints();
 
-
-// Example endpoints
-app.MapPost("api/ml/process-order", async (NewOrderDTO order, NewOrderChannelService newOrderChannelService) =>
-{
-    int om_id = 0;
-    try
-    {
-        await newOrderChannelService.WriteAsync(order);
-    }
-    catch (Exception ex)
-    {
-        app.Logger.LogInformation(ex.Message); 
-    }
-    return Results.Ok(om_id);
-})
-.WithName("ProcessOrder")
-.WithOpenApi();
-
-
-app.MapPost("api/ml/verify-model-trader", async (NewTraderDTO newTrader, IUserService userService) =>
-{
-    int oid = await userService.VerifyAndAddByDisplayName(newTrader);
-    return Results.Ok(oid);
-})
-.WithName("VerifyModelTrader")
-.WithOpenApi();
 
 app.Run();
