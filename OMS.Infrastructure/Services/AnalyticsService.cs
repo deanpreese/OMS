@@ -9,6 +9,7 @@ using OMS.Infrastructure.Interfaces;
 using OMS.SharedKernel.DTO;
 using System.Text.Json;
 using OMS.Application.Common;
+using System.Text.Json.Serialization;
 
 namespace OMS.Infrastructure.Services;
 
@@ -77,15 +78,15 @@ public class AnalyticsService : IAnalyticsService
     }
 
 
-    public async Task<int> LogModelOrderData(LiveOrder liveOrder, NewOrderDTO orderDTO)
+    public async Task<int> LogModelOrderData(LiveOrder liveOrder, NewOrderDTO orderDTO, ClosedTradeDTO closedTradeDTO)
     {
 
         ScoreCard sc = await _unitOfWork.AnalyticsRepository.GetTraderScoreCard(liveOrder.UserID, liveOrder.GroupID);
         var options = new JsonSerializerOptions {
-            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals
+            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
+            //Converters ={ new JsonStringEnumConverter()},
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
-
-
 
         ModelOrderLog modelOrderLog = new ModelOrderLog
         {
@@ -97,7 +98,8 @@ public class AnalyticsService : IAnalyticsService
             OrderAction = liveOrder.OrderAction,
             LiveOrderJSON = JsonSerializer.Serialize(liveOrder, options),
             ModelFeatureData = orderDTO.ModelFeatureData,
-            ScoreCardJSON = JsonSerializer.Serialize(sc, options)
+            ScoreCardJSON = JsonSerializer.Serialize(sc, options),
+            ClosedOrderDTOJSON = JsonSerializer.Serialize(closedTradeDTO, options)
 
         };
 

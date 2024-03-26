@@ -45,7 +45,6 @@ public class ClosedOrderRepository : IClosedOrderRepository
         }
 
         IEnumerable<ClosedTrade> trades = new List<ClosedTrade>();
-
         var sql = $"SELECT * FROM \"ClosedTrades\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} ORDER BY \"CloseOrderTime\" DESC LIMIT {ordToTake}";
 
         //trades = _context.ClosedTrades

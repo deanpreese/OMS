@@ -18,7 +18,6 @@ public class IncomingOrderQueue
     {
         flowBuffer = new BufferBlock<ModelOrderLogDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
 
-        // Create a bounded channel with a capacity limit to prevent out-of-memory issues in case of high load
         _channel = Channel.CreateBounded<ModelOrderLogDTO>(new BoundedChannelOptions(10000)
         {
             FullMode = BoundedChannelFullMode.Wait,
@@ -30,7 +29,7 @@ public class IncomingOrderQueue
         Task.Run(async () => await OrderCapture());
         Task.Run(async () => await OrderBroadcast());
 
-        // Distribute will is a straight through process
+        // Distribute is a straight through process no extra buffer
         //Task.Run(async () => await Distribute());
 
     }
@@ -51,12 +50,6 @@ public class IncomingOrderQueue
     {
         await _channel.Writer.WriteAsync(orderInfo, cancellationToken);
     }
-
-    public IAsyncEnumerable<ModelOrderLogDTO> ReadAllAsync(CancellationToken cancellationToken = default)
-    {
-        return _channel.Reader.ReadAllAsync(cancellationToken);
-    }
-
 
     private async Task Distribute()
     {
@@ -94,25 +87,14 @@ public class IncomingOrderQueue
     {
         while (await flowBuffer.OutputAvailableAsync()) 
         {
-            //await Task.Delay(5);       
             ModelOrderLogDTO newLiveOrder = flowBuffer.Receive();
-            List<Channel<ModelOrderLogDTO>> subscribersSnapshot;
+            //Console.WriteLine(newLiveOrder.UserID + " " + newLiveOrder.LiveOrderIDReference+ " " + newLiveOrder.OrderAction + " " + newLiveOrder.OrderType);
 
-            Console.WriteLine(newLiveOrder.UserID + " " + newLiveOrder.LiveOrderIDReference+ " " + newLiveOrder.OrderAction + " " + newLiveOrder.OrderType);
-
-            /*
-            lock (_subscribers)
+            foreach (Channel<ModelOrderLogDTO> subscriber in _subscribers)
             {
-                subscribersSnapshot = new List<Channel<LiveOrderDTO>>(_subscribers);
-            }
-            
-            foreach (Channel<LiveOrderDTO> subscriber in subscribersSnapshot)
-            {
-                LiveOrderDTO order = newLiveOrder;
+                ModelOrderLogDTO order = newLiveOrder;
                 await subscriber.Writer.WriteAsync(order);
-                //await Task.Delay(10);    
             }
-            */
         }
     }
 

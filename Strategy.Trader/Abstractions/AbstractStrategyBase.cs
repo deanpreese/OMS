@@ -19,18 +19,16 @@ public abstract class AbstractStrategyBase
 
     public List<IStrategyFilter> _filters = new List<IStrategyFilter>();
 
-    public abstract Task<int> EvaluateFilters(string trader_key, string strategy_key, 
-        ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain);
+    public abstract Task<int> EvaluateFilters(ScoreCardDTO scoreCard);
    
     public abstract Task ProcessOrderForStrategy(string strategy_key, NewOrderDTO order);
 
-    public abstract Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order);
+    public abstract Task<int> OnNewData(ModelOrderLogDTO _orig_live_order);
 
     public BufferBlock<string> flowBuffer;
    
 
-    public async Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order,
-        ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
+    public async Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order)
     {
         //await AddToLogBuffer("  ----  ");
         //await AddToLogBuffer("New Order2222: " + _strategy_key + "  " + traderGrain.GetGrainId() + "  " + _orig_live_order.OrderAction + "  " + _orig_live_order.OrderType);
@@ -59,8 +57,7 @@ public abstract class AbstractStrategyBase
         return _mapped_new_order;
     }
 
-    public async Task<LiveOrderDTO> GenerateOrderAction(string strategy_key, LiveOrderDTO order, 
-        ITraderInfoGrain _trader_grain, IStrategyGrain _strategy_grain)
+    public async Task<LiveOrderDTO> GenerateOrderAction()
     {
         string _trader_key = order.UserID + "_" + order.GroupID;
         //await AddToLogBuffer("New Order: " + _strategy_key + "  " + _trader_grain.GetGrainId() + "  " + order.OrderAction + "  " + order.OrderType);
@@ -153,7 +150,7 @@ public abstract class AbstractStrategyBase
         return order;
     }
 
-    public async Task<bool> OkToOpenNewPosition(IStrategyGrain strategyGrain, LiveOrderDTO order)
+    public async Task<bool> OkToOpenNewPosition()
     {   
         bool newPosition = true;
         

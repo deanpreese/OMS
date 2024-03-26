@@ -12,7 +12,7 @@ using OMS.Infrastructure.Data;
 namespace OMS.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderManagementDbContext))]
-    [Migration("20240325004744_InitialCreate")]
+    [Migration("20240326054123_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace OMS.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("OMS.Core.Models.ActivityLog", b =>
+            modelBuilder.Entity("OMS.Application.Models.ActivityLog", b =>
                 {
                     b.Property<int>("ActivityID")
                         .ValueGeneratedOnAdd()
@@ -53,7 +53,7 @@ namespace OMS.Infrastructure.Migrations
                     b.ToTable("ActivityLogs");
                 });
 
-            modelBuilder.Entity("OMS.Core.Models.ClosedTrade", b =>
+            modelBuilder.Entity("OMS.Application.Models.ClosedTrade", b =>
                 {
                     b.Property<int>("StorerID")
                         .ValueGeneratedOnAdd()
@@ -155,7 +155,7 @@ namespace OMS.Infrastructure.Migrations
                     b.ToTable("ClosedTrades");
                 });
 
-            modelBuilder.Entity("OMS.Core.Models.LiveOrder", b =>
+            modelBuilder.Entity("OMS.Application.Models.LiveOrder", b =>
                 {
                     b.Property<int>("LiveOrderID")
                         .ValueGeneratedOnAdd()
@@ -219,13 +219,16 @@ namespace OMS.Infrastructure.Migrations
                     b.ToTable("LiveOrder");
                 });
 
-            modelBuilder.Entity("OMS.Core.Models.ModelOrderLog", b =>
+            modelBuilder.Entity("OMS.Application.Models.ModelOrderLog", b =>
                 {
                     b.Property<int>("ModelOrderLogID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ModelOrderLogID"));
+
+                    b.Property<string>("ClosedOrderDTOJSON")
+                        .HasColumnType("text");
 
                     b.Property<int>("GroupID")
                         .HasColumnType("integer");
@@ -256,7 +259,7 @@ namespace OMS.Infrastructure.Migrations
                     b.ToTable("ModelOrderLog");
                 });
 
-            modelBuilder.Entity("OMS.Core.Models.OrderFlow", b =>
+            modelBuilder.Entity("OMS.Application.Models.OrderFlow", b =>
                 {
                     b.Property<int>("OrderFlowId")
                         .ValueGeneratedOnAdd()
@@ -314,7 +317,7 @@ namespace OMS.Infrastructure.Migrations
                     b.ToTable("OrderFlow");
                 });
 
-            modelBuilder.Entity("OMS.Core.Models.ScoreCard", b =>
+            modelBuilder.Entity("OMS.Application.Models.ScoreCard", b =>
                 {
                     b.Property<int>("ScoreCardID")
                         .ValueGeneratedOnAdd()
@@ -434,7 +437,7 @@ namespace OMS.Infrastructure.Migrations
                     b.ToTable("ScoreCard");
                 });
 
-            modelBuilder.Entity("OMS.Core.Models.UserProfile", b =>
+            modelBuilder.Entity("OMS.Application.Models.UserProfile", b =>
                 {
                     b.Property<int>("UserID")
                         .ValueGeneratedOnAdd()

@@ -6,12 +6,15 @@ using System.Threading.Tasks.Dataflow;
 using System.Threading.Channels;
 using System.Text.Json;
 using System.Text;
+
 using Strategy.Server.Services;
 using Strategy.Server.Models;
 using Strategy.Server.Utility;
-using Strategy.Trader.Strategy;
-using Strategy.Trader.Abstractions;
-using Strategy.Trader;
+
+//using Strategy.Trader.Strategy;
+//using Strategy.Trader.Abstractions;
+//using Strategy.Trader;
+
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
@@ -23,7 +26,7 @@ public class FollowService : BackgroundService
     private ChannelReader<ModelOrderLogDTO> _reader;
     private IncomingOrderQueue _strategyOrderQueue;
     ILogger<FollowService> _logger;
-    private IStrategy loadedStrategy ;
+    //private IStrategy loadedStrategy ;
     IClusterClient _clusterClient;
     StrategyAccount _strategyAccount;
     
@@ -37,7 +40,7 @@ public class FollowService : BackgroundService
         _clusterClient = client;
 
         _strategyAccount = new StrategyAccount();
-        loadedStrategy = new NStrategy();
+        //loadedStrategy = new NStrategy();
 
         flowBuffer = new BufferBlock<ModelOrderLogDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
         Task.Run(async () => await Distribute());
@@ -49,7 +52,7 @@ public class FollowService : BackgroundService
         StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _clusterClient);
         _strategyAccount= configLoader.GetStrategyData().Result;
 
-        loadedStrategy = new BaseFollowStrategy(_clusterClient, _strategyAccount);
+        //loadedStrategy = new BaseFollowStrategy(_clusterClient, _strategyAccount);
 
         return base.StartAsync(cancellationToken);
     }
@@ -88,7 +91,7 @@ public class FollowService : BackgroundService
 
 
             ModelOrderLogDTO newLiveOrder = flowBuffer.Receive();
-            await loadedStrategy.OnNewOrder(newLiveOrder);
+            //await loadedStrategy.OnNewOrder(newLiveOrder);
         }
     }
 

@@ -1,6 +1,6 @@
 ﻿
 using Strategy.Trader.Abstractions;
-using Strategy.Trader.Models;
+
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Grains;
@@ -38,6 +38,10 @@ public class NStrategy : AbstractStrategyBase, IStrategy
         return Task.FromResult(newOrder);
     }
 
+    public Task<NewOrderDTO> OnNewOrder(ModelOrderLogDTO _orig_live_order)
+    {
+        throw new NotImplementedException();
+    }
 
     public override Task ProcessOrderForStrategy(string strategy_key, NewOrderDTO order)
     {

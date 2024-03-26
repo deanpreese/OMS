@@ -15,4 +15,5 @@ public interface IDataService
 {
     Task<List<LiveOrderDTO>> GetLiveOrdersByTrader(int user, int group);
     Task<ClosedTradeDTO> GetLastClosedTradeByOpenPlatformID(int user, int group, int platform_id);
+    Task<ClosedTradeDTO> GetLastClosedTradeForTrader(int user, int group);
 }

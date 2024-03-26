@@ -1,46 +1,35 @@
-﻿
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System.Threading.Channels;
-using System.Text.Json;
-using System.Text;
+﻿using System.Threading.Channels;
 using System.Threading.Tasks.Dataflow;
-
-using Strategy.Server.Models;
-using Strategy.Server.Utility;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using OMS.SharedKernel.DTO;
 using Strategy.Server.Services;
 
-
-//using Strategy.Trader.Strategy;
-//using Strategy.Trader.Abstractions;
 //using Strategy.Trader;
-using OMS.SharedKernel.Common;
-using OMS.SharedKernel.DTO;
+//using Strategy.Trader.Abstractions;
 
-namespace Strategy.Server.StrategyServices;
+namespace Strategy.Server;
 
-
-public class CounterService : BackgroundService
+public class StrategyServiceTest: BackgroundService
 {  
     private ChannelReader<ModelOrderLogDTO> _reader;
     private IncomingOrderQueue _strategyOrderQueue;
-    ILogger<CounterService> _logger;
+    ILogger<StrategyServiceTest> _logger;
     //private IStrategy loadedStrategy ;
-    IClusterClient _clusterClient;
     StrategyAccount _strategyAccount;
-    
     BufferBlock<ModelOrderLogDTO> flowBuffer;
+
+    int _itemCount ;
+
     
-    public CounterService(ILogger<CounterService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
+    public StrategyServiceTest(ILogger<StrategyServiceTest> logger, IncomingOrderQueue strategyOrderQueue) 
     {
         _strategyOrderQueue = strategyOrderQueue;
         _reader = _strategyOrderQueue.Subscribe();
         _logger = logger;
-        _clusterClient = client;
-
+        _itemCount = 0;
         _strategyAccount = new StrategyAccount();
-       // loadedStrategy = new NStrategy();
+        //loadedStrategy = new NStrategy();
 
         flowBuffer = new BufferBlock<ModelOrderLogDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
         Task.Run(async () => await Distribute());
@@ -48,11 +37,11 @@ public class CounterService : BackgroundService
     
     public override Task StartAsync(CancellationToken cancellationToken)
     {
-        string strategy_to_load = "NG0.json";
-        StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _clusterClient);
-        _strategyAccount= configLoader.GetStrategyData().Result;
-
-        //loadedStrategy = new BaseCounterStrategy(_clusterClient, _strategyAccount);
+        _strategyAccount = new StrategyAccount();
+        _strategyAccount.strategy_name = "NG2";
+        _strategyAccount.strategy_traderId = new Random().Next(1000, 2000);
+        _strategyAccount.group = 1;
+        _strategyAccount.strategy_class = "Strategy.Trader.Strategy.BaseFollowStrategy";
 
         return base.StartAsync(cancellationToken);
     }
@@ -68,6 +57,7 @@ public class CounterService : BackgroundService
                 try
                 {
                     await flowBuffer.SendAsync(newLiveOrder); 
+                    //await loadedStrategy.OnNewOrder(newLiveOrder);
                 }
                 catch (Exception ex)
                 {
@@ -84,13 +74,17 @@ public class CounterService : BackgroundService
     {
          while (await flowBuffer.OutputAvailableAsync()) 
         {
-            //int delay = flowBuffer.Count > 100 ? 25 : flowBuffer.Count;
-            //await Task.Delay(delay);         
-            if(flowBuffer.Count > 10)
+
+            if(flowBuffer.Count > 1)
                 Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);
-                
+
+            _itemCount++;
+
             ModelOrderLogDTO newLiveOrder = flowBuffer.Receive();
             //await loadedStrategy.OnNewOrder(newLiveOrder);
+
+            Console.WriteLine("1 --- "  +  _strategyAccount.strategy_traderId + " " + _itemCount );
+            
         }
     }
 

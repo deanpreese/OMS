@@ -112,7 +112,8 @@ namespace OMS.Infrastructure.Migrations
                     OrderAction = table.Column<int>(type: "integer", nullable: false),
                     LiveOrderJSON = table.Column<string>(type: "text", nullable: true),
                     ModelFeatureData = table.Column<string>(type: "text", nullable: true),
-                    ScoreCardJSON = table.Column<string>(type: "text", nullable: true)
+                    ScoreCardJSON = table.Column<string>(type: "text", nullable: true),
+                    ClosedOrderDTOJSON = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

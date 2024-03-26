@@ -37,7 +37,6 @@ public class NewOrderProcessorService : BackgroundService
             IServiceScopeFactory scopeFactory,
                 IServiceProvider serviceProvider,
                 IPlatformOrderIDGen platformOrderIDGen
-                //IClusterClient clusterClient
               )
     {
         _orderChannelService = newOrderChannelService;
@@ -74,9 +73,9 @@ public class NewOrderProcessorService : BackgroundService
             ClosedOrderChannelService closedOrderChannel = scope.ServiceProvider.GetRequiredService<ClosedOrderChannelService>();
             TradingService _trader_service = new TradingService(unitOfWork, logger, _platformOrderIDGen);
 
-            //ILogger<AnalyticsService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
-            //AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, aLogger);
-            
+            ILogger<DataService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<DataService>>();
+            DataService _dataService = new DataService(unitOfWork);
+                        
             await Task.Run(async () =>
             {
                 LiveOrder liveOrder = await _trader_service.ProcessNewOrderAsync(newOrderDTO);
@@ -92,13 +91,17 @@ public class NewOrderProcessorService : BackgroundService
                 {
                     if (newOrderDTO.GroupID < 50)
                     {
+                        ClosedTradeDTO closedTrade = new ClosedTradeDTO();
+
                         if (liveOrder.OrderType  == OrderType.CLOSE )  
                         {
                             await _analytics_service.UpdateTraderScoreCard(liveOrder);
                             Console.WriteLine("New Analytics For Trader " + liveOrder.UserID  ); 
+
+                            closedTrade =await _dataService.GetLastClosedTradeForTrader(liveOrder.UserID, liveOrder.GroupID);
                         }
 
-                        await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO);  
+                        await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO,closedTrade);  
 
                         /*
                         var client = _clusterClient.ServiceProvider.GetRequiredService<IClusterClient>();

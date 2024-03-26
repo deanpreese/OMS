@@ -41,6 +41,20 @@ public class DataService : IDataService
         return closedTradeDTO;
     }
 
+    public async Task<ClosedTradeDTO> GetLastClosedTradeForTrader(int user, int group)
+    {
+        ClosedTradeDTO closedTradeDTO = null;
+
+        List<ClosedTrade> closedTrade = await _unitOfWork.ClosedOrderRepository.Get_XXX_ClosedOrdersByTrader(user, group, 1);
+
+        if( closedTrade.Count() > 0 )
+        {
+            closedTradeDTO = await DTOMapping.MapClosedOrderToClosedOrderDTO(closedTrade.FirstOrDefault());
+        }
+        
+        return closedTradeDTO;
+    }
+
     public async Task<List<LiveOrderDTO>> GetLiveOrdersByTrader(int user, int group)
     {
         List<LiveOrder> orders = await _unitOfWork.LiveOrderRepository.GetOrdersByTraderAsync(user, group);
@@ -51,4 +65,8 @@ public class DataService : IDataService
         }
         return ordersDTO;
     }
+
+
+
+
 }

@@ -73,7 +73,7 @@ public class ClosedOrderProcessorService : BackgroundService
                 UnitOfWork unitOfWork = new UnitOfWork(scopedContext);
                 ILogger<AnalyticsService> logger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
                 AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, logger);   
-                await _analytics_service.LogModelOrderData(logData.liveOrder, logData.newOrderDTO);  
+                await _analytics_service.LogModelOrderData(logData.liveOrder, logData.newOrderDTO, logData.closedTradeDTO);  
 
             }catch (Exception ex)
             {

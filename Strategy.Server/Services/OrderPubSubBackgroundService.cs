@@ -31,6 +31,7 @@ public class OrderPubSubBackgroundService : BackgroundService
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
+
         /*
         await openOrderStreamProvider.SubscribeAsync(
             async (newLiveOrder, token) =>

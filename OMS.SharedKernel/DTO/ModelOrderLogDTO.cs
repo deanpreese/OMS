@@ -5,6 +5,17 @@ namespace OMS.SharedKernel.DTO;
 
 public class ModelOrderLogDTO
 {
+    static JsonSerializerOptions options = new JsonSerializerOptions {
+            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
+            Converters ={
+                new JsonStringEnumConverter()
+            },
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IgnoreReadOnlyProperties = true
+        };
+
+
     public string _ct { get; set; }
     public int ModelOrderLogID { get; set; }
     public int UserID { get; set; }
@@ -14,51 +25,43 @@ public class ModelOrderLogDTO
     public int OrderAction { get; set; }
     
     // JSON strings representing complex objects
-    public string LiveOrderJSON { get; set; }
-    public string ModelFeatureData { get; set; }
-    public string ScoreCardJSON { get; set; }
+    //public string LiveOrderJSON { get; set; }
+    //public string ModelFeatureData { get; set; }
+    //public string ScoreCardJSON { get; set; }
+    //public string ClosedOrderDTOJSON    { get; set; }
     
-    // Properties to hold deserialized data
-    [JsonIgnore]
-    public LiveOrderDTO LiveOrderDeserialized => JsonSerializer.Deserialize<LiveOrderDTO>(LiveOrderJSON);
-    [JsonIgnore]
-    public Dictionary<string, double> ModelFeatureDataDeserialized => JsonSerializer.Deserialize<Dictionary<string, double>>(ModelFeatureData);
-    [JsonIgnore]
-    public ScoreCardDTO ScoreCardDeserialized => JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJSON);
-}
 
-/*
-public class ModelOrderLogJSON
-{
+    [JsonPropertyName("LiveOrderJSON")]
+    public string LiveOrderJson { get; set; }
+    [JsonIgnore]
+    public LiveOrderDTO LiveOrderDeserialized => JsonSerializer.Deserialize<LiveOrderDTO>(LiveOrderJson);
 
-    public string _ct { get; set; }
-    public int LiveOrderIDReference { get; set; }
-    public int ModelOrderLogID { get; set; }
-    public int OrderManagerID { get; set; }
-    public int UserID { get; set; }
-    public int GroupID { get; set; }
-    public string  DateCreated { get; set; }
-    public long PlatformOrderID { get; set; }
-    public long RelatedOrderID { get; set; }
-    public string Instrument { get; set; }
-    public double OrderPX { get; set; }
-    public OrderType OrderType { get; set; }
-    public OrderAction OrderAction { get; set; }
-    public int Quantity { get; set; }
-    public int Leverage { get; set; }
-    public int Opposite { get; set; }
-    public string  OrderTime { get; set; }
-    
-    // Assuming these are JSON strings that represent complex objects
-    public string ModelFeatureData { get; set; }
-    public string ScoreCardJSON { get; set; }
-    
-    // Deserialize nested JSON strings into the following properties
+    [JsonPropertyName("ModelFeatureData")]
+    public string ModelFeatureDataJson { get; set; }
     [JsonIgnore]
-    public Dictionary<string, double> ModelFeatureDataDeserialized => JsonSerializer.Deserialize<Dictionary<string, double>>(ModelFeatureData);
+    public Dictionary<string, double> ModelFeatureDataDeserialized => JsonSerializer.Deserialize<Dictionary<string, double>>(ModelFeatureDataJson);
+
+    [JsonPropertyName("ScoreCardJSON")]
+    public string ScoreCardJson { get; set; }
     [JsonIgnore]
-    public ScoreCardDTO ScoreCardDeserialized => JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJSON);
+    public ScoreCardDTO ScoreCardDeserialized => JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJson);
+
+    [JsonPropertyName("ClosedOrderDTOJSON")]
+    public string ClosedOrderJson { get; set; }
+    [JsonIgnore]
+    public ClosedTradeDTO ClosedTradeDeserialized => JsonSerializer.Deserialize<ClosedTradeDTO>(ClosedOrderJson);
+
+    /*
+    [JsonIgnore]
+    public LiveOrderDTO LiveOrderDeserialized => JsonSerializer.Deserialize<LiveOrderDTO>(LiveOrderJSON,options);
+    [JsonIgnore]
+    public Dictionary<string, double> ModelFeatureDataDeserialized => JsonSerializer.Deserialize<Dictionary<string, double>>(ModelFeatureData,options);
+    [JsonIgnore]
+    public ScoreCardDTO ScoreCardDeserialized => JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJSON,options);
+    [JsonIgnore]
+    public ClosedTradeDTO ClosedTradeDeserialized => JsonSerializer.Deserialize<ClosedTradeDTO>(ClosedOrderDTOJSON,options);
+   */
+
 }
-*/
 
 

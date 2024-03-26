@@ -13,6 +13,8 @@ using PgOutput2Json;
 using OMS.SharedKernel.DTO;
 using Strategy.Server.Services;
 using Strategy.Server.Models;
+using OMS.SharedKernel.Common;
+using System.Text.Json.Serialization;
 
 public class WatcherService : BackgroundService
 {
@@ -30,19 +32,29 @@ public class WatcherService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var options = new JsonSerializerOptions{PropertyNameCaseInsensitive = true};
+    
+        var options = new JsonSerializerOptions {
+            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
+            Converters ={
+                new JsonStringEnumConverter()
+            },
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IgnoreReadOnlyProperties = true
+        };
+
+
         string publication = "liveupdates";
 
         using var pgOutput2Json = PgOutput2JsonBuilder.Create()
-            .WithLoggerFactory(_loggerFactory)
+            //.WithLoggerFactory(_loggerFactory)
             .WithPgConnectionString("Host=localhost;Database=orders;Username=trading;Password=abc")
             .WithPgPublications(publication)
 	        .WithMessageHandler(async (json, table, key, partition) =>
             {
                 if( table == "public.ModelOrderLog")
                 {
+
                     ModelOrderLogDTO orderModelResult = JsonSerializer.Deserialize<ModelOrderLogDTO>(json, options);
-                    //Console.WriteLine($"ModelOrderLog {orderModelResult._ct}    UserID: {orderModelResult.UserID}  ModelOrderLogID: {orderModelResult.ModelOrderLogID} LiveOrderIDReference {orderModelResult.LiveOrderIDReference}  ScorecardID  {orderModelResult.ScoreCardDeserialized.ScoreCardID}  OrderType {orderModelResult.LiveOrderDeserialized.OrderType} ");
                     await _incomingOrderQueue.WriteAsync(orderModelResult);
                 }
 
