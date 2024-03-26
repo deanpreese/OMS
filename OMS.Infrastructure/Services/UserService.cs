@@ -47,29 +47,6 @@ public class UserService : IUserService
         return traderID;
     }
 
-    public async Task<int> AddNewTraderScoreCard(int traderID, int groupID)
-    {
-         traderID = await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(traderID, groupID);
-         _unitOfWork.Commit();
-        _logger.LogInformation($"Trader Scorecard added  {traderID} {groupID} ");
-
-        return traderID;
-
-    }
-
-    public async Task<int> AuthenticateTrader(UserInfoDTO userInfo)
-    {
-        int auth_code = 0;
-
-        if (userInfo.Password != null)
-        {
-            auth_code = await _unitOfWork.TraderRepository.AuthenticateTraderAsync(userInfo.UserID, userInfo.Password, userInfo.GroupID);
-            _unitOfWork.Commit();
-        }
-
-        return auth_code;
-    }
-
     public async Task<int> VerifyAndAddByDisplayName(NewTraderDTO newTrader)
     {
         int t_v = await _unitOfWork.TraderRepository.VerifyModelTrader(newTrader);

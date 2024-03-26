@@ -8,6 +8,7 @@ using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Interfaces;
 using OMS.SharedKernel.DTO;
 using System.Text.Json;
+using OMS.Application.Common;
 
 namespace OMS.Infrastructure.Services;
 
@@ -23,11 +24,26 @@ public class AnalyticsService : IAnalyticsService
         _logger = logger;
     }
 
-    public async Task<int> AddNewTraderScoreCard(int traderID, int groupID)
+
+    public async Task<ScoreCardDTO> GetTraderScoreCard(int traderID, int groupID)
     {
-        return await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(traderID, groupID);
+        ScoreCard scoreCard = await _unitOfWork.AnalyticsRepository.GetTraderScoreCard(traderID, groupID);
+
+        ScoreCardDTO sc_dto = new ScoreCardDTO();
+        if (scoreCard != null)
+        {
+            sc_dto = await DTOMapping.MapScorecardToScorecardDTO(scoreCard);
+        }
+        return sc_dto;
     }
 
+    public async Task<int> AddNewTraderScoreCard(int traderID, int groupID)
+    {
+         traderID = await _unitOfWork.AnalyticsRepository.AddNewTraderScorecard(traderID, groupID);
+         _unitOfWork.Commit();
+        _logger.LogInformation($"Trader Scorecard added  {traderID} {groupID} ");
+        return traderID;        
+    }
 
     public async Task<int> UpdateTraderScoreCard(int UserID, int GroupID)
     {

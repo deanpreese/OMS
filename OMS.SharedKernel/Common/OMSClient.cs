@@ -1,121 +1,27 @@
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
-//using OMS.Core.Models;
 
 using OMS.SharedKernel.DTO;
 
-namespace OMS.Application.WebAPIClient;
+namespace OMS.SharedKernel.WebAPIClient;
 
 public static class OMSClient
 {
-
-    // -------------------------------------------------------------
-    public static async Task<int> AddTraderAsync(NewTraderDTO newTrader, string server_url = "http://localhost:8786")
-    {
-            using (HttpClient client = new HttpClient())
-            {
-                var jsonContent = new StringContent(JsonConvert.SerializeObject(newTrader), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(server_url + "/api/mt/add-new-trader", jsonContent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Add Result: {result}");
-                    return int.Parse(result); 
-                }
-                else
-                {
-                    Console.WriteLine($"Add Failed. Status Code: {response.StatusCode}");
-                    return 0;
-                }
-            }
-    }
-
-
-    public static async Task<int> VerifyModelTrader(NewTraderDTO newTrader, string server_url = "http://localhost:8786")
-    {
-            using (HttpClient client = new HttpClient())
-            {
-                var jsonContent = new StringContent(JsonConvert.SerializeObject(newTrader), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(server_url + "/api/ml/verify-model-trader", jsonContent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Auth Result: {result}");
-                    return int.Parse(result); 
-                }
-                else
-                {
-                    Console.WriteLine($"Auth Failed. Status Code: {response.StatusCode}");
-                    return 0;
-                }
-                
-            }
-    }
-
-
-    // -------------------------------------------------------------
-    public static async Task<int> AuthenticateTraderAsync(UserInfoDTO newTrader, string server_url = "http://localhost:8786")
-    {
-            using (HttpClient client = new HttpClient())
-            {
-                var jsonContent = new StringContent(JsonConvert.SerializeObject(newTrader), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(server_url + "/api/mt/authenticate", jsonContent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Auth Result: {result}");
-                    return int.Parse(result); 
-                }
-                else
-                {
-                    Console.WriteLine($"Auth Failed. Status Code: {response.StatusCode}");
-                    return 0;
-                }
-                
-            }
-    }
-
-
-    // -------------------------------------------------------------
-    public static async Task<int> SendOrderAsync(NewOrderDTO newOrder, string server_url = "http://localhost:8786")
+    // =============================================================
+    // ML API
+    // =============================================================
+    //endpoints.MapPost("api/mlorders/process-order", async (NewOrderDTO order, NewOrderChannelService newOrderChannelService) =>
+    public static async Task<int> ProcessMLOrderAsync(NewOrderDTO newOrder, string server_url = "http://localhost:8786")
     {
         using (HttpClient client = new HttpClient())
         {
             var jsonContent = new StringContent(JsonConvert.SerializeObject(newOrder), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(server_url + "/api/mt/process-order", jsonContent);
-
-            var result = await response.Content.ReadAsStringAsync();
-            int code = int.Parse(result);
-
-            return code;
-
-        }
-    }
-
-
-    // -------------------------------------------------------------
-    public static int SendMLOrderAsync(NewOrderDTO newOrder, string server_url = "http://localhost:8786")
-    {
-        using (HttpClient client = new HttpClient())
-        {
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(newOrder), Encoding.UTF8, "application/json");
-            var response = client.PostAsync(server_url + "/api/ml/process-order", jsonContent);
-
+            var response = client.PostAsync(server_url + "/api/mlorders/process-order", jsonContent);
 
             if (!response.IsCompletedSuccessfully)
             {
                 Console.WriteLine($"ProcessOrder ML Result: {response.Result}");
-                return 0; // Parse the result string to an integer before returning
+                return await Task.FromResult(0); // Parse the result string to an integer before returning
             }
             else
             {
@@ -125,69 +31,79 @@ public static class OMSClient
             }
         }
     }
-
-
-/*
-
-    // -------------------------------------------------------------
-    public static async Task<List<UserProfile>>  GetTraders(int numberOfTraders, string server_url = "http://localhost:8786")
+    //endpoints.MapPost("api/mlorders/verify-model-trader", async (NewTraderDTO newTrader, IUserService userService) =>
+    public static async Task<int> VerifyModelTrader(NewTraderDTO newTrader, string server_url = "http://localhost:8786")
     {
-        List<UserProfile> return_list = new List<UserProfile>();
+            using (HttpClient client = new HttpClient())
+            {
+                var jsonContent = new StringContent(JsonConvert.SerializeObject(newTrader), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(server_url + "/api/mlorders/verify-model-trader", jsonContent);
 
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Auth Result: {result}");
+                    return await Task.FromResult(0);
+                }
+                else
+                {
+                    Console.WriteLine($"Auth Failed. Status Code: {response.StatusCode}");
+                    return 0;
+                }
+                
+            }
+    }
+
+
+    // =============================================================
+    // Strategy API
+    // =============================================================
+
+     //endpoints.MapPost("api/strategyapi/add-new-strategy-trader", async (NewTraderDTO newTrader, IUserService userService) => 
+    public static async Task<int> AddStrategyTraderAsync(NewTraderDTO newTrader, string server_url = "http://localhost:8786")
+    {
+            using (HttpClient client = new HttpClient())
+            {
+                var jsonContent = new StringContent(JsonConvert.SerializeObject(newTrader), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(server_url + "/api/strategyapi/add-new-strategy-trader", jsonContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Add Result: {result}");
+                    return await Task.FromResult(0);
+                }
+                else
+                {
+                    Console.WriteLine($"Add Failed. Status Code: {response.StatusCode}");
+                    return 0;
+                }
+            }
+    }
+
+   
+    //endpoints.MapPost("api/strategyapi/auth-by-displayName", async (NewTraderDTO newTrader, IUserService userService) =>
+    public static async Task<int> StrategyAuthByDisplayName(NewTraderDTO newTrader, string server_url = "http://localhost:8786")
+    {
         using (HttpClient client = new HttpClient())
         {
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(numberOfTraders), Encoding.UTF8, "application/json");
-            var response = client.PostAsync(server_url + "/api/data/get-traders", jsonContent);
-            
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(newTrader), Encoding.UTF8, "application/json");
+            var response = client.PostAsync(server_url + "/api/strategyapi/auth-by-displayName", jsonContent);
+
 
             if (!response.IsCompletedSuccessfully)
             {
                 Console.WriteLine($"ProcessOrder ML Result: {response.Result}");
-                var result = await response.Result.Content.ReadAsStringAsync();
-                var deserializedResult = JsonConvert.DeserializeObject<List<UserProfile>>(result);
-                return_list = deserializedResult ?? new List<UserProfile>();
+                return await Task.FromResult(0);
             }
             else
             {
                 Console.WriteLine($"ProcessOrder ML Failed. Status Code: {response.Exception}");
-                var result = await response.Result.Content.ReadAsStringAsync();
-                return_list = new List<UserProfile>();
+                var result = response.Result.Content.ReadAsStringAsync().Result;
+                return Int32.Parse(result); // Add return statement
             }
-            
-        }
-       return return_list;
-    }
-*/
-
-
-    public static async Task<int> SendToMLForPrediction(string csvData, string server_url = "http://localhost:8786")
-    {
-
-        HttpContent content = new StringContent(csvData, Encoding.UTF8, "text/csv");
-
-        // Create an HttpClient instance
-        using (var httpClient = new HttpClient())
-        {
-            var response = await httpClient.PostAsync(server_url, content);
-
-            // Check the response
-            if (response.IsSuccessStatusCode)
-            {
-                string responseBody = await response.Content.ReadAsStringAsync();
-                //AnsiConsole.WriteLine(responseBody);
-            }
-            else
-            {
-                
-                Console.WriteLine("Failed to send data to ML. Status code: " + response.StatusCode);
-            }
-        }
-
-        return 1;   
-
+        }        
     }
 
-
-
-
+    
 }

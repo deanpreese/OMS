@@ -101,7 +101,7 @@ public class ClosedOrderProcessorService : BackgroundService
                         ILogger<AnalyticsService> logger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
                         AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, logger);   
                         await _analytics_service.UpdateTraderScoreCard(userID, groupID);
-                        Console.WriteLine("Stats UpdatedFor Strategy" + userID + " " + groupID);
+                        Console.WriteLine("Stats Updated For Strategy " + userID + " " + groupID);
 
                     }catch (Exception ex)
                     {
@@ -113,7 +113,7 @@ public class ClosedOrderProcessorService : BackgroundService
             orders.Clear();            
         }else
         {
-            Console.WriteLine("No New Scorecard Updates  " );
+            Console.WriteLine("No New Strategy Scorecard Updates  " );
         }
 
      await Task.CompletedTask; 

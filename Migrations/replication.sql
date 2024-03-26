@@ -2,9 +2,11 @@ select * from pg_publication;
 
 SELECT * FROM pg_replication_slots;
 
+/*
 CREATE PUBLICATION liveupdates
     FOR TABLE public."LiveOrder", public."ScoreCard", public."ClosedTrades", public."ModelOrderLog"
     WITH (publish = 'insert, update, delete, truncate', publish_via_partition_root = false);
+*/
 
 /*
 SELECT * FROM pg_create_logical_replication_slot('liveorders_slot', 'wal2json');

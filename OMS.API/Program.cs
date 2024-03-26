@@ -13,6 +13,7 @@ using OMS.Infrastructure.Queue;
 using OMS.Infrastructure.Services;
 using OMS.Infrastructure.Services.Common;
 using OMS.SharedKernel.DTO;
+using OMS.API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +53,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseOpenApi();
 app.MapMLOrdersEndpoints();
+app.MapStrategyOrdersEndpoints();
 
 
 app.Run();

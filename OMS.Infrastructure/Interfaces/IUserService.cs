@@ -7,6 +7,6 @@ namespace OMS.Infrastructure.Interfaces;
 public interface IUserService
 {
     Task<int> AddNewTrader(NewTraderDTO newTrader);
-    Task<int> AuthenticateTrader( UserInfoDTO userInfo);
     Task<int> VerifyAndAddByDisplayName( NewTraderDTO newTrader);
+    
 }

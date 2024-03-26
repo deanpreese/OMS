@@ -13,8 +13,6 @@ namespace OMS.Infrastructure.Interfaces;
 
 public interface IDataService
 {
-    Task<List<LiveOrder>> GetLiveOrdersByTrader(int user, int group);
-    Task<List<ClosedTrade>> GetClosedOrdersByTrader(int user, int group);
-    Task<List<UserInfoDTO>> GetActiveTraders(int group);
-    Task<List<LiveOrder>> GetAllLiveOrders(int group);
+    Task<List<LiveOrderDTO>> GetLiveOrdersByTrader(int user, int group);
+    Task<ClosedTradeDTO> GetLastClosedTradeByOpenPlatformID(int user, int group, int platform_id);
 }
