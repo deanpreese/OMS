@@ -8,7 +8,6 @@ using System.Text.Json;
 using System.Text;
 
 using Strategy.Server.Services;
-using Strategy.Server.Models;
 using Strategy.Server.Utility;
 
 //using Strategy.Trader.Strategy;
@@ -17,6 +16,8 @@ using Strategy.Server.Utility;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
+using Strategy.SharedKernel;
+using Strategy.Trader.Abstractions;
 
 
 namespace Strategy.Server.StrategyServices;
@@ -26,10 +27,10 @@ public class FollowService : BackgroundService
     private ChannelReader<ModelOrderLogDTO> _reader;
     private IncomingOrderQueue _strategyOrderQueue;
     ILogger<FollowService> _logger;
-    //private IStrategy loadedStrategy ;
-    IClusterClient _clusterClient;
-    StrategyAccount _strategyAccount;
-    
+    private IStrategy loadedStrategy ;
+
+    IStrategyConnection _strategyConnection;
+    StrategyAccount _strategyAccount;    
     BufferBlock<ModelOrderLogDTO> flowBuffer;
     
     public FollowService(ILogger<FollowService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
@@ -37,7 +38,6 @@ public class FollowService : BackgroundService
         _strategyOrderQueue = strategyOrderQueue;
         _reader = _strategyOrderQueue.Subscribe();
         _logger = logger;
-        _clusterClient = client;
 
         _strategyAccount = new StrategyAccount();
         //loadedStrategy = new NStrategy();
@@ -46,15 +46,17 @@ public class FollowService : BackgroundService
         Task.Run(async () => await Distribute());
     }
     
-    public override Task StartAsync(CancellationToken cancellationToken)
+    public override async Task StartAsync(CancellationToken cancellationToken)
     {
         string strategy_to_load = "NG2.json";
-        StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _clusterClient);
-        _strategyAccount= configLoader.GetStrategyData().Result;
+        StrategyConfig configLoader = new StrategyConfig(strategy_to_load);
+
+        _strategyConnection = configLoader.GetStrategyConnection().Result;
+        _strategyAccount = await _strategyConnection.GetStrategyAccount();
 
         //loadedStrategy = new BaseFollowStrategy(_clusterClient, _strategyAccount);
 
-        return base.StartAsync(cancellationToken);
+        await base.StartAsync(cancellationToken);
     }
 
 

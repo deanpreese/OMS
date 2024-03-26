@@ -12,7 +12,6 @@ using Npgsql.Replication.PgOutput.Messages;
 using PgOutput2Json;
 using OMS.SharedKernel.DTO;
 using Strategy.Server.Services;
-using Strategy.Server.Models;
 using OMS.SharedKernel.Common;
 using System.Text.Json.Serialization;
 

@@ -6,7 +6,6 @@ using System.Threading.Tasks.Dataflow;
 using System.Threading.Channels;
 
 using Strategy.Server.Services;
-using Strategy.Server.Models;
 using Strategy.Server.Utility;
 
 //using Strategy.Trader.Strategy;
@@ -15,6 +14,8 @@ using Strategy.Server.Utility;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
+using Strategy.SharedKernel;
+using Strategy.Trader.Abstractions;
 
 namespace Strategy.Server.StrategyServices;
 
@@ -25,9 +26,9 @@ public class BasicService : BackgroundService
     private ChannelReader<ModelOrderLogDTO> _reader;
     private IncomingOrderQueue _incomingOrderQueue;
     ILogger<BasicService> _logger;
-    //private IStrategy loadedStrategy ;
+    private IStrategy loadedStrategy ;
 
-    IClusterClient _clusterClient;
+    IStrategyConnection _strategyConnection;
     StrategyAccount _strategyAccount;
 
     BufferBlock<ModelOrderLogDTO> flowBuffer;
@@ -37,7 +38,6 @@ public class BasicService : BackgroundService
         _incomingOrderQueue = incomingOrderQueue;
         _reader = _incomingOrderQueue.Subscribe();
         _logger = logger;
-        _clusterClient = client;
         _strategyAccount = new StrategyAccount();
         //loadedStrategy = new NStrategy();
 
@@ -46,13 +46,16 @@ public class BasicService : BackgroundService
         
     }
 
-    public override  Task StartAsync(CancellationToken cancellationToken)
+    public override  async Task StartAsync(CancellationToken cancellationToken)
     {
         string strategy_to_load = "NG1.json";
-        StrategyConfig configLoader = new StrategyConfig(strategy_to_load, _clusterClient);
-        _strategyAccount= configLoader.GetStrategyData().Result;
+        StrategyConfig configLoader = new StrategyConfig(strategy_to_load);
+
+        _strategyConnection = configLoader.GetStrategyConnection().Result;
+        _strategyAccount = await _strategyConnection.GetStrategyAccount();
+
         //loadedStrategy = new OpenCloseStrategy(_clusterClient, _strategyAccount);
-        return base.StartAsync(cancellationToken);
+        await base.StartAsync(cancellationToken);
     }
 
 

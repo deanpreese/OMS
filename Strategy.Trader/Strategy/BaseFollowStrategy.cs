@@ -4,6 +4,7 @@ using Strategy.Trader.Filters;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
+using Strategy.SharedKernel;
 
 namespace Strategy.Trader.Strategy;
 

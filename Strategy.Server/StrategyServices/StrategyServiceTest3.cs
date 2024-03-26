@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OMS.SharedKernel.DTO;
 using Strategy.Server.Services;
+using Strategy.SharedKernel;
 
 //using Strategy.Trader;
 //using Strategy.Trader.Abstractions;

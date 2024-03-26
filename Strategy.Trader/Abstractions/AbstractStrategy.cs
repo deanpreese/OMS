@@ -6,15 +6,14 @@ using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel;
 using Strategy.Trader.Filters;
+using Strategy.SharedKernel;
 
 namespace Strategy.Trader.Abstractions;
 
 public abstract class AbstractStrategy 
 {
     // Strategy and Trader Properties
-    public StrategyAccount StrategyAccountData {get; set;}
     public IStrategyConnection _strategyConnection;
-    
     public List<IStrategyFilter> _filters = new List<IStrategyFilter>();
 
     public abstract Task<int> EvaluateFilters(ScoreCardDTO scoreCard);
@@ -38,8 +37,8 @@ public abstract class AbstractStrategy
         if(strategy_order.OrderAction != OrderAction.NoAction)
         {
             _mapped_new_order = await SharedMapping.MapLiveOrderDTOLiveToNewDTO(strategy_order);
-            _mapped_new_order.GroupID = StrategyAccountData.group;
-            _mapped_new_order.UserID = StrategyAccountData.strategy_traderId;
+            _mapped_new_order.GroupID = _strategyConnection.GetStrategyAccount().Result.group;
+            _mapped_new_order.UserID = _strategyConnection.GetStrategyAccount().Result.strategy_traderId;
             _mapped_new_order.Quantity = strategy_order.Quantity;
             _mapped_new_order.RelatedOrderID = _orig_trader_order.PlatformOrderID;
 

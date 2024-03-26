@@ -38,6 +38,8 @@
 
 <ItemGroup>
   <ProjectReference Include="..\OMS.SharedKernel\OMS.SharedKernel.csproj" />
+  <ProjectReference Include="..\Strategy.Trader\Strategy.Trader.csproj" />
+  <ProjectReference Include="..\Strategy.SharedKernal\Strategy.SharedKernal.csproj" />
   
 </ItemGroup>
 

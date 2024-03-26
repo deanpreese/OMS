@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OMS.SharedKernel.DTO;
 using Strategy.Server.Services;
+using Strategy.SharedKernel;
 
 //using Strategy.Trader;
 //using Strategy.Trader.Abstractions;
@@ -16,8 +17,9 @@ public class StrategyServiceTest: BackgroundService
     private IncomingOrderQueue _strategyOrderQueue;
     ILogger<StrategyServiceTest> _logger;
     //private IStrategy loadedStrategy ;
-    StrategyAccount _strategyAccount;
     BufferBlock<ModelOrderLogDTO> flowBuffer;
+    
+     StrategyAccount _strategyAccount;
 
     int _itemCount ;
 
@@ -28,7 +30,6 @@ public class StrategyServiceTest: BackgroundService
         _reader = _strategyOrderQueue.Subscribe();
         _logger = logger;
         _itemCount = 0;
-        _strategyAccount = new StrategyAccount();
         //loadedStrategy = new NStrategy();
 
         flowBuffer = new BufferBlock<ModelOrderLogDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
