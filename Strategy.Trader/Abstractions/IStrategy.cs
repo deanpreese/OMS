@@ -5,7 +5,9 @@ namespace Strategy.Trader.Abstractions;
 
 public interface IStrategy
 {
-   Task<int> OnNewData(ModelOrderLogDTO _orig_live_order);     
+   Task<NewOrderDTO> OnNewData(LiveOrderDTO traderLiveOrderDTO);   
+   Task<int> EvaluateFilters(ScoreCardDTO scoreCard);  
+  
 }
 
 

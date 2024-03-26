@@ -3,48 +3,36 @@ using Strategy.Trader.Abstractions;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
-using OMS.SharedKernel.Grains;
 
 namespace Strategy.Trader;
 
-public class NStrategy : AbstractStrategyBase, IStrategy
+public class NStrategy : AbstractStrategy, IStrategy
 {
-    IClusterClient newClusterClient;
 
     public NStrategy() { }
 
-    public NStrategy(IClusterClient clusterClient, StrategyAccount strategyData) 
+    public NStrategy(IStrategyConnection strategyConnection) 
     {
-        newClusterClient = clusterClient;        
-        _strategyData = strategyData;
     }
 
-
-    public override Task<int> EvaluateFilters(string trader_key, string strategy_key, ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
+    public override Task<int> EvaluateFilters(ScoreCardDTO scoreCard)
     {
         return Task.FromResult(0);
     }
 
-    public override Task<NewOrderDTO> OnNewOrder(LiveOrderDTO order)
+    public override Task<NewOrderDTO> OnNewData(LiveOrderDTO traderLiveOrderDTO)
     {
-        NewOrderDTO newOrder = new NewOrderDTO
+         NewOrderDTO newOrder = new NewOrderDTO
         {
-            Instrument = order.Instrument,
+            Instrument = "NONE",
             OrderAction = OrderAction.NoAction
 
         };
-        
+
+        // in a typical strategy would call 
+        // newOrder = ProcessData();
 
         return Task.FromResult(newOrder);
     }
 
-    public Task<NewOrderDTO> OnNewOrder(ModelOrderLogDTO _orig_live_order)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override Task ProcessOrderForStrategy(string strategy_key, NewOrderDTO order)
-    {
-        throw new NotImplementedException();
-    }
 }
