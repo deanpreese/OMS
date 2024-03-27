@@ -1,63 +1,62 @@
 ﻿
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks.Dataflow;
 using System.Threading.Channels;
+using System.Threading.Tasks.Dataflow;
 
 using Strategy.Server.Services;
 using Strategy.Server.Utility;
 
-//using Strategy.Trader.Strategy;
-//using Strategy.Trader.Abstractions;
-//using Strategy.Trader;
+using Strategy.Trader.Strategy;
+using Strategy.Trader.Abstractions;
+using Strategy.Trader;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using Strategy.SharedKernel;
-using Strategy.Trader.Abstractions;
-
-namespace Strategy.Server.StrategyServices;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 
+namespace Strategy.Server.Abstractions;
 
-public class BasicService : BackgroundService
+public abstract class AbstractStrategyService : BackgroundService
 {
     private ChannelReader<ModelOrderLogDTO> _reader;
-    private IncomingOrderQueue _incomingOrderQueue;
-    ILogger<BasicService> _logger;
-    private IStrategy loadedStrategy ;
-
-    IStrategyConnection _strategyConnection;
-    StrategyAccount _strategyAccount;
-
+    private IncomingOrderQueue _strategyOrderQueue;
+    ILogger _logger;
     BufferBlock<ModelOrderLogDTO> flowBuffer;
 
-    public BasicService(ILogger<BasicService> logger, IncomingOrderQueue incomingOrderQueue) 
-    {
-        _incomingOrderQueue = incomingOrderQueue;
-        _reader = _incomingOrderQueue.Subscribe();
-        _logger = logger;
-        _strategyAccount = new StrategyAccount();
-        //loadedStrategy = new NStrategy();
+    public IStrategyConnection _strategyConnection;
+    public StrategyAccount _strategyAccount;
+    public IStrategy loadedStrategy ;
 
+    public AbstractStrategyService(ILogger logger, IncomingOrderQueue strategyOrderQueue) 
+    {
+        _strategyOrderQueue = strategyOrderQueue;
+        _reader = _strategyOrderQueue.Subscribe();
+        _logger = logger;
+
+        loadedStrategy = new NStrategy();
         flowBuffer = new BufferBlock<ModelOrderLogDTO>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
         Task.Run(async () => await Distribute());
-        
     }
-
+    
+    /*
     public override  async Task StartAsync(CancellationToken cancellationToken)
     {
-        string strategy_to_load = "NG1.json";
+        string strategy_to_load = "NG3.json";
         StrategyConfig configLoader = new StrategyConfig(strategy_to_load);
+
         _strategyConnection = await configLoader.GetStrategyConnection();
         _strategyAccount = await _strategyConnection.GetStrategyAccount();
 
-        //loadedStrategy = new OpenCloseStrategy(_clusterClient, _strategyAccount);
+        loadedStrategy = new BaseFadeStrategy(_strategyConnection );
+
         await base.StartAsync(cancellationToken);
     }
+    */
 
-
+    
    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
        await Task.Run(async () =>
@@ -67,7 +66,6 @@ public class BasicService : BackgroundService
                 try
                 {
                     await flowBuffer.SendAsync(newLiveOrder); 
-                    //await loadedStrategy.OnNewOrder(newLiveOrder);
                 }
                 catch (Exception ex)
                 {
@@ -78,19 +76,16 @@ public class BasicService : BackgroundService
         await Task.CompletedTask;
     }
 
-
+    
     private async Task Distribute()    
     {
         while (await flowBuffer.OutputAvailableAsync()) 
         {
-              
-            if(flowBuffer.Count > 10)
-                Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);
- 
             ModelOrderLogDTO newLiveOrder = flowBuffer.Receive();
-            //await loadedStrategy.OnNewOrder(newLiveOrder);
+            await loadedStrategy.OnTraderModelData(newLiveOrder);
         }
     }
 
-
 }
+
+

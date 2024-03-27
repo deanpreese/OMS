@@ -14,14 +14,13 @@ public class StrategyApiClient
                 }
     };
 
-
     private readonly HttpClient _httpClient;
-    private string _baseUrl = "http://10.0.0.147:8786";
+    public string BaseUrl {get;set;}
 
-    public StrategyApiClient(HttpClient httpClient, string baseUrl = "http://localhost:8786")
+    public StrategyApiClient(string baseUrl = "http://localhost:8786")
     {
-        _httpClient = httpClient;
-        _baseUrl = baseUrl;
+        _httpClient = new HttpClient();
+        BaseUrl = baseUrl;
     }
 
 
@@ -63,14 +62,14 @@ public class StrategyApiClient
 
     private async Task<TResponse> PostAsync<TResponse, TRequest>(string uri, TRequest content)
     {
-        var response = await _httpClient.PostAsJsonAsync(_baseUrl + uri, content);
+        var response = await _httpClient.PostAsJsonAsync(BaseUrl + uri, content);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<TResponse>(options);
     }
 
     private async Task<T> GetAsync<T>(string uri)
     {
-        var response = await _httpClient.GetAsync(_baseUrl + uri);
+        var response = await _httpClient.GetAsync(BaseUrl + uri);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<T>(options);
     }

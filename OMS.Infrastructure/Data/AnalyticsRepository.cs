@@ -22,6 +22,13 @@ public class AnalyticsRepository : IAnalyticsRepository
 
     public async Task<int> AddNewTraderScorecard(int userID, int groupID)
     {
+        var sc = _context.ScoreCard.Where(x=>x.UserID == userID && x.GroupID == groupID).FirstOrDefault();
+
+        if (sc != null)
+        {
+            return 0;
+        }   
+
         ScoreCard scd = new ScoreCard
         {
             UserID = userID,

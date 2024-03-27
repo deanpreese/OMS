@@ -16,14 +16,6 @@ public class StrategyConfig
         _filePath = filePath;
     }
 
-    public async Task<IStrategyConnection> GetStrategyConnection()
-    {
-        StrategyAccount account = await LoadConfig(_filePath);
-        IStrategyConnection _strategyConnection = new BaseStrategyConnection();
-        await _strategyConnection.Initialize(account);
-        return _strategyConnection;
-    }
-
     private async Task<StrategyAccount> LoadConfig(string filePath)
     {
         string jsonString = await File.ReadAllTextAsync(filePath);
@@ -32,6 +24,16 @@ public class StrategyConfig
 
         Console.WriteLine($"{_strategyData.strategy_name} Started" + jsonString);
         return _strategyData;
+    }
+
+
+    public async Task<IStrategyConnection> GetStrategyConnection()
+    {
+        StrategyAccount account = await LoadConfig(_filePath);
+        IStrategyConnection _strategyConnection = new InMemoryStrategyConnection("http://10.0.0.147:8786");
+        
+        await _strategyConnection.Initialize(account);
+        return _strategyConnection;
     }
 
 

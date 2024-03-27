@@ -46,10 +46,10 @@ public class FadeService : BackgroundService
         string strategy_to_load = "NG3.json";
         StrategyConfig configLoader = new StrategyConfig(strategy_to_load);
 
-        _strategyConnection = configLoader.GetStrategyConnection().Result;
+        _strategyConnection = await configLoader.GetStrategyConnection();
         _strategyAccount = await _strategyConnection.GetStrategyAccount();
 
-        //loadedStrategy = new BaseFadeStrategy(_clusterClient, _strategyAccount);
+        loadedStrategy = new BaseFadeStrategy(_strategyConnection );
 
         await base.StartAsync(cancellationToken);
     }
@@ -85,7 +85,7 @@ public class FadeService : BackgroundService
                 Console.WriteLine("****** " + _strategyAccount.strategy_name + " HIGH Buffer Count: " + flowBuffer.Count);
 
             ModelOrderLogDTO newLiveOrder = flowBuffer.Receive();
-            //await loadedStrategy.OnNewOrder(newLiveOrder);
+            await loadedStrategy.OnTraderModelData(newLiveOrder);
         }
     }
 

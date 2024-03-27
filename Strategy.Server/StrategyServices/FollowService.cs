@@ -33,7 +33,7 @@ public class FollowService : BackgroundService
     StrategyAccount _strategyAccount;    
     BufferBlock<ModelOrderLogDTO> flowBuffer;
     
-    public FollowService(ILogger<FollowService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
+    public FollowService(ILogger<FollowService> logger, IncomingOrderQueue strategyOrderQueue) 
     {
         _strategyOrderQueue = strategyOrderQueue;
         _reader = _strategyOrderQueue.Subscribe();

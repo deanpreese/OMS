@@ -35,7 +35,7 @@ public class CounterService : BackgroundService
     
     BufferBlock<ModelOrderLogDTO> flowBuffer;
     
-    public CounterService(ILogger<CounterService> logger, IncomingOrderQueue strategyOrderQueue, IClusterClient client) 
+    public CounterService(ILogger<CounterService> logger, IncomingOrderQueue strategyOrderQueue) 
     {
         _strategyOrderQueue = strategyOrderQueue;
         _reader = _strategyOrderQueue.Subscribe();

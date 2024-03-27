@@ -4,6 +4,7 @@ using Strategy.Trader.Filters;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using Strategy.SharedKernel;
+using System.Diagnostics.Metrics;
 
 namespace Strategy.Trader.Strategy;
 
@@ -20,7 +21,10 @@ public class BaseFadeStrategy : AbstractStrategy , IStrategy
 
     public override async  Task<NewOrderDTO> OnNewData(LiveOrderDTO traderLiveOrderDTO)
     {
-        return await ProcessNewData(traderLiveOrderDTO);
+        NewOrderDTO _mapped_new_order = await SharedMapping.MapLiveOrderDTOLiveToNewDTO(traderLiveOrderDTO);
+        return await Task.FromResult(_mapped_new_order);
+        
+        //return await ProcessNewData(traderLiveOrderDTO);
     }
 
     public async override Task<int> EvaluateFilters(ScoreCardDTO scoreCard)

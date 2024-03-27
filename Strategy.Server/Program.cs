@@ -14,6 +14,7 @@ using Strategy.Server.Services;
 
 using OMS.SharedKernel.Common;
 using Strategy.Server;
+using Strategy.Server.StrategyServices;
 
 
 using IHost host = Host.CreateDefaultBuilder(args)
@@ -25,13 +26,14 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<WatcherService>();
 
         //services.AddHostedService<BasicService>();
-        //services.AddHostedService<FollowService>();ß
+        //ßservices.AddHostedService<FollowService>();
+        services.AddHostedService<FadeService>();
         //services.AddHostedService<CounterService>();
-        //services.AddHostedService<FadeService>();
 
-        services.AddHostedService<StrategyServiceTest>();
-        services.AddHostedService<StrategyServiceTest2>();
-        services.AddHostedService<StrategyServiceTest3>();
+
+        //services.AddHostedService<StrategyServiceTest>();
+        //services.AddHostedService<StrategyServiceTest2>();
+        //services.AddHostedService<StrategyServiceTest3>();
 
     })
     .Build();

@@ -17,10 +17,15 @@ public abstract class AbstractStrategy
     public List<IStrategyFilter> _filters = new List<IStrategyFilter>();
 
     public abstract Task<int> EvaluateFilters(ScoreCardDTO scoreCard);
-    
     public abstract Task<NewOrderDTO> OnNewData(LiveOrderDTO traderLiveOrderDTO);
 
-    
+
+    public async Task OnTraderModelData(ModelOrderLogDTO modelOrderLogDTO)
+    {
+        await _strategyConnection.OnTraderModelData(modelOrderLogDTO);
+        await OnNewData(modelOrderLogDTO.LiveOrderDeserialized);
+    }
+
     public Task<int> AddFilter(IStrategyFilter filter)
     {
         _filters.Add(filter);
