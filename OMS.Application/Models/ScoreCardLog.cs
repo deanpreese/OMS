@@ -7,9 +7,9 @@ using System.Text;
 namespace OMS.Application.Models;
 
 [GenerateSerializer]
-[Alias("ScoreCard")]
+[Alias("ScoreCardLog")]
 
-public class ScoreCard
+public class ScoreCardLog
 {
     [Id(21)]
     private DateTime _lastUpdate;

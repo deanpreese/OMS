@@ -21,19 +21,16 @@ using IHost host = Host.CreateDefaultBuilder(args)
    
     .UseConsoleLifetime().ConfigureServices(services =>
     {
-        services.AddSingleton<IncomingOrderQueue>();
-        //services.AddHostedService<OrderPubSubBackgroundService>();
+        services.AddSingleton<ModelOrderMessageBus>();                
+        
+        services.AddHostedService<ReplWatcher>();
         services.AddHostedService<WatcherService>();
 
-        //services.AddHostedService<BasicService>();
-        //ßservices.AddHostedService<FollowService>();
-        services.AddHostedService<FadeService>();
-        //services.AddHostedService<CounterService>();
-
-
-        //services.AddHostedService<StrategyServiceTest>();
-        //services.AddHostedService<StrategyServiceTest2>();
-        //services.AddHostedService<StrategyServiceTest3>();
+        services.AddHostedService<NGZero>();
+        //services.AddHostedService<NGOne>();
+        //services.AddHostedService<NGTwo>();
+        //services.AddHostedService<NGThree>();
+        
 
     })
     .Build();
@@ -42,3 +39,5 @@ await host.StartAsync();
 
 Console.WriteLine("Press Enter to terminate...");
 Console.ReadLine();
+
+await host.StopAsync();

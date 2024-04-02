@@ -1,6 +1,7 @@
 {
     "strategy_class": "Strategy.Trader.Strategy.OpenCloseStrategy",
     "strategy_name" : "OpenCloseStrategy",
-    "group": 106,
-    "orders_per_direction": 10
+    "group": 101,
+    "orders_per_direction": 10,
+    "logid" : "+-+-_BaseOpenClose.Strategy"
 }

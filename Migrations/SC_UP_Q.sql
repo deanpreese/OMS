@@ -1,17 +1,16 @@
 SELECT 
     UP."DisplayName",
     UP."UserID",
-    SC."ScoreCardID",
-    SC."GroupID",
+    UP."GroupID",
     SC."Trades",
     SC."Winners",
     SC."Losers",
     SC."SharpRatio",
-    SC."SharpRatio",
+    SC."SortinoRatio",
     SC."TotalNetProfit",
     SC."WinLossRatio"
 FROM 
-    public."ScoreCard" AS SC
+    public."ScoreCards" AS SC
 INNER JOIN 
     public."UserProfiles" AS UP ON SC."UserID" = UP."UserID"
 ORDER BY 

@@ -6,7 +6,7 @@ UPDATE public."ScoreCard"
      "GrossProfit"=0, "GrossLoss"=0, 
      "LargestWinner"=0, "LargestLoser"=0, 
      "LargestWinningStreak"=0, "LargestLosingStreak"=0, 
-     "TotalNetProfit"=0, "TradeXML"='', "WinLossRatio"=0, 
+     "TotalNetProfit"=0,  "WinLossRatio"=0, 
      "AveWin"=0, "AveLoss"=0, "AveTradeDuration"=0, 
      "AveWinDuration"=0, "AveLossDuration"=0, "StdDevAllTrades"=0, 
      "StdDevWinTrades"=0, "StdDevLossTrades"=0, 

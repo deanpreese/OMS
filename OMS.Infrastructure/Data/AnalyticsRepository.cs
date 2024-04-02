@@ -20,26 +20,6 @@ public class AnalyticsRepository : IAnalyticsRepository
         _context = context;
     }
 
-    public async Task<int> AddNewTraderScorecard(int userID, int groupID)
-    {
-        var sc = _context.ScoreCard.Where(x=>x.UserID == userID && x.GroupID == groupID).FirstOrDefault();
-
-        if (sc != null)
-        {
-            return 0;
-        }   
-
-        ScoreCard scd = new ScoreCard
-        {
-            UserID = userID,
-            TradeXML = " ",
-            GroupID = groupID
-        };
-
-        await _context.ScoreCard.AddAsync(scd);
-        return userID;
-    }
-
     public async Task UpdateTraderScoreCard(ScoreCard scData)
     {
         //ScoreCard sc = _context.ScoreCard.FirstOrDefault(s => s.UserID == scData.UserID && s.GroupID == scData.GroupID) ?? new ScoreCard { UserID = -13 };
@@ -63,28 +43,23 @@ public class AnalyticsRepository : IAnalyticsRepository
             sc.LargestLosingStreak = scData.LargestLosingStreak;
             sc.UserID = scData.UserID;
             sc.TotalNetProfit = scData.TotalNetProfit;
-            sc.TradeXML = scData.TradeXML;
             sc.GroupID = scData.GroupID;
             sc.LastUpdate = DateTime.UtcNow;
 
-            if (scData.Winners > 0)
-                sc.WinLossRatio = Math.Round(Convert.ToDouble(scData.Winners) / Convert.ToDouble(scData.Trades), 2);
+            sc.WinLossRatio = scData.Trades != 0 ? Math.Round((double)scData.Winners / scData.Trades, 2) : 0;
+            sc.AveWin = scData.Winners != 0 ? Math.Round((double)scData.GrossProfit / scData.Winners, 2) : 0;
+            sc.AveLoss = scData.Losers != 0 ? Math.Round((double)scData.GrossLoss / scData.Losers, 2) : 0;
 
-            if (scData.GrossProfit > 0)
-                sc.AveWin = Math.Round((double)scData.GrossProfit / scData.Winners, 2);
+            sc.AveTradeDuration = Math.Round(scData.AveTradeDuration, 6);
+            sc.AveWinDuration = sc.AveWin > 0 ? Math.Round(scData.AveWinDuration, 6) : 0;
+            sc.AveLossDuration = sc.AveLoss > 0 ? Math.Round(scData.AveLossDuration, 6): 0;
 
-            if (scData.GrossLoss < 0)
-                sc.AveLoss = Math.Round((double)scData.GrossLoss / scData.Losers, 2);
+            sc.StdDevAllTrades = scData.StdDevAllTrades > 0 ? Math.Round(scData.StdDevAllTrades, 6) : 0;
+            sc.StdDevWinTrades = scData.StdDevWinTrades > 0 ? Math.Round(scData.StdDevWinTrades, 6) : 0;
+            sc.StdDevLossTrades = scData.StdDevLossTrades > 0 ? Math.Round(scData.StdDevLossTrades, 6) : 0;
+            sc.SharpRatio = Double.IsFinite(sc.SharpRatio) ? Math.Round(scData.SharpRatio, 6) : 0;
+            sc.SortinoRatio = Double.IsFinite(sc.SortinoRatio) ? Math.Round(scData.SortinoRatio, 6) : 0;
 
-
-            sc.AveTradeDuration = scData.AveTradeDuration;
-            sc.AveWinDuration = scData.AveWinDuration;
-            sc.AveLossDuration = scData.AveLossDuration;
-            sc.StdDevAllTrades = scData.StdDevAllTrades;
-            sc.StdDevWinTrades = scData.StdDevWinTrades;
-            sc.StdDevLossTrades = scData.StdDevLossTrades;
-            sc.SharpRatio = scData.SharpRatio;
-            sc.SortinoRatio = scData.SortinoRatio;
             sc.PNL_Last3 = scData.PNL_Last3;
             sc.PNL_Last5 = scData.PNL_Last5;
             sc.PNL_Last8 = scData.PNL_Last8;
@@ -94,7 +69,7 @@ public class AnalyticsRepository : IAnalyticsRepository
 
             //Console.WriteLine("Updating ScoreCard " + sc.UserID + " " + scData.GroupID + "  " + scData.Winners + "  " + scData.Losers   );
 
-            _context.ScoreCard.Update(sc);
+            _context.ScoreCards.Update(sc);
         }
 
         await Task.CompletedTask;
@@ -104,7 +79,7 @@ public class AnalyticsRepository : IAnalyticsRepository
     public async Task<ScoreCard> GetTraderScoreCard(int UserID, int GroupNumber)
     {
         ScoreCard scoreCard = new ScoreCard();
-        var sql = $"SELECT * FROM \"ScoreCard\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber}"; 
+        var sql = $"SELECT * FROM \"ScoreCards\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber}"; 
 
         /*
         scoreCard = await _context.ScoreCard
@@ -123,11 +98,9 @@ public class AnalyticsRepository : IAnalyticsRepository
 
     public Task ReRankGroupAsync(int groupNumber)
     {
+        // TODO  Implement ReRankGroupAsync
         throw new NotImplementedException();
     }
 
-    public async Task AddModelOrderLogEntry(ModelOrderLog modelOrderLogEntry)
-    {
-        await _context.ModelOrderLog.AddAsync(modelOrderLogEntry);
-    }
+
 }

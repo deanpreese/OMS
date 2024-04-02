@@ -23,13 +23,12 @@ public class BaseCounterStrategy : AbstractStrategy, IStrategy
 
 
 
-    public BaseCounterStrategy(IStrategyConnection strategyConnection) 
+    public BaseCounterStrategy(IStrategyConnection strategyConnection) : base(strategyConnection)
     {
         _filters = new List<IStrategyFilter>
         {
             new AllFollowFilter()
         };
-        _strategyConnection = strategyConnection;
     }
 
     public override async  Task<NewOrderDTO> OnNewData(LiveOrderDTO traderLiveOrderDTO)
@@ -38,14 +37,16 @@ public class BaseCounterStrategy : AbstractStrategy, IStrategy
         NewOrderDTO _mapped_new_order = await SharedMapping.MapLiveOrderDTOLiveToNewDTO(traderLiveOrderDTO);    
         _mapped_new_order.OrderAction = OrderAction.NoAction;
         
-        int netPositions  = await ProcessCounter(traderLiveOrderDTO);
+        //Console.WriteLine(CurrentStrategyAccount.logid + "  " + orderCount);
 
+        
+        int netPositions  = await ProcessCounter(traderLiveOrderDTO);
         if(netPositions > 9 || netPositions < -9) 
         {
             NewOrderDTO newOrder = await ProcessNewData(traderLiveOrderDTO);
             _mapped_new_order  = newOrder;
         }
-
+        
         return _mapped_new_order;            
     }
 

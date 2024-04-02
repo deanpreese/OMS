@@ -1,17 +1,22 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
 
-namespace OMS.SharedKernel.DTO;
+namespace Strategy.SharedKernel;
 
 public class ModelOrderLogDTO
 {
+    static ScreenColorBase scb = new ScreenColorBase();
+
     static JsonSerializerOptions options = new JsonSerializerOptions {
-            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
+            //NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
             Converters ={
-                new JsonStringEnumConverter()
+                new JsonStringEnumConverter(),
+                new CustomDoubleConverter()
             },
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            //DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             IgnoreReadOnlyProperties = true
         };
 
@@ -23,14 +28,7 @@ public class ModelOrderLogDTO
     public int LiveOrderIDReference { get; set; }
     public int OrderType { get; set; }
     public int OrderAction { get; set; }
-    
-    // JSON strings representing complex objects
-    //public string LiveOrderJSON { get; set; }
-    //public string ModelFeatureData { get; set; }
-    //public string ScoreCardJSON { get; set; }
-    //public string ClosedOrderDTOJSON    { get; set; }
-    
-
+        
     [JsonPropertyName("LiveOrderJSON")]
     public string LiveOrderJson { get; set; }
     [JsonIgnore]
@@ -43,24 +41,39 @@ public class ModelOrderLogDTO
 
     [JsonPropertyName("ScoreCardJSON")]
     public string ScoreCardJson { get; set; }
-    [JsonIgnore]
-    public ScoreCardDTO ScoreCardDeserialized => JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJson);
+
+    //[JsonIgnore]
+    public ScoreCardDTO ScoreCardDeserialized()
+    {
+     
+        ScoreCardDTO sc = new ScoreCardDTO();
+
+        try {
+
+            sc =JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJson, options);
+
+            //Console.WriteLine($"{scb.GREEN} SC  {sc.SharpRatio}  {sc.SortinoRatio}");
+            //Console.WriteLine(ScoreCardJson);
+            //Console.ResetColor();
+
+
+
+        }catch (Exception ex) {
+            Console.WriteLine($"{scb.YELLOW}{ex}");
+            Console.WriteLine("--------------");
+            Console.WriteLine(ScoreCardJson);
+            Console.WriteLine("--------------");
+            Console.ResetColor();
+        }
+
+        return sc;
+        
+    } 
 
     [JsonPropertyName("ClosedOrderDTOJSON")]
     public string ClosedOrderJson { get; set; }
     [JsonIgnore]
     public ClosedTradeDTO ClosedTradeDeserialized => JsonSerializer.Deserialize<ClosedTradeDTO>(ClosedOrderJson);
-
-    /*
-    [JsonIgnore]
-    public LiveOrderDTO LiveOrderDeserialized => JsonSerializer.Deserialize<LiveOrderDTO>(LiveOrderJSON,options);
-    [JsonIgnore]
-    public Dictionary<string, double> ModelFeatureDataDeserialized => JsonSerializer.Deserialize<Dictionary<string, double>>(ModelFeatureData,options);
-    [JsonIgnore]
-    public ScoreCardDTO ScoreCardDeserialized => JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJSON,options);
-    [JsonIgnore]
-    public ClosedTradeDTO ClosedTradeDeserialized => JsonSerializer.Deserialize<ClosedTradeDTO>(ClosedOrderDTOJSON,options);
-   */
 
 }
 

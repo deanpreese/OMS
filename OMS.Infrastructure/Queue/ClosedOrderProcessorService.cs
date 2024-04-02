@@ -50,8 +50,6 @@ public class ClosedOrderProcessorService : BackgroundService
             try
             {   if (logDataDTO.liveOrder.GroupID >= 50)
                     orders.Add(logDataDTO.liveOrder);
-
-                //await ProcessLogDataAsync(logDataDTO);
             }
             catch (Exception ex)
             {
@@ -63,24 +61,6 @@ public class ClosedOrderProcessorService : BackgroundService
     }
 
 
-    private async Task ProcessLogDataAsync(LogDataDTO logData)
-    {
-        using (var scope = _scopeFactory.CreateScope())
-        {
-            try 
-            {
-                var scopedContext = scope.ServiceProvider.GetRequiredService<OrderManagementDbContext>();
-                UnitOfWork unitOfWork = new UnitOfWork(scopedContext);
-                ILogger<AnalyticsService> logger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
-                AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, logger);   
-                await _analytics_service.LogModelOrderData(logData.liveOrder, logData.newOrderDTO, logData.closedTradeDTO);  
-
-            }catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
-    }
 
 
     private async void ProcessScorecardUpdatesAsync(object state)

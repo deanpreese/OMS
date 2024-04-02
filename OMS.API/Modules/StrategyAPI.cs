@@ -34,26 +34,24 @@ public static class StrategyAPI
         .WithOpenApi();
 
 
-
-        endpoints.MapPost("api/strategyapi/add-new-scoreCard", async (NewTraderDTO newTrader, IAnalyticsService analyticsService) =>
-        {    
-            int sc_id = await analyticsService.AddNewTraderScoreCard(newTrader.UserID, newTrader.GroupID);    
-            return sc_id;
-        }   
-        )
-        .WithName("AddNewScoreCard")
+        endpoints.MapPost("api/strategyapi/process-order", async (NewOrderDTO order, NewOrderChannelService newOrderChannelService) =>
+        {
+            int om_id = 0;
+            await newOrderChannelService.WriteAsync(order);
+            return Results.Ok(om_id);
+        })
+        .WithName("ProcessStrategyOrder")
         .WithOpenApi();
 
 
 
-        endpoints.MapPost("api/strategyapi/process-order", async (NewOrderDTO order, ITradingService tradingService) =>
+        endpoints.MapPost("api/strategyapi/process-orderx", async (NewOrderDTO order, ITradingService tradingService) =>
         {
             LiveOrder l_o = await tradingService.ProcessNewOrderAsync(order);
             return l_o.LiveOrderID;
-            
         }    
         )
-        .WithName("ProcessStrategyOrder")
+        .WithName("ProcessStrategyOrderX")
         .WithOpenApi();
 
 
@@ -82,7 +80,7 @@ public static class StrategyAPI
 
         endpoints.MapGet("api/strategyapi/scoreCard/{profileKey}", async (string profileKey, IAnalyticsService analyticsService) =>
         {
-            ScoreCardDTO sc_dto = await analyticsService.GetTraderScoreCard(int.Parse(profileKey.Split('_')[0]), int.Parse(profileKey.Split('_')[1]));
+            ScoreCardDTO sc_dto = await analyticsService.GetTraderScoreCardDTO(int.Parse(profileKey.Split('_')[0]), int.Parse(profileKey.Split('_')[1]));
             return sc_dto;
         }    
         )

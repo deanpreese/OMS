@@ -36,7 +36,6 @@ public class ClosedOrderRepository : IClosedOrderRepository
 
     public async Task<List<ClosedTrade>> Get_XXX_ClosedOrdersByTrader(int UserID, int GroupNumber, int numOrders )
     {
-        List<ClosedTrade> histOrders = new List<ClosedTrade>();
 
         int ordToTake = numOrders;
         if (numOrders < 0)
@@ -45,7 +44,7 @@ public class ClosedOrderRepository : IClosedOrderRepository
         }
 
         IEnumerable<ClosedTrade> trades = new List<ClosedTrade>();
-        var sql = $"SELECT * FROM \"ClosedTrades\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} ORDER BY \"CloseOrderTime\" DESC LIMIT {ordToTake}";
+        var sql = $"SELECT * FROM \"ClosedTrades\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} ORDER BY \"StorerID\" DESC LIMIT {ordToTake}";
 
         //trades = _context.ClosedTrades
         //    .Where(c => c.UserID == UserID && c.GroupID == GroupNumber)
@@ -65,8 +64,8 @@ public class ClosedOrderRepository : IClosedOrderRepository
     public async Task<ClosedTrade> GetLastClosedTradeByOpenPlatformID(int UserID, int GroupNumber, int platform_id)
     {
         ClosedTrade closedTrade = new ClosedTrade();
-        var sql = $"SELECT * FROM \"ClosedTrades\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} AND \"OpenPlatformOrderID\" = {platform_id} ORDER BY \"CloseOrderTime\" DESC";
-
+        //var sql = $"SELECT * FROM \"ClosedTrades\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} AND \"OpenPlatformOrderID\" = {platform_id} ORDER BY \"CloseOrderTime\" DESC";
+        var sql = $"SELECT * FROM \"ClosedTrades\" WHERE \"UserID\" = {UserID} AND \"GroupID\" = {GroupNumber} AND \"OpenPlatformOrderID\" = {platform_id}";
         //var closedTrade =  _context.ClosedTrades
         //                    .Where(c=> c.UserID == UserID && c.GroupID == GroupNumber && c.OpenPlatformOrderID == platform_id)
         //                    .OrderByDescending(x => x.CloseOrderTime)

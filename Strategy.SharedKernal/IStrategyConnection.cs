@@ -6,18 +6,24 @@ namespace Strategy.SharedKernel;
 public interface IStrategyConnection
 {
     Task Initialize(StrategyAccount strategyAccount);
-    Task OnTraderModelData(ModelOrderLogDTO modelOrderLogDTO);
-    Task<StrategyAccount> GetStrategyAccount();
+    string GetStrategyProfileKey();
+    public StrategyAccount CurrentStrategyAccount { get; set; }
+    public ScoreCardDTO ModelTraderScoreCardDTO { get; set; }
+    public string ModelTraderScoreCardJSON { get; set; }
+    public LiveOrderDTO ModelTraderLiveOrderDTO { get; set; }
+    public string  ModelTraderLiveOrderJSON { get; set; }
+    public ClosedTradeDTO  ModelTraderLastClosedTradeDTO { get; set; }
+    public string ModelTraderClosedTradeJSON { get; set; }
+    public ModelOrderLogDTO CurrentModelOrderLogDTO { get; set; }
 
     Task<List<LiveOrderDTO>> GetStrategyLiveOrders();
-    Task<List<LiveOrderDTO>> RefreshStrategyLiveOrders();
-
     Task<ScoreCardDTO> GetTraderScoreCard();
-    Task<ScoreCardDTO> RefreshTraderScoreCard();
 
-    Task<ClosedTradeDTO> RefreshLastClosedTraderTradeByOpenPlatformID(int traderPlatformId);
-    Task<ClosedTradeDTO> GetLastClosedTraderTradeByOpenPlatformID(int traderPlatformId);
-    
+    Task<ClosedTradeDTO> RefreshLastClosedTraderTradeByOpenPlatformID(string trader_key, int traderPlatformId);
+    Task<ClosedTradeDTO> GetLastClosedTraderTradeByOpenPlatformID(string trader_key, int traderPlatformId);
+
+
+    Task OnTraderModelData(ModelOrderLogDTO modelOrderLogDTO);
     Task<int> ProcessOrderForStrategy( NewOrderDTO order);
 
 }

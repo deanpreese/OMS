@@ -32,7 +32,7 @@ public class TradingService : ITradingService
     public async Task<LiveOrder> ProcessNewOrderAsync(NewOrderDTO newOrder)
     {
         LiveOrder newLiveOrder = await MapAndAddOrderManagerID(newOrder);
-        await _unitOfWork.UnderCoverRepository.AddToOrderFlowAsync(newLiveOrder);
+        await _unitOfWork.AuditLogRepository.AddToOrderLog(newLiveOrder);
         await _unitOfWork.CommitAsync();
 
         ILiveOrderRepository liveOrderRepository = _unitOfWork.LiveOrderRepository;

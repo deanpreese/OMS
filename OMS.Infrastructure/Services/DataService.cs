@@ -58,9 +58,11 @@ public class DataService : IDataService
     public async Task<List<LiveOrderDTO>> GetLiveOrdersByTrader(int user, int group)
     {
         List<LiveOrder> orders = await _unitOfWork.LiveOrderRepository.GetOrdersByTraderAsync(user, group);
+
         List<LiveOrderDTO> ordersDTO = new List<LiveOrderDTO>();
         foreach (LiveOrder order in orders)
         {
+            // Console.WriteLine("DataService   " + order.UserID + " " + order.OrderTime + " " + order.OrderAction + " " + order.Instrument + " " + order.OrderPX + " " + order.OrderType);
             ordersDTO.Add( await DTOMapping.MapOrderLiveToLiveDTO(order))  ;
         }
         return ordersDTO;

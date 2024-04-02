@@ -1,11 +1,12 @@
 using Strategy.Trader.Abstractions;
 
 using OMS.SharedKernel.DTO;
+using OMS.SharedKernel.Common;
 
 
 namespace Strategy.Trader.Filters;
 
-public class TwoSidedFilter : IStrategyFilter
+public class TwoSidedFilter : ScreenColorBase, IStrategyFilter
 {
     ScoreCardDTO _scoreCard;
 
@@ -13,14 +14,17 @@ public class TwoSidedFilter : IStrategyFilter
     public int IsInFilter(ScoreCardDTO scoreCard)
     {
         _scoreCard = scoreCard;
-        return IsInAlgoFilter114();
+        return IsInFilter114(scoreCard);
     }
 
 
 
-    public int IsInAlgoFilter114()
+    public int IsInFilter114(ScoreCardDTO _scoreCard)
     {
         int includeExclude = 0;
+       
+        Console.WriteLine($" {MAGENTA} ---- {_scoreCard.SortinoRatio} { _scoreCard.SharpRatio} ----");
+        Console.ResetColor();
 
         if (_scoreCard.SortinoRatio > 0.5  || _scoreCard.SharpRatio > 0.5)
         {

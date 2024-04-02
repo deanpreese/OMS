@@ -14,14 +14,14 @@ public class UnitOfWork : IUnitOfWork
         LiveOrderRepository = new LiveOrderRepository(_context);
         ClosedOrderRepository = new ClosedOrderRepository(_context);
         TraderRepository = new TraderRepository(_context);
-        UnderCoverRepository = new UnderCoverRepository(_context);
+        AuditLogRepository = new AuditLogRepository(_context);
         AnalyticsRepository = new AnalyticsRepository(_context);
     }
 
     public ILiveOrderRepository LiveOrderRepository { get; private set; }
     public IClosedOrderRepository ClosedOrderRepository { get; private set; }
     public ITraderRepository TraderRepository { get; private set; }
-    public IUnderCoverRepository UnderCoverRepository { get; private set; }
+    public IAuditLogRepository AuditLogRepository { get; private set; }
     public IAnalyticsRepository AnalyticsRepository { get; private set; }
 
     public async Task CommitAsync()

@@ -213,7 +213,7 @@ namespace OMS.Infrastructure.Migrations
 
                     b.HasKey("LiveOrderID");
 
-                    b.ToTable("LiveOrder");
+                    b.ToTable("LiveOrders");
                 });
 
             modelBuilder.Entity("OMS.Application.Models.ModelOrderLog", b =>
@@ -256,7 +256,7 @@ namespace OMS.Infrastructure.Migrations
                     b.ToTable("ModelOrderLog");
                 });
 
-            modelBuilder.Entity("OMS.Application.Models.OrderFlow", b =>
+            modelBuilder.Entity("OMS.Application.Models.OrderLog", b =>
                 {
                     b.Property<int>("OrderFlowId")
                         .ValueGeneratedOnAdd()
@@ -311,7 +311,7 @@ namespace OMS.Infrastructure.Migrations
 
                     b.HasKey("OrderFlowId");
 
-                    b.ToTable("OrderFlow");
+                    b.ToTable("OrderLog");
                 });
 
             modelBuilder.Entity("OMS.Application.Models.ScoreCard", b =>
@@ -412,9 +412,6 @@ namespace OMS.Infrastructure.Migrations
                     b.Property<double>("TotalNetProfit")
                         .HasColumnType("double precision");
 
-                    b.Property<string>("TradeXML")
-                        .HasColumnType("text");
-
                     b.Property<int>("Trades")
                         .HasColumnType("integer");
 
@@ -429,9 +426,130 @@ namespace OMS.Infrastructure.Migrations
 
                     b.HasKey("ScoreCardID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserID")
+                        .IsUnique();
 
-                    b.ToTable("ScoreCard");
+                    b.ToTable("ScoreCards");
+                });
+
+            modelBuilder.Entity("OMS.Application.Models.ScoreCardLog", b =>
+                {
+                    b.Property<int>("ScoreCardID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ScoreCardID"));
+
+                    b.Property<double>("AveLoss")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("AveLossDuration")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("AveTradeDuration")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("AveWin")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("AveWinDuration")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("GrossLoss")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("GrossProfit")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("GroupID")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("LargestLoser")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("LargestLosingStreak")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("LargestWinner")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("LargestWinningStreak")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Longs")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Losers")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("NetProfitLong")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("NetProfitShort")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last13")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last21")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last3")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last34")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last5")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PNL_Last8")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("SharpRatio")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Shorts")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("SortinoRatio")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("StdDevAllTrades")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("StdDevLossTrades")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("StdDevWinTrades")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("TotalNetProfit")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Trades")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UserProfileUserID")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("WinLossRatio")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Winners")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ScoreCardID");
+
+                    b.HasIndex("UserProfileUserID");
+
+                    b.ToTable("ScoreCardLog");
                 });
 
             modelBuilder.Entity("OMS.Application.Models.UserProfile", b =>
@@ -484,6 +602,31 @@ namespace OMS.Infrastructure.Migrations
                     b.HasKey("UserID");
 
                     b.ToTable("UserProfiles");
+                });
+
+            modelBuilder.Entity("OMS.Application.Models.ScoreCard", b =>
+                {
+                    b.HasOne("OMS.Application.Models.UserProfile", "UserProfile")
+                        .WithOne("ScoreCard")
+                        .HasForeignKey("OMS.Application.Models.ScoreCard", "UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserProfile");
+                });
+
+            modelBuilder.Entity("OMS.Application.Models.ScoreCardLog", b =>
+                {
+                    b.HasOne("OMS.Application.Models.UserProfile", "UserProfile")
+                        .WithMany()
+                        .HasForeignKey("UserProfileUserID");
+
+                    b.Navigation("UserProfile");
+                });
+
+            modelBuilder.Entity("OMS.Application.Models.UserProfile", b =>
+                {
+                    b.Navigation("ScoreCard");
                 });
 #pragma warning restore 612, 618
         }

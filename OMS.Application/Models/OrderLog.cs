@@ -6,8 +6,8 @@ using OMS.SharedKernel.Common;
 namespace OMS.Application.Models;
 
 [GenerateSerializer]
-[Alias("OrderFlow")]
-public class OrderFlow
+[Alias("OrderLog")]
+public class OrderLog
 {
     [Id(0)]
     private DateTime _orderTime;

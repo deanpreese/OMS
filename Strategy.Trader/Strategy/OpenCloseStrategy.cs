@@ -10,13 +10,12 @@ namespace Strategy.Trader.Strategy;
 public class OpenCloseStrategy : AbstractStrategy , IStrategy
 {
 
-    public OpenCloseStrategy(IStrategyConnection strategyConnection) 
+    public OpenCloseStrategy(IStrategyConnection strategyConnection) : base(strategyConnection)
     {
         _filters = new List<IStrategyFilter>
         {
             new TwoSidedFilter()
         };
-        _strategyConnection = strategyConnection;
     }
 
 
@@ -28,12 +27,25 @@ public class OpenCloseStrategy : AbstractStrategy , IStrategy
 
     public override async Task<int> EvaluateFilters(ScoreCardDTO scoreCard)
     {
+      
         int includeExclude = 0;
 
         foreach (IStrategyFilter filter in _filters)
         {
             includeExclude = filter.IsInFilter(scoreCard);
         }
+
+        //Console.WriteLine($" {YELLOW} ---- {scoreCard.Trades} { scoreCard.Winners} ----");
+        //Console.WriteLine($" {YELLOW} ---- {scoreCard.SortinoRatio} { scoreCard.SharpRatio} ----");
+        //Console.ResetColor();
+
+        /*
+        if (includeExclude == 0)
+        {
+            Console.WriteLine(_strategyConnection.ModelTraderScoreCardJSON);
+        }
+        */
+
         return await Task.FromResult(includeExclude);
     }
 

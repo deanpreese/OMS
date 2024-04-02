@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 
 
 namespace OMS.SharedKernel.DTO;
@@ -37,61 +38,60 @@ public class ScoreCardDTO
     [Id(7)]
     public int Shorts {get; set;}
     [Id(8)]
-    public double NetProfitLong {get; set;}
+    public double NetProfitLong {get; set;}= 0.0;
     [Id(9)]
-    public double NetProfitShort {get; set;}
+    public double NetProfitShort {get; set;}= 0.0;
     [Id(10)]
-    public double GrossProfit {get; set;}
+    public double GrossProfit {get; set;}= 0.0;
     [Id(11)]
-    public double GrossLoss {get; set;}
+    public double GrossLoss {get; set;}= 0.0;
     [Id(12)]
-    public double LargestWinner {get; set;}
+    public double LargestWinner {get; set;}= 0.0;
     [Id(13)]
-    public double LargestLoser {get; set;}
+    public double LargestLoser {get; set;} = 0.0;
     [Id(14)]
-    public int LargestWinningStreak {get; set;}
+    public int LargestWinningStreak {get; set;}= 0;
     [Id(15)]
-    public int LargestLosingStreak {get; set;}
+    public int LargestLosingStreak {get; set;} = 0;
     [Id(16)]
-    public double TotalNetProfit {get; set;}
+    public double TotalNetProfit {get; set;} = 0.0;
     [Id(17)]
     public string TradeXML {get; set;} = "";
     [Id(18)]
-    public double WinLossRatio {get; set;}
+    public double WinLossRatio {get; set;} = 0.0;
     [Id(19)]
-    public double AveWin {get; set;}
+    public double AveWin {get; set;} = 0.0;
     [Id(20)]
-    public double AveLoss {get; set;}
+    public double AveLoss {get; set;} = 0.0;
 
     [Id(22)]
-    public double AveTradeDuration {get; set;}
+    public double AveTradeDuration {get; set;} = 0.0;
     [Id(23)]
-    public double AveWinDuration {get; set;}
+    public double AveWinDuration {get; set;} = 0.0;
     [Id(24)]
-    public double AveLossDuration {get; set;}
+    public double AveLossDuration {get; set;} = 0.0;
     [Id(25)]
-    public double StdDevAllTrades {get; set;}
+    public double StdDevAllTrades {get; set;} = 0.0;
     [Id(26)]
-    public double StdDevWinTrades {get; set;}
+    public double StdDevWinTrades {get; set;} = 0.0;
     [Id(27)]
-    public double StdDevLossTrades {get; set;}
+    public double StdDevLossTrades {get; set;} = 0.0;
     [Id(28)]
-    public double SharpRatio {get; set;}
+    public double SharpRatio {get; set;}  = 0.0;
     [Id(29)]
-    public double SortinoRatio {get; set;}
-
+    public double SortinoRatio {get; set;} = 0.0;
     [Id(30)]
-    public double PNL_Last3 {get; set;}
+    public double PNL_Last3 {get; set;}   = 0.0;
     [Id(31)]
-    public double PNL_Last5 {get; set;}
+    public double PNL_Last5 {get; set;}  = 0.0;
     [Id(32)]
-    public double PNL_Last8 {get; set;}
+    public double PNL_Last8 {get; set;}  = 0.0;
     [Id(33)]
-    public double PNL_Last13 {get; set;}
+    public double PNL_Last13 {get; set;}   = 0.0;
     [Id(34)]
-    public double PNL_Last21 {get; set;}
+    public double PNL_Last21 {get; set;}  = 0.0;
     [Id(35)]
-    public double PNL_Last34 {get; set;}
+    public double PNL_Last34 {get; set;} = 0.0;
 
     public DateTime LastUpdate
     {

@@ -71,7 +71,7 @@ namespace OMS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LiveOrder",
+                name: "LiveOrders",
                 columns: table => new
                 {
                     LiveOrderID = table.Column<int>(type: "integer", nullable: false)
@@ -96,7 +96,7 @@ namespace OMS.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LiveOrder", x => x.LiveOrderID);
+                    table.PrimaryKey("PK_LiveOrders", x => x.LiveOrderID);
                 });
 
             migrationBuilder.CreateTable(
@@ -121,7 +121,7 @@ namespace OMS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderFlow",
+                name: "OrderLog",
                 columns: table => new
                 {
                     OrderFlowId = table.Column<int>(type: "integer", nullable: false)
@@ -144,54 +144,7 @@ namespace OMS.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderFlow", x => x.OrderFlowId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ScoreCard",
-                columns: table => new
-                {
-                    ScoreCardID = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserID = table.Column<int>(type: "integer", nullable: false),
-                    GroupID = table.Column<int>(type: "integer", nullable: false),
-                    Trades = table.Column<int>(type: "integer", nullable: false),
-                    Winners = table.Column<int>(type: "integer", nullable: false),
-                    Losers = table.Column<int>(type: "integer", nullable: false),
-                    Longs = table.Column<int>(type: "integer", nullable: false),
-                    Shorts = table.Column<int>(type: "integer", nullable: false),
-                    NetProfitLong = table.Column<double>(type: "double precision", nullable: false),
-                    NetProfitShort = table.Column<double>(type: "double precision", nullable: false),
-                    GrossProfit = table.Column<double>(type: "double precision", nullable: false),
-                    GrossLoss = table.Column<double>(type: "double precision", nullable: false),
-                    LargestWinner = table.Column<double>(type: "double precision", nullable: false),
-                    LargestLoser = table.Column<double>(type: "double precision", nullable: false),
-                    LargestWinningStreak = table.Column<int>(type: "integer", nullable: false),
-                    LargestLosingStreak = table.Column<int>(type: "integer", nullable: false),
-                    TotalNetProfit = table.Column<double>(type: "double precision", nullable: false),
-                    TradeXML = table.Column<string>(type: "text", nullable: true),
-                    WinLossRatio = table.Column<double>(type: "double precision", nullable: false),
-                    AveWin = table.Column<double>(type: "double precision", nullable: false),
-                    AveLoss = table.Column<double>(type: "double precision", nullable: false),
-                    AveTradeDuration = table.Column<double>(type: "double precision", nullable: false),
-                    AveWinDuration = table.Column<double>(type: "double precision", nullable: false),
-                    AveLossDuration = table.Column<double>(type: "double precision", nullable: false),
-                    StdDevAllTrades = table.Column<double>(type: "double precision", nullable: false),
-                    StdDevWinTrades = table.Column<double>(type: "double precision", nullable: false),
-                    StdDevLossTrades = table.Column<double>(type: "double precision", nullable: false),
-                    SharpRatio = table.Column<double>(type: "double precision", nullable: false),
-                    SortinoRatio = table.Column<double>(type: "double precision", nullable: false),
-                    PNL_Last3 = table.Column<double>(type: "double precision", nullable: false),
-                    PNL_Last5 = table.Column<double>(type: "double precision", nullable: false),
-                    PNL_Last8 = table.Column<double>(type: "double precision", nullable: false),
-                    PNL_Last13 = table.Column<double>(type: "double precision", nullable: false),
-                    PNL_Last21 = table.Column<double>(type: "double precision", nullable: false),
-                    PNL_Last34 = table.Column<double>(type: "double precision", nullable: false),
-                    LastUpdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ScoreCard", x => x.ScoreCardID);
+                    table.PrimaryKey("PK_OrderLog", x => x.OrderFlowId);
                 });
 
             migrationBuilder.CreateTable(
@@ -219,15 +172,125 @@ namespace OMS.Infrastructure.Migrations
                     table.PrimaryKey("PK_UserProfiles", x => x.UserID);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ScoreCardLog",
+                columns: table => new
+                {
+                    ScoreCardID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserID = table.Column<int>(type: "integer", nullable: false),
+                    GroupID = table.Column<int>(type: "integer", nullable: false),
+                    Trades = table.Column<int>(type: "integer", nullable: false),
+                    Winners = table.Column<int>(type: "integer", nullable: false),
+                    Losers = table.Column<int>(type: "integer", nullable: false),
+                    Longs = table.Column<int>(type: "integer", nullable: false),
+                    Shorts = table.Column<int>(type: "integer", nullable: false),
+                    NetProfitLong = table.Column<double>(type: "double precision", nullable: false),
+                    NetProfitShort = table.Column<double>(type: "double precision", nullable: false),
+                    GrossProfit = table.Column<double>(type: "double precision", nullable: false),
+                    GrossLoss = table.Column<double>(type: "double precision", nullable: false),
+                    LargestWinner = table.Column<double>(type: "double precision", nullable: false),
+                    LargestLoser = table.Column<double>(type: "double precision", nullable: false),
+                    LargestWinningStreak = table.Column<int>(type: "integer", nullable: false),
+                    LargestLosingStreak = table.Column<int>(type: "integer", nullable: false),
+                    TotalNetProfit = table.Column<double>(type: "double precision", nullable: false),
+                    WinLossRatio = table.Column<double>(type: "double precision", nullable: false),
+                    AveWin = table.Column<double>(type: "double precision", nullable: false),
+                    AveLoss = table.Column<double>(type: "double precision", nullable: false),
+                    AveTradeDuration = table.Column<double>(type: "double precision", nullable: false),
+                    AveWinDuration = table.Column<double>(type: "double precision", nullable: false),
+                    AveLossDuration = table.Column<double>(type: "double precision", nullable: false),
+                    StdDevAllTrades = table.Column<double>(type: "double precision", nullable: false),
+                    StdDevWinTrades = table.Column<double>(type: "double precision", nullable: false),
+                    StdDevLossTrades = table.Column<double>(type: "double precision", nullable: false),
+                    SharpRatio = table.Column<double>(type: "double precision", nullable: false),
+                    SortinoRatio = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last3 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last5 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last8 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last13 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last21 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last34 = table.Column<double>(type: "double precision", nullable: false),
+                    LastUpdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserProfileUserID = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScoreCardLog", x => x.ScoreCardID);
+                    table.ForeignKey(
+                        name: "FK_ScoreCardLog_UserProfiles_UserProfileUserID",
+                        column: x => x.UserProfileUserID,
+                        principalTable: "UserProfiles",
+                        principalColumn: "UserID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ScoreCards",
+                columns: table => new
+                {
+                    ScoreCardID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserID = table.Column<int>(type: "integer", nullable: false),
+                    GroupID = table.Column<int>(type: "integer", nullable: false),
+                    Trades = table.Column<int>(type: "integer", nullable: false),
+                    Winners = table.Column<int>(type: "integer", nullable: false),
+                    Losers = table.Column<int>(type: "integer", nullable: false),
+                    Longs = table.Column<int>(type: "integer", nullable: false),
+                    Shorts = table.Column<int>(type: "integer", nullable: false),
+                    NetProfitLong = table.Column<double>(type: "double precision", nullable: false),
+                    NetProfitShort = table.Column<double>(type: "double precision", nullable: false),
+                    GrossProfit = table.Column<double>(type: "double precision", nullable: false),
+                    GrossLoss = table.Column<double>(type: "double precision", nullable: false),
+                    LargestWinner = table.Column<double>(type: "double precision", nullable: false),
+                    LargestLoser = table.Column<double>(type: "double precision", nullable: false),
+                    LargestWinningStreak = table.Column<int>(type: "integer", nullable: false),
+                    LargestLosingStreak = table.Column<int>(type: "integer", nullable: false),
+                    TotalNetProfit = table.Column<double>(type: "double precision", nullable: false),
+                    WinLossRatio = table.Column<double>(type: "double precision", nullable: false),
+                    AveWin = table.Column<double>(type: "double precision", nullable: false),
+                    AveLoss = table.Column<double>(type: "double precision", nullable: false),
+                    AveTradeDuration = table.Column<double>(type: "double precision", nullable: false),
+                    AveWinDuration = table.Column<double>(type: "double precision", nullable: false),
+                    AveLossDuration = table.Column<double>(type: "double precision", nullable: false),
+                    StdDevAllTrades = table.Column<double>(type: "double precision", nullable: false),
+                    StdDevWinTrades = table.Column<double>(type: "double precision", nullable: false),
+                    StdDevLossTrades = table.Column<double>(type: "double precision", nullable: false),
+                    SharpRatio = table.Column<double>(type: "double precision", nullable: false),
+                    SortinoRatio = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last3 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last5 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last8 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last13 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last21 = table.Column<double>(type: "double precision", nullable: false),
+                    PNL_Last34 = table.Column<double>(type: "double precision", nullable: false),
+                    LastUpdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScoreCards", x => x.ScoreCardID);
+                    table.ForeignKey(
+                        name: "FK_ScoreCards_UserProfiles_UserID",
+                        column: x => x.UserID,
+                        principalTable: "UserProfiles",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_ClosedTrades_UserID",
                 table: "ClosedTrades",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ScoreCard_UserID",
-                table: "ScoreCard",
-                column: "UserID");
+                name: "IX_ScoreCardLog_UserProfileUserID",
+                table: "ScoreCardLog",
+                column: "UserProfileUserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScoreCards_UserID",
+                table: "ScoreCards",
+                column: "UserID",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -240,16 +303,19 @@ namespace OMS.Infrastructure.Migrations
                 name: "ClosedTrades");
 
             migrationBuilder.DropTable(
-                name: "LiveOrder");
+                name: "LiveOrders");
 
             migrationBuilder.DropTable(
                 name: "ModelOrderLog");
 
             migrationBuilder.DropTable(
-                name: "OrderFlow");
+                name: "OrderLog");
 
             migrationBuilder.DropTable(
-                name: "ScoreCard");
+                name: "ScoreCardLog");
+
+            migrationBuilder.DropTable(
+                name: "ScoreCards");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");

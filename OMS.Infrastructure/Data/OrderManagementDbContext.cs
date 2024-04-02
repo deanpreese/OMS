@@ -35,10 +35,11 @@ public class OrderManagementDbContext : DbContext
 
     public DbSet<ActivityLog> ActivityLogs { get; set; }
     public DbSet<ClosedTrade> ClosedTrades { get; set; }
-    public DbSet<LiveOrder> LiveOrder { get; set; }
+    public DbSet<LiveOrder> LiveOrders { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
-    public DbSet<OrderFlow> OrderFlow { get; set; }
-    public DbSet<ScoreCard> ScoreCard { get; set; }
+    public DbSet<ScoreCard> ScoreCards { get; set; }
+    public DbSet<OrderLog> OrderLog { get; set; }
+    public DbSet<ScoreCardLog> ScoreCardLog { get; set; }
     public DbSet<ModelOrderLog> ModelOrderLog { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,6 +49,12 @@ public class OrderManagementDbContext : DbContext
 
         modelBuilder.Entity<ScoreCard>()
             .HasIndex(b => b.UserID);
+
+        modelBuilder.Entity<UserProfile>()
+            .HasOne(u => u.ScoreCard)
+            .WithOne(s => s.UserProfile)
+            .HasForeignKey<ScoreCard>(s => s.UserID);
+
 
     }
 

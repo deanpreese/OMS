@@ -7,33 +7,25 @@ using Strategy.SharedKernel;
 
 namespace Strategy.Trader;
 
-public class NStrategy : AbstractStrategy, IStrategy
+public class NStrategy :  IStrategy
 {
 
-    public NStrategy() { }
-
-    public NStrategy(IStrategyConnection strategyConnection) 
+    public NStrategy()
     {
     }
 
-    public override Task<int> EvaluateFilters(ScoreCardDTO scoreCard)
+    public Task<int> EvaluateFilters(ScoreCardDTO scoreCard)
     {
-        return Task.FromResult(0);
+        throw new NotImplementedException();
     }
 
-    public override Task<NewOrderDTO> OnNewData(LiveOrderDTO traderLiveOrderDTO)
+    public  Task<NewOrderDTO> OnNewData(LiveOrderDTO traderLiveOrderDTO)
     {
-         NewOrderDTO newOrder = new NewOrderDTO
-        {
-            Instrument = "NONE",
-            OrderAction = OrderAction.NoAction
-
-        };
-
-        // in a typical strategy would call 
-        // newOrder = ProcessData();
-
-        return Task.FromResult(newOrder);
+        throw new NotImplementedException();
     }
 
+    public Task OnTraderModelData(ModelOrderLogDTO modelOrderLogDTO)
+    {
+        throw new NotImplementedException();
+    }
 }
