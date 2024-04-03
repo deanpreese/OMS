@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Update;
 using System.Data.SqlClient;
 using Dapper;
 using Npgsql;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 
 namespace OMS.Infrastructure.Data;
 
@@ -19,6 +20,7 @@ public class AnalyticsRepository : IAnalyticsRepository
     {
         _context = context;
     }
+
 
     public async Task UpdateTraderScoreCard(ScoreCard scData)
     {
@@ -54,11 +56,11 @@ public class AnalyticsRepository : IAnalyticsRepository
             sc.AveWinDuration = sc.AveWin > 0 ? Math.Round(scData.AveWinDuration, 6) : 0;
             sc.AveLossDuration = sc.AveLoss > 0 ? Math.Round(scData.AveLossDuration, 6): 0;
 
-            sc.StdDevAllTrades = scData.StdDevAllTrades > 0 ? Math.Round(scData.StdDevAllTrades, 6) : 0;
-            sc.StdDevWinTrades = scData.StdDevWinTrades > 0 ? Math.Round(scData.StdDevWinTrades, 6) : 0;
-            sc.StdDevLossTrades = scData.StdDevLossTrades > 0 ? Math.Round(scData.StdDevLossTrades, 6) : 0;
-            sc.SharpRatio = Double.IsFinite(sc.SharpRatio) ? Math.Round(scData.SharpRatio, 6) : 0;
-            sc.SortinoRatio = Double.IsFinite(sc.SortinoRatio) ? Math.Round(scData.SortinoRatio, 6) : 0;
+            sc.StdDevAllTrades = Math.Round(scData.StdDevAllTrades, 6) ;
+            sc.StdDevWinTrades = Math.Round(scData.StdDevWinTrades, 6) ;
+            sc.StdDevLossTrades = Math.Round(scData.StdDevLossTrades, 6);
+            sc.SharpRatio = Math.Round(scData.SharpRatio, 6);
+            sc.SortinoRatio = Math.Round(scData.SortinoRatio, 6) ;
 
             sc.PNL_Last3 = scData.PNL_Last3;
             sc.PNL_Last5 = scData.PNL_Last5;
@@ -102,5 +104,8 @@ public class AnalyticsRepository : IAnalyticsRepository
         throw new NotImplementedException();
     }
 
-
+    public async Task AddModelOrderLogEntry(ModelOrderLog modelOrderLogEntry)
+    {
+        await _context.ModelOrderLog.AddAsync(modelOrderLogEntry);
+    }
 }

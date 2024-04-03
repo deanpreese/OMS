@@ -1,7 +1,7 @@
 from xgboost import XGBClassifier, XGBRegressor
 from lightgbm  import LGBMClassifier, LGBMRegressor
 from catboost import CatBoostClassifier, CatBoostRegressor
-from common.common_func import calc_reg_streaks, show_stats, create_param_list
+from common.common_func import show_stats, create_param_list
 
 import mlflow.onnx
 
@@ -18,6 +18,8 @@ import mlflow
 #mlflow.set_tracking_uri(uri="http://127.0.0.1:8888")
 #mlflow.set_tracking_uri(uri="http://10.0.0.74:8888")
 mlflow.set_tracking_uri(uri="http://10.0.0.50:8888")
+
+        
 
 # -----------------------------------------------------
 def gen_classifier_data(model, X_train, y_train, X_test, y_test, y_pred):
@@ -51,7 +53,7 @@ def gen_regressor_data(model, X_train, y_train, X_test, y_test, y_pred):
         mae = float(mean_absolute_error(y_test,y_pred))                
         perf, tot = show_stats(False, y_test, y_pred)
         
-        current_streak, longest_win_streak, longest_loss_streak, aws, als, awm, alm, aum, adm = calc_reg_streaks(y_pred, y_test, False, False, False)
+        #current_streak, longest_win_streak, longest_loss_streak, aws, als, awm, alm, aum, adm = calc_reg_streaks(y_pred, y_test, False, False, False)
                 
         
         mlflow.log_param("FeatureCount" , (X_train.shape[1]))
@@ -63,6 +65,7 @@ def gen_regressor_data(model, X_train, y_train, X_test, y_test, y_pred):
         mlflow.log_metric("Perf", perf)
         mlflow.log_metric("Total", tot)
         
+        """
         mlflow.log_metric('Longest Win Streak', longest_win_streak)
         mlflow.log_metric('Longest Loss Streak', longest_loss_streak)
         mlflow.log_metric('Ave Win Streak', aws)
@@ -71,7 +74,7 @@ def gen_regressor_data(model, X_train, y_train, X_test, y_test, y_pred):
         mlflow.log_metric("Ave Loss Miss", alm)
         mlflow.log_metric("Ave Up Miss", aum)
         mlflow.log_metric("Ave Dwn Miss", adm)
-        
+        """
         
         return perf, tot, mse, rmse, r2, score, mae
 
@@ -139,6 +142,7 @@ class TunableCatBoostClassifier(CatBoostClassifier):
             modelx.fit(X_train, y_train)
         
             y_pred = model.predict(X_test)
+            
             pred_proba = model.predict_proba(X_test)
             mlflow.log_params( self.used_params )
             mlflow.catboost.log_model(modelx, "model")
@@ -230,6 +234,7 @@ class TunableLGBMClassifier(LGBMClassifier):
         
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
+            
             pred_proba = model.predict_proba(X_test)
             mlflow.lightgbm.log_model(model, "TunableLGBMClassifier")
             mlflow.log_table(data=pd.DataFrame(self.features_used), artifact_file="features_used.json")                 
@@ -285,6 +290,7 @@ class TunableXGBClassifier(XGBClassifier):
         
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
+            
             pred_proba = model.predict_proba(X_test)
             mlflow.log_params( self.used_params )
             mlflow.xgboost.log_model(model, "TunableXGBClassifier")
@@ -344,8 +350,8 @@ class TunableCatBoostRegressor(CatBoostRegressor):
             modelx =  CatBoostRegressor(**self.param_set())
             model.fit(X_train, y_train)
             modelx.fit(X_train, y_train)
-            
             y_pred = model.predict(X_test)
+            
             mlflow.log_params( self.used_params )
             mlflow.catboost.log_model(modelx, "model")
             mlflow.catboost.log_model(model, "TunableCatBoostRegressor")

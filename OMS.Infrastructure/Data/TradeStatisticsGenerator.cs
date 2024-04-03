@@ -8,6 +8,22 @@ namespace OMS.Infrastructure.Data;
 
 public static class TradeStatisticsGenerator
 {
+
+    public static bool CheckDouble(double d_val)
+    {
+        if (double.IsInfinity(d_val) || double.IsNaN(d_val) 
+            || double.IsNegativeInfinity(d_val) 
+                || double.IsPositiveInfinity(d_val) )
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+
     public static ScoreCard GenerateScoreCard(int userId, int groupId, List<ClosedTrade> closedTrades)
     {
         var scoreCard = new ScoreCard
@@ -82,31 +98,39 @@ public static class TradeStatisticsGenerator
             var losers_list = closedTrades.Where(trade => trade.PNL <= 0);
             scoreCard.AveLossDuration = losers_list.Any() ? losers_list.Average(trade => (trade.CloseOrderTime - trade.OpenOrderTime).TotalMinutes) : 0;
 
+
             // Standard Deviation of P&L
             double meanProfit = closedTrades.Average(trade => trade.PNL);
             double variance = closedTrades.Sum(trade => Math.Pow(trade.PNL - meanProfit, 2)) / closedTrades.Count;
-            scoreCard.StdDevAllTrades = Math.Sqrt(variance);
+            double sqrtVariance = Math.Sqrt(variance);
+            scoreCard.StdDevAllTrades = CheckDouble(sqrtVariance) ? sqrtVariance : 0;
 
             // Standard Deviation for Winners
             double meanProfitWinners = winners_list.Any() ? winners_list.Average(trade => trade.PNL) : 0;
             double varianceWinners = winners_list.Sum(trade => Math.Pow(trade.PNL - meanProfitWinners, 2)) / winners_list.Count();
-            scoreCard.StdDevWinTrades = Math.Sqrt(varianceWinners);
+            double sqrtVarWinners = Math.Sqrt(varianceWinners);
+            scoreCard.StdDevWinTrades = CheckDouble(sqrtVarWinners) ? sqrtVarWinners : 0;
 
             // Standard Deviation for Losers
             double meanProfitLosers = losers_list.Any() ? losers_list.Average(trade => trade.PNL) : 0;
             double varianceLosers = losers_list.Sum(trade => Math.Pow(trade.PNL - meanProfitLosers, 2)) / losers_list.Count();
-            scoreCard.StdDevLossTrades = Math.Sqrt(varianceLosers);
+            double sqrtVarLosers = Math.Sqrt(varianceLosers);
+            scoreCard.StdDevLossTrades = CheckDouble(sqrtVarLosers) ? sqrtVarLosers : 0;
 
             // Sharpe Ratio
             double riskFreeRate = 0.01; // Assuming a 1% risk-free rate. Adjust as needed.
-            scoreCard.SharpRatio = (meanProfit - riskFreeRate) / scoreCard.StdDevAllTrades;
+            double sharp = (meanProfit - riskFreeRate) / scoreCard.StdDevAllTrades;
+            scoreCard.SharpRatio = CheckDouble(sharp) ? sharp : 0;
 
             // Sortino Ratio
             var negativeProfits = closedTrades.Where(trade => trade.PNL < 0).Select(trade => trade.PNL).ToList();
             double meanNegativeProfits = negativeProfits.Any() ? negativeProfits.Average() : 0;
             double downsideVariance = negativeProfits.Sum(profit => Math.Pow(profit - meanNegativeProfits, 2)) / negativeProfits.Count;
             double downsideDeviation = Math.Sqrt(downsideVariance);
-            scoreCard.SortinoRatio = (meanProfit - riskFreeRate) / downsideDeviation;
+            double sortino = (meanProfit - riskFreeRate) / downsideDeviation;
+            scoreCard.SortinoRatio = CheckDouble(sortino) ? sortino : 0;
+
+
         }
         catch (Exception ex)
         {
