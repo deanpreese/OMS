@@ -1,11 +1,15 @@
 ﻿using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
+using Strategy.SharedKernel;
 
 namespace Strategy.Trader.Abstractions;
 
 public interface IStrategy
 {
-   Task<NewOrderDTO> OnNewOrder(ModelOrderLogDTO _orig_live_order);     
+   Task OnTraderModelData(ModelOrderLogDTO modelOrderLogDTO);
+   Task<NewOrderDTO> OnNewData(LiveOrderDTO traderLiveOrderDTO);   
+   Task<int> EvaluateFilters(ScoreCardDTO scoreCard);  
+  
 }
 
 

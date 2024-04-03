@@ -1,6 +1,8 @@
 {
-    "strategy_class": "Strategy.Trader.Strategy.BaseCounter.Strategy",
-    "strategy_name" : "BaseCounterStrategy",
-    "group": 100,
-    "orders_per_direction": 10
+    "strategy_assembly": "Strategy.Trader",    
+    "strategy_class": "Strategy.Trader.Strategy.FollowWinners",
+    "strategy_name" : "FollowWinners",
+    "group": 103,
+    "orders_per_direction": 10,
+    "logid" : "^v^v_FollowWinners"
 }

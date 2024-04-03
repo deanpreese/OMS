@@ -1,3 +1,4 @@
+
 import json
 import mlflow
 import pandas as pd
@@ -72,10 +73,21 @@ def run_sim(exp_id, n_models, file, trades, delay):
     
     
 exp_idx = ["2"]
+
+
 num_models = 10
+num_models = 3
+#num_models = 1
+
+#trades = 500
 trades = 250
+trades = 10
+
+
 #sim_delay = 0.05
-sim_delay = 0.00000000005
+sim_delay = 0.02
+#sim_delay = 0.00000002
+
 
 #file = "data/lucky13_short.csv"
     

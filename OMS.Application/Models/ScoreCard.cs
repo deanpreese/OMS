@@ -18,11 +18,12 @@ public class ScoreCard
     [Key]
     [Id(0)]
     public int ScoreCardID {get; set;}
-    
     [Id(1)]
     public int UserID {get; set;}
     [Id(2)]
     public int GroupID {get; set;}
+
+
     [Id(3)]
     public int Trades {get; set;}
     [Id(4)]
@@ -52,14 +53,11 @@ public class ScoreCard
     [Id(16)]
     public double TotalNetProfit {get; set;}
     [Id(17)]
-    public string TradeXML {get; set;} = "";
-    [Id(18)]
     public double WinLossRatio {get; set;}
     [Id(19)]
     public double AveWin {get; set;}
     [Id(20)]
     public double AveLoss {get; set;}
-
     [Id(22)]
     public double AveTradeDuration {get; set;}
     [Id(23)]
@@ -95,6 +93,9 @@ public class ScoreCard
         get => _lastUpdate;
         set => _lastUpdate = DateTime.SpecifyKind(value, DateTimeKind.Utc);
     }
+
+    [Id(36)]
+    public UserProfile UserProfile { get; set; }
 
 }
 

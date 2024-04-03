@@ -11,7 +11,7 @@ class OrderManager():
     def __init__(self):
         self.px = 0
         self.commission = 0
-        self.tick_dte = dt(1, 1, 1)
+        self.tick_dte = dt(2020, 1, 1)
         
         self.com_cli = CommonCli()
 

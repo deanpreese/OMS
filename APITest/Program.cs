@@ -6,36 +6,50 @@ using System.Text.Json;
 using OMS.SharedKernel;
 using Orleans.Concurrency;
 using OMS.SharedKernel.DTO;
+using System.Security.Cryptography;
 
-var options = new JsonSerializerOptions {
+
+JsonSerializerOptions options = new JsonSerializerOptions {
             NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
             Converters ={
                 new JsonStringEnumConverter()
-            }
-};
+            },
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IgnoreReadOnlyProperties = true
+  };
+
 
 HttpClient httpClient = new HttpClient();
 string baseUrl = "http://10.0.0.147:8786";
 
-StrategyApiClient client = new StrategyApiClient(httpClient, baseUrl);
+StrategyApiClient client = new StrategyApiClient( baseUrl);
 
+/*
 var data =await client.GetScoreCardAsync("390410_0");
 var d_out = JsonSerializer.Serialize(data, options);
 Console.WriteLine(d_out);
 
-Console.WriteLine("--------------------------------------------------");
 
-//4	229047	0	163208755	
-var data2 = await client.GetLastClosedTradeByOpenPlatformIDAsync("229047_0", 163208755);
+Console.WriteLine("--------------------------------------------------");
+//4	592504	0	-1010840761	
+var data2 = await client.GetLastClosedTradeByOpenPlatformIDAsync("592504_0", -1010840761);
 var d_out2 = JsonSerializer.Serialize(data2, options);
 Console.WriteLine(d_out2);
 
 
 Console.WriteLine("--------------------------------------------------");
 
-var data3 = await client.GetLiveOrdersAsync("564127_0");
+var data3 = await client.GetLiveOrdersAsync("734170_80");
+
+foreach(var order in data3)
+{
+    Console.WriteLine(order.UserID + " " + order.OrderTime + " " + order.OrderAction + " " + order.Instrument + " " + order.OrderPX + " " + order.OrderType);
+}
+
 var d_out3 = JsonSerializer.Serialize(data3, options);
 Console.WriteLine(d_out3);
+*/
 
 Console.WriteLine("--------------------------------------------------");
 
@@ -73,3 +87,22 @@ var newOrder = new NewOrderDTO {
 var order = await client.ProcessOrderAsync(newOrder);
 var d_out6 = JsonSerializer.Serialize(order, options);
 Console.WriteLine(d_out6);
+
+
+Console.WriteLine("Press any key to Continue ...");
+Console.ReadKey();
+
+
+var newOrder2 = new NewOrderDTO {
+    OrderType = OrderType.CLOSE,
+    OrderAction = OrderAction.Sell,
+    Instrument = "ES",
+    OrderPX = 110,
+    OrderTime = DateTime.Now,
+    UserID = trader,
+    GroupID = 0,
+    Quantity = 1
+};           
+var order2 = await client.ProcessOrderAsync(newOrder2);
+var d_out7 = JsonSerializer.Serialize(order2, options);
+Console.WriteLine(d_out7);

@@ -1,17 +1,14 @@
 ﻿using Strategy.Trader.Abstractions;
 using Strategy.Trader.Filters;
-using Strategy.Trader.Models;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
-using OMS.SharedKernel.Grains;
-using System.Threading.Tasks.Dataflow;
+using Strategy.SharedKernel;
 
 namespace Strategy.Trader.Strategy;
 
-public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
+public class BaseCounterStrategy : AbstractStrategy, IStrategy
 {
-    IClusterClient newClusterClient;
-   
+    
     int longCount = 0;
     int shortCount = 0;
     int netPositions = 0;
@@ -26,59 +23,36 @@ public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
 
 
 
-    public BaseCounterStrategy(IClusterClient clusterClient, StrategyAccount strategyData) 
+    public BaseCounterStrategy(IStrategyConnection strategyConnection) : base(strategyConnection)
     {
-        newClusterClient = clusterClient;
         _filters = new List<IStrategyFilter>
         {
             new AllFollowFilter()
         };
-        _strategyData = strategyData;
-        flowBuffer = new BufferBlock<string>(new DataflowBlockOptions { BoundedCapacity = DataflowBlockOptions.Unbounded });
-        Task.Run(async () => await ProcessLogBuffer());
     }
 
-    public override async Task<NewOrderDTO> OnNewOrder(LiveOrderDTO _orig_live_order)
+    public override async  Task<NewOrderDTO> OnNewData(LiveOrderDTO traderLiveOrderDTO)
     {
 
-        string _trader_key = _orig_live_order.UserID + "_" + _orig_live_order.GroupID;
-        _strategy_key = _strategyData.strategy_traderId + "_" + _strategyData.group;
-
-        NewOrderDTO _mapped_new_order = await SharedMapping.MapLiveOrderDTOLiveToNewDTO(_orig_live_order);    
+        NewOrderDTO _mapped_new_order = await SharedMapping.MapLiveOrderDTOLiveToNewDTO(traderLiveOrderDTO);    
         _mapped_new_order.OrderAction = OrderAction.NoAction;
         
-        int netPositions  = await ProcessCounter(_orig_live_order);
+        //Console.WriteLine(CurrentStrategyAccount.logid + "  " + orderCount);
 
+        
+        int netPositions  = await ProcessCounter(traderLiveOrderDTO);
         if(netPositions > 9 || netPositions < -9) 
         {
-            ITraderInfoGrain traderInfoGrain = newClusterClient.GetGrain<ITraderInfoGrain>(_trader_key);
-            IStrategyGrain strategyGrain = newClusterClient.GetGrain<IStrategyGrain>(_strategy_key);
-
-            NewOrderDTO newOrder = await OnNewOrder(_orig_live_order, traderInfoGrain, strategyGrain);
+            NewOrderDTO newOrder = await ProcessNewData(traderLiveOrderDTO);
             _mapped_new_order  = newOrder;
         }
-
+        
         return _mapped_new_order;            
     }
 
-    public async override Task<int> EvaluateFilters(string trader_key, string strategy_key, 
-        ITraderInfoGrain traderGrain, IStrategyGrain strategyGrain)
+    public async override Task<int> EvaluateFilters(ScoreCardDTO scoreCard)
     {
         return await Task.FromResult(1);
-    }
-
-
-
-    public async override Task ProcessOrderForStrategy(string strategy_key, NewOrderDTO order)
-    {
-       if(order.OrderAction != OrderAction.NoAction)
-        {
-            IOrderGrain orderGrain = newClusterClient.GetGrain<IOrderGrain>("T"+_strategyData.strategy_traderId + "-"+ orderCount);
-            
-            await orderGrain.ProcessOrder(order);
-            
-            orderCount++;
-        }
     }
 
 
@@ -120,7 +94,7 @@ public class BaseCounterStrategy : AbstractStrategyBase , IStrategy
         netList.Reverse();
         double netAve = netList.Take(aveCount).Average();
         
-        await AddToLogBuffer("NET: " + netPositions + "  AvePos10  " + netAve + "      Long: " + longCount + "  Short: " + shortCount + "       LongAve: " + longAve + "     ShortAve: " + shortAve);
+        //await AddToLogBuffer("NET: " + netPositions + "  AvePos10  " + netAve + "      Long: " + longCount + "  Short: " + shortCount + "       LongAve: " + longAve + "     ShortAve: " + shortAve);
 
         return await Task.FromResult(netPositions);
 

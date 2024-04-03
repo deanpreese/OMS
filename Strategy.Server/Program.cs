@@ -13,20 +13,25 @@ using Microsoft.Extensions.Options;
 using Strategy.Server.Services;
 
 using OMS.SharedKernel.Common;
+using Strategy.Server;
+using Strategy.Server.StrategyServices;
 
 
 using IHost host = Host.CreateDefaultBuilder(args)
    
     .UseConsoleLifetime().ConfigureServices(services =>
     {
-        services.AddSingleton<IncomingOrderQueue>();
-        //services.AddHostedService<OrderPubSubBackgroundService>();
+        services.AddSingleton<ModelOrderMessageBus>();                
+        
+        services.AddHostedService<ReplWatcher>();
         services.AddHostedService<WatcherService>();
 
-        //services.AddHostedService<BasicService>();
-        //services.AddHostedService<FollowService>();ß
-        //services.AddHostedService<CounterService>();
-        //services.AddHostedService<FadeService>();
+        services.AddHostedService<NGZero>();
+        //services.AddHostedService<NGOne>();
+        //services.AddHostedService<NGTwo>();
+        //services.AddHostedService<NGThree>();
+        
+
     })
     .Build();
 
@@ -34,3 +39,5 @@ await host.StartAsync();
 
 Console.WriteLine("Press Enter to terminate...");
 Console.ReadLine();
+
+await host.StopAsync();

@@ -47,4 +47,7 @@ public class UserProfile
     public int GroupID { get; set; }
     [Id(13)]
     public int TraderRole { get; set; }
+
+    [Id(15)]
+    public ScoreCard ScoreCard { get; set; }
 }

@@ -8,7 +8,7 @@ public static class MLOrders
     public static IEndpointRouteBuilder MapMLOrdersEndpoints(this IEndpointRouteBuilder endpoints)
     {
         
-        endpoints.MapPost("api/mlorders/process-order", async (NewOrderDTO order, NewOrderChannelService newOrderChannelService) =>
+        endpoints.MapPost("api/ml/process-order", async (NewOrderDTO order, NewOrderChannelService newOrderChannelService) =>
         {
             int om_id = 0;
             await newOrderChannelService.WriteAsync(order);
@@ -18,7 +18,7 @@ public static class MLOrders
         .WithOpenApi();
 
 
-        endpoints.MapPost("api/mlorders/verify-model-trader", async (NewTraderDTO newTrader, IUserService userService) =>
+        endpoints.MapPost("api/ml/verify-model-trader", async (NewTraderDTO newTrader, IUserService userService) =>
         {
             int oid = await userService.VerifyAndAddByDisplayName(newTrader);
             return Results.Ok(oid);

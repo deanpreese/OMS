@@ -2,12 +2,15 @@
 DB_NAME="orders"
 DB_USER="dean"
 DB_PASSWORD="abc"
+DB_CONNECTION="Host=localhost;Database=orders;Username=trading;Password=abc" 
+DB_HOST="10.0.0.147"
+DB_PORT="5432"
+
 MIGRATIONS_DIR="../OMS.Infrastructure/Migrations" # e.g., ./Data/Migrations
 PROJECT_DIR="../OMS.Infrastructure" # e.g., ./MyApp
 PROJECT_FILE="../OMS.Infrastructure/OMS.Infrastructure.csproj" # e.g., ./MyApp
 DB_CONTEXT="OrderManagementDbContext" #
-#DB_CONNECTION="Host=10.0.0.50;Database=orders;Username=trading;Password=abc" 
-DB_CONNECTION="Host=localhost;Database=orders;Username=trading;Password=abc" 
+
 EF_ASSEMBLY="OMS.Infrastructure" 
 START_UP_PROJECT="Migrations.csproj"
 
@@ -37,10 +40,39 @@ recreateDatabase() {
     dotnet ef database update  -p ${PROJECT_DIR} -c $DB_CONTEXT --connection $DB_CONNECTION  --startup-project  ${START_UP_PROJECT} 
 }
 
+add_publication() {
+
+    echo "Adding publication..."
+
+    SQL_COMMAND="CREATE PUBLICATION liveupdates
+    FOR TABLE public.\"ClosedTrades\", public.\"LiveOrders\", public.\"ScoreCards\", public.\"ModelOrderLog\"
+    WITH (publish = 'insert, update, delete, truncate', publish_via_partition_root = false);"
+
+    #CREATE PUBLICATION logupdates
+    #FOR TABLE public."OrderLog", public."ScoreCardLog", public."ClosedTrades", public."ModelOrderLog"
+    #WITH (publish = 'insert, update, delete, truncate', publish_via_partition_root = false);    
+
+    # Directly pass the SQL command to psql without using eval or complex escaping
+    echo "${SQL_COMMAND}" | psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
+
+    # Check for errors
+    if [[ $? -ne 0 ]]; then
+        echo "Error creating publication liveupdates!"
+        exit 1
+    fi
+
+    echo "Publication liveupdates created successfully."
+
+
+}
+   
+
+
 
 # Main script execution
 dropDatabase
 removeMigrations
 recreateDatabase
+add_publication 
 
 echo "Database reset complete."

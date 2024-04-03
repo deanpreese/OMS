@@ -14,6 +14,10 @@ class order_action(Enum):
     Sell = -2
     Ignore = 0
 
+class order_type(Enum):
+    Open = 100
+    Close = 99
+    NOTYPE = -1
 
 
 
@@ -51,7 +55,7 @@ class CommonStrategy :
       orders = []
 
       if self.position == position_status.FLAT:
-         orders.append(self.build_order( new_order_action,px))
+         orders.append(self.build_order( new_order_action, px, order_type.Open)) 
 
          if new_order_action == order_action.Buy:
                self.position = position_status.LONG 
@@ -76,7 +80,7 @@ class CommonStrategy :
          
          # long but sell order
          if new_order_action == order_action.Sell:
-               orders.append(self.build_order(new_order_action,px))  
+               orders.append(self.build_order(new_order_action, px, order_type.Close))  
                self.last_prediction = prediction
                self.position = position_status.FLAT
                self.bars_since = 0
@@ -95,7 +99,7 @@ class CommonStrategy :
          
          # short but buy order
          if new_order_action == order_action.Buy:
-               orders.append(self.build_order(new_order_action,px))  
+               orders.append(self.build_order(new_order_action, px, order_type.Close))  
                self.last_prediction = prediction
                self.position = position_status.FLAT
                self.bars_since = 0
@@ -139,12 +143,12 @@ class CommonStrategy :
       if self.position == position_status.LONG:
          self.position = position_status.FLAT
          self.bars_since = 0
-         return self.build_order(order_action.Sell,px)
+         return self.build_order(order_action.Sell,px,order_type.Close)
          
       if self.position == position_status.SHORT:
          self.position = position_status.FLAT
          self.bars_since = 0  
-         return self.build_order(order_action.Buy,px)
+         return self.build_order(order_action.Buy,px,order_type.Close)
            
     
    # --------------------------------------
@@ -152,16 +156,16 @@ class CommonStrategy :
    def close_orders(self, px):
       orders_to_close = []
       if self.position == position_status.LONG:
-         orders_to_close.append( self.build_order(order_action.Sell,px))
+         orders_to_close.append( self.build_order(order_action.Sell,px, order_type.Close))
          self.position = position_status.FLAT
          
       if self.position == position_status.SHORT:
-         orders_to_close.append( self.build_order(order_action.Buy,px))
+         orders_to_close.append( self.build_order(order_action.Buy,px, order_type.Close))
          self.position = position_status.FLAT  
       return orders_to_close
    
    
-   def build_order(self, new_order_action, px):
+   def build_order(self, new_order_action, px, new_order_type):
       
       dt_string = dt.datetime.utcnow()
       dte_iso = dt_string.isoformat()
@@ -176,11 +180,12 @@ class CommonStrategy :
          "authToken": 0,
          "instrument": "ES",
          "orderPX": px,
-         "orderType": "Market",
+         "orderType": int(new_order_type.value),
          "orderAction": int(new_order_action.value),
          "quantity": 1,
          "orderTime": dte_iso,
          "modelFeatureData" :  self.predict_data.to_json()
       }    
-   
+
+      
       return new_order

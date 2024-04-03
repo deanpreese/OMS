@@ -14,6 +14,8 @@ using OMS.Infrastructure.Services;
 using OMS.Infrastructure.Services.Common;
 using OMS.SharedKernel.DTO;
 using OMS.API;
+using System.Text.Json;
+using OMS.SharedKernel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,7 +48,13 @@ builder.Services.AddHostedService<ClosedOrderProcessorService>();
 builder.Services.AddLogging(configure => configure.AddConsole());
 builder.Services.AddHttpsRedirection(opt => opt.HttpsPort = 44300);
 
-builder.Services.Configure<JsonOptions>( options =>  options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+builder.Services.Configure<JsonOptions>( options =>  
+{
+     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+     options.SerializerOptions.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
+}
+);
 
 var app = builder.Build();
 app.UseSwagger();

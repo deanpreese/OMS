@@ -46,9 +46,10 @@ public class TraderRepository : ITraderRepository
         ScoreCard scd = new ScoreCard
         {
             UserID = user.UserID,
-            TradeXML = " ",
             GroupID = addedTrader.GroupID
         };
+
+        user.ScoreCard = scd; 
         await _context.UserProfiles.AddAsync(user);
         return user.UserID;
 
