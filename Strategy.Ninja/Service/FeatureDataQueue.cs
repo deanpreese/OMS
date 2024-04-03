@@ -3,14 +3,14 @@ using System.Security.Cryptography;
 using System.Threading.Channels;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Logging;
-using OMS.Core.Models;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
 
 
 
-namespace OMS.Infrastructure.Services.Queue;
+namespace Strategy.Ninja.Service;
+
 
 public class FeatureDataDataQueue
 {

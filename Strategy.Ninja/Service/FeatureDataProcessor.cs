@@ -1,13 +1,10 @@
-﻿using OMS.Core.Models;
-using OMS.Core.Common;
-using OMS.Core.Interfaces;
+﻿
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using System.Data;
 using System.Text;
-using OMS.Core.WebAPIClient;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
@@ -15,7 +12,7 @@ using OMS.SharedKernel.DTO;
 
 
 
-namespace OMS.Infrastructure.Services.Queue;
+namespace Strategy.Ninja.Service;
 
 public class FeatureDataProcessor : BackgroundService
 {
@@ -65,11 +62,11 @@ public class FeatureDataProcessor : BackgroundService
 
         if (featureData.TimeTicks < DateTime.UtcNow.Ticks - 150000000 )
         {
-            await OMSClient.SendToMLForPrediction(csv_data, "http://10.0.147:8888/predict");    
+            //await OMSClient.SendToMLForPrediction(csv_data, "http://10.0.147:8888/predict");    
             Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks));        
         }else
         {
-           await OMSClient.SendToMLForPrediction(csv_data, "http://10.0.0.147:8888/predict");        
+           //await OMSClient.SendToMLForPrediction(csv_data, "http://10.0.0.147:8888/predict");        
             Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +new DateTime(featureData.TimeTicks) );    
         }
         

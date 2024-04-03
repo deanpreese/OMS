@@ -1,4 +1,7 @@
-﻿namespace Strategy.Ninja.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using Strategy.Ninja.Service;
+
+namespace Strategy.Ninja.Controllers;
 
 [ApiController]
 [Route("api/data")]
