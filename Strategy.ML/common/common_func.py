@@ -176,6 +176,9 @@ def calc_class_results(all_predictions, models):
 
 def calc_reg_results(all_predictions, estimator_run_ids):
 
+        r_predictions = []
+        r_y_target = []
+        
         correctX = 0
         correctY = 0
         totalX = 0
@@ -186,57 +189,69 @@ def calc_reg_results(all_predictions, estimator_run_ids):
         
         for index, row in all_predictions.iterrows():
         
-            key_result = 0
-            weighted_prob = 0
+            agg_predict = 0
+            agg_weighted_predict = 0
         
             # for each id pull the result and prob data 
             for id in estimator_run_ids:
-                key_result += row[id]
+                agg_predict += row[id]
         
                 k = f"{id}_p"
                 prob_data = row[k]
-                weighted_prob = key_result * prob_data
+                agg_weighted_predict = agg_predict * prob_data
                 
             target_output = row['target']
             
-            #print(f"Target  {target_output}    Prob  {key_result}    Predict  {weighted_prob}  ")
+            wp_kr = (agg_weighted_predict * agg_predict) 
             
-            if(target_output > 0 and (key_result) > 0  ):
+                        
+            if(target_output > 0 and (agg_predict) > 0  ):
                     correctX= correctX + 1 
             
-            if(target_output < 0 and (key_result) < 0 ):
+            if(target_output < 0 and (agg_predict) < 0 ):
                     correctX= correctX + 1  
             
-            if(target_output == 0 and (key_result) == 0 ):
+            if(target_output == 0 and (agg_predict) == 0 ):
                     correctX= correctX + 1 
                     
 
-            if(target_output > 0 and (weighted_prob * key_result) > 0  ):
+            if(target_output > 0 and (wp_kr) > 0  ):
                     correctY= correctY + 1 
             
-            if(target_output < 0 and (weighted_prob * key_result) < 0  ):
+            if(target_output < 0 and (wp_kr) < 0  ):
                     correctY= correctY + 1         
             
-            if(target_output == 0 and (weighted_prob * key_result) == 0  ):
+            if(target_output == 0 and (wp_kr) == 0  ):
                     correctY= correctY + 1  
 
 
-            if(target_output > 0 and (key_result> 0 or (weighted_prob * key_result)  > 0) ):
+            if(target_output > 0 and (agg_predict> 0 or (wp_kr)  > 0) ):
                     correctP= correctP + 1 
-            
-            if(target_output < 0 and (key_result < 0 or (weighted_prob * key_result) < 0) ):
+                    
+            if(target_output < 0 and (agg_predict < 0 or (wp_kr) < 0) ):
                     correctP= correctP + 1         
             
-            if(target_output == 0 and (key_result == 0 or (weighted_prob * key_result) == 0) ):
+            if(target_output == 0 and (agg_predict == 0 or (wp_kr) == 0) ):
                     correctP= correctP + 1  
 
-            totalX = totalX + 1    
+            totalX = totalX + 1 
+            
+            local_predict = 0
+            if agg_predict > 0 or agg_weighted_predict > 0:
+                local_predict = 1
+            elif agg_predict < 0 or agg_weighted_predict < 0:
+                local_predict = -1
+            else:
+                local_predict = 0
+
+            r_y_target.append(target_output)
+            r_predictions.append(local_predict)
         
         cxp = correctX/totalX
         cyp = correctY/totalX
         cpp = correctP/totalX
         
-        return correctX, correctY, correctP, totalX, cxp, cyp, cpp
+        return correctX, correctY, correctP, totalX, cxp, cyp, cpp, r_predictions, r_y_target
    
 
 def calc_reg_streaks(predictions, y_test, display_data, display_plot, asList):

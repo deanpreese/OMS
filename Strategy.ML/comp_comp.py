@@ -23,7 +23,8 @@ def load_models(exp_id, n_models):
     model_loader = ModelLoader()
     return model_loader.load_composite_models( experiment_id, num_models)
 
-def run_sim(exp_id, n_models, file, trades, delay):
+
+def run_sim(models_in, file, trades, delay):
 
 
     data = pd.read_csv(file)   
@@ -32,7 +33,7 @@ def run_sim(exp_id, n_models, file, trades, delay):
     X = data.iloc[:, 0:input_features]  
     y = data["output"].values
     
-    models = load_models(exp_id, n_models)
+    models = models_in
 
     order_manager = OrderManager()
     order_manager.is_sim(True)
@@ -69,13 +70,14 @@ def run_sim(exp_id, n_models, file, trades, delay):
     print(f"Time {t} seconds to process {order_total} predictions  --  {round(order_total/t,2)}/sec ")
     print(" ") 
     
+
+# ------------------
     
-exp_idx = ["32"]
-
-num_models = 5
-#num_models = 3
-#num_models = 1
-
+models1 = load_models(["36"], 2)
+models2 = load_models(["32"], 2)
+models3 = load_models(["30"], 2)    
+models4 = load_models(["26"], 2)       
+models_agg = models1 + models2 + models3 + models4
 
 #trades = 750
 trades = 250
@@ -85,11 +87,8 @@ trades = 250
 #sim_delay = 0.05
 sim_delay = 0.025
 #sim_delay = 0.00000002
-
-
-#file = "data/lucky13_short.csv"
     
 file = "data/lucky13_oos.csv"    
     
-run_sim(exp_idx, num_models, file, trades, sim_delay)    
+run_sim(models_agg, file, trades, sim_delay)    
 

@@ -46,8 +46,6 @@ class CompositeStrategy (CommonStrategy):
             perf = self.strategy_models[m].metrics["Perf"]
             predict = self.strategy_models[m].do_predict(data)
             
-            #//TODO: Add Code to export to DB for Optimization
-            
             agg_weighted_predict += predict * perf
             agg_predict += predict
              

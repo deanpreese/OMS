@@ -7,7 +7,9 @@ import mlflow
 
 import pandas as pd
 
-from common.common_func import calc_MSE, calc_reg_results, show_stats, simple_split_and_scale
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
+
+from common.common_func import calc_MSE, calc_reg_results, calc_reg_streaks, show_stats, simple_split_and_scale
 
 from models.wrapped_models import TunableCatBoostRegressor, TunableLGBMRegressor, TunableXGBRegressor
 
@@ -15,8 +17,7 @@ import logging
 logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
 
 
-
-def process_model(exp_name, data,  randomize, models, run_test_size, feature_list_size):
+def process_model(exp_name, data, models, run_test_size, feature_list_size):
         
         run_uuid = str(uuid.uuid1())[:6]
         
@@ -37,15 +38,13 @@ def process_model(exp_name, data,  randomize, models, run_test_size, feature_lis
                 X = data.iloc[:, 0:input_features]
                 y = data['output'].values
                 
-                if randomize:
-                        idxx = rand.sample(range(1, len(data.axes[1]) -2 ), feature_list_size)
-                        features_list.append(idxx)    
-                        fl= features_list[f]
-                        X = data.iloc[:, fl]  
-                        input_features = len(X.axes[1]) 
-                        fl_out = fl
+                idxx = rand.sample(range(1, len(data.axes[1]) -2 ), feature_list_size)
+                features_list.append(idxx)    
+                fl= features_list[f]
+                X = data.iloc[:, fl]  
+                input_features = len(X.axes[1]) 
+                fl_out = fl
               
-
                 X_train, X_test, y_train, y_test = simple_split_and_scale(X, y, run_test_size, 0)
                 
                 #e.features_used = fl_out
@@ -71,27 +70,25 @@ def process_model(exp_name, data,  randomize, models, run_test_size, feature_lis
         e_perf = pd.DataFrame(estimator_perf)        
         e_perf.columns = ["Estimator", "Perf", "Total", "MSE", "RMSE", "Score", "Features", "UUID", "RUN_ID" ]
         
-        correctX, correctY, correctP, totalX, cxp, cyp, cpp = calc_reg_results(all_predict_data, estimator_run_ids)
+        correctX, correctY, correctP, totalX, cxp, cyp, cpp, r_predictions, r_y_target = calc_reg_results(all_predict_data, estimator_run_ids)
+        current_streak, longest_win_streak, longest_loss_streak, AveWinSt, AveLossSt, AveWinMiss, AveLossMiss, AveUpMiss, AveDownMiss = calc_reg_streaks(r_predictions, r_y_target, False, False, False)                
 
+        mse = mean_squared_error(r_y_target, r_predictions, squared=True)
+        rmse =mean_squared_error(r_y_target, r_predictions, squared=False)
+        r2 =r2_score(r_y_target, r_predictions)
+        score = r2
+        mae = float(mean_absolute_error(r_y_target,r_predictions))                
 
         perf_data_t = [run_uuid, feature_list_size, e_perf.values.tolist(), features_list, 
-                       correctX, correctY, correctP, totalX, cxp, cyp, cpp]
+                       correctX, correctY, correctP, totalX, cxp, cyp, cpp, 
+                       current_streak, longest_win_streak, longest_loss_streak, AveWinSt, AveLossSt, 
+                       AveWinMiss, AveLossMiss, AveUpMiss, AveDownMiss, mse, rmse, r2, mae]
         
         return perf_data_t    
 
 
 
-def GenerateResults(perf_data):
-        p_df = pd.DataFrame(perf_data)    
-        p_df.columns = ["rid", "input_features", "e_perf", "features_list", "correctX", "correctY", 
-                        "correctP", "totalX", "cxp", "cyp", "cpp" ]
-        p_df.sort_values(by=['cpp'], ascending=False, inplace=True)
-        return p_df
-
-
-
-
-def run_models(data, write_to_file, random_features,  estimators, run_test_size, 
+def run_models(data, estimators, run_test_size, 
                min_features, max_features, step_features, total_cycles ):
         
         feature_list_size = min_features
@@ -109,39 +106,29 @@ def run_models(data, write_to_file, random_features,  estimators, run_test_size,
             print(f"{e}")    
             experiment_id = mlflow.get_experiment_by_name(exp_name).experiment_id        
        
-        if random_features:
                 
-                perf_data = []
-                #e_df_list = []
-                
-                for q in range(total_cycles):
-                        
-                        for f in range(min_features, max_features, step_features):
-                        
-                                random_features = True
-                                feature_list_size = f
-                                
-                                perf_data_t = process_model(experiment_id, data,  random_features, 
-                                                            estimators, run_test_size, feature_list_size)
-                                perf_data.append(perf_data_t)
-                        
-                        p_df = GenerateResults(perf_data)
-                
-                                        
-        else:   
-                perf_data = []
-                
-                perf_data_t =process_model(exp_name, data,  random_features, estimators, run_test_size, feature_list_size)
-                perf_data.append(perf_data_t)
-                p_df = GenerateResults(perf_data)
-                        
-        return p_df, experiment_id
-                
-
-def LogFinalResults(p_df, experiment_id_parent):
+        perf_data = []
         
-        step = 0
+        for q in range(total_cycles):
+                
+                for f in range(min_features, max_features, step_features):
+                
+                        feature_list_size = f
+                        
+                        perf_data_t = process_model(experiment_id, data, 
+                                                        estimators, run_test_size, feature_list_size)
+                        perf_data.append(perf_data_t)
+                
+                p_df = pd.DataFrame(perf_data)    
+                p_df.columns = ["rid", "input_features", "e_perf", "features_list", "correctX", "correctY", 
+                                "correctP", "totalX", "cxp", "cyp", "cpp", "current_streak", "longest_win_streak", "longest_loss_streak"
+                                , "AveWinSt", "AveLossSt", "AveWinMiss", "AveLossMiss", "AveUpMiss", "AveDownMiss", "mse", "rmse", "r2", "mae"]
+                
+                p_df.sort_values(by=['cpp'], ascending=False, inplace=True)
+                                        
+                        
 
+        step = 0
         time_stamp = dte_time.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
         exp_name = f"mixer_output_{time_stamp}"
         
@@ -150,10 +137,8 @@ def LogFinalResults(p_df, experiment_id_parent):
         except Exception as e:
             print(f"{e}")    
             experiment_id = mlflow.get_experiment_by_name(exp_name).experiment_id        
-
-                        
        
-        for run_uuid, input_features, e_perf, features_list, correctX, correctY, correctP, totalX, cxp, cyp, cpp in p_df.values.tolist() :
+        for run_uuid, input_features, e_perf, features_list, correctX, correctY, correctP, totalX, cxp, cyp, cpp, current_streak, longest_win_streak, longest_loss_streak, AveWinSt, AveLossSt, AveWinMiss, AveLossMiss, AveUpMiss, AveDownMiss, mse, rmse, r2, mae in p_df.values.tolist() :
         
                 with mlflow.start_run(experiment_id = experiment_id, nested=False): 
                                 
@@ -167,10 +152,30 @@ def LogFinalResults(p_df, experiment_id_parent):
                         mlflow.log_metric('cxp', cxp, step)
                         mlflow.log_metric("cyp", cyp, step)
                         mlflow.log_metric("cpp", cpp, step)
+
+                        mlflow.log_metric('Longest Win Streak', longest_win_streak, step)
+                        mlflow.log_metric('Longest Loss Streak', longest_loss_streak, step)
+                        mlflow.log_metric('Ave Win Streak', AveWinSt, step)
+                        mlflow.log_metric("Ave Loss Streak", AveLossSt, step)
+                        mlflow.log_metric('Ave Win Miss', AveWinMiss, step)
+                        mlflow.log_metric("Ave Loss Miss", AveLossMiss, step)
+                        mlflow.log_metric("Ave Up Miss", AveUpMiss, step)
+                        mlflow.log_metric("Ave Dwn Miss", AveDownMiss, step)        
+                        
+                        mlflow.log_metric('MSE', mse, step)
+                        mlflow.log_metric('RMSE', rmse, step)
+                        mlflow.log_metric('R2', r2, step)
+                        mlflow.log_metric('Score', r2, step)
+                        mlflow.log_metric("MAE", mae, step)
+                        mlflow.log_metric("Perf", cpp, step)
+                        mlflow.log_metric("Total", totalX, step)
+                                
+                                        
                         
                         mlflow.log_table(data=pd.DataFrame(e_perf), artifact_file="all_perf_data.json")        
-                        step += 1        
-        
+                        step += 1 
+                               
+        return p_df, experiment_id        
                 
 # ---------------------------
 #
@@ -192,55 +197,56 @@ datafile = [
 
 dtx = pd.read_csv(datafile[4])
 
-#6
-#est_list = [ TunableXGBRegressor(),  TunableLGBMRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
 
-#8
+est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+
+"""
+est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),            
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+"""
+"""
+est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),           
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+"""
+"""
+est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),            
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+"""
+"""
+est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),               
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),            
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+"""
+
 #est_list = [ TunableCatBoostRegressor(),  TunableLGBMRegressor(), TunableXGBRegressor() ]
 
-# 10 
-#est_list = [ TunableCatBoostRegressor(),  TunableXGBRegressor() ]
-
-#12
-#est_list = [ TunableXGBRegressor(),  TunableLGBMRegressor() ]
-
-#14
-#est_list = [ TunableCatBoostRegressor(),  TunableLGBMRegressor() ]
-
-
-##mlflow2
-#2
-#est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
-#            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
-
-#4
-#est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
-#            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
-#            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
-
-#7
-est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
-            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
-            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
-            TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
-
-
-to_file = False
-randomize_features = True
 
 split_test_size_value = 0.2          
 
 min_features_used = 2
-max_features_used = 6
+max_features_used = 3
 step_features_used = 1
-total_cycles_used = 10
+total_cycles_used = 100
 
 
-p_df, experiment_id_parent = run_models(dtx, to_file, randomize_features, est_list, 
+p_df, experiment_id_parent = run_models(dtx, est_list, 
                                         split_test_size_value, min_features_used, max_features_used, 
                                         step_features_used, total_cycles_used  )
-
-LogFinalResults(p_df, experiment_id_parent )
 
 print(" ")
 print(p_df)                

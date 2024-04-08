@@ -1,4 +1,4 @@
-UPDATE public."ScoreCard"
+UPDATE "public"."ScoreCards"
 	SET 
      "Trades"=0, "Winners"=0, 
      "Losers"=0, "Longs"=0, "Shorts"=0, 
@@ -16,9 +16,11 @@ UPDATE public."ScoreCard"
 	WHERE "GroupID" < 51;
 
 
-    Delete from "public"."LiveOrder";
+    Delete from "public"."LiveOrders";
     delete from "public"."ClosedTrades";
-    delete from public."ModelOrderLog";
+    delete from "public"."ModelOrderLog";
+	delete from "public"."OrderLog";
+	delete from "public"."ScoreCardLog";
 
-    delete from "public"."ScoreCard" where "GroupID" < 50;
+    delete from "public"."ScoreCards" where "GroupID" < 50;
     delete from "public"."UserProfiles" where "GroupID" < 50;
