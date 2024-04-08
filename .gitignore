@@ -22,8 +22,8 @@
 *.csv
 
 [mlfl]ow/**
-OMS.ML.Analysis/data/**
-OMS.ML.Analysis/catboost_info/**
+STrategy.ML/data/**
+Strategy.ML/catboost_info/**
 
 # Mono auto generated files
 mono_crash.*
