@@ -9,29 +9,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-
-using Strategy.Server.Services;
-
-using OMS.SharedKernel.Common;
-using Strategy.Server;
-using Strategy.Server.StrategyServices;
+using Data.Producer;
 
 
 using IHost host = Host.CreateDefaultBuilder(args)
    
     .UseConsoleLifetime().ConfigureServices(services =>
     {
-        services.AddSingleton<ModelOrderMessageBus>();                
-        
-        //services.AddHostedService<ReplWatcher>();
-        services.AddHostedService<WatcherService>();
-
-        services.AddHostedService<NGZero>(); //FollowWinners
-        //services.AddHostedService<NGOne>();  // OC
-        //services.AddHostedService<NGTwo>();   //Follow
-        //services.AddHostedService<NGThree>();   //Fade
-        
-
+        services.AddHostedService<PulsarProducerService>();
     })
     .Build();
 

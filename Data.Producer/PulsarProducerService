@@ -1,0 +1,177 @@
+﻿
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks.Dataflow;
+
+using System.Text.Json;
+
+using Npgsql;
+using Npgsql.Replication;
+using Npgsql.Replication.PgOutput;
+using Npgsql.Replication.PgOutput.Messages;
+using PgOutput2Json;
+using OMS.SharedKernel.DTO;
+
+using OMS.SharedKernel.Common;
+using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using OMS.SharedKernel;
+using Strategy.SharedKernel;
+
+
+using DotPulsar;
+using DotPulsar.Extensions;
+using DotPulsar.Abstractions;
+
+
+
+namespace Data.Producer;
+
+
+public class PulsarProducerService : BackgroundService
+{
+    private readonly ILogger<PulsarProducerService> _logger;
+    private readonly ILoggerFactory _loggerFactory;
+    ScreenColorBase scb  = new ScreenColorBase();
+
+    
+    int order = 0;
+    int closed = 0;
+    int score = 0;
+    int model = 0;
+
+    const string myTopic = "persistent://public/default/mytopic";
+    IPulsarClient  _pulsarClient;
+    IProducer<string> _producer;
+
+    
+    public PulsarProducerService(ILogger<PulsarProducerService> logger, ILoggerFactory loggerFactory )
+    {
+        _logger = logger;
+        _loggerFactory = loggerFactory;
+
+        _logger.LogInformation("Starting ReplWatcher...");
+        System.Uri uri = new System.Uri("pulsar://10.0.0.74:6650");
+        _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
+        _producer = _pulsarClient.NewProducer(Schema.String).Topic(myTopic).Create();
+        
+    }
+
+    public override  async Task StartAsync(CancellationToken cancellationToken)
+    {
+
+
+
+        await base.StartAsync(cancellationToken);
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        string publication = "logupdates";
+
+
+        JsonSerializerOptions options = new JsonSerializerOptions {
+            Converters ={
+                new JsonStringEnumConverter(),
+                new CustomDoubleConverter(),
+                new CustomDateTimeConverter()
+            },
+            IgnoreReadOnlyProperties = true
+        };
+
+
+        using var pgOutput2Json = PgOutput2JsonBuilder.Create()
+            .WithLoggerFactory(_loggerFactory)
+            .WithPgConnectionString("Host=localhost;Database=orders;Username=trading;Password=abc")
+            .WithPgPublications(publication)
+            .WithMessageHandler(async (json, table, key, partition) =>
+            {
+                 if (table == "public.OrderLog")
+                 {
+                    /*
+                    Console.WriteLine($"{scb.YELLOW}");
+                    Console.WriteLine(json);    
+                    Console.ResetColor();   
+                    
+
+                    Console.WriteLine($"{scb.YELLOW}");
+                    OrderLogDTO orderLogResult = JsonSerializer.Deserialize<OrderLogDTO>(json, options);
+                    Console.WriteLine("Order " + orderLogResult.UserID + " " + orderLogResult.PlatformOrderID + "  "  + orderLogResult.OrderType);
+                    Console.ResetColor();   
+                    order++;
+                    */
+                 }
+                 
+
+                if( table == "public.ClosedTrades")
+                {
+                    /*    
+                    Console.WriteLine($"{scb.RED}");
+                    Console.WriteLine(json);
+                    Console.ResetColor();
+                    
+
+                    Console.WriteLine($"{scb.MAGENTA}");
+                    ClosedOrderLogDTO closedOrderLogDTO = JsonSerializer.Deserialize<ClosedOrderLogDTO>(json, options);
+                    Console.WriteLine("Closed " + closedOrderLogDTO.UserID + " " + closedOrderLogDTO.OpenPlatformOrderID  + " " + closedOrderLogDTO.ClosePlatformOrderID );
+                    Console.ResetColor();
+                    closed++; 
+                    */
+                }                     
+            
+                if (table == "public.ScoreCardLog")
+                {
+                    /*
+                    Console.WriteLine($"{scb.GREEN}");
+                    Console.WriteLine(json);
+                    Console.ResetColor();
+                    
+                    Console.WriteLine($"{scb.GREEN}");
+                    ScoreCardLogDTO scoreCardLogDTO = JsonSerializer.Deserialize<ScoreCardLogDTO>(json, options);
+                    Console.WriteLine("ScoreCard " + scoreCardLogDTO.UserID + " " + scoreCardLogDTO.ScoreCardID + "  " );
+                    Console.ResetColor();   
+                    score++;
+                    */
+                }   
+
+
+                if( table == "public.ModelOrderLog")
+                {
+
+                    model++;                        
+
+                    await _producer.Send("Test");
+                    await _producer.Send(json);
+
+                    ModelOrderLogDTO orderModelResult = JsonSerializer.Deserialize<ModelOrderLogDTO>(json, options);
+                    
+                    Console.WriteLine($"{scb.YELLOW}");
+                    Console.WriteLine($"ScoreCardJson: {orderModelResult.ScoreCardJson}");
+                    Console.ResetColor();
+                    
+                    /*
+                    Console.WriteLine($"{scb.CYAN}");
+                    Console.WriteLine($"ClosedOrderJson: {orderModelResult.ClosedOrderJson}");
+                    Console.ResetColor();
+
+                    Console.WriteLine($"{scb.MAGENTA}");                    
+                    Console.WriteLine($"LiveOrderJson: {orderModelResult.LiveOrderJson}");
+                    Console.ResetColor();
+                    */
+                    //await _messageBus.PublishAsync(orderModelResult);
+                    
+                    
+                }
+
+                //Console.WriteLine($"{scb.CYAN}");
+                //Console.WriteLine($"Order {order}    Closed {closed}   Scorecard {score}    Model {model}");
+                //Console.ResetColor();
+                
+                await Task.CompletedTask;
+            })
+            .Build();
+
+        await pgOutput2Json.Start(stoppingToken);
+    }
+}
+

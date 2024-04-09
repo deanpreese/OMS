@@ -23,6 +23,8 @@ public class ScoreCardLog
     [Id(2)]
     public int GroupID {get; set;}
 
+    [Id(37)]
+    public int Rank { get; set; }
 
     [Id(3)]
     public int Trades {get; set;}

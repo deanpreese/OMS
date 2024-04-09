@@ -70,16 +70,16 @@ def run_sim(exp_id, n_models, file, trades, delay):
     print(" ") 
     
     
-exp_idx = ["32"]
+exp_idx = ["52"]
 
 num_models = 5
 #num_models = 3
-#num_models = 1
+num_models = 1
 
 
 #trades = 750
 trades = 250
-#trades = 10
+trades = 10
 
 
 #sim_delay = 0.05

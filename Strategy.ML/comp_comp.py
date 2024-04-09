@@ -73,11 +73,9 @@ def run_sim(models_in, file, trades, delay):
 
 # ------------------
     
-models1 = load_models(["36"], 2)
-models2 = load_models(["32"], 2)
-models3 = load_models(["30"], 2)    
-models4 = load_models(["26"], 2)       
-models_agg = models1 + models2 + models3 + models4
+models1 = load_models(["50"], 3)
+models2 = load_models(["52"], 7)
+models_agg = models1 + models2 
 
 #trades = 750
 trades = 250
