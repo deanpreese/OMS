@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="DotPulsar" Version="3.2.0" />
     <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="8.0.0" />
     <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="8.0.0" />
     <PackageReference Include="Microsoft.Orleans.Reminders" Version="8.0.0" />

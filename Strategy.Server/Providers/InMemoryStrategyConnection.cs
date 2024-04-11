@@ -1,6 +1,11 @@
 ﻿using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using DotPulsar;
+using DotPulsar.Abstractions;
+using DotPulsar.Extensions;
 using OMS.SharedKernel;
+using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using Strategy.SharedKernel;
 using Strategy.Trader.Abstractions;
@@ -18,9 +23,15 @@ public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnectio
     public string ModelTraderClosedTradeJSON { get; set; }
     public ModelOrderLogDTO CurrentModelOrderLogDTO { get; set; }
 
-
+    IPulsarClient  _pulsarClient;
+    IProducer<string> _producer;
+    
     public InMemoryStrategyConnection(string baseURL)
     {
+        System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
+        _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
+        _producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.pulsar_strategy_topic).Create();
+
         base.BaseUrl = baseURL;
     }
 
@@ -138,6 +149,9 @@ public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnectio
     {
         int oid = await ProcessOrderAsync(order);
 
+        string json = JsonSerializer.Serialize(order);
+        await _producer.Send(json);
+
         switch (order.OrderType)
         {
             case OMS.SharedKernel.Common.OrderType.OPEN:
@@ -145,7 +159,7 @@ public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnectio
                 Console.ResetColor();
                 break;
             case OMS.SharedKernel.Common.OrderType.CLOSE:
-                Console.WriteLine($"{RED}{oid} {CurrentStrategyAccount.strategy_name} ProcessOrderForStrategy: {order.UserID} {order.OrderAction} {order.OrderType}");
+                Console.WriteLine($"{MAGENTA}{oid} {CurrentStrategyAccount.strategy_name} ProcessOrderForStrategy: {order.UserID} {order.OrderAction} {order.OrderType}");
                 Console.ResetColor();
                 break;
 

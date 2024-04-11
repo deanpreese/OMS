@@ -44,6 +44,7 @@ builder.Services.AddSingleton<NewOrderChannelService>();
 builder.Services.AddSingleton<ClosedOrderChannelService>();
 builder.Services.AddHostedService<NewOrderProcessorService>();
 builder.Services.AddHostedService<ClosedOrderProcessorService>();
+builder.Services.AddHostedService<PulsarNewOrderWatcherService>();
 
 builder.Services.AddLogging(configure => configure.AddConsole());
 builder.Services.AddHttpsRedirection(opt => opt.HttpsPort = 44300);

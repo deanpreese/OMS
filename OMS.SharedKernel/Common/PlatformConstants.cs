@@ -5,14 +5,11 @@ public class PlatformConstants
     // Order and Trader Constants
     public const string InvalidSymbol = "InvalidSymbol";
 
-    // Grain Storage
-    public const string GrainMemoryStreamStore = "PubSubStore";
+    public const string pulsar_strategy_topic =  "persistent://public/strategy/strategy-orders";
 
-    // Streaming Constants
-    public const string OrderMemoryStreamStore = "OrderStorage";
-    public const string OrderStreamProvider = "order-stream-provider";
-    
-    public const string MemoryStreamNamespace = "memory-stream-namespace";
-    
+    public const string pulsar_new_order_topic =  "persistent://public/models/model-orders";
+
+
+    public const string pulsar_uri_string = "pulsar://10.0.0.82:6650";
 
 }
