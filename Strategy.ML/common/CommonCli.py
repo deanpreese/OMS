@@ -16,13 +16,7 @@ class PulsarCli:
 
 
 class CommonCli:
-
-    def __init__(self, **kwargs):
-        
-        self.topic = 'persistent://public/default/my-topic'
-        self.client = pulsar.Client('pulsar://10.0.0.82:6650')
-        self.producer = self.client.create_producer(self.topic)
-                
+               
 
     def initialize_trader(display_name, group_num ):
         

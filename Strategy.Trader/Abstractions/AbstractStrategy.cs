@@ -95,111 +95,122 @@ public abstract class AbstractStrategy  :  ScreenColorBase
         return _mapped_new_order;
     }
 
-
     public async Task<LiveOrderDTO> GenerateOrderAction(LiveOrderDTO traderOrder)
     {
-        
-        string _trader_key = traderOrder.UserID + "_" + traderOrder.GroupID;
-        
-        //Console.WriteLine(CurrentStrategyAccount.strategy_name + " New Order for Trader " + _trader_key + "  " + traderOrder.OrderAction + "  " + traderOrder.OrderType) ;
 
         if (traderOrder.OrderType == OrderType.OPEN)
         {
-            int filterAction = 1;
-
-            if ((_strategyConnection.ModelTraderScoreCardJSON == "null")  || (_strategyConnection.ModelTraderScoreCardJSON == "[]")
-                     || _strategyConnection.ModelTraderScoreCardJSON.Equals(null) )
-                        
-            {
-                Console.WriteLine($"{YELLOW} NULL ScoreCard Found");
-                filterAction = 0;
-                Console.ResetColor();
-            }                
-            else
-            {   
-                //Console.WriteLine(_strategyConnection.ModelTraderScoreCardJSON);
-                filterAction = await EvaluateFilters(await _strategyConnection.GetTraderScoreCard());
-            }
-
-            Console.WriteLine(CurrentStrategyAccount.strategy_name  +  " __Filter Action Result: " + filterAction);
-
-            if(!await OkToOpenNewPosition(traderOrder))
-            {
-                traderOrder.OrderAction = OrderAction.NoAction;
-                await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
-                return traderOrder;
-            }else
-            {
-                if (filterAction == 0)
-                {
-                    traderOrder.OrderAction = OrderAction.NoAction;
-                    await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
-                }    
-
-                // FilterAction > 0 means FOLLOW -- do the same 
-                // Nothing Changes
-                if (filterAction > 0 )
-                {
-                    await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
-                }
-
-                //  filterAction < 0 means FADE -- do the opposite
-                // Reverse Current Order
-                if (filterAction < 0)
-                {
-                    if (traderOrder.OrderAction == OrderAction.Buy)
-                    {
-                        traderOrder.OrderAction = OrderAction.Sell;
-                        await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
-                    } else 
-                    if (traderOrder.OrderAction == OrderAction.Sell)
-                    {
-                        traderOrder.OrderAction = OrderAction.Buy;
-                        await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
-                    }
-                }
-
-                return traderOrder;
-            }
-
+            return await OpenOrderAction(traderOrder);
         }
 
         if (traderOrder.OrderType == OrderType.CLOSE)
         {
-            traderOrder.OrderAction = OrderAction.NoAction;
-            List<LiveOrderDTO> liveOrders = await _strategyConnection.GetStrategyLiveOrders();
-
-            //Console.WriteLine(CurrentStrategyAccount.strategy_name +  " Strategy Orders Count: " + liveOrders.Count);
-
-            if(liveOrders.Count > 0)
-            {
-                LiveOrderDTO liveStrategyOrder = liveOrders.FirstOrDefault();
-                //Console.WriteLine(CurrentStrategyAccount.strategy_name  +  " XREF: " + liveStrategyOrder.RelatedOrderID);
-                ClosedTradeDTO lastClosedTraderTrade = await _strategyConnection.GetLastClosedTraderTradeByOpenPlatformID(_trader_key, liveStrategyOrder.RelatedOrderID);
-
-                if(liveStrategyOrder != null && lastClosedTraderTrade != null)
-                {
-                    if (liveStrategyOrder.OrderAction == OrderAction.Buy)
-                    {
-                        traderOrder.OrderAction = OrderAction.Sell;
-                        await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
-                    }
-                    if (liveStrategyOrder.OrderAction == OrderAction.Sell)
-                    {
-                        traderOrder.OrderAction = OrderAction.Buy;
-                        await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
-                    }
-                }
-            }else
-            {
-                await LogStrategyData(_trader_key, traderOrder.OrderAction, OrderType.NONE); 
-                Console.WriteLine(CurrentStrategyAccount.strategy_name +  " NULL ORDER: " + liveOrders.Count);
-            }            
+            return await CloseOrderAction(traderOrder);                   
         }
 
-        return traderOrder;
+        return traderOrder;        
+
     }
 
+    private async Task<LiveOrderDTO> CloseOrderAction(LiveOrderDTO traderOrder)
+    {
+        string _trader_key = traderOrder.UserID + "_" + traderOrder.GroupID;
+        traderOrder.OrderAction = OrderAction.NoAction;
+        List<LiveOrderDTO> liveOrders = await _strategyConnection.GetStrategyLiveOrders();
+
+        //Console.WriteLine(CurrentStrategyAccount.strategy_name +  " Strategy Orders Count: " + liveOrders.Count);
+
+        if(liveOrders.Count > 0)
+        {
+            LiveOrderDTO liveStrategyOrder = liveOrders.FirstOrDefault();
+            //Console.WriteLine(CurrentStrategyAccount.strategy_name  +  " XREF: " + liveStrategyOrder.RelatedOrderID);
+            ClosedTradeDTO lastClosedTraderTrade = await _strategyConnection.GetLastClosedTraderTradeByOpenPlatformID(_trader_key, liveStrategyOrder.RelatedOrderID);
+
+            if(liveStrategyOrder != null && lastClosedTraderTrade != null)
+            {
+                if (liveStrategyOrder.OrderAction == OrderAction.Buy)
+                {
+                    traderOrder.OrderAction = OrderAction.Sell;
+                    await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
+                    return traderOrder;
+                }
+                if (liveStrategyOrder.OrderAction == OrderAction.Sell)
+                {
+                    traderOrder.OrderAction = OrderAction.Buy;
+                    await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType);
+                    return traderOrder;
+                }
+            }
+        }else
+        {
+            await LogStrategyData(_trader_key, traderOrder.OrderAction, OrderType.NONE); 
+            Console.WriteLine(CurrentStrategyAccount.strategy_name +  " NULL ORDER: " + liveOrders.Count);
+        }
+        return traderOrder;       
+    }
+
+
+
+    private async Task<LiveOrderDTO> OpenOrderAction(LiveOrderDTO traderOrder)
+    {
+        string _trader_key = traderOrder.UserID + "_" + traderOrder.GroupID;
+        int filterAction = 1;
+
+        if ((_strategyConnection.ModelTraderScoreCardJSON == "null")  || (_strategyConnection.ModelTraderScoreCardJSON == "[]")
+                    || _strategyConnection.ModelTraderScoreCardJSON.Equals(null) )
+                    
+        {
+            Console.WriteLine($"{YELLOW} NULL ScoreCard Found");
+            filterAction = 0;
+            Console.ResetColor();
+        }                
+        else
+        {   
+            //Console.WriteLine(_strategyConnection.ModelTraderScoreCardJSON);
+            filterAction = await EvaluateFilters(await _strategyConnection.GetTraderScoreCard());
+        }
+
+        Console.WriteLine(CurrentStrategyAccount.strategy_name  +  " __Filter Action Result: " + filterAction);
+
+        if(!await OkToOpenNewPosition(traderOrder))
+        {
+            traderOrder.OrderAction = OrderAction.NoAction;
+            await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
+            return traderOrder;
+        }else
+        {
+            if (filterAction == 0)
+            {
+                traderOrder.OrderAction = OrderAction.NoAction;
+                await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
+            }    
+
+            // FilterAction > 0 means FOLLOW -- do the same 
+            // Nothing Changes
+            if (filterAction > 0 )
+            {
+                await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
+            }
+
+            //  filterAction < 0 means FADE -- do the opposite
+            // Reverse Current Order
+            if (filterAction < 0)
+            {
+                if (traderOrder.OrderAction == OrderAction.Buy)
+                {
+                    traderOrder.OrderAction = OrderAction.Sell;
+                    await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
+                } else 
+                if (traderOrder.OrderAction == OrderAction.Sell)
+                {
+                    traderOrder.OrderAction = OrderAction.Buy;
+                    await LogStrategyData(_trader_key, traderOrder.OrderAction, traderOrder.OrderType); 
+                }
+            }
+
+            return traderOrder;
+        }
+    }
 
 
     public async Task<bool> OkToOpenNewPosition(LiveOrderDTO origTraderLiveOrder)
