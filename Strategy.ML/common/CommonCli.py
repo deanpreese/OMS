@@ -1,8 +1,28 @@
 import json
 import requests
+import pulsar
+
+class PulsarCli:
+    def __init__(self, **kwargs):
+        self.topic = 'persistent://public/default/my-topic'
+        self.client = pulsar.Client('pulsar://10.0.0.82:6650')
+        self.producer = self.client.create_producer(self.topic)
+
+                  
+    def send_order_pulsar(self, new_order):
+
+        data=json.dumps(new_order,default=str)
+        self.producer.send(data.encode('utf-8'))
 
 
 class CommonCli:
+
+    def __init__(self, **kwargs):
+        
+        self.topic = 'persistent://public/default/my-topic'
+        self.client = pulsar.Client('pulsar://10.0.0.82:6650')
+        self.producer = self.client.create_producer(self.topic)
+                
 
     def initialize_trader(display_name, group_num ):
         
@@ -36,9 +56,10 @@ class CommonCli:
 
         return t_id
                         
+  
                     
 
-    def send_order(new_order):
+    def send_order(self, new_order):
         
         url = "http://10.0.0.147:8786/api/ml/process-order"  # Replace with the actual URL of the web service
 

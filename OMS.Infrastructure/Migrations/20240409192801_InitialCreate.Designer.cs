@@ -12,7 +12,7 @@ using OMS.Infrastructure.Data;
 namespace OMS.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderManagementDbContext))]
-    [Migration("20240401043446_InitialCreate")]
+    [Migration("20240409192801_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -394,10 +394,19 @@ namespace OMS.Infrastructure.Migrations
                     b.Property<double>("PNL_Last8")
                         .HasColumnType("double precision");
 
+                    b.Property<int>("Rank")
+                        .HasColumnType("integer");
+
                     b.Property<double>("SharpRatio")
                         .HasColumnType("double precision");
 
+                    b.Property<int>("SharpeRank")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Shorts")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SortinoRank")
                         .HasColumnType("integer");
 
                     b.Property<double>("SortinoRatio")
@@ -512,10 +521,19 @@ namespace OMS.Infrastructure.Migrations
                     b.Property<double>("PNL_Last8")
                         .HasColumnType("double precision");
 
+                    b.Property<int>("Rank")
+                        .HasColumnType("integer");
+
                     b.Property<double>("SharpRatio")
                         .HasColumnType("double precision");
 
+                    b.Property<int>("SharpeRank")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Shorts")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SortinoRank")
                         .HasColumnType("integer");
 
                     b.Property<double>("SortinoRatio")

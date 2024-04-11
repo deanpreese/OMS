@@ -22,6 +22,12 @@ public class ScoreCard
     public int UserID {get; set;}
     [Id(2)]
     public int GroupID {get; set;}
+    [Id(37)]
+    public int Rank { get; set; }
+    [Id(38)]
+    public int SortinoRank { get; set; }
+    [Id(39)]
+    public int SharpeRank { get; set; }
 
 
     [Id(3)]

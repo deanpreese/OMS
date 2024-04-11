@@ -8,7 +8,10 @@ SELECT
     SC."SharpRatio",
     SC."SortinoRatio",
     SC."TotalNetProfit",
-    SC."WinLossRatio"
+    SC."WinLossRatio",
+	SC."Rank",
+	SC."SortinoRank",
+	SC."SharpeRank"
 FROM 
     public."ScoreCards" AS SC
 INNER JOIN 
