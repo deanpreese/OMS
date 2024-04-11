@@ -40,7 +40,7 @@ public class PulsarWatcherService : BackgroundService
     int score = 0;
     int model = 0;
 
-    const string myTopic = "persistent://public/default/mytopic";
+    const string myTopic = "persistent://public/default/my-topic";
     IPulsarClient  _pulsarClient;
     IProducer<string> _producer;
 
@@ -52,7 +52,7 @@ public class PulsarWatcherService : BackgroundService
         _loggerFactory = loggerFactory;
 
         _logger.LogInformation("Starting ReplWatcher...");
-        System.Uri uri = new System.Uri("pulsar://10.0.0.74:6650");
+        System.Uri uri = new System.Uri("pulsar://10.0.0.82:6650");
         _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
 
         _consumer = _pulsarClient.NewConsumer(Schema.String)
@@ -71,7 +71,26 @@ public class PulsarWatcherService : BackgroundService
 
     private ValueTask ProcessMessage(IMessage<string> message, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"Received: {message.Value()}");
+        JsonSerializerOptions options = new JsonSerializerOptions {
+        //NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
+        Converters ={
+            new JsonStringEnumConverter(),
+            new CustomDoubleConverter()
+        },
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        IgnoreReadOnlyProperties = true
+        };
+
+        try
+        {
+            NewOrderDTO newOrderDTO = JsonSerializer.Deserialize<NewOrderDTO>(message.Value(), options);
+            Console.WriteLine($"Received: {newOrderDTO.UserName}  {newOrderDTO.OrderAction} ");
+        }catch(Exception ex)
+        {
+            Console.WriteLine($"Received: {ex.Message} ");
+        }
+        
         return ValueTask.CompletedTask;
     }
 }

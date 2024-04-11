@@ -14,9 +14,21 @@ public class TwoSidedFilter : ScreenColorBase, IStrategyFilter
     public int IsInFilter(ScoreCardDTO scoreCard)
     {
         _scoreCard = scoreCard;
-        return IsInFilter114(scoreCard);
+        return IsInFilter115(scoreCard);
     }
 
+
+
+    public int IsInFilter115(ScoreCardDTO _scoreCard)
+    {
+        int includeExclude = 0;
+        if ((_scoreCard.SortinoRatio > 0.5  || _scoreCard.SharpRatio > 0.5) && _scoreCard.Rank < 3)
+        {
+            includeExclude = 1;
+        }
+
+         return includeExclude;
+    }
 
 
     public int IsInFilter114(ScoreCardDTO _scoreCard)

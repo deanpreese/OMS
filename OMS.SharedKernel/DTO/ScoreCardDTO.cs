@@ -28,7 +28,14 @@ public class ScoreCardDTO
     [Id(2)]
     public int GroupID {get; set;}
     [Id(37)]
-    public int Rank { get; set; }    
+    public int Rank { get; set; }
+
+    [Id(38)]
+    public int SortinoRank { get; set; }
+    [Id(39)]
+    public int SharpeRank { get; set; }
+
+
     [Id(3)]
     public int Trades {get; set;}
     [Id(4)]

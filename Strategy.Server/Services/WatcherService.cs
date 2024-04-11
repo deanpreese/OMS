@@ -61,7 +61,6 @@ public class WatcherService : BackgroundService
                     if ( json != null )
                     {
                         ModelOrderLogDTO orderModelResult = JsonSerializer.Deserialize<ModelOrderLogDTO>(json);
-                        
                         //Console.WriteLine($"{scb.YELLOW}");
                         //Console.WriteLine($"ScoreCardJson: {orderModelResult.ScoreCardJson}");
                         //Console.ResetColor();

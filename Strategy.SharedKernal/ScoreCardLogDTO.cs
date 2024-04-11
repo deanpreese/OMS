@@ -7,6 +7,8 @@ public class ScoreCardLogDTO
     public int UserID { get; set; }
     public int GroupID { get; set; }
     public int Rank { get; set; }
+    public int SortinoRank { get; set; }
+    public int SharpeRank { get; set; }
     public int Trades { get; set; }
     public int Winners { get; set; }
     public int Losers { get; set; }

@@ -26,6 +26,12 @@ public class ScoreCardLog
     [Id(37)]
     public int Rank { get; set; }
 
+    [Id(38)]
+    public int SortinoRank { get; set; }
+    [Id(39)]
+    public int SharpeRank { get; set; }
+
+
     [Id(3)]
     public int Trades {get; set;}
     [Id(4)]

@@ -40,7 +40,7 @@ public class PulsarProducerService : BackgroundService
     int score = 0;
     int model = 0;
 
-    const string myTopic = "persistent://public/default/mytopic";
+    const string myTopic = "persistent://public/default/my-topic";
     IPulsarClient  _pulsarClient;
     IProducer<string> _producer;
 
@@ -51,7 +51,7 @@ public class PulsarProducerService : BackgroundService
         _loggerFactory = loggerFactory;
 
         _logger.LogInformation("Starting ReplWatcher...");
-        System.Uri uri = new System.Uri("pulsar://10.0.0.74:6650");
+        System.Uri uri = new System.Uri("pulsar://10.0.0.82:6650");
         _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
         _producer = _pulsarClient.NewProducer(Schema.String).Topic(myTopic).Create();
         
@@ -140,7 +140,6 @@ public class PulsarProducerService : BackgroundService
 
                     model++;                        
 
-                    await _producer.Send("Test");
                     await _producer.Send(json);
 
                     ModelOrderLogDTO orderModelResult = JsonSerializer.Deserialize<ModelOrderLogDTO>(json, options);

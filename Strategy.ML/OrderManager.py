@@ -3,7 +3,7 @@ import requests
 from datetime import datetime as dt
 from datetime import timedelta
 
-from common.CommonCli import CommonCli
+from common.CommonCli import CommonCli, PulsarCli
 
 class OrderManager():
         
@@ -14,6 +14,7 @@ class OrderManager():
         self.tick_dte = dt(2020, 1, 1)
         
         self.com_cli = CommonCli()
+        self.pulsar_cli = PulsarCli()
 
 
     def is_sim(self, is_sim_yn):
@@ -61,4 +62,6 @@ class OrderManager():
         
             print(f" Order   {new_order['userID']}   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']} {new_order['orderTime']} " ) 
     
-            CommonCli.send_order(new_order)        
+            #CommonCli.send_order(new_order)
+            self.pulsar_cli.send_order_pulsar(new_order)        
+            

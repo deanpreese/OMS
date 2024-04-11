@@ -69,6 +69,18 @@ public class AnalyticsRepository : IAnalyticsRepository
             sc.PNL_Last21 = scData.PNL_Last21;
             sc.PNL_Last34 = scData.PNL_Last34;
 
+            if (scData.Trades > 0)    
+            {
+                sc.Rank = await GetTraderRank(scData.UserID, scData.GroupID);
+                sc.SortinoRank = await GetSortinoRank(scData.UserID, scData.GroupID);
+                sc.SharpeRank = await GetSharpeRank(scData.UserID, scData.GroupID);    
+            }else
+            {
+                sc.Rank = 0;
+                sc.SortinoRank = 0;
+                sc.SharpeRank = 0;
+            }
+
             //Console.WriteLine("Updating ScoreCard " + sc.UserID + " " + scData.GroupID + "  " + scData.Winners + "  " + scData.Losers   );
 
             _context.ScoreCards.Update(sc);
@@ -98,10 +110,99 @@ public class AnalyticsRepository : IAnalyticsRepository
         return scoreCard;
     }
 
-    public Task ReRankGroupAsync(int groupNumber)
+    public async Task<int> GetTraderRank(int userID, int groupNumber)
     {
-        // TODO  Implement ReRankGroupAsync
-        throw new NotImplementedException();
+        int rank = 0;
+
+        string query = @"
+            WITH RankedUsers AS (
+                SELECT
+                    SC.""UserID"",
+                    SC.""TotalNetProfit"",
+                    RANK() OVER (ORDER BY SC.""TotalNetProfit"" DESC) AS ""PNL_Rank""
+                FROM
+                    public.""ScoreCards"" as SC
+                WHERE
+                    SC.""GroupID"" = @GroupNumber
+            )
+            SELECT
+                ""PNL_Rank""
+            FROM
+                RankedUsers
+            WHERE
+                ""UserID"" = @UserID;";
+
+        using (NpgsqlConnection connection = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+        {
+            rank = await connection.QuerySingleAsync<int>(query, new { UserId = userID, groupNumber }); 
+        }
+
+        return rank;
+
+    }
+
+
+    public async Task<int> GetSortinoRank(int userID, int groupNumber)
+    {
+        int rank = 0;
+
+        string query = @"
+            WITH RankedUsers AS (
+                SELECT
+                    SC.""UserID"",
+                    SC.""SortinoRatio"",
+                    RANK() OVER (ORDER BY SC.""SortinoRatio"" DESC) AS ""PNL_Rank""
+                FROM
+                    public.""ScoreCards""  as SC
+                WHERE
+                    SC.""GroupID"" = @GroupNumber
+            )
+            SELECT
+                ""PNL_Rank""
+            FROM
+                RankedUsers
+            WHERE
+                ""UserID"" = @UserID;";
+
+        using (NpgsqlConnection connection = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+        {
+            rank = await connection.QuerySingleAsync<int>(query, new { UserId = userID, groupNumber });   
+        }
+
+        return rank;
+
+    }
+
+
+    public async Task<int> GetSharpeRank(int userID, int groupNumber)
+    {
+        int rank = 0;
+
+        string query = @"
+            WITH RankedUsers AS (
+                SELECT
+                    SC.""UserID"",
+                    SC.""SharpRatio"",
+                    RANK() OVER (ORDER BY SC.""SharpRatio"" DESC) AS ""PNL_Rank""
+                FROM
+                    public.""ScoreCards"" as SC
+                WHERE
+                    SC.""GroupID"" = @GroupNumber
+            )
+            SELECT
+                ""PNL_Rank""
+            FROM
+                RankedUsers
+            WHERE
+                ""UserID"" = @UserID;";
+
+        using (NpgsqlConnection connection = new NpgsqlConnection(_context.Database.GetDbConnection().ConnectionString))
+        {
+            rank = await connection.QuerySingleAsync<int>(query, new { UserId = userID, groupNumber }); 
+        }
+
+        return rank;
+
     }
 
     public async Task AddModelOrderLogEntry(ModelOrderLog modelOrderLogEntry)

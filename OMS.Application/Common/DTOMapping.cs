@@ -182,7 +182,10 @@ public class DTOMapping
             PNL_Last13 = scoreCard.PNL_Last13,
             PNL_Last21 = scoreCard.PNL_Last21,
             PNL_Last34 = scoreCard.PNL_Last34,
-            LastUpdate = scoreCard.LastUpdate
+            LastUpdate = scoreCard.LastUpdate,
+            Rank = scoreCard.Rank,
+            SortinoRank = scoreCard.SortinoRank,
+            SharpeRank = scoreCard.SharpeRank
         };
         return await Task.FromResult(scoreCardDTO);
 
