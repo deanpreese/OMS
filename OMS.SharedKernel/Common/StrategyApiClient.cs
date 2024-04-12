@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OMS.SharedKernel.Common;
@@ -26,6 +27,32 @@ public class StrategyApiClient : ScreenColorBase
     {
         //_httpClient = new HttpClient();
         BaseUrl = baseUrl;
+    }
+
+    public async Task<string> SendCsvDataAsync(string url, string csvData)
+    {
+        var _httpClient = new HttpClient();
+        try
+        {
+            // Assuming the server expects the content type to be 'text/csv'
+            var content = new StringContent(csvData, Encoding.UTF8, "text/csv");
+
+            // Perform the POST request
+            HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+
+            // Ensure the request was successful
+            response.EnsureSuccessStatusCode();
+
+            // Read the response body
+            string responseBody = await response.Content.ReadAsStringAsync();
+            return responseBody;
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine("Message :{0} ", e.Message);
+            return e.Message;
+        }
     }
 
 

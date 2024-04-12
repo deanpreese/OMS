@@ -27,8 +27,8 @@ logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
 def LoadModels():
     m = []
    
-    experiment_id = ["2"]
-    num_models = 10    
+    experiment_id = ["50"]
+    num_models = 1    
 
     # USed for base models
     #m = model_loader.load_random_models(experiment_id, 5)
@@ -56,6 +56,9 @@ def init_app():
         px = data_df["actual"]
         data_df.drop(columns=['time', 'actual', 'output', 'outputC'], inplace=True)
         
+        print(csv_data)
+        
+        """
         for m in range(len(models)):
             loaded_prediction = models[m].do_predict(data_df)
             
@@ -71,6 +74,8 @@ def init_app():
             
             
         order_manager.process_tick_rt(px[0],time[0])
+        """
+        
         
         return "ok"       
         
