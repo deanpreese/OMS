@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace OMS.SharedKernel;
+namespace OMS.SharedKernel.Common;
 
 
 

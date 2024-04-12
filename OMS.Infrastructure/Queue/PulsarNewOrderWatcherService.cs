@@ -14,18 +14,14 @@ namespace OMS.Infrastructure.Queue;
 public class PulsarNewOrderWatcherService : BackgroundService
 {
     private readonly ILogger<PulsarNewOrderWatcherService> _logger;
-    private readonly ILoggerFactory _loggerFactory;
     ScreenColorBase scb  = new ScreenColorBase();
 
     IPulsarClient  _pulsarClient;
-    IProducer<string> _producer;
-
     IConsumer<string> _consumer;
     
     public PulsarNewOrderWatcherService(ILogger<PulsarNewOrderWatcherService> logger, ILoggerFactory loggerFactory )
     {
         _logger = logger;
-        _loggerFactory = loggerFactory;
 
         _logger.LogInformation("Starting ReplWatcher...");
         System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);

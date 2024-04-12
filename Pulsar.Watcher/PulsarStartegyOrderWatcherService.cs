@@ -25,7 +25,7 @@ using DotPulsar.Abstractions;
 
 
 
-namespace Data.Watcher;
+namespace Pulsar.Watcher;
 
 
 public class PulsarStrategyOrderWatcherService : BackgroundService
