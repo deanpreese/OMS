@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using OMS.SharedKernel.DTO;
 using Strategy.Ninja.Service;
 
 namespace Strategy.Ninja.Controllers;
@@ -9,15 +11,14 @@ public class DataController : ControllerBase
 {
 
     private ILogger<DataController> _logger;
-    private OrderManagementDbContext _context;
+
     private FeatureDataDataQueue _featureDataQueue;
 
-    public DataController(ITradingService tradingService,
-        ILogger<DataController> logger, OrderManagementDbContext context, 
+    public DataController(
+        ILogger<DataController> logger, 
          FeatureDataDataQueue featureDataDataQueue)
     {
         _logger = logger;
-        _context = context;
         _featureDataQueue = featureDataDataQueue;
         
     }
@@ -34,7 +35,6 @@ public class DataController : ControllerBase
     public async Task<string> AddFeatureData([FromBody] FeatureDataDTO featureData)
     {
         await _featureDataQueue.WriteAsync(featureData);
-
         return await Task.FromResult(featureData.TimeTicks.ToString());
     }
 

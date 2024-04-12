@@ -1,13 +1,9 @@
 
-using OMS.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
-using OMS.NinjaTrader;
-using OMS.Infrastructure.Data;
-using OMS.Infrastructure.Data.Repositories;
-using OMS.Infrastructure.Services.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Strategy.Ninja.Service;
 
 
 
@@ -20,7 +16,7 @@ builder.Host.UseOrleans((ctx, siloBuilder) =>
     siloBuilder = orleansStartup.ConfigureSilo(siloBuilder); 
 });
 */
-
+/*
  builder.Services.AddDbContext<OrderManagementDbContext>(options =>
         {
             //string conn =  "Host=127.0.0.1;Database=orders;Username=trading;Password=abc";
@@ -29,20 +25,15 @@ builder.Host.UseOrleans((ctx, siloBuilder) =>
 
         },ServiceLifetime.Scoped);
 
-
+*/
 
 builder.Services.AddControllers()
 .AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 }); 
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IDataService, DataService>();
-
-builder.Services.AddSingleton<DataQueue>();
-builder.Services.AddHostedService<DataProcessor>();
-builder.Services.AddHostedService<NinjaTraderService>();
+builder.Services.AddSingleton<FeatureDataDataQueue>();
+builder.Services.AddHostedService<FeatureDataProcessor>();
 
 
 

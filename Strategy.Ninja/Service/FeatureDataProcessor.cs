@@ -63,7 +63,7 @@ public class FeatureDataProcessor : BackgroundService
         if (featureData.TimeTicks < DateTime.UtcNow.Ticks - 150000000 )
         {
             //await OMSClient.SendToMLForPrediction(csv_data, "http://10.0.147:8888/predict");    
-            Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks));        
+            Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks) + "  " + featureData.FeatureSetData);        
         }else
         {
            //await OMSClient.SendToMLForPrediction(csv_data, "http://10.0.0.147:8888/predict");        
