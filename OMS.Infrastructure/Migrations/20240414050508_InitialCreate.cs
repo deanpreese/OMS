@@ -30,6 +30,47 @@ namespace OMS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClosedTradeLog",
+                columns: table => new
+                {
+                    StorerID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserID = table.Column<int>(type: "integer", nullable: false),
+                    GroupID = table.Column<int>(type: "integer", nullable: false),
+                    Instrument = table.Column<string>(type: "text", nullable: true),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Leverage = table.Column<double>(type: "double precision", nullable: false),
+                    OppositeTrader = table.Column<bool>(type: "boolean", nullable: false),
+                    OpenLiveOrderID = table.Column<int>(type: "integer", nullable: false),
+                    OpenPlatformOrderID = table.Column<int>(type: "integer", nullable: false),
+                    OpenOrderMangerID = table.Column<int>(type: "integer", nullable: false),
+                    OpenAuthToken = table.Column<int>(type: "integer", nullable: false),
+                    OpenExecutionID = table.Column<int>(type: "integer", nullable: false),
+                    OpenRelatedOrderID = table.Column<int>(type: "integer", nullable: false),
+                    OpenOrderTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    OpenOrderPX = table.Column<double>(type: "double precision", nullable: false),
+                    OpenOrderType = table.Column<int>(type: "integer", nullable: false),
+                    OpenOrderAction = table.Column<int>(type: "integer", nullable: false),
+                    ClosePlatformOrderID = table.Column<int>(type: "integer", nullable: false),
+                    ClosedOrderMangerID = table.Column<int>(type: "integer", nullable: false),
+                    CloseAuthToken = table.Column<int>(type: "integer", nullable: false),
+                    CloseExecutionID = table.Column<int>(type: "integer", nullable: false),
+                    CloseRelatedOrderID = table.Column<int>(type: "integer", nullable: false),
+                    CloseOrderTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CloseOrderPX = table.Column<double>(type: "double precision", nullable: false),
+                    CloseOrderType = table.Column<int>(type: "integer", nullable: false),
+                    CloseOrderAction = table.Column<int>(type: "integer", nullable: false),
+                    PNL = table.Column<double>(type: "double precision", nullable: false),
+                    MAE = table.Column<double>(type: "double precision", nullable: false),
+                    MFE = table.Column<double>(type: "double precision", nullable: false),
+                    NetChange = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClosedTradeLog", x => x.StorerID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClosedTrades",
                 columns: table => new
                 {
@@ -304,6 +345,9 @@ namespace OMS.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ActivityLogs");
+
+            migrationBuilder.DropTable(
+                name: "ClosedTradeLog");
 
             migrationBuilder.DropTable(
                 name: "ClosedTrades");

@@ -27,8 +27,8 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<WatcherService>();
 
         //services.AddHostedService<NGZero>(); //FollowWinners
-        //services.AddHostedService<NGOne>();  // OC
-        services.AddHostedService<NGTwo>();   //Follow
+        services.AddHostedService<NGOne>();  // OC
+        //services.AddHostedService<NGTwo>();   //Follow
         //services.AddHostedService<NGThree>();   //Fade
         
 

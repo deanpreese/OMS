@@ -27,8 +27,9 @@ logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
 def LoadModels():
     m = []
    
+    
     experiment_id = ["50"]
-    num_models = 1    
+    num_models = 5    
 
     # USed for base models
     #m = model_loader.load_random_models(experiment_id, 5)
@@ -37,12 +38,14 @@ def LoadModels():
     m = model_loader.load_composite_models( experiment_id, num_models)
     
     
+    
     return m
 
 def init_app():
     app = Flask(__name__)
 
     with app.app_context():
+        pass
         models = LoadModels()
        
        
@@ -52,13 +55,15 @@ def init_app():
         csv_data = BytesIO(request.data)
         column_names = ['time', 'SDLR310', 'SDBB91', 'SDKC91', 'SDKC9', 'ROC', 'ATR34', 'ATR32', 'ATR31', 'ATR3', 'ATR21', 'ATR2', 'RSI', 'STOK1', 'output', 'outputC', 'actual']
         data_df = pd.read_csv(csv_data, header=None, names=column_names)
-        time = data_df["time"]
-        px = data_df["actual"]
+        
+        time_raw = data_df["time"]
+        px_f = float(data_df["actual"][0])
+
         data_df.drop(columns=['time', 'actual', 'output', 'outputC'], inplace=True)
         
-        print(csv_data)
+        #print( data_df )
         
-        """
+        
         for m in range(len(models)):
             loaded_prediction = models[m].do_predict(data_df)
             
@@ -68,13 +73,12 @@ def init_app():
             #order_manager.process_model(models[m], px[0], loaded_prediction[0])
             
             #used for comp models
-            order_manager.process_model(models[m], px[0], loaded_prediction)
+            order_manager.process_model(models[m], px_f, loaded_prediction)
             
-            mytime.sleep(0.15)
+            mytime.sleep(0.025)
             
             
-        order_manager.process_tick_rt(px[0],time[0])
-        """
+        order_manager.process_tick_rt(px_f,time_raw[0])
         
         
         return "ok"       

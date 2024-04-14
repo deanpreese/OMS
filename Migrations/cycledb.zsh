@@ -2,8 +2,8 @@
 DB_NAME="orders"
 DB_USER="dean"
 DB_PASSWORD="abc"
-DB_CONNECTION="Host=localhost;Database=orders;Username=trading;Password=abc" 
-DB_HOST="10.0.0.147"
+DB_CONNECTION="Host=localhost;Database=orders;Username=dean;Password=abc" 
+DB_HOST="localhost"
 DB_PORT="5432"
 
 MIGRATIONS_DIR="../OMS.Infrastructure/Migrations" # e.g., ./Data/Migrations
@@ -54,6 +54,13 @@ add_publication() {
 
     # Directly pass the SQL command to psql without using eval or complex escaping
     echo "${SQL_COMMAND}" | psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
+
+    SQL_COMMAND2="CREATE PUBLICATION logupdates
+    FOR TABLE public.\"ClosedTradeLog\", public.\"ModelOrderLog\", public.\"ScoreCardLog\", public.\"OrderLog\"
+    WITH (publish = 'insert, update, delete, truncate', publish_via_partition_root = false);"
+
+    echo "${SQL_COMMAND2}" | psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
+
 
     # Check for errors
     if [[ $? -ne 0 ]]; then

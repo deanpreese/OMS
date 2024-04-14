@@ -13,131 +13,144 @@ public class TwoSidedFilter : ScreenColorBase, IStrategyFilter
 
     public int IsInFilter(ScoreCardDTO scoreCard)
     {
-        _scoreCard = scoreCard;
-        return IsInFilter115(scoreCard);
+        _scoreCard = scoreCard; 
+
+        //  122  126 128 129 130
+
+        return IsInFilter130(scoreCard);
     }
 
 
-
-    public int IsInFilter115(ScoreCardDTO _scoreCard)
+    public int IsInFilter130(ScoreCardDTO _scoreCard)
     {
-        int includeExclude = 0;
-        if ((_scoreCard.SortinoRatio > 0.5  || _scoreCard.SharpRatio > 0.5) && _scoreCard.Rank < 3)
-        {
-            includeExclude = 1;
-        }
 
-         return includeExclude;
-    }
-
-
-    public int IsInFilter114(ScoreCardDTO _scoreCard)
-    {
-        int includeExclude = 0;
-       
-        Console.WriteLine($" {MAGENTA} ---- {_scoreCard.SortinoRatio} { _scoreCard.SharpRatio} ----");
-        Console.ResetColor();
-
-        if (_scoreCard.SortinoRatio > 0.5  || _scoreCard.SharpRatio > 0.5)
-        {
-            includeExclude = 1;
-        }
-
-         return includeExclude;
-    }
-
-
-
-    public int IsInAlgoFilter117()
-    {
-       int includeExclude = 0;
-
-       if ((_scoreCard.SortinoRatio > 0.5  || _scoreCard.SharpRatio > 0.5 )
-            &&  _scoreCard.WinLossRatio > 0.6
-            )
-        {
-            includeExclude = 1;
-        }
-
-         return includeExclude;
-    }
-
-
-
-    public int IsInAlgoFilter116()
-    {
+        int min_trades = 10;
         int includeExclude = 0;
 
-        if (_scoreCard.SortinoRatio > 0.6  || _scoreCard.SharpRatio > 0.6 )
-           
+        if (_scoreCard.Trades > min_trades && _scoreCard.TotalNetProfit > 0 && ( _scoreCard.PNL_Last5 > _scoreCard.PNL_Last3)   )
         {
             includeExclude = 1;
         }
 
-         return includeExclude;
-    }
-
-
-
-    public int IsInAlgoFilter115()
-    {
-        int includeExclude = 0;
-
-        if (_scoreCard.SortinoRatio > 0.55  || _scoreCard.SharpRatio > 0.55)
+        if (_scoreCard.Rank == 1)
         {
-            includeExclude = 1;
+             includeExclude = 1;
         }
 
-         return includeExclude;
-    }
-
-
-
-
-    public int IsInAlgoFilter113()
-    {
-        int includeExclude = 0;
-
-        if (_scoreCard.SortinoRatio > 0.5  || _scoreCard.SharpRatio > 0.5 || _scoreCard.WinLossRatio > 0.6)
+        if (_scoreCard.Rank > 4  && _scoreCard.PNL_Last5 < 0)
         {
-            includeExclude = 1;
+             includeExclude = 1;
         }
 
-         return includeExclude;
-    }
-
-
-    public int IsInAlgoFilter112()
-    {
-        int includeExclude = 0;
-
-        if (_scoreCard.SortinoRatio > 0.35  || _scoreCard.SharpRatio > 0.35 || _scoreCard.WinLossRatio > 0.6)
+        if (_scoreCard.Rank < 3  && _scoreCard.PNL_Last5 < _scoreCard.PNL_Last8)
         {
-            includeExclude = 1;
+             includeExclude = 1;
         }
 
-        if (_scoreCard.SortinoRatio < 0  || _scoreCard.SharpRatio < 0 )
-        {
-            includeExclude = -1;
-        }
-
-
-         return includeExclude;
-    }
-
-
-    public int IsInAlgoFilter111()
-    {
-        int includeExclude = 0;
-
-        if (_scoreCard.SortinoRatio > 0.35  || _scoreCard.SharpRatio > 0.35 || _scoreCard.WinLossRatio > 0.6)
-        {
-            includeExclude = 1;
-        }
-    
 
         return includeExclude;
     }
+
+    public int IsInFilter129(ScoreCardDTO _scoreCard)
+    {
+
+        int min_trades = 10;
+        int includeExclude = 0;
+
+        if (_scoreCard.Trades > min_trades && _scoreCard.TotalNetProfit > 0 && ( _scoreCard.PNL_Last5 > _scoreCard.PNL_Last3)   )
+        {
+            includeExclude = 1;
+        }
+
+        if (_scoreCard.Rank == 1)
+        {
+             includeExclude = 1;
+        }
+
+        if (_scoreCard.Rank > 4  && _scoreCard.PNL_Last5 < 0)
+        {
+             includeExclude = 1;
+        }
+
+        return includeExclude;
+    }
+
+
+
+
+    public int IsInFilter128(ScoreCardDTO _scoreCard)
+    {
+
+        int includeExclude = 0;
+
+        if ( _scoreCard.TotalNetProfit > 0 && ( _scoreCard.PNL_Last5 > _scoreCard.PNL_Last3)   )
+        {
+            includeExclude = 1;
+        }
+
+        if (_scoreCard.Rank == 1)
+        {
+             includeExclude = 1;
+        }
+
+        if (_scoreCard.Rank < 4  && _scoreCard.PNL_Last5 < 0)
+        {
+             includeExclude = 1;
+        }
+
+        return includeExclude;
+    }
+
+
+    public int IsInFilter126(ScoreCardDTO _scoreCard)
+    {
+
+        int min_trades = 10;
+        int includeExclude = 0;
+
+        if (_scoreCard.Trades > min_trades && _scoreCard.TotalNetProfit > 0 && ( _scoreCard.PNL_Last5 > _scoreCard.PNL_Last3)   )
+        {
+            includeExclude = 1;
+        }
+
+        if (_scoreCard.Rank == 1)
+        {
+             includeExclude = 1;
+        }
+
+        if (_scoreCard.Rank < 4  && _scoreCard.PNL_Last5 < 0)
+        {
+             includeExclude = 1;
+        }
+
+        return includeExclude;
+    }
+
+
+    public int IsInFilter122(ScoreCardDTO _scoreCard)
+    {
+
+        int min_trades = 15;
+        int includeExclude = 0;
+
+        if (_scoreCard.Trades > min_trades && _scoreCard.TotalNetProfit > 0 && ( _scoreCard.PNL_Last5 > _scoreCard.PNL_Last3)   )
+        {
+            includeExclude = 1;
+        }
+
+        if (_scoreCard.Rank == 1)
+        {
+             includeExclude = 1;
+        }
+
+        if (_scoreCard.Rank < 3  && _scoreCard.PNL_Last5 < 0)
+        {
+             includeExclude = 1;
+        }
+
+        return includeExclude;
+    }
+
 
 
 }

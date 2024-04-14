@@ -78,7 +78,7 @@ public class PulsarStrategyOrderWatcherService : BackgroundService
         try
         {
             NewOrderDTO newOrderDTO = JsonSerializer.Deserialize<NewOrderDTO>(message.Value(), options);
-            Console.WriteLine($"Received: {newOrderDTO.UserID} {newOrderDTO.GroupID}  {newOrderDTO.UserName}  {newOrderDTO.OrderAction} ");
+            Console.WriteLine($"Received: {newOrderDTO.UserID} {newOrderDTO.GroupID}  {newOrderDTO.UserName}  {newOrderDTO.OrderAction} {newOrderDTO.OrderTime} {newOrderDTO.Instrument} {newOrderDTO.OrderType} {newOrderDTO.OrderPX} {newOrderDTO.Quantity} " );
 
             
         }catch(Exception ex)

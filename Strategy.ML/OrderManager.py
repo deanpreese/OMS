@@ -60,6 +60,6 @@ class OrderManager():
         
             print(f" Order   {new_order['userID']}   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']} {new_order['orderTime']} " ) 
     
-            #self.com_cli.send_order(new_order)
+            self.com_cli.send_order(new_order)
             #self.pulsar_cli.send_order_pulsar(new_order)        
             

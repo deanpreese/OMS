@@ -87,7 +87,7 @@ public class TradingService : ITradingService
 
 
     // ******************************************************************************************* /
-    private async Task<double> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, 
+    private async Task<ClosedTrade> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, 
         ILiveOrderRepository liveOrderRepository, IClosedOrderRepository closedOrderRepository)
     {
         ClosedTrade histOrder = await DTOMapping.MapClosedOrder(orderToClose, orderToStore);       
@@ -104,17 +104,18 @@ public class TradingService : ITradingService
         histOrder.PNL = PNL;
         histOrder.NetChange = netChange;
 
-
         try 
         {
             await closedOrderRepository.AddClosedOrder(histOrder);
             await liveOrderRepository.DeleteOrderAsyncByOrderManagerID(orderToClose.OrderManagerID);
+            await _unitOfWork.AuditLogRepository.AddToClosedTradeLogAsync(histOrder);
+            await _unitOfWork.CommitAsync();
 
         }catch (Exception fail)
         {
             Console.WriteLine(fail.Message);
         }
-        return orderToClose.OrderManagerID;
+        return histOrder;
     }
 
 
