@@ -1,5 +1,5 @@
 
-DELETE FROM PUBLIC."ßClßosedTrades"  ;
+DELETE FROM PUBLIC."ClosedTrades"  ;
 ALTER SEQUENCE public."ClosedTrades_StorerID_seq" RESTART WITH 1;
 
 DELETE FROM PUBLIC."ClosedTradeLog";

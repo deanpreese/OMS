@@ -324,6 +324,11 @@ namespace OMS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClosedTradeLog_UserID",
+                table: "ClosedTradeLog",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ClosedTrades_UserID",
                 table: "ClosedTrades",
                 column: "UserID");

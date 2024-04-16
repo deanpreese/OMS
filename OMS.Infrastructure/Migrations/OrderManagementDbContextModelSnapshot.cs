@@ -249,6 +249,8 @@ namespace OMS.Infrastructure.Migrations
 
                     b.HasKey("StorerID");
 
+                    b.HasIndex("UserID");
+
                     b.ToTable("ClosedTradeLog");
                 });
 

@@ -72,13 +72,13 @@ num_models = 10
 #num_models = 2
 
 
-#trades = 750
+#trades = 1000
 trades = 250
 #trades = 100
 #trades = 10
 
 
-#sim_delay = 0.0500.h
+#sim_delay = 0.0500
 sim_delay = 0.025
 #sim_delay = 0.00000002
 

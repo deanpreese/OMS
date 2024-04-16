@@ -48,6 +48,9 @@ public class OrderManagementDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ClosedTradeLog>()
+            .HasIndex (b => b.UserID);
+
         modelBuilder.Entity<ClosedTrade>()
             .HasIndex(b => b.UserID);
 

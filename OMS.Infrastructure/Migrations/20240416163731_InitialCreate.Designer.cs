@@ -12,7 +12,7 @@ using OMS.Infrastructure.Data;
 namespace OMS.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderManagementDbContext))]
-    [Migration("20240414050508_InitialCreate")]
+    [Migration("20240416163731_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -251,6 +251,8 @@ namespace OMS.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("StorerID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("ClosedTradeLog");
                 });
