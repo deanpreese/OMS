@@ -16,13 +16,11 @@ namespace OMS.Infrastructure.Services;
 public class AnalyticsService : IAnalyticsService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private ILogger<AnalyticsService> _logger;
-    
+   
 
-    public AnalyticsService(IUnitOfWork unitOfWork, ILogger<AnalyticsService> logger)
+    public AnalyticsService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _logger = logger;
     }
 
     public async Task<ScoreCard> GetTraderScoreCard(int traderID, int groupID)
@@ -71,7 +69,7 @@ public class AnalyticsService : IAnalyticsService
     }
 
 
-    public async Task<int> LogModelOrderData(LiveOrder liveOrder, NewOrderDTO orderDTO, ClosedTradeDTO closedTradeDTO, ScoreCard scoreCard)
+    public async Task<ModelOrderLog> LogModelOrderData(LiveOrder liveOrder, NewOrderDTO orderDTO, ClosedTradeDTO closedTradeDTO, ScoreCard scoreCard)
     {
         var options = new JsonSerializerOptions {
             NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
@@ -98,7 +96,7 @@ public class AnalyticsService : IAnalyticsService
         await _unitOfWork.AuditLogRepository.AddModelOrderLogEntry(modelOrderLog);
         await _unitOfWork.CommitAsync();
 
-        return  Task.FromResult(0).Result;
+        return  modelOrderLog;
     }
 
 

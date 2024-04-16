@@ -1,29 +1,19 @@
 ﻿using OMS.Application.Models;
-using OMS.Application.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using OMS.Application.Common;
-using Orleans.Streams;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
+using OMS.Infrastructure.Data;
+using OMS.Infrastructure.Services;
+using OMS.Infrastructure.Interfaces;
+using OMS.Application;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Orleans;
-using OMS.Infrastructure.Services.Common;
-
-using OMS.Infrastructure.Data;
-using OMS.Infrastructure.Services;
-
-using OMS.Infrastructure.Interfaces;
-using OMS.Application;
 
 namespace OMS.Infrastructure.Queue;
 
 public class NewOrderProcessorService : BackgroundService
 {
-    private readonly object _lock = new object();
-
     private readonly NewOrderChannelService _orderChannelService;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<NewOrderProcessorService> _logger;
@@ -62,28 +52,20 @@ public class NewOrderProcessorService : BackgroundService
         {
             var scopedContext = scope.ServiceProvider.GetRequiredService<OrderManagementDbContext>();
             UnitOfWork tradingUnitOfWork = new UnitOfWork(scopedContext);
-            ILogger<TradingService> logger = scope.ServiceProvider.GetRequiredService<ILogger<TradingService>>();
-            
-            ClosedOrderChannelService closedOrderChannel = scope.ServiceProvider.GetRequiredService<ClosedOrderChannelService>();
-            TradingService _trader_service = new TradingService(tradingUnitOfWork, logger, _platformOrderIDGen);
-
-            ILogger<DataService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<DataService>>();
-            UnitOfWork dataUnitOfWork = new UnitOfWork(scopedContext);
                         
             await Task.Run(async () =>
             {
                 try
                 {
 
-
-
+                TradingService _trader_service = new TradingService(tradingUnitOfWork, _platformOrderIDGen);
                 LiveOrder liveOrder = await _trader_service.ProcessNewOrderAsync(newOrderDTO);
                 
                 if (newOrderDTO.GroupID < 50)
                 {
                     ILogger<AnalyticsService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
                     UnitOfWork analyticsUnitOfWork = new UnitOfWork(scopedContext);
-                    AnalyticsService _analytics_service = new AnalyticsService(analyticsUnitOfWork, aLogger);
+                    AnalyticsService _analytics_service = new AnalyticsService(analyticsUnitOfWork);
 
                     ClosedTradeDTO closedTrade = new ClosedTradeDTO();
                     ScoreCard scoreCard = await _analytics_service.GetTraderScoreCard(liveOrder.UserID, liveOrder.GroupID);
@@ -94,6 +76,7 @@ public class NewOrderProcessorService : BackgroundService
 
                         Console.WriteLine("New Analytics For Trader " + liveOrder.UserID  ); 
 
+                        UnitOfWork dataUnitOfWork = new UnitOfWork(scopedContext);
                         DataService _dataService = new DataService(dataUnitOfWork);
                         closedTrade = await _dataService.GetLastClosedTradeForTrader(liveOrder.UserID, liveOrder.GroupID);
                     }
@@ -101,6 +84,8 @@ public class NewOrderProcessorService : BackgroundService
                     await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO, closedTrade, scoreCard );  
 
                 }
+
+                ClosedOrderChannelService closedOrderChannel = scope.ServiceProvider.GetRequiredService<ClosedOrderChannelService>();
                 await closedOrderChannel.WriteAsync(new LogDataDTO { liveOrder = liveOrder, newOrderDTO = newOrderDTO });
 
                 

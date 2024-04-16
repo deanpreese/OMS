@@ -8,7 +8,7 @@ using Strategy.SharedKernel;
 
 namespace Strategy.Trader.Strategy;
 
-public class BaseFollowStrategy : AbstractStrategyNG , IStrategy
+public class BaseFollowStrategy : AbstractStrategy , IStrategy
 {
 
     public BaseFollowStrategy(IStrategyConnection strategyConnection) : base(strategyConnection)

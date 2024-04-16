@@ -17,16 +17,12 @@ namespace OMS.Infrastructure.Services;
 public class TradingService : ITradingService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private ILogger<TradingService> _logger;
     private IPlatformOrderIDGen _platformOrderIDGen;
     
-    public TradingService(IUnitOfWork unitOfWork, ILogger<TradingService> logger, 
-        IPlatformOrderIDGen platformOrderIDGen)
+    public TradingService(IUnitOfWork unitOfWork, IPlatformOrderIDGen platformOrderIDGen)
     {
         _unitOfWork = unitOfWork;
-        _logger = logger;
         _platformOrderIDGen = platformOrderIDGen;
-
     }
 
     public async Task<LiveOrder> ProcessNewOrderAsync(NewOrderDTO newOrder)

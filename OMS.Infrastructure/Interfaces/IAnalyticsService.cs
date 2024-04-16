@@ -8,5 +8,5 @@ public interface IAnalyticsService
     Task<ScoreCard> UpdateTraderScoreCard(LiveOrder order);
     Task<ScoreCard> GetTraderScoreCard(int traderID, int groupID);
     Task<ScoreCardDTO> GetTraderScoreCardDTO(int traderID, int groupID);
-    Task<int> LogModelOrderData(LiveOrder liveOrder, NewOrderDTO orderDTO, ClosedTradeDTO closedTradeDTO, ScoreCard scoreCard);
+    Task<ModelOrderLog> LogModelOrderData(LiveOrder liveOrder, NewOrderDTO orderDTO, ClosedTradeDTO closedTradeDTO, ScoreCard scoreCard);
 }
