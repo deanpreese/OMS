@@ -78,8 +78,7 @@ public class ClosedOrderProcessorService : BackgroundService
                     {
                         var scopedContext = scope.ServiceProvider.GetRequiredService<OrderManagementDbContext>();
                         UnitOfWork unitOfWork = new UnitOfWork(scopedContext);
-                        ILogger<AnalyticsService> logger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
-                        AnalyticsService _analytics_service = new AnalyticsService(unitOfWork, logger);   
+                        AnalyticsService _analytics_service = new AnalyticsService(unitOfWork);   
                         await _analytics_service.UpdateTraderScoreCard(userID, groupID);
                         Console.WriteLine("Stats Updated For Strategy " + userID + " " + groupID);
 

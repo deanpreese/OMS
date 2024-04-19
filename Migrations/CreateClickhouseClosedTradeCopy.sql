@@ -1,0 +1,35 @@
+
+CREATE TABLE default.`ClosedTradeLogCopy` (
+	`StorerID` Int32 ,
+	`UserID` Int32 ,
+	`GroupID` Int32 ,
+	`Instrument` String,
+	`Quantity` Int32 ,
+	`Leverage` Float64 ,
+	`OppositeTrader` Boolean ,
+	`OpenLiveOrderID` Int32 ,
+	`OpenPlatformOrderID` Int32 ,
+	`OpenOrderMangerID` Int32 ,
+	`OpenAuthToken` Int32 ,
+	`OpenExecutionID` Int32 ,
+	`OpenRelatedOrderID` Int32 ,
+	`OpenOrderTime` DateTime64(3, 'UTC'),
+	`OpenOrderPX` Float64 ,
+	`OpenOrderType` Int32 ,
+	`OpenOrderAction` Int32 ,
+	`ClosePlatformOrderID` Int32 ,
+	`ClosedOrderMangerID` Int32 ,
+	`CloseAuthToken` Int32 ,
+	`CloseExecutionID` Int32 ,
+	`CloseRelatedOrderID` Int32 ,
+	`CloseOrderTime` DateTime64(3, 'UTC'),
+	`CloseOrderPX` Float64 ,
+	`CloseOrderType` Int32 ,
+	`CloseOrderAction` Int32 ,
+	`PNL` Float64 ,
+	`MAE` Float64 ,
+	`MFE` Float64 ,
+	`NetChange` Float64 
+	)
+	ENGINE = MergeTree
+	ORDER BY (StorerID);

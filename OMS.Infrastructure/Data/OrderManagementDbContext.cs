@@ -41,9 +41,16 @@ public class OrderManagementDbContext : DbContext
     public DbSet<OrderLog> OrderLog { get; set; }
     public DbSet<ScoreCardLog> ScoreCardLog { get; set; }
     public DbSet<ModelOrderLog> ModelOrderLog { get; set; }
+    public DbSet<ClosedTradeLog> ClosedTradeLog { get; set; }
+
+
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ClosedTradeLog>()
+            .HasIndex (b => b.UserID);
+
         modelBuilder.Entity<ClosedTrade>()
             .HasIndex(b => b.UserID);
 

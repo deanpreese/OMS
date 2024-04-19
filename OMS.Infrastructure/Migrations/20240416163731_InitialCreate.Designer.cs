@@ -12,7 +12,7 @@ using OMS.Infrastructure.Data;
 namespace OMS.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderManagementDbContext))]
-    [Migration("20240409192801_InitialCreate")]
+    [Migration("20240416163731_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -153,6 +153,108 @@ namespace OMS.Infrastructure.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("ClosedTrades");
+                });
+
+            modelBuilder.Entity("OMS.Application.Models.ClosedTradeLog", b =>
+                {
+                    b.Property<int>("StorerID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("StorerID"));
+
+                    b.Property<int>("CloseAuthToken")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CloseExecutionID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CloseOrderAction")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("CloseOrderPX")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("CloseOrderTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CloseOrderType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ClosePlatformOrderID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CloseRelatedOrderID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ClosedOrderMangerID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GroupID")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Instrument")
+                        .HasColumnType("text");
+
+                    b.Property<double>("Leverage")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("MAE")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("MFE")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("NetChange")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("OpenAuthToken")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OpenExecutionID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OpenLiveOrderID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OpenOrderAction")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OpenOrderMangerID")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("OpenOrderPX")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("OpenOrderTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("OpenOrderType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OpenPlatformOrderID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OpenRelatedOrderID")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("OppositeTrader")
+                        .HasColumnType("boolean");
+
+                    b.Property<double>("PNL")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("StorerID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("ClosedTradeLog");
                 });
 
             modelBuilder.Entity("OMS.Application.Models.LiveOrder", b =>

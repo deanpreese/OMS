@@ -8,4 +8,5 @@ public interface IAuditLogRepository
     Task AddToActivityLog(ActivityLog logEntry);
     Task AddModelOrderLogEntry(ModelOrderLog modelOrderLogEntry);
     Task AddToScoreCardLog(ScoreCard scoreCardToAdd);
+    Task AddToClosedTradeLogAsync(ClosedTrade log);
 }

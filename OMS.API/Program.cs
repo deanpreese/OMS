@@ -12,14 +12,14 @@ using OMS.Infrastructure.Interfaces;
 using OMS.Infrastructure.Queue;
 using OMS.Infrastructure.Services;
 using OMS.Infrastructure.Services.Common;
-using OMS.SharedKernel.DTO;
+using OMS.SharedKernel.Common;
+
 using OMS.API;
 using System.Text.Json;
 using OMS.SharedKernel;
 
 var builder = WebApplication.CreateBuilder(args);
-
- string conn =  "Server=127.0.0.1;Database=orders;Username=trading;Password=abc";
+string conn =  PlatformConstants.conn_in_use;
 
 // Add services to the container.
 builder.Services.AddDbContext<OrderManagementDbContext>(options =>
@@ -39,12 +39,13 @@ builder.Services.AddScoped<ITradingService, TradingService>();
 builder.Services.AddScoped<IDataService, DataService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
-builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();        
+builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();      
+  
 builder.Services.AddSingleton<NewOrderChannelService>();
 builder.Services.AddSingleton<ClosedOrderChannelService>();
 builder.Services.AddHostedService<NewOrderProcessorService>();
 builder.Services.AddHostedService<ClosedOrderProcessorService>();
-builder.Services.AddHostedService<PulsarNewOrderWatcherService>();
+//builder.Services.AddHostedService<PulsarNewOrderWatcherService>();
 
 builder.Services.AddLogging(configure => configure.AddConsole());
 builder.Services.AddHttpsRedirection(opt => opt.HttpsPort = 44300);

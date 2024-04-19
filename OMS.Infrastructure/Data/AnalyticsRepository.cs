@@ -205,8 +205,4 @@ public class AnalyticsRepository : IAnalyticsRepository
 
     }
 
-    public async Task AddModelOrderLogEntry(ModelOrderLog modelOrderLogEntry)
-    {
-        await _context.ModelOrderLog.AddAsync(modelOrderLogEntry);
-    }
 }

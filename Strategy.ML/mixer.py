@@ -197,6 +197,9 @@ datafile = [
 
 dtx = pd.read_csv(datafile[4])
 
+est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+
 
 """
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
@@ -204,11 +207,12 @@ est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegr
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
 """
 
+"""
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),            
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
-
+"""
 """
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
@@ -224,7 +228,7 @@ est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegr
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),            
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
 """
-
+"""
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),               
@@ -232,6 +236,7 @@ est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegr
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),            
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+"""
 
 #est_list = [ TunableCatBoostRegressor(),  TunableLGBMRegressor(), TunableXGBRegressor() ]
 
@@ -239,9 +244,9 @@ est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegr
 split_test_size_value = 0.2          
 
 min_features_used = 2
-max_features_used = 3
+max_features_used = 11
 step_features_used = 1
-total_cycles_used = 100
+total_cycles_used = 25
 
 
 p_df, experiment_id_parent = run_models(dtx, est_list, 

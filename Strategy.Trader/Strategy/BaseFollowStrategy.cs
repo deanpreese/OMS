@@ -37,7 +37,8 @@ public class BaseFollowStrategy : AbstractStrategy , IStrategy
         int includeExclude = 0;
         foreach (IStrategyFilter filter in _filters)
         {
-            includeExclude = filter.IsInFilter(scoreCard);
+            //includeExclude = filter.IsInFilter(scoreCard);
+            includeExclude = 1;
         }
         return await Task.FromResult(includeExclude);
     }

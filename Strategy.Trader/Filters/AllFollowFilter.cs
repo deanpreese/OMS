@@ -22,7 +22,7 @@ public class AllFollowFilter : ScreenColorBase, IStrategyFilter
         int min_trades = 30;
 
         _scoreCard = scoreCard;
-        if (_scoreCard.WinLossRatio > .51 )
+        if (_scoreCard.TotalNetProfit > 0 )
         {
             double confidenceLevel = 0.95; 
             double successProbability = _scoreCard.WinLossRatio;

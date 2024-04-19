@@ -1,9 +1,9 @@
 
-DB_NAME="orders"
-DB_USER="dean"
+DB_NAME="timedata"
+DB_USER="omsuser"
 DB_PASSWORD="abc"
-DB_CONNECTION="Host=localhost;Database=orders;Username=dean;Password=abc" 
-DB_HOST="localhost"
+DB_CONNECTION="Host=10.0.0.50;Database=timedata;Username=omsuser;Password=abc" 
+DB_HOST="10.0.0.50"
 DB_PORT="5432"
 
 MIGRATIONS_DIR="../OMS.Infrastructure/Migrations" # e.g., ./Data/Migrations
@@ -18,8 +18,8 @@ START_UP_PROJECT="Migrations.csproj"
 # Function to drop the PostgreSQL database
 dropDatabase() {
     echo "Dropping database $DB_NAME..."
-    PGPASSWORD=$DB_PASSWORD dropdb -U $DB_USER --force $DB_NAME 
-    PGPASSWORD=$DB_PASSWORD createdb -U $DB_USER $DB_NAME
+    PGPASSWORD=$DB_PASSWORD dropdb -U $DB_USER --force $DB_NAME -h $DB_HOST -p $DB_PORT
+    PGPASSWORD=$DB_PASSWORD createdb -U $DB_USER $DB_NAME -h $DB_HOST -p $DB_PORT
 }
 
 
@@ -44,7 +44,13 @@ add_publication() {
 
     echo "Adding publication..."
 
-    SQL_COMMAND="CREATE PUBLICATION liveupdates
+    SQL_WAL="ALTER SYSTEM SET wal_level = logical;"
+    #echo "${SQL_WAL}" | PGPASSWORD=$DB_PASSWORD psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
+
+    SQL_RL="SELECT pg_reload_conf();"
+    #echo "${SQL_RL}" | PGPASSWORD=$DB_PASSWORD psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
+
+    SQL_LIVEUPDATES="CREATE PUBLICATION liveupdates
     FOR TABLE public.\"ClosedTrades\", public.\"LiveOrders\", public.\"ScoreCards\", public.\"ModelOrderLog\"
     WITH (publish = 'insert, update, delete, truncate', publish_via_partition_root = false);"
 
@@ -52,15 +58,20 @@ add_publication() {
     #FOR TABLE public."OrderLog", public."ScoreCardLog", public."ClosedTrades", public."ModelOrderLog"
     #WITH (publish = 'insert, update, delete, truncate', publish_via_partition_root = false);    
 
-    # Directly pass the SQL command to psql without using eval or complex escaping
-    echo "${SQL_COMMAND}" | psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
+    echo "${SQL_LIVEUPDATES}" | PGPASSWORD=$DB_PASSWORD psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
 
-    SQL_COMMAND2="CREATE PUBLICATION logupdates
+    SQL_LOGUPDATES="CREATE PUBLICATION logupdates
     FOR TABLE public.\"ClosedTradeLog\", public.\"ModelOrderLog\", public.\"ScoreCardLog\", public.\"OrderLog\"
     WITH (publish = 'insert, update, delete, truncate', publish_via_partition_root = false);"
 
-    echo "${SQL_COMMAND2}" | psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
+    echo "${SQL_LOGUPDATES}" | PGPASSWORD=$DB_PASSWORD psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
 
+    SQL_EXT="CREATE EXTENSION timescaledb;"
+    SQL_EXT2="CREATE EXTENSION tablefunc;"
+    SQL_EXT3="CREATE EXTENSION cube;"
+    #echo "${SQL_EXT}" | PGPASSWORD=$DB_PASSWORD psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
+    #echo "${SQL_EXT2}" | PGPASSWORD=$DB_PASSWORD psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
+    #echo "${SQL_EXT3}" | PGPASSWORD=$DB_PASSWORD psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}"
 
     # Check for errors
     if [[ $? -ne 0 ]]; then

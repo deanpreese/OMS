@@ -17,16 +17,12 @@ namespace OMS.Infrastructure.Services;
 public class TradingService : ITradingService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private ILogger<TradingService> _logger;
     private IPlatformOrderIDGen _platformOrderIDGen;
     
-    public TradingService(IUnitOfWork unitOfWork, ILogger<TradingService> logger, 
-        IPlatformOrderIDGen platformOrderIDGen)
+    public TradingService(IUnitOfWork unitOfWork, IPlatformOrderIDGen platformOrderIDGen)
     {
         _unitOfWork = unitOfWork;
-        _logger = logger;
         _platformOrderIDGen = platformOrderIDGen;
-
     }
 
     public async Task<LiveOrder> ProcessNewOrderAsync(NewOrderDTO newOrder)
@@ -87,7 +83,7 @@ public class TradingService : ITradingService
 
 
     // ******************************************************************************************* /
-    private async Task<double> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, 
+    private async Task<ClosedTrade> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, 
         ILiveOrderRepository liveOrderRepository, IClosedOrderRepository closedOrderRepository)
     {
         ClosedTrade histOrder = await DTOMapping.MapClosedOrder(orderToClose, orderToStore);       
@@ -104,17 +100,18 @@ public class TradingService : ITradingService
         histOrder.PNL = PNL;
         histOrder.NetChange = netChange;
 
-
         try 
         {
             await closedOrderRepository.AddClosedOrder(histOrder);
             await liveOrderRepository.DeleteOrderAsyncByOrderManagerID(orderToClose.OrderManagerID);
+            await _unitOfWork.AuditLogRepository.AddToClosedTradeLogAsync(histOrder);
+            await _unitOfWork.CommitAsync();
 
         }catch (Exception fail)
         {
             Console.WriteLine(fail.Message);
         }
-        return orderToClose.OrderManagerID;
+        return histOrder;
     }
 
 

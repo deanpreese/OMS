@@ -11,23 +11,11 @@ namespace OMS.Infrastructure.Services;
 
 public class UserService : IUserService
 {
-    private readonly ITradingService _trader_service;
-    private readonly ILogger<UserService> _logger;
-    private readonly OrderManagementDbContext _context;
-    private readonly NewOrderChannelService _newOrderChannelService;
     IUnitOfWork _unitOfWork;
 
-    public UserService(ITradingService tradingService,
-        ILogger<UserService> logger, OrderManagementDbContext context,
-         NewOrderChannelService newOrderChannelService, IUnitOfWork unitOfWork)
+    public UserService(IUnitOfWork unitOfWork)
     {
-
-        _logger = logger;
-        _trader_service = tradingService;
-        _context = context;
-        _newOrderChannelService = newOrderChannelService;
         _unitOfWork = unitOfWork;
-
     }
 
     public async Task<int> AddNewTrader(NewTraderDTO newTrader)
@@ -35,15 +23,13 @@ public class UserService : IUserService
         int traderID = 0;
         try
         {
-            _logger.LogInformation("Adding new trader...");
             traderID = await _unitOfWork.TraderRepository.AddTraderAsync(newTrader);
             _unitOfWork.Commit();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            Console.WriteLine(ex.Message);
         }
-        _logger.LogInformation($"Trader added  {traderID}  ");
         return traderID;
     }
 

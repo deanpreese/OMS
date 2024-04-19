@@ -18,6 +18,45 @@ public class AuditLogRepository : IAuditLogRepository
         _context = context;
     }
 
+    public async Task AddToClosedTradeLogAsync(ClosedTrade log)
+    {
+
+        ClosedTradeLog closedTradeLog = new ClosedTradeLog();
+        closedTradeLog.CloseAuthToken = log.CloseAuthToken;  
+        closedTradeLog.ClosedOrderMangerID = log.ClosedOrderMangerID;
+        closedTradeLog.CloseExecutionID = log.CloseExecutionID;
+        closedTradeLog.CloseOrderAction = log.CloseOrderAction;
+        closedTradeLog.CloseOrderPX = log.CloseOrderPX;
+        closedTradeLog.CloseRelatedOrderID = log.CloseRelatedOrderID;
+        closedTradeLog.CloseOrderTime = log.CloseOrderTime;
+        closedTradeLog.CloseOrderType  = log.CloseOrderType;
+        closedTradeLog.ClosePlatformOrderID = log.ClosePlatformOrderID;
+
+        closedTradeLog.GroupID   = log.GroupID;
+        closedTradeLog.Instrument = log.Instrument;
+        closedTradeLog.Leverage = log.Leverage;
+        closedTradeLog.OpenAuthToken = log.OpenAuthToken;
+        closedTradeLog.OpenExecutionID = log.OpenExecutionID;
+        closedTradeLog.OpenOrderAction = log.OpenOrderAction;
+        closedTradeLog.OpenOrderPX = log.OpenOrderPX;
+        closedTradeLog.OpenRelatedOrderID = log.OpenRelatedOrderID;
+        closedTradeLog.OppositeTrader = log.OppositeTrader;
+        closedTradeLog.OpenPlatformOrderID = log.OpenPlatformOrderID;
+        closedTradeLog.OpenOrderMangerID = log.OpenOrderMangerID;
+        closedTradeLog.OpenOrderTime = log.OpenOrderTime;
+        closedTradeLog.OpenOrderType = log.OpenOrderType;
+        closedTradeLog.OpenLiveOrderID = log.OpenLiveOrderID;
+        closedTradeLog.Quantity = log.Quantity;
+        closedTradeLog.StorerID = log.StorerID;
+        closedTradeLog.UserID = log.UserID;
+
+        closedTradeLog.PNL  = log.PNL;
+        closedTradeLog.NetChange = log.NetChange;
+
+        await _context.ClosedTradeLog.AddAsync(closedTradeLog);
+    }
+
+
     public Task AddToActivityLog(ActivityLog log)
     {
         throw new NotImplementedException();
