@@ -30,7 +30,7 @@ public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnectio
     {
         System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
         _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
-        _producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.pulsar_strategy_topic).Create();
+        _producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_STRATEGY_ORDER_TOPIC).Create();
 
         base.BaseUrl = baseURL;
     }

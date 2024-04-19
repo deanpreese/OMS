@@ -24,3 +24,4 @@ UPDATE "public"."ScoreCards"
 
     delete from "public"."ScoreCards" where "GroupID" < 50;
     delete from "public"."UserProfiles" where "GroupID" < 50;
+	

@@ -9,6 +9,10 @@ using OMS.Application;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using DotPulsar.Abstractions;
+using DotPulsar;
+using DotPulsar.Extensions;
+using System.Text.Json;
 
 namespace OMS.Infrastructure.Queue;
 
@@ -19,6 +23,10 @@ public class NewOrderProcessorService : BackgroundService
     private readonly ILogger<NewOrderProcessorService> _logger;
     private IPlatformOrderIDGen _platformOrderIDGen;
     
+    IPulsarClient  _pulsarClient;
+    IProducer<string> _producer;
+
+
     public NewOrderProcessorService(ILogger<NewOrderProcessorService> logger,
             NewOrderChannelService newOrderChannelService,
             IServiceScopeFactory scopeFactory,
@@ -29,6 +37,10 @@ public class NewOrderProcessorService : BackgroundService
         _scopeFactory = scopeFactory;
         _logger = logger;
         _platformOrderIDGen = platformOrderIDGen;
+
+        System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
+        _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
+        _producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_MODEL_ORDER_LOG_TOPIC).Create();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -81,7 +93,9 @@ public class NewOrderProcessorService : BackgroundService
                         closedTrade = await _dataService.GetLastClosedTradeForTrader(liveOrder.UserID, liveOrder.GroupID);
                     }
 
-                    await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO, closedTrade, scoreCard );  
+                    ModelOrderLog mor = await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO, closedTrade, scoreCard );  
+                    string json = JsonSerializer.Serialize(mor);
+                    await _producer.Send(json);
 
                 }
 

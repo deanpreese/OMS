@@ -39,12 +39,13 @@ builder.Services.AddScoped<ITradingService, TradingService>();
 builder.Services.AddScoped<IDataService, DataService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
-builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();        
+builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();      
+  
 builder.Services.AddSingleton<NewOrderChannelService>();
 builder.Services.AddSingleton<ClosedOrderChannelService>();
 builder.Services.AddHostedService<NewOrderProcessorService>();
 builder.Services.AddHostedService<ClosedOrderProcessorService>();
-builder.Services.AddHostedService<PulsarNewOrderWatcherService>();
+//builder.Services.AddHostedService<PulsarNewOrderWatcherService>();
 
 builder.Services.AddLogging(configure => configure.AddConsole());
 builder.Services.AddHttpsRedirection(opt => opt.HttpsPort = 44300);

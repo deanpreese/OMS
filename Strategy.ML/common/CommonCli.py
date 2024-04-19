@@ -2,15 +2,31 @@ import json
 import requests
 import pulsar
 
-class PulsarCli:
+class PulsarConsumerCli:
     def __init__(self, **kwargs):
-        self.topic = 'persistent://public/default/my-topic'
-        self.client = pulsar.Client('pulsar://10.0.0.82:6650')
-        self.producer = self.client.create_producer(self.topic)
+        
+        PULSAR_NEW_ORDER_TOPIC =  "persistent://public/models/new-model-orders"
+        self.topic = PULSAR_NEW_ORDER_TOPIC
+        #self.client = pulsar.Client('pulsar://10.0.0.82:6650')
+        self.client = pulsar.Client('pulsar://10.0.0.50:6650')
+       
 
+    def get_consumer(self, subs):
+        return  self.client.subscribe(self.topic, subs)
+
+
+class PulsarProducerCli:
+    def __init__(self, **kwargs):
+        
+        PULSAR_NEW_ORDER_TOPIC =  "persistent://public/models/new-model-orders"
+        self.topic = PULSAR_NEW_ORDER_TOPIC
+        #self.client = pulsar.Client('pulsar://10.0.0.82:6650')
+        self.client = pulsar.Client('pulsar://10.0.0.50:6650')
+        self.producer = self.client.create_producer(self.topic)
                   
     def send_order_pulsar(self, new_order):
-
+        
+        #self.producer = self.client.create_producer(self.topic)
         data=json.dumps(new_order,default=str)
         self.producer.send(data.encode('utf-8'))
 

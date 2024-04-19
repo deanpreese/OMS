@@ -29,7 +29,7 @@ public class PulsarNewOrderWatcherService : BackgroundService
 
         _consumer = _pulsarClient.NewConsumer(Schema.String)
             .SubscriptionName("PulsarNewOrderWatcherService")
-            .Topic(PlatformConstants.pulsar_new_order_topic)
+            .Topic(PlatformConstants.PULSAR_NEW_ORDER_TOPIC)
             .InitialPosition(SubscriptionInitialPosition.Earliest)
             .Create();
 

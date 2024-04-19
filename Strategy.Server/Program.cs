@@ -23,8 +23,8 @@ using IHost host = Host.CreateDefaultBuilder(args)
     {
         services.AddSingleton<ModelOrderMessageBus>();                
         
-        //services.AddHostedService<ReplWatcher>();
-        services.AddHostedService<WatcherService>();
+        //services.AddHostedService<WatcherService>();
+        services.AddHostedService<PulsarModelLogWatcher>();
 
         //services.AddHostedService<NGZero>(); //FollowWinners
         services.AddHostedService<NGOne>();  // OC
