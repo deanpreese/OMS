@@ -8,6 +8,7 @@ using System.Text;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
+using System.Net.Http;
 
 
 
@@ -62,15 +63,44 @@ public class FeatureDataProcessor : BackgroundService
 
         if (featureData.TimeTicks < DateTime.UtcNow.Ticks - 150000000 )
         {
-            //await OMSClient.SendToMLForPrediction(csv_data, "http://10.0.147:8888/predict");    
-            Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks) + "  " + featureData.FeatureSetData);        
+            await SendCsvDataAsync(csv_data, "http://10.0.147:8888/predict");    
+            Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks) + "  UTC " + featureData.FeatureSetData);        
         }else
         {
-           //await OMSClient.SendToMLForPrediction(csv_data, "http://10.0.0.147:8888/predict");        
-            Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +new DateTime(featureData.TimeTicks) );    
+            //await SendCsvDataAsync(csv_data, "http://10.0.0.147:8888/predict");        
+            Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "   UTC " +new DateTime(featureData.TimeTicks) );    
         }
         
         await Task.CompletedTask; 
     }
    
+
+    public async Task<string> SendCsvDataAsync(string csvData, string url )
+    {
+        var _httpClient = new HttpClient();
+        try
+        {
+            // Assuming the server expects the content type to be 'text/csv'
+            var content = new StringContent(csvData, Encoding.UTF8, "text/csv");
+
+            // Perform the POST request
+            HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+
+            // Ensure the request was successful
+            response.EnsureSuccessStatusCode();
+
+            // Read the response body
+            string responseBody = await response.Content.ReadAsStringAsync();
+            return responseBody;
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine("Message :{0} ", e.Message);
+            return e.Message;
+        }
+    }
+
+
+
 }
