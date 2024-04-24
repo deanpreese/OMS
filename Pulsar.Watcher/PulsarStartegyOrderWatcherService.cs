@@ -67,7 +67,7 @@ public class PulsarStrategyOrderWatcherService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-      //await _strategyConsumer.Process(ProcessStrategyMessage, stoppingToken);
+      await _strategyConsumer.Process(ProcessStrategyMessage, stoppingToken);
       await _modelConsumer.Process(ProcessModelMessage, stoppingToken);
     }
 
@@ -86,7 +86,7 @@ public class PulsarStrategyOrderWatcherService : BackgroundService
 
         try
         {
-            ModelOrderLogDTO modelOrderLogDTO = JsonSerializer.Deserialize<ModelOrderLogDTO>(message.Value(), options);
+            ModelOrderLogDTO modelOrderLogDTO = JsonSerializer.Deserialize<ModelOrderLogDTO>(message.Value());
             Console.WriteLine($"ModelOrderLog Message: {modelOrderLogDTO.UserID} {modelOrderLogDTO.GroupID}  {modelOrderLogDTO.OrderAction} " );
             //Console.WriteLine($"{scb.CYAN} {modelOrderLogDTO.LiveOrderJson} " );
             //Console.WriteLine($" {scb.GREEN}{modelOrderLogDTO.ClosedOrderJson} " );

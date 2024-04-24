@@ -14,6 +14,7 @@ from models import wrapped_models
 from  common.CommonCli import CommonCli as common_cli
 
 
+
 class ModelLoader:
 
     def __init__(self):
@@ -21,6 +22,8 @@ class ModelLoader:
         #self.l_models = []
         self.l_artifacts = []
         self.model_list = []
+        
+        self.model_group = 0
 
     # -------------------------
     # Main add_model function
@@ -48,6 +51,7 @@ class ModelLoader:
         
         #self.l_models.append(loaded_model)
         lm = MLStrategy(loaded_model, cols,rid)
+        lm.trader_group = self.model_group
         lm.run_name = rinfo.info.run_name
         lm.metrics = rinfo.data.metrics
         lm.perf = rinfo.data.metrics["Perf"]
@@ -64,59 +68,6 @@ class ModelLoader:
         self.model_list.append(lm)        
                 
         return loaded_model, cols
-
-
-    # -------------------------
-    def load_composite_models(self, experiment_id, num_models): 
-        
-        print("Querying Runs ...")
-        runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.cpp DESC"], max_results=num_models)
-       
-        comp_strategies = []
-        
-        for i in range(len(runs)):
-            self.model_list = []    
-            
-            r_id = runs.iloc[i].run_id 
-            print(f"Run Id     {r_id}")
-            loaded_strat = self.add_composite_strategies(r_id)
-            comp_strategies.append(loaded_strat)
-        
-        return comp_strategies    
-
-
-    def add_composite_strategies(self, rid):
-        rinfo = mlflow.get_run(rid)
-        
-        comp_strat = CompositeStrategy()
-        comp_strat.run_id = rid
-        comp_strat.run_name = rinfo.info.run_name        
-
-        t_id = common_cli.initialize_trader(comp_strat.run_name, comp_strat.trader_group)
-        comp_strat.trader_id = t_id
-
-        try:
-            art = json.loads(rinfo.data.tags['mlflow.loggedArtifacts'])
-
-            for item in art:
-                if item.get('path') == "all_perf_data.json" :
-                    art_file = item.get('path', None)
-                    art_uri = rinfo.info.artifact_uri
-                    art_to_load = f"{art_uri}/{art_file}"
-                    
-                    print(art_to_load)
-                    
-                    arti_d = mlflow.artifacts.load_dict(art_to_load)
-                    
-                    for item_data in arti_d['data']:
-                        print( item_data[8])
-                        self.add_model(item_data[8], False)
-                        
-            comp_strat.strategy_models = self.model_list    
-            return comp_strat
-                    
-        except Exception as e:
-            print(f"An error occurred: {e}")
 
 
     # -------------------------
@@ -147,3 +98,61 @@ class ModelLoader:
             self.add_model(r_id, True)
         
         return self.model_list     
+
+
+
+    # -------------------------
+    def load_composite_models(self, experiment_id, num_models, group_id): 
+        
+        print("Querying Runs ...")
+        runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.cpp DESC"], max_results=num_models)
+       
+        self.model_group = group_id
+       
+        comp_strategies = []
+        
+        for i in range(len(runs)):
+            self.model_list = []    
+            
+            r_id = runs.iloc[i].run_id 
+            print(f"Run Id     {r_id}")
+            loaded_strat = self.add_composite_strategies(r_id, group_id)
+            comp_strategies.append(loaded_strat)
+        
+        return comp_strategies    
+
+
+    def add_composite_strategies(self, rid, group_id):
+        rinfo = mlflow.get_run(rid)
+        
+        comp_strat = CompositeStrategy()
+        comp_strat.run_id = rid
+        comp_strat.run_name = rinfo.info.run_name   
+        comp_strat.trader_group = group_id     
+
+        t_id = common_cli.initialize_trader(comp_strat.run_name, comp_strat.trader_group)
+        comp_strat.trader_id = t_id
+
+        try:
+            art = json.loads(rinfo.data.tags['mlflow.loggedArtifacts'])
+
+            for item in art:
+                if item.get('path') == "all_perf_data.json" :
+                    art_file = item.get('path', None)
+                    art_uri = rinfo.info.artifact_uri
+                    art_to_load = f"{art_uri}/{art_file}"
+                    
+                    print(art_to_load)
+                    
+                    arti_d = mlflow.artifacts.load_dict(art_to_load)
+                    
+                    for item_data in arti_d['data']:
+                        print( item_data[8])
+                        self.add_model(item_data[8], False)
+                        
+            comp_strat.strategy_models = self.model_list    
+            return comp_strat
+                    
+        except Exception as e:
+            print(f"An error occurred: {e}")
+

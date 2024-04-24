@@ -64,10 +64,21 @@ public class PulsarModelLogWatcher : BackgroundService
         try
         {
             ModelOrderLogDTO modelOrderLogDTO = JsonSerializer.Deserialize<ModelOrderLogDTO>(message.Value());
+            
+            if (modelOrderLogDTO.OrderType == 2)
+            {
+                Console.WriteLine($" {scb.GREEN}" );
+            }
+
+            if (modelOrderLogDTO.OrderType == -2)
+            {
+                Console.WriteLine($" {scb.MAGENTA}" );
+            }
+
             Console.WriteLine($"ModelOrderLog: {modelOrderLogDTO.UserID} {modelOrderLogDTO.GroupID}  {modelOrderLogDTO.OrderAction} " );
-            Console.WriteLine($"{scb.CYAN} {modelOrderLogDTO.LiveOrderJson} " );
-            Console.WriteLine($" {scb.GREEN}{modelOrderLogDTO.ClosedOrderJson} " );
-            Console.WriteLine($" {scb.YELLOW}{modelOrderLogDTO.ScoreCardJson} " );
+            //Console.WriteLine($"{scb.CYAN} {modelOrderLogDTO.LiveOrderJson} " );
+            //Console.WriteLine($" {scb.GREEN}{modelOrderLogDTO.ClosedOrderJson} " );
+            //Console.WriteLine($" {scb.YELLOW}{modelOrderLogDTO.ScoreCardJson} " );
             Console.ResetColor();
             
             await _messageBus.PublishAsync(modelOrderLogDTO);

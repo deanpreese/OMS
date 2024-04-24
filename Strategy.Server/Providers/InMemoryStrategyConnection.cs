@@ -29,8 +29,8 @@ public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnectio
     public InMemoryStrategyConnection(string baseURL)
     {
         System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
-        _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
-        _producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_STRATEGY_ORDER_TOPIC).Create();
+        //_pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
+        //_producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_STRATEGY_ORDER_TOPIC).Create();
 
         base.BaseUrl = baseURL;
     }
@@ -150,7 +150,7 @@ public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnectio
         int oid = await ProcessOrderAsync(order);
 
         string json = JsonSerializer.Serialize(order);
-        await _producer.Send(json);
+        //await _producer.Send(json);
 
         switch (order.OrderType)
         {

@@ -34,28 +34,9 @@ public abstract class AbstractStrategy  :  ScreenColorBase
     {
         await Task.Run(async () =>
         {
-
             orderCount++;    
             await _strategyConnection.OnTraderModelData(modelOrderLogDTO);            
-            
-            /*
-            Console.WriteLine(CurrentStrategyAccount.logid + "  " + orderCount);
-            if ( _strategyConnection.ModelTraderLiveOrderDTO.OrderType == OrderType.OPEN)
-            {
-                Console.WriteLine(orderCount + " " + CurrentStrategyAccount.logid + " OPEN " + _strategyConnection.ModelTraderLiveOrderJSON);
-                Console.WriteLine(orderCount + " " + CurrentStrategyAccount.logid + " OPEN " );
-            }
-
-            if ( _strategyConnection.ModelTraderLiveOrderDTO.OrderType == OrderType.CLOSE)
-            {
-                Console.WriteLine(orderCount + " " + CurrentStrategyAccount.logid + " CLOSE " + _strategyConnection.ModelTraderClosedTradeJSON);
-                Console.WriteLine(orderCount + " " + CurrentStrategyAccount.logid + " CLOSE " );
-            }
-            Console.WriteLine("-----------------");
-            */
-            
             await OnNewData(_strategyConnection.ModelTraderLiveOrderDTO);
-
         });
     }
 
@@ -218,18 +199,13 @@ public abstract class AbstractStrategy  :  ScreenColorBase
         bool newPosition = true;
         
         List<LiveOrderDTO> liveOrders = await _strategyConnection.GetStrategyLiveOrders();
-        
-        //Console.WriteLine( _strategyConnection.GetStrategyProfileKey() + "  " + _strategyConnection.GetStrategyAccount().strategy_name +  " Strategy Orders Count for New: " + liveOrders.Count);
 
-        if(liveOrders.Count > 0)
+        if(liveOrders.Count > (CurrentStrategyAccount.orders_per_direction-1))
+        //if(liveOrders.Count > 0)
         {
-            //int ordersSameDirection = liveOrders.FindAll(x => x.OrderAction == order.OrderAction).Count();
-            //if (_strategyData.orders_per_direction >= ordersSameDirection)
-            //{
                 newPosition = false;     
-
-                Console.WriteLine(_strategyConnection.GetStrategyProfileKey() + "   ***NOT***  OK for new trade");
-            //}
+                Console.WriteLine($"{YELLOW}{_strategyConnection.GetStrategyProfileKey()}  ***NOT*** OK for new trade");
+                Console.ResetColor();
         }else
         {
             Console.WriteLine(_strategyConnection.GetStrategyProfileKey() + "   OK for new trade");

@@ -45,7 +45,7 @@ class CommonCli:
         }
 
         add_trader_model = {  
-            "group": group_num,
+            "groupId": group_num,
             "userId": 0,
             "displayName": display_name,
             "userPwd": "abc",

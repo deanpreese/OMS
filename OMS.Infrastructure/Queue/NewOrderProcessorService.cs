@@ -94,8 +94,8 @@ public class NewOrderProcessorService : BackgroundService
                     }
 
                     ModelOrderLog mor = await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO, closedTrade, scoreCard );  
-                    string json = JsonSerializer.Serialize(mor);
-                    await _producer.Send(json);
+                    //string json = JsonSerializer.Serialize(mor);
+                    //await _producer.Send(json);
 
                 }
 
