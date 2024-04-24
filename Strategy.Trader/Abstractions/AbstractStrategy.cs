@@ -30,14 +30,19 @@ public abstract class AbstractStrategy  :  ScreenColorBase
         CurrentStrategyAccount = strategyConnection.CurrentStrategyAccount;
     }
 
-    public async Task OnTraderModelData(ModelOrderLogDTO modelOrderLogDTO)
+    public async Task<NewOrderDTO> OnTraderModelData(ModelOrderLogDTO modelOrderLogDTO)
     {
+        NewOrderDTO newOrderDTO = new NewOrderDTO();
+
         await Task.Run(async () =>
         {
             orderCount++;    
             await _strategyConnection.OnTraderModelData(modelOrderLogDTO);            
-            await OnNewData(_strategyConnection.ModelTraderLiveOrderDTO);
+            newOrderDTO = await OnNewData(_strategyConnection.ModelTraderLiveOrderDTO);
         });
+        
+        return newOrderDTO;
+
     }
 
 

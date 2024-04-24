@@ -24,7 +24,7 @@ public class NStrategy :  IStrategy
         throw new NotImplementedException();
     }
 
-    public Task OnTraderModelData(ModelOrderLogDTO modelOrderLogDTO)
+    public Task<NewOrderDTO> OnTraderModelData(ModelOrderLogDTO modelOrderLogDTO)
     {
         throw new NotImplementedException();
     }

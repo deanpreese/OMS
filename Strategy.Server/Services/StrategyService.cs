@@ -34,7 +34,8 @@ public class StrategyService : BackgroundService
     public IStrategy loadedStrategy ;
     public IStrategyConnection _strategyConnection;
     public IServiceScopeFactory _serviceScopeFactory;
-    int orderCount;
+
+    ScreenColorBase _scb = new ScreenColorBase();
 
      public StrategyService(IServiceScopeFactory serviceScopeFactory, ModelOrderMessageBus messageBus) 
     {
@@ -43,15 +44,12 @@ public class StrategyService : BackgroundService
         _serviceScopeFactory = serviceScopeFactory;
         loadedStrategy = new NStrategy();
     }
-
+    
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
         string strategy_to_load = "Strategy.json";
-        StrategyConfig configLoader = new StrategyConfig(strategy_to_load);
-        _strategyConnection = await configLoader.GetStrategyConnection();
-        Assembly assembly = Assembly.Load(configLoader.StrategyAccountData.strategy_assembly);
-        Type myType = assembly.GetType(configLoader.StrategyAccountData.strategy_class);
-        loadedStrategy = (IStrategy)Activator.CreateInstance(myType, _strategyConnection);
+        loadedStrategy = await StrategyLoader.LoadStrategy(strategy_to_load);
+
         await base.StartAsync(cancellationToken);
     }
 
@@ -62,11 +60,20 @@ public class StrategyService : BackgroundService
        {
             await foreach (ModelOrderLogDTO modelOrderLogDataDTO in _reader.ReadAllAsync(stoppingToken))
             {
-                orderCount++;
-                await loadedStrategy.OnTraderModelData(modelOrderLogDataDTO); 
+                var dto = await EvaluateStrategy(modelOrderLogDataDTO);
+
+                Console.WriteLine($"{_scb.CYAN} ORDER: {dto.UserID} {dto.OrderAction}");
+                Console.ResetColor();
+                
             }
         });
         await Task.CompletedTask;
     }
+
+    public async Task<NewOrderDTO> EvaluateStrategy(ModelOrderLogDTO modelOrderLogDataDTO)
+    {
+        return await loadedStrategy.OnTraderModelData(modelOrderLogDataDTO); 
+    }
+
 
 }

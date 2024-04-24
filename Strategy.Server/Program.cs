@@ -10,34 +10,34 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
+using Microsoft.AspNetCore.Http.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.EntityFrameworkCore;
+
 using Strategy.Server.Services;
 
 using OMS.SharedKernel.Common;
 using Strategy.Server;
 using Strategy.Server.StrategyServices;
+using Microsoft.AspNetCore.Builder;
+using OMS.API;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<ModelOrderMessageBus>();                
+builder.Services.AddHostedService<WatcherService>();
+builder.Services.AddHostedService<StrategyService>();  // OC
 
 
-using IHost host = Host.CreateDefaultBuilder(args)
-   
-    .UseConsoleLifetime().ConfigureServices(services =>
-    {
-        services.AddSingleton<ModelOrderMessageBus>();                
-        
-        services.AddHostedService<WatcherService>();
-        //services.AddHostedService<PulsarModelLogWatcher>();
+var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI();
+//app.UseOpenApi();
+app.MapStrategyServerEndpoints();
+app.Run();
 
-        //services.AddHostedService<NGZero>(); //FollowWinners
-        services.AddHostedService<StrategyService>();  // OC
-        //services.AddHostedService<NGTwo>();   //Follow
-        //services.AddHostedService<NGThree>();   //Fade
-        
-
-    })
-    .Build();
-
-await host.StartAsync();
 
 Console.WriteLine("Press Enter to terminate...");
 Console.ReadLine();
 
-await host.StopAsync();

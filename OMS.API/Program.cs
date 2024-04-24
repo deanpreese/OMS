@@ -40,7 +40,8 @@ builder.Services.AddScoped<IDataService, DataService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();      
-  
+builder.Services.AddSingleton<OrderManagerService>();  
+
 builder.Services.AddSingleton<NewOrderChannelService>();
 builder.Services.AddSingleton<ClosedOrderChannelService>();
 builder.Services.AddHostedService<NewOrderProcessorService>();

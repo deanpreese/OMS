@@ -23,24 +23,28 @@ public class NewOrderProcessorService : BackgroundService
     private readonly ILogger<NewOrderProcessorService> _logger;
     private IPlatformOrderIDGen _platformOrderIDGen;
     
-    IPulsarClient  _pulsarClient;
-    IProducer<string> _producer;
+    private OrderManagerService _oms;
+
+    //IPulsarClient  _pulsarClient;
+    //IProducer<string> _producer;
 
 
     public NewOrderProcessorService(ILogger<NewOrderProcessorService> logger,
             NewOrderChannelService newOrderChannelService,
             IServiceScopeFactory scopeFactory,
-                IPlatformOrderIDGen platformOrderIDGen
+                IPlatformOrderIDGen platformOrderIDGen,
+                OrderManagerService oms
               )
     {
         _orderChannelService = newOrderChannelService;
         _scopeFactory = scopeFactory;
         _logger = logger;
         _platformOrderIDGen = platformOrderIDGen;
+        _oms = oms;
 
-        System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
-        _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
-        _producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_MODEL_ORDER_LOG_TOPIC).Create();
+        //System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
+        //_pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
+        //_producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_MODEL_ORDER_LOG_TOPIC).Create();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -49,7 +53,7 @@ public class NewOrderProcessorService : BackgroundService
         {
             try
             {
-                await ProcessLiveOrderAsync(liveOrder, stoppingToken);
+                await _oms.ProcessNewTraderOrder(liveOrder);
             }
             catch (Exception ex)
             {
@@ -58,59 +62,4 @@ public class NewOrderProcessorService : BackgroundService
         }
     }
 
-    private async Task ProcessLiveOrderAsync(NewOrderDTO newOrderDTO, CancellationToken cancellationToken)
-    {
-        using (var scope = _scopeFactory.CreateScope())
-        {
-            var scopedContext = scope.ServiceProvider.GetRequiredService<OrderManagementDbContext>();
-            UnitOfWork tradingUnitOfWork = new UnitOfWork(scopedContext);
-                        
-            await Task.Run(async () =>
-            {
-                try
-                {
-
-                TradingService _trader_service = new TradingService(tradingUnitOfWork, _platformOrderIDGen);
-                LiveOrder liveOrder = await _trader_service.ProcessNewOrderAsync(newOrderDTO);
-                
-                if (newOrderDTO.GroupID < 50)
-                {
-                    ILogger<AnalyticsService> aLogger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
-                    UnitOfWork analyticsUnitOfWork = new UnitOfWork(scopedContext);
-                    AnalyticsService _analytics_service = new AnalyticsService(analyticsUnitOfWork);
-
-                    ClosedTradeDTO closedTrade = new ClosedTradeDTO();
-                    ScoreCard scoreCard = await _analytics_service.GetTraderScoreCard(liveOrder.UserID, liveOrder.GroupID);
-
-                    if (liveOrder.OrderType  == OrderType.CLOSE )  
-                    {
-                        scoreCard = await _analytics_service.UpdateTraderScoreCard(liveOrder);
-
-                        Console.WriteLine("New Analytics For Trader " + liveOrder.UserID  ); 
-
-                        UnitOfWork dataUnitOfWork = new UnitOfWork(scopedContext);
-                        DataService _dataService = new DataService(dataUnitOfWork);
-                        closedTrade = await _dataService.GetLastClosedTradeForTrader(liveOrder.UserID, liveOrder.GroupID);
-                    }
-
-                    ModelOrderLog mor = await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO, closedTrade, scoreCard );  
-                    //string json = JsonSerializer.Serialize(mor);
-                    //await _producer.Send(json);
-
-                }
-
-                ClosedOrderChannelService closedOrderChannel = scope.ServiceProvider.GetRequiredService<ClosedOrderChannelService>();
-                await closedOrderChannel.WriteAsync(new LogDataDTO { liveOrder = liveOrder, newOrderDTO = newOrderDTO });
-
-                
-                }catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-                
-            });
-        }
-       
-        await Task.CompletedTask;
-    }
 }
