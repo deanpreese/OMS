@@ -33,28 +33,14 @@ public static class StrategyAPI
         .WithName("AuthByDisplayName")
         .WithOpenApi();
 
-
-        endpoints.MapPost("api/strategyapi/process-order", async (NewOrderDTO order, NewOrderChannelService newOrderChannelService) =>
+  
+        endpoints.MapPost("api/strategyapi/process-order", async (OrderManagerService orderManagerService, NewOrderDTO order ) =>
         {
-            int om_id = 987654321;
-
-            await newOrderChannelService.WriteAsync(order);
-            return Results.Ok(om_id);
+            ModelOrderLog mol =  await orderManagerService.ProcessNewTraderOrder(order);
+            return Results.Ok(mol.LiveOrderIDReference);
         })
         .WithName("ProcessStrategyOrder")
         .WithOpenApi();
-
-
-
-        endpoints.MapPost("api/strategyapi/process-orderx", async (NewOrderDTO order, ITradingService tradingService) =>
-        {
-            LiveOrder l_o = await tradingService.ProcessNewOrderAsync(order);
-            return l_o.LiveOrderID;
-        }    
-        )
-        .WithName("ProcessStrategyOrderX")
-        .WithOpenApi();
-
 
 
         endpoints.MapGet("api/strategyapi/orders/live/{profileKey}", async (string profileKey, IDataService dataService ) =>

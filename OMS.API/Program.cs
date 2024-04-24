@@ -42,10 +42,10 @@ builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();      
 builder.Services.AddSingleton<OrderManagerService>();  
 
-builder.Services.AddSingleton<NewOrderChannelService>();
-builder.Services.AddSingleton<ClosedOrderChannelService>();
-builder.Services.AddHostedService<NewOrderProcessorService>();
-builder.Services.AddHostedService<ClosedOrderProcessorService>();
+//builder.Services.AddSingleton<NewOrderChannelService>();
+//builder.Services.AddSingleton<ClosedOrderChannelService>();
+//builder.Services.AddHostedService<NewOrderProcessorService>();
+//builder.Services.AddHostedService<ClosedOrderProcessorService>();
 //builder.Services.AddHostedService<PulsarNewOrderWatcherService>();
 
 builder.Services.AddLogging(configure => configure.AddConsole());
