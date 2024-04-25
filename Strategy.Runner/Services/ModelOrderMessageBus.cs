@@ -1,7 +1,7 @@
 ﻿using System.Threading.Channels;
 using Strategy.SharedKernel;
 
-namespace Strategy.Server.Services;
+namespace Strategy.Runner.Services;
 
 public class ModelOrderMessageBus
 {

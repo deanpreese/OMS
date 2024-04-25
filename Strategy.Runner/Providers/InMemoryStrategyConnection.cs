@@ -10,7 +10,7 @@ using OMS.SharedKernel.DTO;
 using Strategy.SharedKernel;
 using Strategy.Trader.Abstractions;
 
-namespace Strategy.Server.Providers;
+namespace Strategy.Runner.Providers;
 
 public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnection
 {

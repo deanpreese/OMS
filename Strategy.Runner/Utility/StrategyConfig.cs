@@ -1,10 +1,10 @@
 ﻿using OMS.SharedKernel.DTO;
-using Strategy.Server.Providers;
+using Strategy.Runner.Providers;
 using Strategy.SharedKernel;
 using System.Text;
 
 
-namespace Strategy.Server.Utility;
+namespace Strategy.Runner.Utility;
 
 
 public class StrategyConfig

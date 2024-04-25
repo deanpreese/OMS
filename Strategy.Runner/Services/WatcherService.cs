@@ -3,11 +3,12 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 using PgOutput2Json;
-using Strategy.Server.Services;
+using Strategy.Runner.Services;
 using OMS.SharedKernel.Common;
 
 using Strategy.SharedKernel;
 
+namespace Strategy.Runner.Services;
 
 public class WatcherService : BackgroundService
 {
@@ -15,12 +16,6 @@ public class WatcherService : BackgroundService
     private readonly ILoggerFactory _loggerFactory;
     ModelOrderMessageBus _messageBus;
     ScreenColorBase scb  = new ScreenColorBase();
-
-    /*
-    int scoNulls = 0;
-    int cloNulls = 0;
-    int livNulls = 0;
-    */
 
     public WatcherService(ILogger<WatcherService> logger, ILoggerFactory loggerFactory, ModelOrderMessageBus messageBus)
     {
@@ -101,7 +96,7 @@ public class WatcherService : BackgroundService
                         Console.WriteLine($"{scoNulls} {cloNulls} {livNulls}");    
                         */
 
-                        await _messageBus.PublishAsync(orderModelResult);
+                        //await _messageBus.PublishAsync(orderModelResult);
                     }
                     //await Task.CompletedTask;
                 }

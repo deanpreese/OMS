@@ -15,26 +15,25 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
 
-using Strategy.Server.Services;
-
 using OMS.SharedKernel.Common;
-using Strategy.Server;
-using Strategy.Server.StrategyServices;
 using Microsoft.AspNetCore.Builder;
-using OMS.API;
+using Strategy.Runner.Services;
+using Strategy.Runner.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<ModelOrderMessageBus>();                
-builder.Services.AddHostedService<WatcherService>();
-builder.Services.AddHostedService<StrategyService>();  // OC
+builder.Services.AddSingleton<ModelOrderMessageBus>(); 
+builder.Services.AddSingleton<StrategyRunnerService>();               
+//builder.Services.AddHostedService<WatcherService>();
+builder.Services.AddHostedService<StrategyService>();  
 
 
+   
 var app = builder.Build();
-app.UseSwagger();
-app.UseSwaggerUI();
+//app.UseSwagger();
+//app.UseSwaggerUI();
 //app.UseOpenApi();
-app.MapStrategyServerEndpoints();
+app.MapStrategyRunnerEndpoints();
 app.Run();
 
 

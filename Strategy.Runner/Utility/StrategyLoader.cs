@@ -3,7 +3,7 @@ using System.Reflection;
 using Strategy.SharedKernel;
 using Strategy.Trader.Abstractions;
 
-namespace Strategy.Server.Utility;
+namespace Strategy.Runner.Utility;
 
 public static class StrategyLoader 
 {

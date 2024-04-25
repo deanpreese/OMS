@@ -24,7 +24,7 @@ using DotPulsar.Extensions;
 using DotPulsar.Abstractions;
 
 
-namespace Strategy.Server.Services;
+namespace Strategy.Runner.Services;
 
 public class PulsarModelLogWatcher : BackgroundService
 {

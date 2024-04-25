@@ -1,0 +1,4 @@
+#@Strategy.Runner_HostAddress = http://localhost:5191
+#GET {{Strategy.Runner_HostAddress}}/weatherforecast/
+#Accept: application/json
+###
