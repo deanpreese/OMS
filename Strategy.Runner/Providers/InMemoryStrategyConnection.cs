@@ -1,9 +1,6 @@
 ﻿using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using DotPulsar;
-using DotPulsar.Abstractions;
-using DotPulsar.Extensions;
 using OMS.SharedKernel;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
@@ -23,17 +20,10 @@ public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
     public string ModelTraderClosedTradeJSON { get; set; }
     public ModelOrderLogDTO CurrentModelOrderLogDTO { get; set; }
 
-    IPulsarClient  _pulsarClient;
-    IProducer<string> _producer;
-
     CommonApiClient _apiClient;
     
     public InMemoryStrategyConnection()
     {
-        System.Uri uri = new System.Uri(PlatformConstants.PULSAR_URI);
-        //_pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
-        //_producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_STRATEGY_ORDER_TOPIC).Create();
-
         _apiClient = new CommonApiClient();
     }
 

@@ -38,7 +38,7 @@ class CommonCli:
         
         t_id = 0
         
-        url = "http://10.0.0.147:8786/api/user/verify-model-trader"  
+        url = "http://10.0.0.147:8786/user/verify-model-trader"  
 
         headers = {
             "Content-Type": "application/json"
@@ -71,7 +71,7 @@ class CommonCli:
 
     def send_order(self, new_order):
         
-        url = "http://10.0.0.147:8786/api/order/ml/process-order"  
+        url = "http://10.0.0.147:8786/order/ml/process-order"  
 
         headers = {
             "Content-Type": "application/json"

@@ -11,9 +11,6 @@ using OMS.Infrastructure.Interfaces;
 using OMS.Application.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using DotPulsar.Abstractions;
-using DotPulsar;
-using DotPulsar.Extensions;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Queue;
 using OMS.Application;
@@ -25,10 +22,6 @@ public class OrderManagerService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<OrderManagerService> _logger;
     private IPlatformOrderIDGen _platformOrderIDGen;
-    
-    IPulsarClient  _pulsarClient;
-    IProducer<string> _producer;
-
 
     public OrderManagerService(ILogger<OrderManagerService> logger,
             IServiceScopeFactory scopeFactory,
@@ -39,9 +32,6 @@ public class OrderManagerService
         _logger = logger;
         _platformOrderIDGen = platformOrderIDGen;
 
-        System.Uri uri = new System.Uri(PlatformConstants.PULSAR_URI);
-        _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
-        _producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_MODEL_ORDER_LOG_TOPIC).Create();
     }
 
 
@@ -82,8 +72,6 @@ public class OrderManagerService
                     if (newOrderDTO.GroupID < 50)
                     {
                         modelOrderLog = await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO, closedTrade, scoreCard );  
-                        //string json = JsonSerializer.Serialize(mor);
-                        //await _producer.Send(json);
                     }
 
                 

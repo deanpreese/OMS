@@ -20,21 +20,21 @@ public class PlatformConstants
 
     // Order API Constants
     public const string OM_BASE_URL = "http://10.0.0.147:8786/";
-    public const string ML_ORDER_URI="api/order/ml/process-order";
-    public const string STRATEGY_ORDER_URI="api/order/strategy/process-order";
+    public const string ML_ORDER_URI="order/ml/process-order";
+    public const string STRATEGY_ORDER_URI="order/strategy/process-order";
 
     // User API Constants
-    public const string ADD_TRADER_URI="api/user/add-new-strategy-trader";
-    public const string VERIFY_AND_ADD_BY_DISPLAY_NAME_URI="api/user/verify-add-by-displayName";
-    public const string VERIFY_MODEL_TRADER_URI="api/user/verify-model-trader";
+    public const string ADD_TRADER_URI="user/add-new-strategy-trader";
+    public const string VERIFY_AND_ADD_BY_DISPLAY_NAME_URI="user/verify-add-by-displayName";
+    public const string VERIFY_MODEL_TRADER_URI="user/verify-model-trader";
 
     // Data Analysis API Constants
-    public const string GET_LIVE_ORDERS_BY_TRADER="api/data/orders/live/{profileKey}";
-    public const string GET_LIVE_ORDERS_BY_TRADER_PART="api/data/orders/live/";
+    public const string GET_LIVE_ORDERS_BY_TRADER="data/orders/live/{profileKey}";
+    public const string GET_LIVE_ORDERS_BY_TRADER_PART="data/orders/live/";
 
-    public const string GET_LAST_CLOSED_TRADE_BY_OPEN_PLATFORM_ID="api/data/trades/closed/last/{profileKey}/{platformId}";
-    public const string GET_LAST_CLOSED_TRADE_BY_OPEN_PLATFORM_ID_PART="api/data/trades/closed/last/";
-    public const string GET_SCORE_CARD="api/data/scoreCard/{profileKey}";
+    public const string GET_LAST_CLOSED_TRADE_BY_OPEN_PLATFORM_ID="data/trades/closed/last/{profileKey}/{platformId}";
+    public const string GET_LAST_CLOSED_TRADE_BY_OPEN_PLATFORM_ID_PART="data/trades/closed/last/";
+    public const string GET_SCORE_CARD="data/scoreCard/{profileKey}";
 
 
     // Strategy Runner API Constants

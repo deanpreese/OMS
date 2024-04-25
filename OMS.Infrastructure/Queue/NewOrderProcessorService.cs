@@ -9,9 +9,6 @@ using OMS.Application;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using DotPulsar.Abstractions;
-using DotPulsar;
-using DotPulsar.Extensions;
 using System.Text.Json;
 
 namespace OMS.Infrastructure.Queue;
@@ -25,8 +22,6 @@ public class NewOrderProcessorService : BackgroundService
     
     private OrderManagerService _oms;
 
-    //IPulsarClient  _pulsarClient;
-    //IProducer<string> _producer;
 
 
     public NewOrderProcessorService(ILogger<NewOrderProcessorService> logger,
@@ -41,10 +36,6 @@ public class NewOrderProcessorService : BackgroundService
         _logger = logger;
         _platformOrderIDGen = platformOrderIDGen;
         _oms = oms;
-
-        //System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
-        //_pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
-        //_producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_MODEL_ORDER_LOG_TOPIC).Create();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
