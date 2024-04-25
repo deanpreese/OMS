@@ -38,7 +38,7 @@ class CommonCli:
         
         t_id = 0
         
-        url = "http://10.0.0.147:8786/api/ml/verify-model-trader"  # Replace with the actual URL of the web service
+        url = "http://10.0.0.147:8786/api/user/verify-model-trader"  
 
         headers = {
             "Content-Type": "application/json"
@@ -71,7 +71,7 @@ class CommonCli:
 
     def send_order(self, new_order):
         
-        url = "http://10.0.0.147:8786/api/ml/process-order"  # Replace with the actual URL of the web service
+        url = "http://10.0.0.147:8786/api/order/ml/process-order"  
 
         headers = {
             "Content-Type": "application/json"

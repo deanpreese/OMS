@@ -52,7 +52,7 @@ public class LiveOrderDTO
         set => _orderTime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
     }
     [Id(10)]
-    public string Instrument { get; set; } = PlatformConstants.InvalidSymbol;
+    public string Instrument { get; set; } = PlatformConstants.INVALID_SYMBOL;
     [Id(11)]
     public double OrderPX { get; set; }
 

@@ -2,19 +2,45 @@
 
 public class PlatformConstants
 {
+    // ORDER Constants
+    public const string INVALID_SYMBOL = "InvalidSymbol";
+
+
     // Pulsar Constants
-    public const string InvalidSymbol = "InvalidSymbol";
     public const string PULSAR_STRATEGY_ORDER_TOPIC =  "persistent://public/strategy/strategy-orders";
     public const string PULSAR_NEW_ORDER_TOPIC =  "persistent://public/models/new-model-orders";
     public const string PULSAR_MODEL_ORDER_LOG_TOPIC =  "persistent://public/models/raw-model-orders";
-    //public const string pulsar_uri_string = "pulsar://10.0.0.82:6650";
-    public const string pulsar_uri_string = "pulsar://10.0.0.50:6650";
+    public const string PULSAR_URI = "pulsar://10.0.0.50:6650";
 
 
     // Postgres Constants
-    public const string local_conn ="Host=localhost;Database=orders;Username=trading;Password=abc";
-    public const string remote_conn ="Host=10.0.0.50;Database=timedata;Username=omsuser;Password=abc";
+    public const string LOCAL_CONN ="Host=localhost;Database=orders;Username=trading;Password=abc";
+    public const string REMOTE_CONN ="Host=10.0.0.50;Database=timedata;Username=omsuser;Password=abc";
+    public const string CURRENT_CONN = LOCAL_CONN;
 
-    public const string conn_in_use = local_conn;
+    // Order API Constants
+    public const string OM_BASE_URL = "http://10.0.0.147:8786/";
+    public const string ML_ORDER_URI="api/order/ml/process-order";
+    public const string STRATEGY_ORDER_URI="api/order/strategy/process-order";
+
+    // User API Constants
+    public const string ADD_TRADER_URI="api/user/add-new-strategy-trader";
+    public const string VERIFY_AND_ADD_BY_DISPLAY_NAME_URI="api/user/verify-add-by-displayName";
+    public const string VERIFY_MODEL_TRADER_URI="api/user/verify-model-trader";
+
+    // Data Analysis API Constants
+    public const string GET_LIVE_ORDERS_BY_TRADER="api/data/orders/live/{profileKey}";
+    public const string GET_LIVE_ORDERS_BY_TRADER_PART="api/data/orders/live/";
+
+    public const string GET_LAST_CLOSED_TRADE_BY_OPEN_PLATFORM_ID="api/data/trades/closed/last/{profileKey}/{platformId}";
+    public const string GET_LAST_CLOSED_TRADE_BY_OPEN_PLATFORM_ID_PART="api/data/trades/closed/last/";
+    public const string GET_SCORE_CARD="api/data/scoreCard/{profileKey}";
+
+
+    // Strategy Runner API Constants
+    public const string STRATEGY_RUNNER_BASE_URL = "http://10.0.0.147:9999/";
+    public const string STRATEGY_RUNNER_EVALUATE="api/strategy/evaluate";
+
+
 
 }

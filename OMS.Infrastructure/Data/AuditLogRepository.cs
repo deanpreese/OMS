@@ -116,7 +116,7 @@ public class AuditLogRepository : IAuditLogRepository
             ordFlow.GroupID = orderToAdd.GroupID;
             ordFlow.AuthToken = orderToAdd.AuthToken;
             ordFlow.ExecutedOrderID = orderToAdd.ExecutedOrderID;
-            ordFlow.Instrument = orderToAdd.Instrument ?? PlatformConstants.InvalidSymbol;
+            ordFlow.Instrument = orderToAdd.Instrument ?? PlatformConstants.INVALID_SYMBOL;
             ordFlow.Leverage = orderToAdd.Leverage;
             ordFlow.Opposite = orderToAdd.Opposite;
             ordFlow.OrderAction = orderToAdd.OrderAction;

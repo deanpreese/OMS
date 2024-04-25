@@ -44,7 +44,7 @@ public class PulsarStrategyOrderWatcherService : BackgroundService
         _loggerFactory = loggerFactory;
 
         _logger.LogInformation("Starting PulsarWatcher...");
-        System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
+        System.Uri uri = new System.Uri(PlatformConstants.PULSAR_URI);
         _pulsarStrategyClient = PulsarClient.Builder().ServiceUrl(uri).Build();
         _pulsarModelClient = PulsarClient.Builder().ServiceUrl(uri).Build();
 

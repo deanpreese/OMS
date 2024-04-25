@@ -1,5 +1,5 @@
 ﻿using OMS.SharedKernel.DTO;
-using Strategy.Runner.Providers;
+using Strategy.Runner.Provider;
 using Strategy.SharedKernel;
 using System.Text;
 
@@ -34,7 +34,7 @@ public class StrategyConfig
     public async Task<IStrategyConnection> GetStrategyConnection()
     {
         StrategyAccount account = await LoadConfig(_filePath);
-        IStrategyConnection _strategyConnection = new InMemoryStrategyConnection("http://10.0.0.147:8786");
+        IStrategyConnection _strategyConnection = new InMemoryStrategyConnection();
         await _strategyConnection.Initialize(account);
 
         Console.WriteLine("StrategyConnection Account: " + _strategyConnection.CurrentStrategyAccount.strategy_traderId);

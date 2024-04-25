@@ -41,7 +41,7 @@ public class PulsarModelLogWatcher : BackgroundService
         _messageBus = messageBus;
 
         _logger.LogInformation("Starting PulsarModelLogWatcher...");
-        System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
+        System.Uri uri = new System.Uri(PlatformConstants.PULSAR_URI);
         _pulsarModelClient = PulsarClient.Builder().ServiceUrl(uri).Build();
 
         _modelConsumer = _pulsarModelClient.NewConsumer(Schema.String)

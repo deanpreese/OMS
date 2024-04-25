@@ -3,7 +3,9 @@ using OMS.Application.Models;
 using OMS.Infrastructure.Interfaces;
 using OMS.Infrastructure.Queue;
 using OMS.Infrastructure.Services;
+using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
+
 
 public static class MLOrders
 {
@@ -11,15 +13,12 @@ public static class MLOrders
     public static IEndpointRouteBuilder MapMLOrdersEndpoints(this IEndpointRouteBuilder endpoints)
     {
 
-        string baseUrl = "http://10.0.0.147:9999";
-        string uri = "/api/strategy/evaluate";
-        
-        endpoints.MapPost("api/ml/process-order", async (OrderManagerService orderManagerService, NewOrderDTO order ) =>
+        endpoints.MapPost(PlatformConstants.ML_ORDER_URI, async (OrderManagerService orderManagerService, NewOrderDTO order ) =>
         {
             ModelOrderLog mol =  await orderManagerService.ProcessNewTraderOrder(order);
 
             var _httpClient = new HttpClient();
-            var response = await _httpClient.PostAsJsonAsync(baseUrl + uri, mol);
+            var response = await _httpClient.PostAsJsonAsync(PlatformConstants.STRATEGY_RUNNER_BASE_URL + PlatformConstants.STRATEGY_RUNNER_EVALUATE, mol);
             response.EnsureSuccessStatusCode();
             var dto = await response.Content.ReadFromJsonAsync<NewOrderDTO>();
 
@@ -28,14 +27,6 @@ public static class MLOrders
         .WithName("ProcessOrderX")
         .WithOpenApi();
         
-
-        endpoints.MapPost("api/ml/verify-model-trader", async (NewTraderDTO newTrader, IUserService userService) =>
-        {
-            int oid = await userService.VerifyAndAddByDisplayName(newTrader);
-            return Results.Ok(oid);
-        })
-        .WithName("VerifyModelTrader")
-        .WithOpenApi();
 
         return endpoints;
     }

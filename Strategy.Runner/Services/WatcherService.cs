@@ -30,7 +30,7 @@ public class WatcherService : BackgroundService
 
         using var pgOutput2Json = PgOutput2JsonBuilder.Create()
             .WithLoggerFactory(_loggerFactory)
-            .WithPgConnectionString(PlatformConstants.conn_in_use)
+            .WithPgConnectionString(PlatformConstants.CURRENT_CONN)
             .WithPgPublications(publication)
             .WithMessageHandler(async (json, table, key, partition) =>
             {

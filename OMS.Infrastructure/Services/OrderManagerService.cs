@@ -39,7 +39,7 @@ public class OrderManagerService
         _logger = logger;
         _platformOrderIDGen = platformOrderIDGen;
 
-        System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
+        System.Uri uri = new System.Uri(PlatformConstants.PULSAR_URI);
         _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
         _producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_MODEL_ORDER_LOG_TOPIC).Create();
     }

@@ -18,10 +18,11 @@ using OMS.API;
 using System.Text.Json;
 using OMS.SharedKernel;
 
-var builder = WebApplication.CreateBuilder(args);
-string conn =  PlatformConstants.conn_in_use;
 
-// Add services to the container.
+string conn =  PlatformConstants.CURRENT_CONN;
+
+
+var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<OrderManagementDbContext>(options =>
 {   
     options.UseNpgsql(conn);
@@ -42,14 +43,8 @@ builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();      
 builder.Services.AddSingleton<OrderManagerService>();  
 
-//builder.Services.AddSingleton<NewOrderChannelService>();
-//builder.Services.AddSingleton<ClosedOrderChannelService>();
-//builder.Services.AddHostedService<NewOrderProcessorService>();
-//builder.Services.AddHostedService<ClosedOrderProcessorService>();
-//builder.Services.AddHostedService<PulsarNewOrderWatcherService>();
-
 builder.Services.AddLogging(configure => configure.AddConsole());
-builder.Services.AddHttpsRedirection(opt => opt.HttpsPort = 44300);
+//builder.Services.AddHttpsRedirection(opt => opt.HttpsPort = 44300);
 
 
 builder.Services.Configure<JsonOptions>( options =>  
@@ -65,6 +60,53 @@ app.UseSwaggerUI();
 app.UseOpenApi();
 app.MapMLOrdersEndpoints();
 app.MapStrategyOrdersEndpoints();
-
+app.MapUsersAPIEndpoints();
+app.MapDataAnalysisEndpoints();
 
 app.Run();
+
+
+/*
+var DataBuilder = WebApplication.CreateBuilder(args);
+DataBuilder.Services.AddDbContext<OrderManagementDbContext>(options =>
+{   
+    options.UseNpgsql(conn);
+    options.EnableThreadSafetyChecks();
+});
+
+
+DataBuilder.WebHost.UseUrls("http://10.0.0.147:5002");
+
+DataBuilder.Services.AddEndpointsApiExplorer();
+DataBuilder.Services.AddSwaggerGen();
+DataBuilder.Services.AddOpenApiDocument();
+
+DataBuilder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+DataBuilder.Services.AddScoped<ILiveOrderRepository, LiveOrderRepository>();
+DataBuilder.Services.AddScoped<IClosedOrderRepository, ClosedOrderRepository>();
+DataBuilder.Services.AddScoped<ITradingService, TradingService>();
+DataBuilder.Services.AddScoped<IDataService, DataService>();
+DataBuilder.Services.AddScoped<IUserService, UserService>();
+DataBuilder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+DataBuilder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();      
+DataBuilder.Services.AddSingleton<OrderManagerService>();  
+DataBuilder.Services.AddLogging(configure => configure.AddConsole());
+
+//DataBuilder.Services.AddHttpsRedirection(opt => opt.HttpsPort = 44400);
+
+var DataApp = DataBuilder.Build();
+DataApp.UseSwagger();
+DataApp.UseSwaggerUI();
+DataApp.UseOpenApi();
+
+DataApp.MapMLOrdersEndpoints();
+DataApp.MapStrategyOrdersEndpoints();
+
+
+
+await Task.WhenAny
+(
+    app.RunAsync(),
+    DataApp.RunAsync()
+);
+*/

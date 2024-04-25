@@ -8,11 +8,11 @@ using OMS.SharedKernel;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using Strategy.SharedKernel;
-using Strategy.Trader.Abstractions;
 
-namespace Strategy.Runner.Providers;
 
-public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnection
+namespace Strategy.Runner.Provider;
+
+public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
 {
     public StrategyAccount CurrentStrategyAccount { get; set; }
     public ScoreCardDTO ModelTraderScoreCardDTO { get; set; }
@@ -25,14 +25,16 @@ public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnectio
 
     IPulsarClient  _pulsarClient;
     IProducer<string> _producer;
+
+    CommonApiClient _apiClient;
     
-    public InMemoryStrategyConnection(string baseURL)
+    public InMemoryStrategyConnection()
     {
-        System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
+        System.Uri uri = new System.Uri(PlatformConstants.PULSAR_URI);
         //_pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
         //_producer = _pulsarClient.NewProducer(Schema.String).Topic(PlatformConstants.PULSAR_STRATEGY_ORDER_TOPIC).Create();
 
-        base.BaseUrl = baseURL;
+        _apiClient = new CommonApiClient();
     }
 
     public string GetStrategyProfileKey()
@@ -55,7 +57,7 @@ public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnectio
             Email = "abc@abc"
         };
         
-        int trader_id = await VerifyAndAddByDisplayNameAsync(n_strategy);
+        int trader_id = await _apiClient.VerifyAndAddByDisplayNameAsync(n_strategy);
         CurrentStrategyAccount.strategy_traderId = trader_id;
     }
         
@@ -106,48 +108,28 @@ public class InMemoryStrategyConnection :  StrategyApiClient, IStrategyConnectio
 
     public async Task<ClosedTradeDTO> RefreshLastClosedTraderTradeByOpenPlatformID(string trader_key, int traderPlatformId)
     {
-        return await GetLastClosedTradeByOpenPlatformIDAsync( trader_key, traderPlatformId);
+        return await _apiClient.GetLastClosedTradeByOpenPlatformIDAsync( trader_key, traderPlatformId);
     }
 
     public Task<ClosedTradeDTO> GetLastClosedTraderTradeByOpenPlatformID(string trader_key, int traderPlatformIdStrategyRelatedOrderID)
     {
-        /*
-        if( ModelTraderLastClosedTradeDTO.OpenPlatformOrderID == traderPlatformIdStrategyRelatedOrderID)
-        {
-            Console.WriteLine($"{YELLOW}USING Current --- GetLastClosedTraderTradeByOpenPlatformID: " + trader_key + " " +  traderPlatformIdStrategyRelatedOrderID);
-            Console.WriteLine(ModelTraderClosedTradeJSON); 
-            Console.ResetColor();
-            return Task.FromResult(ModelTraderLastClosedTradeDTO);
-        }else
-        {
-            Console.WriteLine($"{MAGENTA}REFRESHING  === GetLastClosedTraderTradeByOpenPlatformID: " + trader_key + " " +  traderPlatformIdStrategyRelatedOrderID);
-            Console.WriteLine("Store " +  ModelTraderLastClosedTradeDTO.StorerID + " OP_ID " + ModelTraderLastClosedTradeDTO.OpenPlatformOrderID);
-            Console.WriteLine(ModelTraderClosedTradeJSON); 
-            Console.ResetColor();
-            
-            return  RefreshLastClosedTraderTradeByOpenPlatformID(trader_key, traderPlatformIdStrategyRelatedOrderID);
-        }
-        */
         return  RefreshLastClosedTraderTradeByOpenPlatformID(trader_key, traderPlatformIdStrategyRelatedOrderID);
         
     }
 
     public async Task<List<LiveOrderDTO>> GetStrategyLiveOrders()
     {
-        return await GetLiveOrdersAsync(GetStrategyProfileKey());
+        return await _apiClient.GetLiveOrdersAsync(GetStrategyProfileKey());
     }
 
     public async Task<ScoreCardDTO> GetTraderScoreCard()
     {
         return await Task.FromResult(ModelTraderScoreCardDTO);
-
-        //ModelTraderScoreCardDTO =  await GetScoreCardAsync(trader_key);
-        //return ModelTraderScoreCardDTO;
     }
 
     public async Task<int> ProcessOrderForStrategy(NewOrderDTO order)
     {
-        int oid = await ProcessOrderAsync(order);
+        int oid = await _apiClient.ProcessOrderAsync(order);
 
         string json = JsonSerializer.Serialize(order);
         //await _producer.Send(json);

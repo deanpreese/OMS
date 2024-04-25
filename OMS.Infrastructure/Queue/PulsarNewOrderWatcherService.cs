@@ -24,7 +24,7 @@ public class PulsarNewOrderWatcherService : BackgroundService
         _logger = logger;
 
         _logger.LogInformation("Starting ReplWatcher...");
-        System.Uri uri = new System.Uri(PlatformConstants.pulsar_uri_string);
+        System.Uri uri = new System.Uri(PlatformConstants.PULSAR_URI);
         _pulsarClient = PulsarClient.Builder().ServiceUrl(uri).Build();
 
         _consumer = _pulsarClient.NewConsumer(Schema.String)
