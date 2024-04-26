@@ -1,17 +1,17 @@
 import json
 import mlflow
-import pandas as pd
-import requests
-import datetime as dt
+#import pandas as pd
+#import requests
+#import datetime as dt
 import random as rand
 
 
-from MLStrategy import MLStrategy
-from CompositeStrategy import CompositeStrategy
+from ml_strategy import MLStrategy
+from composite_strategy import CompositeStrategy
 
-from models import wrapped_models
+#from models import wrapped_models
 
-from  common.CommonCli import CommonCli as common_cli
+from  common.common_cli import CommonCli as common_cli
 
 
 

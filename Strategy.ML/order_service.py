@@ -1,16 +1,16 @@
-import csv
-import datetime
-from flask import Flask, Response, request, jsonify
-import numpy as np
+#import csv
+#import datetime
+from flask import Flask, request
+#import numpy as np
 import pandas as pd
-from io import StringIO
-import cProfile
+#from io import StringIO
+#import cProfile
 from io import BytesIO
 import time as mytime
+import logging
 
-
-from ModelLoader import ModelLoader
-from OrderManager import OrderManager
+from model_loader import ModelLoader
+from order_manager import OrderManager
 
 order_manager = OrderManager()
 order_manager.is_sim(False)
@@ -18,7 +18,7 @@ order_manager.is_sim(False)
 model_loader = ModelLoader()
 models = []
 
-import logging
+
 logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
 logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
 

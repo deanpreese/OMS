@@ -1,6 +1,6 @@
 
-from ModelLoader import ModelLoader
-from OrderManager import OrderManager
+from model_loader import ModelLoader
+from order_manager import OrderManager
 
 import pandas as pd
 #import datetime as dt
