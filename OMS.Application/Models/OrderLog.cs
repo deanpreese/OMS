@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using OMS.Application.Common;
 
 using OMS.SharedKernel.Common;
@@ -44,4 +45,7 @@ public class OrderLog
     public OrderAction OrderAction { get; set; }
 
     public int Quantity { get; set; }
+
+    [Column(TypeName = "jsonb")]
+    public string ModelFeatureData { get; set; }
 }

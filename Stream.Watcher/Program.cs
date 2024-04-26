@@ -1,14 +1,15 @@
-﻿using Pulsar.Watcher;
+﻿
 using DotPulsar;
 using DotPulsar.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Stream.Watcher;
 
 using IHost host = Host.CreateDefaultBuilder(args)
    
     .UseConsoleLifetime().ConfigureServices(services =>
     {
-        services.AddHostedService<PulsarStrategyOrderWatcherService>();
+        services.AddHostedService<StreamWatcherService>();
     })
     .Build();
 

@@ -28,6 +28,7 @@ public class DTOMapping
             OpenOrderPX = orderToClose.OrderPX,
             OpenOrderType = orderToClose.OrderType,
             OpenOrderAction = orderToClose.OrderAction,
+            OpenFeatureData = orderToClose.ModelFeatureData,
 
             ClosePlatformOrderID = orderToStore.PlatformOrderID,
             ClosedOrderMangerID = orderToStore.OrderManagerID,
@@ -37,7 +38,8 @@ public class DTOMapping
             CloseOrderTime = orderToStore.OrderTime,
             CloseOrderPX = orderToStore.OrderPX,
             CloseOrderType = orderToStore.OrderType,
-            CloseOrderAction = orderToStore.OrderAction
+            CloseOrderAction = orderToStore.OrderAction,
+            CloseFeatureData = orderToStore.ModelFeatureData
         };
 
         return await Task.FromResult(histOrder);
@@ -60,6 +62,7 @@ public class DTOMapping
         liveOrder.Leverage = 1;
         liveOrder.Opposite = 0;
         liveOrder.RelatedOrderID = newOrder.RelatedOrderID;
+        liveOrder.ModelFeatureData = newOrder.ModelFeatureData;
 
         return await Task.FromResult(liveOrder);
     }
@@ -103,6 +106,7 @@ public class DTOMapping
         liveOrderDTO.Leverage = 1;
         liveOrderDTO.Opposite = 0;
         liveOrderDTO.RelatedOrderID = newOrder.RelatedOrderID;
+        liveOrderDTO.ModelFeatureData = newOrder.ModelFeatureData;
 
         return await Task.FromResult(liveOrderDTO);
     }
@@ -128,6 +132,7 @@ public class DTOMapping
             OpenOrderPX = closedTrade.OpenOrderPX,
             OpenOrderType = closedTrade.OpenOrderType,
             OpenOrderAction = closedTrade.OpenOrderAction,
+            OpenFeatureData = closedTrade.OpenFeatureData,
             ClosePlatformOrderID = closedTrade.ClosePlatformOrderID,
             ClosedOrderMangerID = closedTrade.ClosedOrderMangerID,
             CloseAuthToken = closedTrade.CloseAuthToken,
@@ -137,6 +142,7 @@ public class DTOMapping
             CloseOrderPX = closedTrade.CloseOrderPX,
             CloseOrderType = closedTrade.CloseOrderType,
             CloseOrderAction = closedTrade.CloseOrderAction,
+            CloseFeatureData = closedTrade.CloseFeatureData,
             PNL = closedTrade.PNL,
             MAE = closedTrade.MAE,
             MFE = closedTrade.MFE,

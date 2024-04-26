@@ -39,5 +39,8 @@ public class LiveOrder
 
     public double MAE { get; set; }
     public double MFE { get; set; }
+    
+    [Column(TypeName = "jsonb")]
+    public string ModelFeatureData { get; set; }
 
 }

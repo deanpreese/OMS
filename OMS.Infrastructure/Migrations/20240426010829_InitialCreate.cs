@@ -51,6 +51,7 @@ namespace OMS.Infrastructure.Migrations
                     OpenOrderPX = table.Column<double>(type: "double precision", nullable: false),
                     OpenOrderType = table.Column<int>(type: "integer", nullable: false),
                     OpenOrderAction = table.Column<int>(type: "integer", nullable: false),
+                    OpenFeatureData = table.Column<string>(type: "jsonb", nullable: true),
                     ClosePlatformOrderID = table.Column<int>(type: "integer", nullable: false),
                     ClosedOrderMangerID = table.Column<int>(type: "integer", nullable: false),
                     CloseAuthToken = table.Column<int>(type: "integer", nullable: false),
@@ -60,6 +61,7 @@ namespace OMS.Infrastructure.Migrations
                     CloseOrderPX = table.Column<double>(type: "double precision", nullable: false),
                     CloseOrderType = table.Column<int>(type: "integer", nullable: false),
                     CloseOrderAction = table.Column<int>(type: "integer", nullable: false),
+                    CloseFeatureData = table.Column<string>(type: "jsonb", nullable: true),
                     PNL = table.Column<double>(type: "double precision", nullable: false),
                     MAE = table.Column<double>(type: "double precision", nullable: false),
                     MFE = table.Column<double>(type: "double precision", nullable: false),
@@ -92,6 +94,7 @@ namespace OMS.Infrastructure.Migrations
                     OpenOrderPX = table.Column<double>(type: "double precision", nullable: false),
                     OpenOrderType = table.Column<int>(type: "integer", nullable: false),
                     OpenOrderAction = table.Column<int>(type: "integer", nullable: false),
+                    OpenFeatureData = table.Column<string>(type: "jsonb", nullable: true),
                     ClosePlatformOrderID = table.Column<int>(type: "integer", nullable: false),
                     ClosedOrderMangerID = table.Column<int>(type: "integer", nullable: false),
                     CloseAuthToken = table.Column<int>(type: "integer", nullable: false),
@@ -101,6 +104,7 @@ namespace OMS.Infrastructure.Migrations
                     CloseOrderPX = table.Column<double>(type: "double precision", nullable: false),
                     CloseOrderType = table.Column<int>(type: "integer", nullable: false),
                     CloseOrderAction = table.Column<int>(type: "integer", nullable: false),
+                    CloseFeatureData = table.Column<string>(type: "jsonb", nullable: true),
                     PNL = table.Column<double>(type: "double precision", nullable: false),
                     MAE = table.Column<double>(type: "double precision", nullable: false),
                     MFE = table.Column<double>(type: "double precision", nullable: false),
@@ -133,7 +137,8 @@ namespace OMS.Infrastructure.Migrations
                     OrderAction = table.Column<int>(type: "integer", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     MAE = table.Column<double>(type: "double precision", nullable: false),
-                    MFE = table.Column<double>(type: "double precision", nullable: false)
+                    MFE = table.Column<double>(type: "double precision", nullable: false),
+                    ModelFeatureData = table.Column<string>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -181,7 +186,8 @@ namespace OMS.Infrastructure.Migrations
                     OrderPX = table.Column<double>(type: "double precision", nullable: false),
                     OrderType = table.Column<int>(type: "integer", nullable: false),
                     OrderAction = table.Column<int>(type: "integer", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    ModelFeatureData = table.Column<string>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {

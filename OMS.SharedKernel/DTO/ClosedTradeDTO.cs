@@ -36,7 +36,8 @@ public class ClosedTradeDTO
     public double OpenOrderPX { get; set; }
     public OrderType OpenOrderType { get; set; }
     public OrderAction OpenOrderAction { get; set; }
-
+    public string OpenFeatureData { get; set; }
+    
     // ====================================
     public int ClosePlatformOrderID { get; set; }
     public int ClosedOrderMangerID { get; set; }
@@ -61,6 +62,8 @@ public class ClosedTradeDTO
 
     public OrderAction CloseOrderAction { get; set; }
 
+    public string CloseFeatureData { get; set; }
+
     // ====================================
 
     public double PNL { get; set; }
@@ -69,5 +72,6 @@ public class ClosedTradeDTO
 
     public double MFE { get; set; }
     public double NetChange { get; set; }
+
 
 }

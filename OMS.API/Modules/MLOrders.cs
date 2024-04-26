@@ -28,6 +28,15 @@ public static class MLOrders
         .WithOpenApi();
         
 
+        
+        endpoints.MapPost(PlatformConstants.ML_ORDER_URI_Z, async (OrderManagerService orderManagerService, NewOrderDTO order ) =>
+        {
+            ModelOrderLog mol =  await orderManagerService.ProcessNewTraderOrder(order);
+            return Results.Ok(mol.LiveOrderIDReference);
+        })
+        .WithName("ProcessOrderZ")
+        .WithOpenApi();
+
         return endpoints;
     }
 

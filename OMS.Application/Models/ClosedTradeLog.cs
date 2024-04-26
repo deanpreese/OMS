@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -58,6 +59,9 @@ public class ClosedTradeLog
 
     public OrderAction OpenOrderAction { get; set; }
 
+    [Column(TypeName = "jsonb")]
+    public string OpenFeatureData { get; set; }
+
     // ====================================
     public int ClosePlatformOrderID { get; set; }
 
@@ -82,6 +86,9 @@ public class ClosedTradeLog
     public OrderType CloseOrderType { get; set; }
 
     public OrderAction CloseOrderAction { get; set; }
+
+    [Column(TypeName = "jsonb")]
+    public string CloseFeatureData { get; set; }
 
     // ====================================
     public double PNL { get; set; }

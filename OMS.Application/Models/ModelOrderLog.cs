@@ -12,6 +12,7 @@ public class ModelOrderLog
     [Key]
     public int ModelOrderLogID { get; set; }
     public int UserID { get; set; }
+    
     public int GroupID { get; set; }
     public int LiveOrderIDReference { get; set; }
     public OrderType OrderType { get; set; }

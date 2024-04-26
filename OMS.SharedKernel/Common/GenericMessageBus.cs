@@ -1,15 +1,14 @@
 ﻿using System.Threading.Channels;
-using Strategy.SharedKernel;
 
 namespace Strategy.Runner.Services;
 
-public class ModelOrderMessageBus
+public class GenericMessageBus<T>
 {
-    List<Channel<ModelOrderLogDTO>> _subscribers = new List<Channel<ModelOrderLogDTO>>();
+    readonly List<Channel<T>> _subscribers = new();
 
-    public ChannelReader<ModelOrderLogDTO> Subscribe()
+    public ChannelReader<T> Subscribe()
     {
-        var channel = Channel.CreateUnbounded<ModelOrderLogDTO>();
+        var channel = Channel.CreateUnbounded<T>();
         lock (_subscribers)
         {
             _subscribers.Add(channel);
@@ -18,13 +17,12 @@ public class ModelOrderMessageBus
         return channel.Reader;
     }    
 
-    public async Task PublishAsync<T>(
+    public async Task PublishAsync(
         T integrationEvent,
         CancellationToken cancellationToken = default)
-        where T :  ModelOrderLogDTO
     {
 
-        foreach (Channel<ModelOrderLogDTO> subscriber in _subscribers)
+        foreach (Channel<T> subscriber in _subscribers)
         {
                 await subscriber.Writer.WriteAsync(integrationEvent, cancellationToken);
         }

@@ -48,4 +48,6 @@ public class LiveOrderDTO
     public double MAE { get; set; }
     public double MFE { get; set; }
 
+    public string ModelFeatureData { get; set; }
+
 }

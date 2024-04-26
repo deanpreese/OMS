@@ -12,7 +12,6 @@ public class StrategyRunnerService
 
     public StrategyRunnerService()
     { 
-     
     }
 
     public async Task LoadService()

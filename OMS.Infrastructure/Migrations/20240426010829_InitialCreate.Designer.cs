@@ -12,7 +12,7 @@ using OMS.Infrastructure.Data;
 namespace OMS.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderManagementDbContext))]
-    [Migration("20240425202223_InitialCreate")]
+    [Migration("20240426010829_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -67,6 +67,9 @@ namespace OMS.Infrastructure.Migrations
                     b.Property<int>("CloseExecutionID")
                         .HasColumnType("integer");
 
+                    b.Property<string>("CloseFeatureData")
+                        .HasColumnType("jsonb");
+
                     b.Property<int>("CloseOrderAction")
                         .HasColumnType("integer");
 
@@ -111,6 +114,9 @@ namespace OMS.Infrastructure.Migrations
 
                     b.Property<int>("OpenExecutionID")
                         .HasColumnType("integer");
+
+                    b.Property<string>("OpenFeatureData")
+                        .HasColumnType("jsonb");
 
                     b.Property<int>("OpenLiveOrderID")
                         .HasColumnType("integer");
@@ -169,6 +175,9 @@ namespace OMS.Infrastructure.Migrations
                     b.Property<int>("CloseExecutionID")
                         .HasColumnType("integer");
 
+                    b.Property<string>("CloseFeatureData")
+                        .HasColumnType("jsonb");
+
                     b.Property<int>("CloseOrderAction")
                         .HasColumnType("integer");
 
@@ -213,6 +222,9 @@ namespace OMS.Infrastructure.Migrations
 
                     b.Property<int>("OpenExecutionID")
                         .HasColumnType("integer");
+
+                    b.Property<string>("OpenFeatureData")
+                        .HasColumnType("jsonb");
 
                     b.Property<int>("OpenLiveOrderID")
                         .HasColumnType("integer");
@@ -285,6 +297,9 @@ namespace OMS.Infrastructure.Migrations
 
                     b.Property<double>("MFE")
                         .HasColumnType("double precision");
+
+                    b.Property<string>("ModelFeatureData")
+                        .HasColumnType("jsonb");
 
                     b.Property<int>("Opposite")
                         .HasColumnType("integer");
@@ -383,6 +398,9 @@ namespace OMS.Infrastructure.Migrations
 
                     b.Property<double>("Leverage")
                         .HasColumnType("double precision");
+
+                    b.Property<string>("ModelFeatureData")
+                        .HasColumnType("jsonb");
 
                     b.Property<int>("Opposite")
                         .HasColumnType("integer");
