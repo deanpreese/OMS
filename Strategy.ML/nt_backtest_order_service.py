@@ -9,8 +9,8 @@ from io import BytesIO
 import time as mytime
 import logging
 
-from model_loader import ModelLoader
-from order_manager import OrderManager
+from common.model_loader import ModelLoader
+from common.order_manager import OrderManager
 
 order_manager = OrderManager()
 order_manager.is_sim(False)

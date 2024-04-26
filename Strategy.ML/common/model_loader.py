@@ -5,8 +5,8 @@ import requests
 import datetime as dt
 import random as rand
 
-from ml_strategy import MLStrategy
-from composite_strategy import CompositeStrategy
+from common.ml_strategy import MLStrategy
+from common.composite_strategy import CompositeStrategy
 
 from models import wrapped_models
 

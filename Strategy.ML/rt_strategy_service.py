@@ -8,7 +8,7 @@ import pandas as pd
 from io import BytesIO
 #import time as mytime
 
-from model_loader import ModelLoader
+from common.model_loader import ModelLoader
 
 import logging
 logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)

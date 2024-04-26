@@ -7,7 +7,7 @@
 
 #from models import wrapped_models
 
-from common_strategy import  CommonStrategy
+from common.common_strategy import  CommonStrategy
 
 
 class CompositeStrategy (CommonStrategy):
