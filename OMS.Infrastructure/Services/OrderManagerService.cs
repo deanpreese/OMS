@@ -23,14 +23,18 @@ public class OrderManagerService
     private readonly ILogger<OrderManagerService> _logger;
     private IPlatformOrderIDGen _platformOrderIDGen;
 
+    private BrokerChannelService _brokerChannelService;
+
     public OrderManagerService(ILogger<OrderManagerService> logger,
             IServiceScopeFactory scopeFactory,
-                IPlatformOrderIDGen platformOrderIDGen
+                IPlatformOrderIDGen platformOrderIDGen,
+                BrokerChannelService brokerChannelService
               )
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
         _platformOrderIDGen = platformOrderIDGen;
+        _brokerChannelService = brokerChannelService;
 
     }
 
@@ -72,6 +76,7 @@ public class OrderManagerService
                     if (newOrderDTO.GroupID < 50)
                     {
                         modelOrderLog = await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO, closedTrade, scoreCard );  
+                        await _brokerChannelService.WriteAsync(modelOrderLog);
                     }
 
                 

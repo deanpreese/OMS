@@ -10,6 +10,8 @@ public class StrategyRunnerService
     public IStrategy loadedStrategy ;
     public IStrategyConnection _strategyConnection;
 
+    List<IStrategy> _strategyList = new List<IStrategy>();
+
     public StrategyRunnerService()
     { 
     }
@@ -18,12 +20,27 @@ public class StrategyRunnerService
     {
        string strategy_to_load = "Strategy.json";
        loadedStrategy = await StrategyLoader.LoadStrategy(strategy_to_load);
-       
+        _strategyList.Add(loadedStrategy);       
+
+       strategy_to_load = "Strategy2.json";
+       loadedStrategy = await StrategyLoader.LoadStrategy(strategy_to_load);
+        _strategyList.Add(loadedStrategy);
+
+
     }
 
-    public async Task<NewOrderDTO> EvaluateStrategy(ModelOrderLogDTO modelOrderLogDataDTO)
+    public async Task<List<NewOrderDTO>> EvaluateStrategy(ModelOrderLogDTO modelOrderLogDataDTO)
     {
-        return await loadedStrategy.OnTraderModelData(modelOrderLogDataDTO); 
+        List<NewOrderDTO> newOrders = new List<NewOrderDTO>();
+
+        foreach (var strategy in _strategyList)
+        {
+            var newOrder = await strategy.OnTraderModelData(modelOrderLogDataDTO);
+            newOrders.Add(newOrder);
+        }
+
+        return newOrders;
+        //return await loadedStrategy.OnTraderModelData(modelOrderLogDataDTO); 
     }
 
 }

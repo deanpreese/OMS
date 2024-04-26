@@ -40,7 +40,11 @@ builder.Services.AddScoped<ITradingService, TradingService>();
 builder.Services.AddScoped<IDataService, DataService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
-builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>();      
+builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>(); 
+     
+builder.Services.AddSingleton<BrokerChannelService>();
+builder.Services.AddHostedService<BrokerProcessorService>();
+
 builder.Services.AddSingleton<OrderManagerService>();  
 
 builder.Services.AddLogging(configure => configure.AddConsole());

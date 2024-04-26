@@ -40,11 +40,11 @@ public class StreamWatcherService : BackgroundService
         _logger.LogInformation("Starting Stream Watcher...");
         
 
-        topic = "order_topic";
+        topic = PlatformConstants.KAFKA_TOPIC_NAME;
 
         var config = new ConsumerConfig
         {
-            BootstrapServers = "10.0.0.50:9092",
+            BootstrapServers = PlatformConstants.KAFKA_BOOTSTRAP_SERVERS,
             GroupId = "foo",
             AutoOffsetReset = AutoOffsetReset.Earliest
         };

@@ -7,14 +7,14 @@ using OMS.SharedKernel.DTO;
 namespace OMS.Infrastructure.Queue;
 
 
-public class NewOrderChannelService 
+public class BrokerChannelService 
 {
-    private readonly Channel<NewOrderDTO> _channel;
+    private readonly Channel<ModelOrderLog> _channel;
 
-    public NewOrderChannelService()
+    public BrokerChannelService()
     {
         // Create a bounded channel with a capacity limit to prevent out-of-memory issues in case of high load
-        _channel = Channel.CreateBounded<NewOrderDTO>(new BoundedChannelOptions(10000)
+        _channel = Channel.CreateBounded<ModelOrderLog>(new BoundedChannelOptions(10000)
         {
             //FullMode = BoundedChannelFullMode.Wait,
             SingleReader = true, // Set to true if only one consumer will read from the channel
@@ -22,12 +22,12 @@ public class NewOrderChannelService
         });
     }
 
-    public async Task WriteAsync(NewOrderDTO order, CancellationToken cancellationToken = default)
+    public async Task WriteAsync(ModelOrderLog order, CancellationToken cancellationToken = default)
     {
         await _channel.Writer.WriteAsync(order, cancellationToken);
     }
 
-    public IAsyncEnumerable<NewOrderDTO> ReadAllAsync(CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<ModelOrderLog> ReadAllAsync(CancellationToken cancellationToken = default)
     {
         return _channel.Reader.ReadAllAsync(cancellationToken);
     }

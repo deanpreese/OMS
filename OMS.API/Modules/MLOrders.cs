@@ -20,7 +20,7 @@ public static class MLOrders
             var _httpClient = new HttpClient();
             var response = await _httpClient.PostAsJsonAsync(PlatformConstants.STRATEGY_RUNNER_BASE_URL + PlatformConstants.STRATEGY_RUNNER_EVALUATE, mol);
             response.EnsureSuccessStatusCode();
-            var dto = await response.Content.ReadFromJsonAsync<NewOrderDTO>();
+            var dto = await response.Content.ReadFromJsonAsync<List<NewOrderDTO>>();
 
             return Results.Ok(mol.LiveOrderIDReference);
         })

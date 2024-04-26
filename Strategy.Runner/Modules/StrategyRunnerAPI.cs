@@ -12,10 +12,10 @@ public static class StrategyRunnerAPI
     public static IEndpointRouteBuilder MapStrategyRunnerEndpoints(this IEndpointRouteBuilder endpoints)
     {
 
-        endpoints.MapPost("api/strategy/evaluate", async (StrategyRunnerService strategyService, ModelOrderLogDTO traderOrderLogDTO) => 
+        endpoints.MapPost("api/strategy/evaluate", async (StrategyRunnerService strategyRunnerService, ModelOrderLogDTO traderOrderLogDTO) => 
         {
-            NewOrderDTO strategyOrder = new NewOrderDTO();
-            strategyOrder = await strategyService.EvaluateStrategy(traderOrderLogDTO);
+            List<NewOrderDTO> strategyOrder = new List<NewOrderDTO>();
+            strategyOrder = await strategyRunnerService.EvaluateStrategy(traderOrderLogDTO);
             return strategyOrder;
         }
         )

@@ -126,6 +126,7 @@ class CommonCli:
         }
 
         response = requests.post(url, data=json.dumps(new_order,default=str), headers=headers)
+        
         if response.status_code == 200:
             pass
         else:

@@ -63,7 +63,7 @@ class OrderManager():
             self.com_cli.send_order(new_order)
             #self.com_cli.send_order_z(new_order)
             #self.pulsar_cli.send_order_pulsar(new_order) 
-            self.kafka_cli.send_order_data(new_order['modelFeatureData'])    
+            #self.kafka_cli.send_order_data(new_order['modelFeatureData'])    
             
                
             
