@@ -80,6 +80,6 @@ add_publication() {
 dropDatabase
 removeMigrations
 recreateDatabase
-add_publication 
+#add_publication 
 
 echo "Database reset complete."

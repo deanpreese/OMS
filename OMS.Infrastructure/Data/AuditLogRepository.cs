@@ -31,6 +31,7 @@ public class AuditLogRepository : IAuditLogRepository
         closedTradeLog.CloseOrderTime = log.CloseOrderTime;
         closedTradeLog.CloseOrderType  = log.CloseOrderType;
         closedTradeLog.ClosePlatformOrderID = log.ClosePlatformOrderID;
+        closedTradeLog.CloseFeatureData = log.CloseFeatureData;
 
         closedTradeLog.GroupID   = log.GroupID;
         closedTradeLog.Instrument = log.Instrument;
@@ -46,6 +47,7 @@ public class AuditLogRepository : IAuditLogRepository
         closedTradeLog.OpenOrderTime = log.OpenOrderTime;
         closedTradeLog.OpenOrderType = log.OpenOrderType;
         closedTradeLog.OpenLiveOrderID = log.OpenLiveOrderID;
+        closedTradeLog.OpenFeatureData = log.OpenFeatureData;
         closedTradeLog.Quantity = log.Quantity;
         closedTradeLog.StorerID = log.StorerID;
         closedTradeLog.UserID = log.UserID;
@@ -116,7 +118,7 @@ public class AuditLogRepository : IAuditLogRepository
             ordFlow.GroupID = orderToAdd.GroupID;
             ordFlow.AuthToken = orderToAdd.AuthToken;
             ordFlow.ExecutedOrderID = orderToAdd.ExecutedOrderID;
-            ordFlow.Instrument = orderToAdd.Instrument ?? PlatformConstants.InvalidSymbol;
+            ordFlow.Instrument = orderToAdd.Instrument ?? PlatformConstants.INVALID_SYMBOL;
             ordFlow.Leverage = orderToAdd.Leverage;
             ordFlow.Opposite = orderToAdd.Opposite;
             ordFlow.OrderAction = orderToAdd.OrderAction;
@@ -128,7 +130,7 @@ public class AuditLogRepository : IAuditLogRepository
             ordFlow.Quantity = orderToAdd.Quantity;
             ordFlow.RelatedOrderID = orderToAdd.RelatedOrderID;
             ordFlow.UserID = orderToAdd.UserID;
-
+            ordFlow.ModelFeatureData = orderToAdd.ModelFeatureData;
             //ordFlow.ScoreCardData = DAL.DataAccess.StatisticsScorecardHelper.SerializeScorecard(ots.TraderID, ots.OrderType);
             //ordFlow.ProfileData = DAL.DataAccess.UserProfileHelper.SerializeProfile(ots.TraderID, ots.OrderType);
 

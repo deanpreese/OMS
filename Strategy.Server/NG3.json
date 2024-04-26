@@ -1,7 +1,0 @@
-{
-    "strategy_class": "Strategy.Trader.Strategy.BaseFadeStrategy",
-    "strategy_name" : "BaseFadeStrategy",
-    "group": 103,
-    "orders_per_direction": 10,
-    "logid" : "----_BaseFade.Strategy"
-}

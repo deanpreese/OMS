@@ -1,8 +1,7 @@
 from datetime import datetime as dt
 from datetime import timedelta
 
-from common.CommonCli import CommonCli, PulsarProducerCli
-
+from common.CommonCli import CommonCli, KafkaProducerCli 
 class OrderManager():
         
     
@@ -13,6 +12,7 @@ class OrderManager():
         
         self.com_cli = CommonCli()
         #self.pulsar_cli = PulsarProducerCli()
+        self.kafka_cli = KafkaProducerCli()
         
 
     def is_sim(self, is_sim_yn):
@@ -58,8 +58,12 @@ class OrderManager():
                 
         if self.px > 0:
         
-            print(f"X  Order   {new_order['userID']}   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']} {new_order['orderTime']} " ) 
+            print(f"X  Order   {new_order['userID']}   {new_order['userName']}   {new_order['orderAction']}  {new_order['orderPX']} {new_order['orderTime']}" ) 
     
             self.com_cli.send_order(new_order)
-            #self.pulsar_cli.send_order_pulsar(new_order)        
+            #self.com_cli.send_order_z(new_order)
+            #self.pulsar_cli.send_order_pulsar(new_order) 
+            #self.kafka_cli.send_order_data(new_order['modelFeatureData'])    
+            
+               
             

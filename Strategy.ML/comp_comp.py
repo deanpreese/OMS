@@ -16,12 +16,12 @@ logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
 #from  common.CommonCli import CommonCli as common_cli
 #from CompositeStrategy import CompositeStrategy    
 
-def load_models(exp_id, n_models):
+def load_models(exp_id, n_models, group):
     
     experiment_id = exp_id
     num_models = n_models    
     model_loader = ModelLoader()
-    return model_loader.load_composite_models( experiment_id, num_models)
+    return model_loader.load_composite_models( experiment_id, num_models, group)
 
 
 def run_sim(models_in, file, trades, delay):
@@ -73,9 +73,13 @@ def run_sim(models_in, file, trades, delay):
 
 # ------------------
     
-models1 = load_models(["50"], 3)
-models2 = load_models(["52"], 7)
-models_agg = models1 + models2 
+models1 = load_models(["31"], 1, 31)
+models2 = load_models(["36"], 1, 36)
+models3 = load_models(["33"], 1, 33)
+
+
+
+models_agg = models1 + models2 + models3 
 
 #trades = 750
 trades = 250

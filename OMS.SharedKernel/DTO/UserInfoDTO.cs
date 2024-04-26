@@ -1,11 +1,4 @@
-﻿
-
-
-namespace OMS.SharedKernel.DTO;
-
-
-[GenerateSerializer]
-[Alias("UserInfoDTO")]
+﻿namespace OMS.SharedKernel.DTO;
 
 public class UserInfoDTO
 {
@@ -20,11 +13,8 @@ public class UserInfoDTO
         GroupID = groupNum ;
     }
 
-    [Id(0)]
     public int UserID { get; set; }
-    [Id(1)]
     public string Password { get; set; }
-    [Id(2)]
     public int GroupID { get; set; }
    
 }

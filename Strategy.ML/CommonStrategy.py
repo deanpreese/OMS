@@ -176,7 +176,7 @@ class CommonStrategy :
          "platformOrderID": 0,
          "userName": self.run_name,
          "userID": int(self.trader_id),
-         "userGroup": int(self.trader_group),
+         "groupID": int(self.trader_group),
          "authToken": 0,
          "instrument": "ES",
          "orderPX": px,

@@ -1,4 +1,5 @@
 
+
 from ModelLoader import ModelLoader
 from OrderManager import OrderManager
 
@@ -11,14 +12,14 @@ import logging
 logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
 logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
 
-def load_models(exp_id, n_models):
+def load_models(exp_id, n_models, group_id):
     
     experiment_id = exp_id
     num_models = n_models    
     model_loader = ModelLoader()
-    return model_loader.load_composite_models( experiment_id, num_models)
+    return model_loader.load_composite_models( experiment_id, num_models, group_id)
 
-def run_sim(exp_id, n_models, file, trades, delay):
+def run_sim(exp_id, n_models, file, trades, delay, group_id):
 
 
     data = pd.read_csv(file)   
@@ -27,7 +28,7 @@ def run_sim(exp_id, n_models, file, trades, delay):
     X = data.iloc[:, 0:input_features]  
     y = data["output"].values
     
-    models = load_models(exp_id, n_models)
+    models = load_models(exp_id, n_models, group_id)
 
     order_manager = OrderManager()
     order_manager.is_sim(True)
@@ -65,27 +66,29 @@ def run_sim(exp_id, n_models, file, trades, delay):
     print(" ") 
     
     
-exp_idx = ["27"]
+exp_idx = ["31"]
+group_id = 31
 
-num_models = 5
+
+num_models = 3
 #num_models = 3
 #num_models = 2
 
 
-trades = 1000
-#trades = 250
+#trades = 500
+trades = 250
 #trades = 100
 #trades = 10
 
 
 #sim_delay = 0.0500
 sim_delay = 0.025
-#sim_delay = 0.00000002
+sim_delay = 0.00000002
 
 
 #file = "data/lucky13_short.csv"
     
 file = "data/lucky13_oos.csv"    
     
-run_sim(exp_idx, num_models, file, trades, sim_delay)    
+run_sim(exp_idx, num_models, file, trades, sim_delay, group_id)    
 

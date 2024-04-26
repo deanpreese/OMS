@@ -29,7 +29,7 @@ class CompositeStrategy (CommonStrategy):
         self.short_big_threshold = 0        
         
         self.trader_id = 0
-        self.trader_group = 50
+        self.trader_group = 0
         
 
 
