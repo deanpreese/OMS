@@ -45,6 +45,7 @@ public class PlatformConstants
     public const string STRATEGY_RUNNER_BASE_URL = "http://10.0.0.147:9999/";
     public const string STRATEGY_RUNNER_EVALUATE="api/strategy/evaluate";
 
-
+    // Feature Data API Constants
+    public const string PROCESS_FEATURE_DATA="data/new-feature-data";
 
 }

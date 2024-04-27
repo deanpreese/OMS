@@ -28,14 +28,15 @@ def LoadModels():
     m = []
    
     
-    experiment_id = ["50"]
-    num_models = 5    
+    exp_id = 27
+    experiment_id = ["27"]
+    num_models = 3    
 
     # USed for base models
     #m = model_loader.load_random_models(experiment_id, 5)
     
     #used for comp models
-    m = model_loader.load_composite_models( experiment_id, num_models)
+    m = model_loader.load_composite_models( experiment_id, num_models, exp_id)
     
     
     

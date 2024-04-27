@@ -68,8 +68,36 @@ public class StreamWatcherService : BackgroundService
             {
                 var cr = kafkaConsumer.Consume(cancellationToken);
 
+                try
+                {
+                    ModelOrderLogDTO modelOrderLogDTO = JsonSerializer.Deserialize<ModelOrderLogDTO>(cr.Message.Value);
+
+                    if (modelOrderLogDTO.OrderType == 2)
+                    {
+                        Console.WriteLine($" {scb.GREEN}" );
+                    }
+
+                    if (modelOrderLogDTO.OrderType == -2)
+                    {
+                        Console.WriteLine($" {scb.MAGENTA}" );
+                    }
+
+                    Console.WriteLine($"ModelOrderLog: {modelOrderLogDTO.UserID} {modelOrderLogDTO.GroupID}  {modelOrderLogDTO.OrderAction} " );
+                    Console.WriteLine($"{scb.CYAN} {modelOrderLogDTO.LiveOrderJson} " );
+                    Console.WriteLine($" {scb.GREEN}{modelOrderLogDTO.ClosedOrderJson} " );
+                    Console.WriteLine($" {scb.YELLOW}{modelOrderLogDTO.ScoreCardJson} " );
+                    Console.ResetColor();
+
+                    
+
+                }catch(Exception ex)
+                {
+                    Console.WriteLine($"Received: {ex.Message} ");
+                }
+
+
                 // Handle message...
-                Console.WriteLine($"{cr.Message.Value}");
+                //Console.WriteLine($"{cr.Message.Value}");
             }
             catch (OperationCanceledException)
             {

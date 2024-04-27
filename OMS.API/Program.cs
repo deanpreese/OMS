@@ -66,6 +66,7 @@ app.MapMLOrdersEndpoints();
 app.MapStrategyOrdersEndpoints();
 app.MapUsersAPIEndpoints();
 app.MapDataAnalysisEndpoints();
+app.MapFeatureDataEndpoints();
 
 app.Run();
 

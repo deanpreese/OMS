@@ -82,8 +82,8 @@ trades = 250
 
 
 #sim_delay = 0.0500
-sim_delay = 0.025
-sim_delay = 0.00000002
+#sim_delay = 0.025
+sim_delay = 0.0000000000002
 
 
 #file = "data/lucky13_short.csv"
