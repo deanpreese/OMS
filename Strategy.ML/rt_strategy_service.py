@@ -56,6 +56,7 @@ def init_app():
         data_df.drop(columns=['time', 'actual', 'output', 'outputC'], inplace=True)
         #print( data_df )
        
+       
         loaded_prediction = 0
        
         for m in range(len(models)):

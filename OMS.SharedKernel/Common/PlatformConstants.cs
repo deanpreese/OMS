@@ -7,12 +7,14 @@ public class PlatformConstants
 
     // Kafka Constants
     public const string KAFKA_BOOTSTRAP_SERVERS = "10.0.0.50:9092";
-    public const string KAFKA_TOPIC_NAME = "model-orders";
+    public const string MODEL_ORDER_TOPIC_NAME = "model-orders";
+    public const string STRATEGY_ORDER_TOPIC_NAME = "strategy-orders";
+    public const string MODEL_ORDER_LOG_TOPIC_NAME = "model-order-log";
 
     // Pulsar Constants
-    public const string PULSAR_STRATEGY_ORDER_TOPIC =  "persistent://public/strategy/strategy-orders";
-    public const string PULSAR_NEW_ORDER_TOPIC =  "persistent://public/models/new-model-orders";
-    public const string PULSAR_MODEL_ORDER_LOG_TOPIC =  "persistent://public/models/raw-model-orders";
+    public const string PULSAR_STRATEGY_ORDER_TOPIC_PART =  "persistent://public/strategy/";
+    public const string PULSAR_MODEL_ORDER_TOPIC_PART =  "persistent://public/models/";
+    public const string PULSAR_MODEL_ORDER_LOG_TOPIC_PART =  "persistent://public/models/";
     public const string PULSAR_URI = "pulsar://10.0.0.50:6650";
 
 

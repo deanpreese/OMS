@@ -41,7 +41,7 @@ public class BrokerProcessorService : BackgroundService
         {
             try
             {
-                _producer.Produce(PlatformConstants.KAFKA_TOPIC_NAME, new Message<string, string> { Value = JsonSerializer.Serialize(liveOrder) });
+                _producer.Produce(PlatformConstants.MODEL_ORDER_TOPIC_NAME, new Message<string, string> { Value = JsonSerializer.Serialize(liveOrder) });
             }
             catch (Exception ex)
             {

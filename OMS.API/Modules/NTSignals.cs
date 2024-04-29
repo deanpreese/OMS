@@ -5,10 +5,10 @@ using OMS.SharedKernel.DTO;
 
 namespace OMS.API;
 
-public static class FeatureData
+public static class NTSignals
 {
 
-    public static IEndpointRouteBuilder MapFeatureDataEndpoints(this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapNTSignalsEndpoints(this IEndpointRouteBuilder endpoints)
     {
   
         endpoints.MapPost(PlatformConstants.PROCESS_FEATURE_DATA, async (OrderManagerService orderManagerService, FeatureDataDTO featureData ) =>
@@ -25,11 +25,12 @@ public static class FeatureData
             if (featureData.TimeTicks < DateTime.UtcNow.Ticks - 150000000 )
             {
                 await SendCsvDataAsync(csv_data, "http://10.0.147:8888/predict");    
-                Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks) + "  UTC " + featureData.FeatureSetData);        
+                Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks) );        
+                //Console.WriteLine("Hist: " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " +  new DateTime(featureData.TimeTicks) + "  UTC " + featureData.FeatureSetData);        
             }else
             {
-                await SendCsvDataAsync(csv_data, "http://10.0.0.147:8888/predict");        
-                Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "   UTC " +new DateTime(featureData.TimeTicks) );    
+                //await SendCsvDataAsync(csv_data, "http://10.0.0.147:8888/predict");        
+                //Console.WriteLine("RT: " + featureData.Instrument + "  " + featureData.FeatureSetName + "   UTC " +new DateTime(featureData.TimeTicks) );    
             }
 
 

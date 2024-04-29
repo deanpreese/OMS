@@ -38,6 +38,12 @@ public class OrderManagerService
 
     }
 
+    public async Task<ModelOrderLog> ProcessModelOrderLogAsync(ModelOrderLog modelOrderLog )
+    {
+        await _brokerChannelService.WriteAsync(modelOrderLog);
+        return modelOrderLog;
+    }
+
 
     public async Task<ModelOrderLog> ProcessNewTraderOrder(NewOrderDTO newOrderDTO)
     {
@@ -76,7 +82,6 @@ public class OrderManagerService
                     if (newOrderDTO.GroupID < 50)
                     {
                         modelOrderLog = await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO, closedTrade, scoreCard );  
-                        await _brokerChannelService.WriteAsync(modelOrderLog);
                     }
 
                 

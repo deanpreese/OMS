@@ -40,7 +40,7 @@ public class StreamWatcherService : BackgroundService
         _logger.LogInformation("Starting Stream Watcher...");
         
 
-        topic = PlatformConstants.KAFKA_TOPIC_NAME;
+        topic = PlatformConstants.MODEL_ORDER_TOPIC_NAME;
 
         var config = new ConsumerConfig
         {
@@ -82,11 +82,14 @@ public class StreamWatcherService : BackgroundService
                         Console.WriteLine($" {scb.MAGENTA}" );
                     }
 
+                    Console.ResetColor();
                     Console.WriteLine($"ModelOrderLog: {modelOrderLogDTO.UserID} {modelOrderLogDTO.GroupID}  {modelOrderLogDTO.OrderAction} " );
                     Console.WriteLine($"{scb.CYAN} {modelOrderLogDTO.LiveOrderJson} " );
-                    Console.WriteLine($" {scb.GREEN}{modelOrderLogDTO.ClosedOrderJson} " );
-                    Console.WriteLine($" {scb.YELLOW}{modelOrderLogDTO.ScoreCardJson} " );
+                    Console.WriteLine($" {scb.RED}{modelOrderLogDTO.ClosedOrderJson} " );
                     Console.ResetColor();
+                    Console.WriteLine($" {modelOrderLogDTO.ModelFeatureDataJson} " );
+                    Console.WriteLine($" {scb.YELLOW}{modelOrderLogDTO.ScoreCardJson} " );
+                    
 
                     
 

@@ -26,13 +26,17 @@ class KafkaProducerCli:
 class KafkaConsumerCli:
     def __init__(self, **kwargs):
         self.topic = "order_topic"
-        self.consumer = KafkaConsumer(self.topic)
+        
+        self.consumer = KafkaConsumer('model-orders',
+                         group_id='foox',
+                         bootstrap_servers=['10.0.0.50:9092'])
+        
 
     def get_order_consumer(self):
         return  self.consumer.subscribe(self.topic)        
                 
-    def get_consumer(self, subs):
-        return  self.consumer.subscribe(subs)        
+    def get_consumer(self):
+        return  self.consumer 
 
 
 class PulsarConsumerCli:

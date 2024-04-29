@@ -1,16 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OMS.Application.Models;
 using OMS.Infrastructure.Interfaces;
 using OMS.Infrastructure.Queue;
 using OMS.Infrastructure.Services;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
+using YamlDotNet.Serialization;
 
 
-public static class MLOrders
+public static class Orders
 {
 
-    public static IEndpointRouteBuilder MapMLOrdersEndpoints(this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapOrdersEndpoints(this IEndpointRouteBuilder endpoints)
     {
 
         endpoints.MapPost(PlatformConstants.ML_ORDER_URI, async (OrderManagerService orderManagerService, NewOrderDTO order ) =>
@@ -22,6 +24,11 @@ public static class MLOrders
             response.EnsureSuccessStatusCode();
             var dto = await response.Content.ReadFromJsonAsync<List<NewOrderDTO>>();
 
+            if ( order.GroupID > 99)
+            {
+                await orderManagerService.ProcessModelOrderLogAsync(mol);
+            }
+
             return Results.Ok(mol.LiveOrderIDReference);
         })
         .WithName("ProcessOrderX")
@@ -32,12 +39,30 @@ public static class MLOrders
         endpoints.MapPost(PlatformConstants.ML_ORDER_URI_Z, async (OrderManagerService orderManagerService, NewOrderDTO order ) =>
         {
             ModelOrderLog mol =  await orderManagerService.ProcessNewTraderOrder(order);
+
+            if ( order.GroupID > 99)
+            {
+                await orderManagerService.ProcessModelOrderLogAsync(mol);
+            }
+
             return Results.Ok(mol.LiveOrderIDReference);
         })
         .WithName("ProcessOrderZ")
         .WithOpenApi();
 
-        return endpoints;
+  
+        endpoints.MapPost(PlatformConstants.STRATEGY_ORDER_URI, async (OrderManagerService orderManagerService, NewOrderDTO order ) =>
+        {
+            ModelOrderLog mol =  await orderManagerService.ProcessNewTraderOrder(order);
+            return Results.Ok(mol.LiveOrderIDReference);
+        })
+        .WithName("ProcessStrategyOrder")
+        .WithOpenApi();
+
+        return endpoints;   
+
+
+
     }
 
 }

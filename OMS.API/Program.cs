@@ -62,11 +62,10 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseOpenApi();
-app.MapMLOrdersEndpoints();
-app.MapStrategyOrdersEndpoints();
+app.MapOrdersEndpoints();
 app.MapUsersAPIEndpoints();
 app.MapDataAnalysisEndpoints();
-app.MapFeatureDataEndpoints();
+app.MapNTSignalsEndpoints();
 
 app.Run();
 

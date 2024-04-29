@@ -50,9 +50,9 @@ class CompositeStrategy (CommonStrategy):
             agg_predict += predict
              
         if agg_predict > self.long_big_threshold or agg_weighted_predict > self.long_threshold:
-            return_predict = 1
+            return_predict = max(agg_predict, agg_weighted_predict)
         elif agg_predict < self.short_big_threshold or agg_weighted_predict < self.short_threshold:
-            return_predict = -1
+            return_predict = min(agg_predict, agg_weighted_predict)
         else:
             return_predict = 0
         

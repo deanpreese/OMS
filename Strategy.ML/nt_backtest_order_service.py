@@ -61,21 +61,14 @@ def init_app():
         px_f = float(data_df["actual"][0])
 
         data_df.drop(columns=['time', 'actual', 'output', 'outputC'], inplace=True)
+        reshaped_df = data_df.stack().reset_index(level=0, drop=True)
         
-        #print( data_df )
         
-        
+                
         for m in range(len(models)):
-            loaded_prediction = models[m].do_predict(data_df)
             
-            print(f"Model-{m}    {loaded_prediction}")
-            
-            # used for base models
-            #order_manager.process_model(models[m], px[0], loaded_prediction[0])
-            
-            #used for comp models
+            loaded_prediction = models[m].do_predict(reshaped_df)            
             order_manager.process_model(models[m], px_f, loaded_prediction)
-            
             mytime.sleep(0.025)
             
             

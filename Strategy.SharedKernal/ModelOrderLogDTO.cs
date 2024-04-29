@@ -32,11 +32,13 @@ public class ModelOrderLogDTO
         
     [JsonPropertyName("LiveOrderJSON")]
     public string LiveOrderJson { get; set; }
-    [JsonIgnore]
-    public LiveOrderDTO LiveOrderDeserialized => JsonSerializer.Deserialize<LiveOrderDTO>(LiveOrderJson);
+    
+    //[JsonIgnore]
+    public LiveOrderDTO LiveOrderDeserialized => JsonSerializer.Deserialize<LiveOrderDTO>(LiveOrderJson, options);
 
     [JsonPropertyName("ModelFeatureData")]
     public string ModelFeatureDataJson { get; set; }
+    
     [JsonIgnore]
     public Dictionary<string, double> ModelFeatureDataDeserialized => JsonSerializer.Deserialize<Dictionary<string, double>>(ModelFeatureDataJson);
 
@@ -46,35 +48,13 @@ public class ModelOrderLogDTO
     //[JsonIgnore]
     public ScoreCardDTO ScoreCardDeserialized()
     {
-     
-        ScoreCardDTO sc = new ScoreCardDTO();
-
-        try {
-
-            sc =JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJson, options);
-
-            //Console.WriteLine($"{scb.GREEN} SC  {sc.SharpRatio}  {sc.SortinoRatio}");
-            //Console.WriteLine(ScoreCardJson);
-            //Console.ResetColor();
-
-
-
-        }catch (Exception ex) {
-            Console.WriteLine($"{scb.YELLOW}{ex}");
-            Console.WriteLine("--------------");
-            Console.WriteLine(ScoreCardJson);
-            Console.WriteLine("--------------");
-            Console.ResetColor();
-        }
-
-        return sc;
-        
+        return JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJson, options);
     } 
 
     [JsonPropertyName("ClosedOrderDTOJSON")]
     public string ClosedOrderJson { get; set; }
-    [JsonIgnore]
-    public ClosedTradeDTO ClosedTradeDeserialized => JsonSerializer.Deserialize<ClosedTradeDTO>(ClosedOrderJson);
+    //[JsonIgnore]
+    public ClosedTradeDTO ClosedTradeDeserialized => JsonSerializer.Deserialize<ClosedTradeDTO>(ClosedOrderJson, options);
 
 }
 
