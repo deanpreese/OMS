@@ -32,7 +32,6 @@ class CompositeStrategy (CommonStrategy):
         self.trader_group = 0
         
 
-
     def do_predict(self,data):
 
         agg_predict = 0    
