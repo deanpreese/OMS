@@ -13,7 +13,7 @@ class OrderManager():
         
         self.com_cli = CommonCli()
         #self.pulsar_cli = PulsarProducerCli()
-        self.kafka_cli = KafkaProducerCli()
+        #self.kafka_cli = KafkaProducerCli()
         
 
     def is_sim(self, is_sim_yn):

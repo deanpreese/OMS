@@ -1,7 +1,4 @@
-﻿
-using DotPulsar;
-using DotPulsar.Extensions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Stream.Watcher;
 
