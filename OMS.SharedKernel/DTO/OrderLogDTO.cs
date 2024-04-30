@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Strategy.SharedKernel;
+namespace OMS.SharedKernel.DTO;
 
 public class OrderLogDTO
 {

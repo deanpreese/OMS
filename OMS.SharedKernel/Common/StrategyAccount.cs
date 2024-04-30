@@ -1,4 +1,5 @@
-﻿namespace Strategy.SharedKernel;
+﻿namespace OMS.SharedKernel.Common;
+
 
 
 public class StrategyAccount

@@ -1,15 +1,11 @@
-﻿using System.Drawing;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
-using OMS.SharedKernel;
+﻿using System.Text.Json;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
+namespace Strategy.Runner;
 
-namespace Strategy.Runner.Provider;
-
-public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
-{
+public class DirectProvider : ScreenColorBase, IStrategyConnection
+{    
     public StrategyAccount CurrentStrategyAccount { get; set; }
     public ScoreCardDTO ModelTraderScoreCardDTO { get; set; }
     public string ModelTraderScoreCardJSON { get; set; }
@@ -19,12 +15,7 @@ public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
     public string ModelTraderClosedTradeJSON { get; set; }
     public ModelOrderLogDTO CurrentModelOrderLogDTO { get; set; }
 
-    CommonApiClient _apiClient;
-    
-    public InMemoryStrategyConnection()
-    {
-        _apiClient = new CommonApiClient();
-    }
+
 
     public string GetStrategyProfileKey()
     {
@@ -46,7 +37,8 @@ public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
             Email = "abc@abc"
         };
         
-        int trader_id = await _apiClient.VerifyAndAddByDisplayNameAsync(n_strategy);
+        //int trader_id = await _apiClient.VerifyAndAddByDisplayNameAsync(n_strategy);
+        int trader_id = 0;
         CurrentStrategyAccount.strategy_traderId = trader_id;
     }
         
@@ -92,7 +84,8 @@ public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
     
     public async Task<ClosedTradeDTO> RefreshLastClosedTraderTradeByOpenPlatformID(string trader_key, int traderPlatformId)
     {
-        return await _apiClient.GetLastClosedTradeByOpenPlatformIDAsync( trader_key, traderPlatformId);
+        //return await _apiClient.GetLastClosedTradeByOpenPlatformIDAsync( trader_key, traderPlatformId);
+        return await Task.FromResult(ModelTraderLastClosedTradeDTO);
     }
 
     public Task<ClosedTradeDTO> GetLastClosedTraderTradeByOpenPlatformID(string trader_key, int traderPlatformIdStrategyRelatedOrderID)
@@ -103,7 +96,8 @@ public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
 
     public async Task<List<LiveOrderDTO>> GetStrategyLiveOrders()
     {
-        return await _apiClient.GetLiveOrdersAsync(GetStrategyProfileKey());
+        //return await _apiClient.GetLiveOrdersAsync(GetStrategyProfileKey());
+        return await Task.FromResult(new List<LiveOrderDTO>());
     }
 
     public async Task<ScoreCardDTO> GetTraderScoreCard()
@@ -113,7 +107,9 @@ public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
 
     public async Task<int> ProcessOrderForStrategy(NewOrderDTO order)
     {
-        int oid = await _apiClient.ProcessOrderAsync(order);
+        //int oid = await _apiClient.ProcessOrderAsync(order);
+
+        int oid = 0;
 
         string json = JsonSerializer.Serialize(order);
         //await _producer.Send(json);
@@ -136,5 +132,6 @@ public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
 
         return await Task.FromResult(oid);
     }
+
 
 }

@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OMS.SharedKernel\OMS.SharedKernel.csproj" />
-    <ProjectReference Include="..\Strategy.SharedKernal\Strategy.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>

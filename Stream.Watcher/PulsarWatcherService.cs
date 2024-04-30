@@ -15,8 +15,7 @@ using OMS.SharedKernel.DTO;
 using OMS.SharedKernel.Common;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using OMS.SharedKernel;
-using Strategy.SharedKernel;
+
 
 
 using DotPulsar;
@@ -51,13 +50,13 @@ public class PulsarWatcherService : BackgroundService
 
         _strategyConsumer = _pulsarStrategyClient.NewConsumer(Schema.String)
             .SubscriptionName("PulsarStrategyWatcherService")
-            .Topic(PlatformConstants.PULSAR_STRATEGY_ORDER_TOPIC)
+            .Topic(PlatformConstants.PULSAR_MODEL_ORDER_TOPIC_PART)
             .InitialPosition(SubscriptionInitialPosition.Earliest)
             .Create();
 
         _modelConsumer = _pulsarModelClient.NewConsumer(Schema.String)
             .SubscriptionName("PulsarModelWatcherService")
-            .Topic(PlatformConstants.PULSAR_MODEL_ORDER_LOG_TOPIC)
+            .Topic(PlatformConstants.PULSAR_MODEL_ORDER_TOPIC_PART)
             .InitialPosition(SubscriptionInitialPosition.Earliest)
             .Create();
 

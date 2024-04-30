@@ -5,7 +5,8 @@ using System.Text.Json.Serialization;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
-namespace Strategy.SharedKernel;
+namespace OMS.SharedKernel.Common;
+
 
 public class CommonApiClient : ScreenColorBase
 {

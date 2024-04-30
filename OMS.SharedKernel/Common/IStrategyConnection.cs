@@ -1,7 +1,7 @@
 ﻿using OMS.SharedKernel.DTO;
-using Strategy.SharedKernel;
 
-namespace Strategy.SharedKernel;
+namespace OMS.SharedKernel.Common;
+
 
 public interface IStrategyConnection
 {

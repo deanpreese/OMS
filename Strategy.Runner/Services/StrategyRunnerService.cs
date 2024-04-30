@@ -1,6 +1,6 @@
 ﻿using OMS.SharedKernel.DTO;
 using Strategy.Runner.Utility;
-using Strategy.SharedKernel;
+using OMS.SharedKernel.Common;
 using Strategy.Trader.Abstractions;
 
 namespace Strategy.Runner.Services;
@@ -21,11 +21,6 @@ public class StrategyRunnerService
        string strategy_to_load = "Strategy.json";
        loadedStrategy = await StrategyLoader.LoadStrategy(strategy_to_load);
         _strategyList.Add(loadedStrategy);       
-
-       strategy_to_load = "Strategy2.json";
-       loadedStrategy = await StrategyLoader.LoadStrategy(strategy_to_load);
-        _strategyList.Add(loadedStrategy);
-
 
     }
 

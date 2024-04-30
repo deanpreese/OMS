@@ -1,6 +1,6 @@
 
 using System.Reflection;
-using Strategy.SharedKernel;
+using OMS.SharedKernel.Common;
 using Strategy.Trader.Abstractions;
 
 namespace Strategy.Runner.Utility;

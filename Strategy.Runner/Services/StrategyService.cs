@@ -2,7 +2,6 @@ using System.Threading.Channels;
 
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
-using Strategy.SharedKernel;
 using Strategy.Trader.Abstractions;
 using Strategy.Trader;
 using Strategy.Runner.Utility;

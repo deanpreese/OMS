@@ -2,7 +2,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Strategy.SharedKernel;
+namespace OMS.SharedKernel.Common;
+
 
 
 public class CustomDateTimeConverter : JsonConverter<DateTime>

@@ -16,7 +16,6 @@ using OMS.SharedKernel.Common;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OMS.SharedKernel;
-using Strategy.SharedKernel;
 
 using Confluent.Kafka;
 

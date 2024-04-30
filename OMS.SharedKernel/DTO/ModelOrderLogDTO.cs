@@ -4,9 +4,9 @@ using OMS.SharedKernel;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
-namespace Strategy.SharedKernel;
+namespace OMS.SharedKernel.DTO;
 
-public class StrategyEvaluationDTO
+public class ModelOrderLogDTO
 {
     static ScreenColorBase scb = new ScreenColorBase();
 
@@ -56,5 +56,6 @@ public class StrategyEvaluationDTO
     //[JsonIgnore]
     public ClosedTradeDTO ClosedTradeDeserialized => JsonSerializer.Deserialize<ClosedTradeDTO>(ClosedOrderJson, options);
 
-
 }
+
+

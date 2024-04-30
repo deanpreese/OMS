@@ -1,6 +1,4 @@
-﻿
-namespace OMS.Application.Common;
-
+﻿namespace OMS.SharedKernel.Common;
 public class TrackedInstruments
 {
     List<InstrumentData> instruments = new List<InstrumentData>();

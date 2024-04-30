@@ -1,4 +1,4 @@
-﻿namespace Strategy.SharedKernel;
+﻿namespace OMS.SharedKernel.DTO;
 
 public class ScoreCardLogDTO
 {

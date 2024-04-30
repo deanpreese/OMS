@@ -6,7 +6,6 @@ using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.SharedKernel;
 using Strategy.Trader.Filters;
-using Strategy.SharedKernel;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 

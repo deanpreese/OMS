@@ -5,7 +5,7 @@ using OMS.SharedKernel.DTO;
 
 namespace OMS.Application.Common;
 
-public class DTOMapping
+public class DTOHelper
 {
     public static async Task<ClosedTrade> MapClosedOrder(LiveOrder orderToClose, LiveOrder orderToStore)
     {

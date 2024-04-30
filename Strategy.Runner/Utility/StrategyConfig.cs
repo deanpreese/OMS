@@ -1,6 +1,6 @@
 ﻿using OMS.SharedKernel.DTO;
 using Strategy.Runner.Provider;
-using Strategy.SharedKernel;
+using OMS.SharedKernel.Common;
 using System.Text;
 
 
