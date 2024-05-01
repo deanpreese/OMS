@@ -15,6 +15,13 @@ public class StrategyRunnerService
     List<IStrategy> _strategyList = new List<IStrategy>();
 
 
+
+    public StrategyRunnerService()
+    {
+        _strategyConfig = new StrategyConfig();
+
+    }
+
     public async Task LoadService()
     {
        string strategy_to_load = "Strategy.json";
@@ -33,7 +40,6 @@ public class StrategyRunnerService
         }
 
         return newOrders;
-        //return await loadedStrategy.OnTraderModelData(modelOrderLogDataDTO); 
     }
 
 }

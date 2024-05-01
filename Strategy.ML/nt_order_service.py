@@ -1,5 +1,6 @@
 #import csv
 #import datetime
+import json
 from flask import Flask, request
 #import numpy as np
 import pandas as pd
@@ -62,20 +63,17 @@ def init_app():
 
         data_df.drop(columns=['time', 'actual', 'output', 'outputC'], inplace=True)
         reshaped_df = data_df.stack().reset_index(level=0, drop=True)
-        
-        
+                
+        orders = []        
+        order_manager.process_tick_rt(px_f,time_raw[0])
                 
         for m in range(len(models)):
             
             loaded_prediction = models[m].do_predict(reshaped_df)            
-            order_manager.process_model(models[m], px_f, loaded_prediction)
+            orders = orders + order_manager.process_model_ninja_data(models[m], px_f, loaded_prediction)
             mytime.sleep(0.025)
-            
-            
-        order_manager.process_tick_rt(px_f,time_raw[0])
         
-        
-        return "ok"       
+        return json.dumps(orders,default=str)
         
     @app.route('/close-all-open', methods=['POST'])
     def close_all_open():
@@ -107,7 +105,7 @@ if __name__ == '__main__':
     app.run(
         debug=True, 
         use_reloader=False,
-        port=8888, 
+        port=9898, 
         host='0.0.0.0'
         )
     

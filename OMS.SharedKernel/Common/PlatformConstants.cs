@@ -50,4 +50,7 @@ public class PlatformConstants
     // Feature Data API Constants
     public const string PROCESS_FEATURE_DATA="data/new-feature-data";
 
+    public const string NT_ORDER_SERVICE_BASE_URL = "http://10.0.0.147:9898/";
+    public const string NT_SIGNALS_PREDICT = "predict";
+
 }
