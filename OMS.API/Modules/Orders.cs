@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OMS.Application.Models;
 using OMS.Infrastructure.Interfaces;
-using OMS.Infrastructure.Queue;
+
 using OMS.Infrastructure.Services;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
