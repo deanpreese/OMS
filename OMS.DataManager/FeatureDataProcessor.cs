@@ -55,7 +55,7 @@ public class FeatureDataProcessor : BackgroundService
         //8.336952, -2.5, 0.0, 5048
         DateTime feature_time = new DateTime(featureDataDTO.TimeTicks);
 
-        Console.WriteLine($"{feature_time} {featureDataDTO.FeatureNameData} {featureDataDTO.FeatureSetData}");
+        Console.WriteLine($"{feature_time} {featureDataDTO.FeatureSetData}");
 
         string[] fdn_str = featureDataDTO.FeatureNameData.Split(',');
         string[] fdd_str = featureDataDTO.FeatureSetData.Split(',');
