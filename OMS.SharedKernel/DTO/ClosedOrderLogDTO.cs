@@ -20,6 +20,7 @@ public class ClosedOrderLogDTO
     public double OpenOrderPX { get; set; }
     public int OpenOrderType { get; set; }
     public int OpenOrderAction { get; set; }
+    public string OpenFeatureData { get; set; }
     public long ClosePlatformOrderID { get; set; } // Using long due to the large number
     public int ClosedOrderMangerID { get; set; }
     public int CloseAuthToken { get; set; }
@@ -29,6 +30,7 @@ public class ClosedOrderLogDTO
     public double CloseOrderPX { get; set; }
     public int CloseOrderType { get; set; }
     public int CloseOrderAction { get; set; }
+    public string CloseFeatureData { get; set; }
     public double PNL { get; set; }
     public double MAE { get; set; }
     public double MFE { get; set; }

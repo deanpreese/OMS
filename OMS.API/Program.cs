@@ -16,7 +16,7 @@ using OMS.SharedKernel.Common;
 using OMS.API;
 using System.Text.Json;
 using OMS.SharedKernel;
-using OMS.Infrastructure.Queue;
+using OMS.SharedKernel.DTO;
 
 
 string conn =  PlatformConstants.CURRENT_CONN;
@@ -42,10 +42,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>(); 
      
-builder.Services.AddSingleton<BrokerChannelService>();
-builder.Services.AddHostedService<BrokerProcessorService>();
-
 builder.Services.AddSingleton<OrderManagerService>();  
+
 
 builder.Services.AddLogging(configure => configure.AddConsole());
 //builder.Services.AddHttpsRedirection(opt => opt.HttpsPort = 44300);

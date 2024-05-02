@@ -5,7 +5,6 @@ using OMS.Application.Common;
 using OMS.Application.Models;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
-using OMS.Infrastructure.Queue;
 using OMS.Infrastructure.Services.Common;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using OMS.SharedKernel.Common;

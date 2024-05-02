@@ -13,7 +13,7 @@ public static class NTSignals
     public static IEndpointRouteBuilder MapNTSignalsEndpoints(this IEndpointRouteBuilder endpoints)
     {
   
-        endpoints.MapPost(PlatformConstants.PROCESS_FEATURE_DATA, async (OrderManagerService orderManagerService, FeatureDataDTO featureData ) =>
+        endpoints.MapPost(PlatformConstants.PROCESS_FEATURE_DATA_PREDICT, async (OrderManagerService orderManagerService, FeatureDataDTO featureData ) =>
         {
             DateTime time = new DateTime(featureData.TimeTicks);
             string iso8601String = time.ToString("o");
@@ -25,9 +25,10 @@ public static class NTSignals
 
             foreach (var item in rtn_dto)
             {
-                TimeZoneInfo easternZone = TimeZoneInfo.FindSystemTimeZoneById("America/New_York");
-                DateTime easternTime = TimeZoneInfo.ConvertTime(time, easternZone);
-                Console.WriteLine("DTO: " + easternTime + "    " + item.OrderTime +  " " + item.UserID + "  " + item.OrderAction + "  " + item.OrderType + "  " +   item.OrderPX +  " " + featureData.Instrument + "  " + featureData.FeatureSetName + "  " );                        
+                string feature_data = JsonSerializer.Serialize(featureData);
+                item.ModelFeatureData = feature_data ;   
+
+                Console.WriteLine("DTO: " + item.OrderTime +  " " + item.UserID + "  " + item.OrderAction + "  " + item.OrderType + "  " +   item.OrderPX +  " " + featureData.Instrument + "  " + featureData.FeatureSetName );                        
                 ModelOrderLog mol =  await orderManagerService.ProcessNewTraderOrder(item);
                 
                 var _httpClient = new HttpClient();
@@ -35,7 +36,7 @@ public static class NTSignals
                 response.EnsureSuccessStatusCode();
 
                 var dto = await response.Content.ReadFromJsonAsync<List<NewOrderDTO>>();
-
+                
 
             }
 

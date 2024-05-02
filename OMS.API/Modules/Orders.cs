@@ -24,11 +24,6 @@ public static class Orders
             response.EnsureSuccessStatusCode();
             var dto = await response.Content.ReadFromJsonAsync<List<NewOrderDTO>>();
 
-            if ( order.GroupID > 99)
-            {
-                await orderManagerService.ProcessModelOrderLogAsync(mol);
-            }
-
             return Results.Ok(mol.LiveOrderIDReference);
         })
         .WithName("ProcessOrderX")
@@ -39,12 +34,6 @@ public static class Orders
         endpoints.MapPost(PlatformConstants.ML_ORDER_URI_Z, async (OrderManagerService orderManagerService, NewOrderDTO order ) =>
         {
             ModelOrderLog mol =  await orderManagerService.ProcessNewTraderOrder(order);
-
-            if ( order.GroupID > 99)
-            {
-                await orderManagerService.ProcessModelOrderLogAsync(mol);
-            }
-
             return Results.Ok(mol.LiveOrderIDReference);
         })
         .WithName("ProcessOrderZ")

@@ -12,7 +12,6 @@ using OMS.Application.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OMS.Infrastructure.Data;
-using OMS.Infrastructure.Queue;
 using OMS.Application;
 
 namespace OMS.Infrastructure.Services;
@@ -22,28 +21,17 @@ public class OrderManagerService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<OrderManagerService> _logger;
     private IPlatformOrderIDGen _platformOrderIDGen;
-
-    private BrokerChannelService _brokerChannelService;
-
+    
     public OrderManagerService(ILogger<OrderManagerService> logger,
             IServiceScopeFactory scopeFactory,
-                IPlatformOrderIDGen platformOrderIDGen,
-                BrokerChannelService brokerChannelService
+                IPlatformOrderIDGen platformOrderIDGen
               )
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
         _platformOrderIDGen = platformOrderIDGen;
-        _brokerChannelService = brokerChannelService;
 
     }
-
-    public async Task<ModelOrderLog> ProcessModelOrderLogAsync(ModelOrderLog modelOrderLog )
-    {
-        await _brokerChannelService.WriteAsync(modelOrderLog);
-        return modelOrderLog;
-    }
-
 
     public async Task<ModelOrderLog> ProcessNewTraderOrder(NewOrderDTO newOrderDTO)
     {
