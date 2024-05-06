@@ -21,29 +21,52 @@ public class FeatureDataProcessor : BackgroundService
     private readonly ILogger<FeatureDataProcessor> _logger;
     private readonly  ChannelReader<FeatureDataDTO> _reader;
 
+    private readonly IServiceScopeFactory _scopeFactory;
+
     public FeatureDataProcessor(ILogger<FeatureDataProcessor> logger,
-        GenericMessageBus<FeatureDataDTO> featureDataBus)  
+        GenericMessageBus<FeatureDataDTO> featureDataBus,
+        IServiceScopeFactory scopeFactory
+        )  
     {
         _logger = logger;
         _featureDataBus = featureDataBus;
         _reader = _featureDataBus.Subscribe();
+        _scopeFactory = scopeFactory;            
+        
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await foreach (var feature_data in _reader.ReadAllAsync(stoppingToken))
+        using (var scope = _scopeFactory.CreateScope())
         {
-            try
+
+            var scopedContext = scope.ServiceProvider.GetRequiredService<OrderManagementDbContext>();
+            UnitOfWork tradingUnitOfWork = new UnitOfWork(scopedContext);
+            ILogger<AnalyticsService> logger = scope.ServiceProvider.GetRequiredService<ILogger<AnalyticsService>>();
+            AnalyticsService _analyticsService = new AnalyticsService(tradingUnitOfWork);
+
+            await foreach (var feature_data in _reader.ReadAllAsync(stoppingToken))
             {
-                await ProcessData(feature_data);
+                try
+                {
+                    await _analyticsService.AddFeatureData(MapFeatureData(feature_data));
+
+                    Console.WriteLine($"{feature_data._featureTime} {feature_data.FeatureSetData}");
+
+                    //await ProcessData(feature_data);
+                    Console.WriteLine("Records Left to Process: " + _reader.Count);
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-            }
+
         }
     }
 
+    
     private async Task ProcessData(FeatureDataDTO featureDataDTO)
     {
 
@@ -91,10 +114,25 @@ public class FeatureDataProcessor : BackgroundService
             .Column(fdn_str[15], fdd_d[15])
             .AtAsync(feature_time);
                                         
-        //await sender.SendAsync();
-
-                    
+        await sender.SendAsync();
                             
+    }
+
+    private FeatureData MapFeatureData(FeatureDataDTO featureDataDTO)   
+    {
+        return new FeatureData
+        {
+            Open = featureDataDTO.Open,
+            High = featureDataDTO.High,
+            Low = featureDataDTO.Low,
+            Close = featureDataDTO.Close,
+            FeatureSetData = featureDataDTO.FeatureSetData, 
+            FeatureNameData = featureDataDTO.FeatureNameData,
+            FeatureSetName = featureDataDTO.FeatureSetName,
+            TimeTicks = featureDataDTO.TimeTicks,
+            _featureTime = featureDataDTO._featureTime,
+            Instrument = featureDataDTO.Instrument
+        };
     }
 
 

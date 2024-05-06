@@ -99,5 +99,10 @@ public class AnalyticsService : IAnalyticsService
         return  modelOrderLog;
     }
 
+    public async Task AddFeatureData(FeatureData featureData)
+    {
+       await _unitOfWork.AnalyticsRepository.AddFeatureData(featureData);
+       await _unitOfWork.CommitAsync();
 
+    }
 }

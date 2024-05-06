@@ -23,6 +23,7 @@ string conn =  PlatformConstants.CURRENT_CONN;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddDbContext<OrderManagementDbContext>(options =>
 {   
     options.UseNpgsql(conn);
@@ -61,8 +62,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseOpenApi();
 app.MapOrdersEndpoints();
-app.MapUsersAPIEndpoints();
-app.MapDataAnalysisEndpoints();
+app.MapAuxEndpoints();
 app.MapNTSignalsEndpoints();
 
 app.Run();

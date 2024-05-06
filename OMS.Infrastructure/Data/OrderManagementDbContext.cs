@@ -42,6 +42,7 @@ public class OrderManagementDbContext : DbContext
     public DbSet<ScoreCardLog> ScoreCardLog { get; set; }
     public DbSet<ModelOrderLog> ModelOrderLog { get; set; }
     public DbSet<ClosedTradeLog> ClosedTradeLog { get; set; }
+    public DbSet<FeatureData> FeatureData { get; set; }
 
 
     

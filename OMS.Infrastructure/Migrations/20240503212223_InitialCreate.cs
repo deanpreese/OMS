@@ -116,6 +116,27 @@ namespace OMS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FeatureData",
+                columns: table => new
+                {
+                    FeatureSetID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FeatureSetData = table.Column<string>(type: "text", nullable: true),
+                    FeatureSetName = table.Column<string>(type: "text", nullable: true),
+                    FeatureNameData = table.Column<string>(type: "text", nullable: true),
+                    TimeTicks = table.Column<long>(type: "bigint", nullable: false),
+                    Instrument = table.Column<string>(type: "text", nullable: true),
+                    Open = table.Column<double>(type: "double precision", nullable: false),
+                    High = table.Column<double>(type: "double precision", nullable: false),
+                    Low = table.Column<double>(type: "double precision", nullable: false),
+                    Close = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeatureData", x => x.FeatureSetID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LiveOrders",
                 columns: table => new
                 {
@@ -362,6 +383,9 @@ namespace OMS.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ClosedTrades");
+
+            migrationBuilder.DropTable(
+                name: "FeatureData");
 
             migrationBuilder.DropTable(
                 name: "LiveOrders");

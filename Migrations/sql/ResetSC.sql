@@ -13,7 +13,7 @@ UPDATE "public"."ScoreCards"
      "SharpRatio"=0, "SortinoRatio"=0, 
      "PNL_Last3"=0, "PNL_Last5"=0, "PNL_Last8"=0, "PNL_Last13"=0, 
      "PNL_Last21"=0, "PNL_Last34"=0 
-	WHERE "GroupID" < 51;
+	WHERE "GroupID" < 50;
 
 
     Delete from "public"."LiveOrders";

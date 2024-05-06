@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using Dapper;
 using Npgsql;
 using Microsoft.EntityFrameworkCore.Storage.Json;
+using OMS.SharedKernel.DTO;
 
 namespace OMS.Infrastructure.Data;
 
@@ -205,4 +206,11 @@ public class AnalyticsRepository : IAnalyticsRepository
 
     }
 
+    public async Task AddFeatureData(FeatureData featureData)
+    {
+        _context.FeatureData.Add(featureData);  
+        await Task.CompletedTask;
+
+
+    }
 }

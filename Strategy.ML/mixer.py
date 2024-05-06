@@ -203,10 +203,10 @@ est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegr
 
 
 
+"""
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
-
 """
 
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
@@ -214,12 +214,14 @@ est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegr
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),            
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
 
-"""
+
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),           
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+
+
 
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
@@ -240,7 +242,7 @@ est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegr
 #est_list = [ TunableCatBoostRegressor(),  TunableLGBMRegressor(), TunableXGBRegressor() ]
 
 
-split_test_size_value = 0.2          
+split_test_size_value = 0.6          
 
 min_features_used = 2
 max_features_used = 3

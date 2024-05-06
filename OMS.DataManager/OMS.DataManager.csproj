@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OMS.SharedKernel\OMS.SharedKernel.csproj" />
     <ProjectReference Include="..\OMS.Infrastructure\OMS.Infrastructure.csproj" />
+    <ProjectReference Include="..\OMS.Application\OMS.Application.csproj" />
   </ItemGroup>
 
 </Project>
