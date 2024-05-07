@@ -28,7 +28,10 @@ public class PlatformConstants
     public const string CURRENT_CONN = LOCAL_CONN;
 
     // Order API Constants
-    public const string OM_BASE_URL = "http://10.0.0.147:8786/";
+	public const string OSX_BASE_URL = "http://10.0.0.147:8786/";
+	public const string CYBER_BASE_URL = "http://10.0.0.240:8786/";
+    public const string OM_BASE_URL = CYBER_BASE_URL;
+	
     public const string ML_ORDER_URI="order/ml/process-order";
     public const string ML_ORDER_URI_Z="order/ml/process-order-z";
     public const string STRATEGY_ORDER_URI="order/strategy/process-order";
@@ -48,7 +51,10 @@ public class PlatformConstants
 
 
     // Strategy Runner API Constants
-    public const string STRATEGY_RUNNER_BASE_URL = "http://10.0.0.147:9999/";
+	public const string OSX_STRATEGY_RUNNER_BASE_URL = "http://10.0.0.147:9999/";
+	public const string CYBER_STRATEGY_RUNNER_BASE_URL = "http://10.0.0.240:9999/";
+    public const string STRATEGY_RUNNER_BASE_URL = CYBER_STRATEGY_RUNNER_BASE_URL;
+	
     public const string STRATEGY_RUNNER_EVALUATE="api/strategy/evaluate";
 
     // Feature Data API Constants
