@@ -2,7 +2,7 @@
     "strategy_assembly": "Strategy.Trader",    
     "strategy_class": "Strategy.Trader.Strategy.OpenCloseStrategy",
     "strategy_name" : "OpenCloseStrategy",
-    "group": 146,
+    "group": 147,
     "orders_per_direction": 1,
     "logid" : "+-+-_BaseOpenClose.Strategy"
 }

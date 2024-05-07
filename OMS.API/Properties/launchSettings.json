@@ -5,17 +5,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://10.0.0.147:8786",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "cyber": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://10.0.0.240:8786",
+      "applicationUrl": "http://0.0.0.0:8786",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
