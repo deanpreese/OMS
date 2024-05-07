@@ -1,7 +1,7 @@
 With cdata as (
 SELECT
 	t1."UserID" as "Trader",
-    --t1."GroupID" as "TraderGroup",
+    t1."GroupID" as "TraderGroup",
     t2."UserID" as "Strategy",
     --t2."GroupID" as "StrategyGroup",
     --t1."OpenPlatformOrderID" as "TraderPOID",
@@ -30,7 +30,7 @@ SELECT
 SELECT
 	UP."DisplayName",
     "Trader",
-    --t1."GroupID" as "TraderGroup",
+    t1."TraderGroup",
     "Strategy",
     --t2."GroupID" as "StrategyGroup",
     --t1."OpenPlatformOrderID" as "TraderPOID",
@@ -42,6 +42,7 @@ SELECT
     FROM "cdata" t1 
 	INNER JOIN 
     	public."UserProfiles" AS UP ON t1."Trader" = UP."UserID"
-	Group BY "Trader", "Strategy", UP."DisplayName"
+	Group BY "Trader", "Strategy", UP."DisplayName", "TraderGroup"
+	Order BY "TraderGroup"
 
 

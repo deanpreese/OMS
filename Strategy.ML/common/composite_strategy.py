@@ -58,3 +58,24 @@ class CompositeStrategy (CommonStrategy):
             return_predict = 0
         
         return return_predict
+    
+    def do_predict_x(self,data):
+
+        agg_predict = 0    
+        agg_weighted_predict = 0    
+        return_predict = 0
+        
+        self.set_predict_data(data) 
+        
+        for m in range(len(self.strategy_models)):
+            
+            perf = self.strategy_models[m].metrics["Perf"]
+            predict = self.strategy_models[m].do_predict(data)
+            
+            agg_weighted_predict += predict * perf
+            agg_predict += predict
+
+            return_predict = agg_predict
+
+        
+        return return_predict

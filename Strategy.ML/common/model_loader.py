@@ -99,6 +99,26 @@ class ModelLoader:
         return self.model_list     
 
 
+    # -------------------------
+    def load_composite_models_by_feature_count(self, experiment_id, num_models, group_id): 
+        
+        print("Querying Runs ...")
+        runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.FeatureCount DESC"], max_results=num_models)
+       
+        self.model_group = group_id
+       
+        comp_strategies = []
+        
+        for i in range(len(runs)):
+            self.model_list = []    
+            
+            r_id = runs.iloc[i].run_id 
+            print(f"Run Id     {r_id}")
+            loaded_strat = self.add_composite_strategies(r_id, group_id)
+            comp_strategies.append(loaded_strat)
+        
+        return comp_strategies    
+
 
     # -------------------------
     def load_composite_models(self, experiment_id, num_models, group_id): 

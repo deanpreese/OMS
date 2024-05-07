@@ -16,11 +16,11 @@ UPDATE "public"."ScoreCards"
 	WHERE "GroupID" < 50;
 
 
-    Delete from "public"."LiveOrders";
-    delete from "public"."ClosedTrades";
-    delete from "public"."ModelOrderLog";
-	delete from "public"."OrderLog";
-	delete from "public"."ScoreCardLog";
+    Delete from "public"."LiveOrders" ;
+    delete from "public"."ClosedTrades" ;
+    delete from "public"."ModelOrderLog" ;
+	delete from "public"."OrderLog" ;
+	delete from "public"."ScoreCardLog" ;
 
     delete from "public"."ScoreCards" where "GroupID" < 50;
     delete from "public"."UserProfiles" where "GroupID" < 50;

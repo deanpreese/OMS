@@ -29,18 +29,20 @@ def LoadModels():
     m = []
    
     
-    exp_id = 27
-    experiment_id = ["27"]
-    num_models = 3    
+    group_id = 46
+    experiment_id = ["44"]
+    num_models = 5    
 
     # USed for base models
     #m = model_loader.load_random_models(experiment_id, 5)
     
     #used for comp models
-    m = model_loader.load_composite_models( experiment_id, num_models, exp_id)
+    #m = model_loader.load_composite_models( experiment_id, num_models, group_id)
     
+    # used for comp models by feature count
+    m = model_loader.load_composite_models_by_feature_count( experiment_id, num_models, group_id)
     
-    
+        
     return m
 
 def init_app():
@@ -70,6 +72,8 @@ def init_app():
         for m in range(len(models)):
             
             loaded_prediction = models[m].do_predict(reshaped_df)            
+            #loaded_prediction = models[m].do_predict_x(reshaped_df)    
+                    
             orders = orders + order_manager.process_model_ninja_data(models[m], px_f, loaded_prediction)
             mytime.sleep(0.025)
         
