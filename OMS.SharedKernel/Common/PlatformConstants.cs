@@ -29,7 +29,9 @@ public class PlatformConstants
     // Order API Constants
 	public const string OSX_BASE_URL = "http://10.0.0.147:8786/";
 	public const string CYBER_BASE_URL = "http://10.0.0.240:8786/";
-    public const string OM_BASE_URL = CYBER_BASE_URL;
+	
+    //CHANGE BASED ON ENVIRONMENT
+	public const string OM_BASE_URL = CYBER_BASE_URL;
 	
     public const string ML_ORDER_URI="order/ml/process-order";
     public const string ML_ORDER_URI_Z="order/ml/process-order-z";
