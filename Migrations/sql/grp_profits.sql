@@ -10,4 +10,4 @@ INNER JOIN
 group by 
 	SC."GroupID"
 
-order by grp_pft desc
+order by "GroupID" 
