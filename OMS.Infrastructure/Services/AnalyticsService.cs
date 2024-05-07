@@ -35,7 +35,7 @@ public class AnalyticsService : IAnalyticsService
         ScoreCardDTO sc_dto = new ScoreCardDTO();
         if (scoreCard != null)
         {
-            sc_dto = await DTOMapping.MapScorecardToScorecardDTO(scoreCard);
+            sc_dto = await DTOHelper.MapScorecardToScorecardDTO(scoreCard);
         }
         return sc_dto;
     }
@@ -99,5 +99,10 @@ public class AnalyticsService : IAnalyticsService
         return  modelOrderLog;
     }
 
+    public async Task AddFeatureData(FeatureData featureData)
+    {
+       await _unitOfWork.AnalyticsRepository.AddFeatureData(featureData);
+       await _unitOfWork.CommitAsync();
 
+    }
 }

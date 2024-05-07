@@ -5,6 +5,8 @@ public class PlatformConstants
     // ORDER Constants
     public const string INVALID_SYMBOL = "InvalidSymbol";
 
+
+    /*
     // Kafka Constants
     public const string KAFKA_BOOTSTRAP_SERVERS = "10.0.0.50:9092";
     public const string MODEL_ORDER_TOPIC_NAME = "model-orders";
@@ -17,7 +19,8 @@ public class PlatformConstants
     public const string PULSAR_MODEL_ORDER_LOG_TOPIC_PART =  "persistent://public/models/";
     public const string PULSAR_URI = "pulsar://10.0.0.50:6650";
 
-
+    */
+    
     // Postgres Constants
     public const string LOCAL_CONN ="Host=localhost;Database=orders;Username=trading;Password=abc";
     public const string REMOTE_CONN ="Host=10.0.0.50;Database=timedata;Username=omsuser;Password=abc";
@@ -48,6 +51,12 @@ public class PlatformConstants
     public const string STRATEGY_RUNNER_EVALUATE="api/strategy/evaluate";
 
     // Feature Data API Constants
-    public const string PROCESS_FEATURE_DATA="data/new-feature-data";
+    public const string PROCESS_FEATURE_DATA_PREDICT="data/new-feature-data";
+    public const string PROCESS_RAW_FEATURE_DATA="data/raw-feature-data";
+
+    public const string NT_ORDER_SERVICE_BASE_URL = "http://10.0.0.147:9898/";
+    public const string NT_SIGNALS_PREDICT = "predict";
+
+    public const string QUEST_DB_CONN = "http::addr=10.0.0.50:9999;";
 
 }

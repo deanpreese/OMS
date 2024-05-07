@@ -266,6 +266,46 @@ namespace OMS.Infrastructure.Migrations
                     b.ToTable("ClosedTradeLog");
                 });
 
+            modelBuilder.Entity("OMS.Application.Models.FeatureData", b =>
+                {
+                    b.Property<int>("FeatureSetID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FeatureSetID"));
+
+                    b.Property<double>("Close")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("FeatureNameData")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FeatureSetData")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FeatureSetName")
+                        .HasColumnType("text");
+
+                    b.Property<double>("High")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Instrument")
+                        .HasColumnType("text");
+
+                    b.Property<double>("Low")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Open")
+                        .HasColumnType("double precision");
+
+                    b.Property<long>("TimeTicks")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("FeatureSetID");
+
+                    b.ToTable("FeatureData");
+                });
+
             modelBuilder.Entity("OMS.Application.Models.LiveOrder", b =>
                 {
                     b.Property<int>("LiveOrderID")

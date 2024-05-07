@@ -4,7 +4,6 @@ using System.Text.Json;
 using OMS.SharedKernel;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
-using Strategy.SharedKernel;
 
 
 namespace Strategy.Runner.Provider;
@@ -91,11 +90,6 @@ public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
 
     }
     
-    public StrategyAccount GetStrategyAccount()
-    {
-        return CurrentStrategyAccount ;
-    }
-
     public async Task<ClosedTradeDTO> RefreshLastClosedTraderTradeByOpenPlatformID(string trader_key, int traderPlatformId)
     {
         return await _apiClient.GetLastClosedTradeByOpenPlatformIDAsync( trader_key, traderPlatformId);

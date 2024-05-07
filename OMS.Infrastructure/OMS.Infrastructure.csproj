@@ -7,10 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="2.3.0" />
     <PackageReference Include="Dapper" Version="2.1.35" />
-    <PackageReference Include="DotPulsar" Version="3.2.0" />
-
+    <PackageReference Include="net-questdb-client" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
   </ItemGroup>
@@ -46,7 +44,6 @@
 
   <ItemGroup>
     <Folder Include="Interfaces/" />
-    <Folder Include="Services/" />
   </ItemGroup>
 
   <ItemGroup>

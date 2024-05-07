@@ -1,0 +1,61 @@
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using OMS.SharedKernel;
+using OMS.SharedKernel.Common;
+using OMS.SharedKernel.DTO;
+
+namespace OMS.SharedKernel.DTO;
+
+public class ModelOrderLogDTO
+{
+    static ScreenColorBase scb = new ScreenColorBase();
+
+    static JsonSerializerOptions options = new JsonSerializerOptions {
+            //NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
+            Converters ={
+                new JsonStringEnumConverter(),
+                new CustomDoubleConverter()
+            },
+            //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            //DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IgnoreReadOnlyProperties = true
+        };
+
+
+    public string _ct { get; set; }
+    public int ModelOrderLogID { get; set; }
+    public int UserID { get; set; }
+    public int GroupID { get; set; }
+    public int LiveOrderIDReference { get; set; }
+    public int OrderType { get; set; }
+    public int OrderAction { get; set; }
+        
+    [JsonPropertyName("LiveOrderJSON")]
+    public string LiveOrderJson { get; set; }
+    
+    //[JsonIgnore]
+    public LiveOrderDTO LiveOrderDeserialized => JsonSerializer.Deserialize<LiveOrderDTO>(LiveOrderJson, options);
+
+    [JsonPropertyName("ModelFeatureData")]
+    public string ModelFeatureDataJson { get; set; }
+    
+    [JsonIgnore]
+    public Dictionary<string, double> ModelFeatureDataDeserialized => JsonSerializer.Deserialize<Dictionary<string, double>>(ModelFeatureDataJson);
+
+    [JsonPropertyName("ScoreCardJSON")]
+    public string ScoreCardJson { get; set; }
+
+    //[JsonIgnore]
+    public ScoreCardDTO ScoreCardDeserialized()
+    {
+        return JsonSerializer.Deserialize<ScoreCardDTO>(ScoreCardJson, options);
+    } 
+
+    [JsonPropertyName("ClosedOrderDTOJSON")]
+    public string ClosedOrderJson { get; set; }
+    //[JsonIgnore]
+    public ClosedTradeDTO ClosedTradeDeserialized => JsonSerializer.Deserialize<ClosedTradeDTO>(ClosedOrderJson, options);
+
+}
+
+

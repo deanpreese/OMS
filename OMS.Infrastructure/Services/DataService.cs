@@ -30,7 +30,7 @@ public class DataService : IDataService
         {
             try 
             {
-                closedTradeDTO = await DTOMapping.MapClosedOrderToClosedOrderDTO(closedTrade);
+                closedTradeDTO = await DTOHelper.MapClosedOrderToClosedOrderDTO(closedTrade);
             }
             catch (Exception e)
             {
@@ -49,7 +49,7 @@ public class DataService : IDataService
 
         if( closedTrade.Count() > 0 )
         {
-            closedTradeDTO = await DTOMapping.MapClosedOrderToClosedOrderDTO(closedTrade.FirstOrDefault());
+            closedTradeDTO = await DTOHelper.MapClosedOrderToClosedOrderDTO(closedTrade.FirstOrDefault());
         }
         
         return closedTradeDTO;
@@ -63,7 +63,7 @@ public class DataService : IDataService
         foreach (LiveOrder order in orders)
         {
             // Console.WriteLine("DataService   " + order.UserID + " " + order.OrderTime + " " + order.OrderAction + " " + order.Instrument + " " + order.OrderPX + " " + order.OrderType);
-            ordersDTO.Add( await DTOMapping.MapOrderLiveToLiveDTO(order))  ;
+            ordersDTO.Add( await DTOHelper.MapOrderLiveToLiveDTO(order))  ;
         }
         return ordersDTO;
     }

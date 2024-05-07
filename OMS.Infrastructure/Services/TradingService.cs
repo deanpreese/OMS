@@ -5,7 +5,6 @@ using OMS.Application.Common;
 using OMS.Application.Models;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
-using OMS.Infrastructure.Queue;
 using OMS.Infrastructure.Services.Common;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using OMS.SharedKernel.Common;
@@ -86,7 +85,7 @@ public class TradingService : ITradingService
     private async Task<ClosedTrade> CloseOrder(LiveOrder orderToClose, LiveOrder orderToStore, 
         ILiveOrderRepository liveOrderRepository, IClosedOrderRepository closedOrderRepository)
     {
-        ClosedTrade histOrder = await DTOMapping.MapClosedOrder(orderToClose, orderToStore);       
+        ClosedTrade histOrder = await DTOHelper.MapClosedOrder(orderToClose, orderToStore);       
 
         histOrder.MAE = orderToClose.MAE; 
         histOrder.MFE = orderToClose.MFE;
@@ -128,7 +127,7 @@ public class TradingService : ITradingService
             om_id = BitConverter.ToInt32(salt, 0);
         }
 
-        LiveOrder liveOrder = await DTOMapping.MapOrderNewToLive(newOrder);
+        LiveOrder liveOrder = await DTOHelper.MapOrderNewToLive(newOrder);
         liveOrder.OrderManagerID = om_id;
 
         return await Task.FromResult(liveOrder);

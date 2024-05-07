@@ -3,7 +3,6 @@ using Strategy.Trader.Abstractions;
 using Strategy.Trader.Filters;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
-using Strategy.SharedKernel;
 using System.Diagnostics.Metrics;
 
 namespace Strategy.Trader.Strategy;

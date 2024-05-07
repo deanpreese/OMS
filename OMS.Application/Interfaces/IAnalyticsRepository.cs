@@ -8,5 +8,6 @@ public interface IAnalyticsRepository
     public Task UpdateTraderScoreCard(ScoreCard scoreCard);
     public Task<ScoreCard> GetTraderScoreCard(int UserID, int GroupNumber);
     public Task<int> GetTraderRank(int UserID, int groupNumber);
+    public Task AddFeatureData(FeatureData featureData);
 
 }

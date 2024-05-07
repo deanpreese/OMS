@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using OMS.Application.Interfaces;
 using OMS.Infrastructure.Data;
-using OMS.Infrastructure.Queue;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 using OMS.Infrastructure.Interfaces;

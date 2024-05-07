@@ -1,6 +1,6 @@
 ﻿using System.Threading.Channels;
 
-namespace Strategy.Runner.Services;
+namespace OMS.SharedKernel.Common;
 
 public class GenericMessageBus<T>
 {

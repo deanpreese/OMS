@@ -13,7 +13,7 @@ class OrderManager():
         
         self.com_cli = CommonCli()
         #self.pulsar_cli = PulsarProducerCli()
-        self.kafka_cli = KafkaProducerCli()
+        #self.kafka_cli = KafkaProducerCli()
         
 
     def is_sim(self, is_sim_yn):
@@ -28,9 +28,21 @@ class OrderManager():
         self.tick_dte = self.tick_dte + timedelta(minutes=5)
         
 
-    def process_tick_rt(self, tick, ticks):
+    def process_tick_rt(self, tick, time_ticks):
         self.px = tick    
-        self.tick_dte = ticks
+        self.tick_dte = time_ticks
+    
+    def process_model_ninja_data(self, model, y_pred, prediction):
+        
+        out_orders = []
+        orders = model.check_for_orders(prediction, self.px)        
+        
+        if len(orders) > 0:        
+             for ord in orders:
+                ord['orderTime']  = self.tick_dte
+                out_orders.append(ord)
+ 
+        return out_orders
         
     def process_model(self, model, y_pred, prediction):
 

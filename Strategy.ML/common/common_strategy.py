@@ -66,6 +66,7 @@ class CommonStrategy :
          self.last_prediction = prediction
          self.bars_since = 1
          
+         return orders
          
       if self.position == position_status.LONG:
          
@@ -85,6 +86,7 @@ class CommonStrategy :
                self.position = position_status.FLAT
                self.bars_since = 0
                
+         return orders
       
       if self.position == position_status.SHORT:
 
@@ -105,7 +107,9 @@ class CommonStrategy :
                self.bars_since = 0
 
 
-      return orders                        
+         return orders  
+      
+      return orders                      
    
    
    def check_bars_since(self, px):

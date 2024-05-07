@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using OMS.Application.Interfaces;
 using OMS.Infrastructure.Data;
 using OMS.Infrastructure.Interfaces;
-using OMS.Infrastructure.Queue;
 using OMS.Infrastructure.Services;
 using OMS.Infrastructure.Services.Common;
 using OMS.SharedKernel.Common;
@@ -17,12 +16,14 @@ using OMS.SharedKernel.Common;
 using OMS.API;
 using System.Text.Json;
 using OMS.SharedKernel;
+using OMS.SharedKernel.DTO;
 
 
 string conn =  PlatformConstants.CURRENT_CONN;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddDbContext<OrderManagementDbContext>(options =>
 {   
     options.UseNpgsql(conn);
@@ -42,10 +43,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddSingleton<IPlatformOrderIDGen, PlatformOrderIDGen>(); 
      
-builder.Services.AddSingleton<BrokerChannelService>();
-builder.Services.AddHostedService<BrokerProcessorService>();
-
 builder.Services.AddSingleton<OrderManagerService>();  
+
 
 builder.Services.AddLogging(configure => configure.AddConsole());
 //builder.Services.AddHttpsRedirection(opt => opt.HttpsPort = 44300);
@@ -63,8 +62,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseOpenApi();
 app.MapOrdersEndpoints();
-app.MapUsersAPIEndpoints();
-app.MapDataAnalysisEndpoints();
+app.MapAuxEndpoints();
 app.MapNTSignalsEndpoints();
 
 app.Run();

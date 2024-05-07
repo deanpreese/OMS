@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using OMS.SharedKernel.DTO;
 using Strategy.Runner.Services;
-using Strategy.SharedKernel;
 
 namespace Strategy.Runner.Modules;
 

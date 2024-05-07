@@ -22,11 +22,18 @@ using Strategy.Runner.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddSingleton<StrategyRunnerService>();               
-builder.Services.AddHostedService<StrategyService>();  
    
 var app = builder.Build();
 app.MapStrategyRunnerEndpoints();
+
+using (var scope = app.Services.CreateScope())
+{
+    var strategyRunnerService = scope.ServiceProvider.GetRequiredService<StrategyRunnerService>();
+    await strategyRunnerService.LoadService();
+}
+
 app.Run();
 
 Console.WriteLine("Press Enter to terminate...");

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OMS.Application.Models;
 using OMS.Infrastructure.Interfaces;
-using OMS.Infrastructure.Queue;
+
 using OMS.Infrastructure.Services;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
@@ -24,11 +24,6 @@ public static class Orders
             response.EnsureSuccessStatusCode();
             var dto = await response.Content.ReadFromJsonAsync<List<NewOrderDTO>>();
 
-            if ( order.GroupID > 99)
-            {
-                await orderManagerService.ProcessModelOrderLogAsync(mol);
-            }
-
             return Results.Ok(mol.LiveOrderIDReference);
         })
         .WithName("ProcessOrderX")
@@ -39,12 +34,6 @@ public static class Orders
         endpoints.MapPost(PlatformConstants.ML_ORDER_URI_Z, async (OrderManagerService orderManagerService, NewOrderDTO order ) =>
         {
             ModelOrderLog mol =  await orderManagerService.ProcessNewTraderOrder(order);
-
-            if ( order.GroupID > 99)
-            {
-                await orderManagerService.ProcessModelOrderLogAsync(mol);
-            }
-
             return Results.Ok(mol.LiveOrderIDReference);
         })
         .WithName("ProcessOrderZ")
