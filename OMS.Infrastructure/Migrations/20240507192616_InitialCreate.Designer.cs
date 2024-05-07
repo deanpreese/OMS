@@ -12,7 +12,7 @@ using OMS.Infrastructure.Data;
 namespace OMS.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderManagementDbContext))]
-    [Migration("20240503212223_InitialCreate")]
+    [Migration("20240507192616_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

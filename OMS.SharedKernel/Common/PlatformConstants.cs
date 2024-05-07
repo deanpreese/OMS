@@ -24,6 +24,7 @@ public class PlatformConstants
     // Postgres Constants
     public const string LOCAL_CONN ="Host=localhost;Database=orders;Username=trading;Password=abc";
     public const string REMOTE_CONN ="Host=10.0.0.50;Database=timedata;Username=omsuser;Password=abc";
+    public const string CYBER_CONN ="Host=10.0.0.240;Database=omsuser;Username=omsuser;Password=abc";
     public const string CURRENT_CONN = LOCAL_CONN;
 
     // Order API Constants

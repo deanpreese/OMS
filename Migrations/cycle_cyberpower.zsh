@@ -1,8 +1,8 @@
 
-DB_NAME="timedata"
+DB_NAME="orders"
 DB_USER="omsuser"
 DB_PASSWORD="abc"
-DB_CONNECTION="Host=10.0.0.240;Database=timedata;Username=omsuser;Password=abc" 
+DB_CONNECTION="Host=10.0.0.240;Database=orders;Username=omsuser;Password=abc" 
 DB_HOST="10.0.0.240"
 DB_PORT="5432"
 
