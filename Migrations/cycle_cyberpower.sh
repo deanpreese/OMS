@@ -2,8 +2,8 @@
 DB_NAME="timedata"
 DB_USER="omsuser"
 DB_PASSWORD="abc"
-DB_CONNECTION="Host=10.0.0.50;Database=timedata;Username=omsuser;Password=abc" 
-DB_HOST="10.0.0.50"
+DB_CONNECTION="Host=10.0.0.240;Database=timedata;Username=omsuser;Password=abc" 
+DB_HOST="10.0.0.240"
 DB_PORT="5432"
 
 MIGRATIONS_DIR="../OMS.Infrastructure/Migrations" # e.g., ./Data/Migrations
@@ -91,6 +91,6 @@ add_publication() {
 dropDatabase
 removeMigrations
 recreateDatabase
-add_publication 
+#add_publication 
 
 echo "Database reset complete."
