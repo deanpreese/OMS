@@ -5,7 +5,6 @@ public class PlatformConstants
     // ORDER Constants
     public const string INVALID_SYMBOL = "InvalidSymbol";
 
-
     /*
     // Kafka Constants
     public const string KAFKA_BOOTSTRAP_SERVERS = "10.0.0.50:9092";
