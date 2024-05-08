@@ -22,16 +22,19 @@ public class FeatureDataProcessor : BackgroundService
     private readonly  ChannelReader<FeatureDataDTO> _reader;
 
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IConfiguration _configuration;
 
     public FeatureDataProcessor(ILogger<FeatureDataProcessor> logger,
         GenericMessageBus<FeatureDataDTO> featureDataBus,
+        IConfiguration configuration,
         IServiceScopeFactory scopeFactory
         )  
     {
         _logger = logger;
         _featureDataBus = featureDataBus;
         _reader = _featureDataBus.Subscribe();
-        _scopeFactory = scopeFactory;            
+        _scopeFactory = scopeFactory;    
+        _configuration = configuration;        
         
     }
 
@@ -89,7 +92,7 @@ public class FeatureDataProcessor : BackgroundService
             fdd_d[Array.IndexOf(fdd_str, item)] = double.Parse(item);
         }
 
-        using var sender = Sender.New(PlatformConstants.QUEST_DB_CONN);
+        using var sender = Sender.New(_configuration.GetConnectionString("QUEST_DB"));
         
         await sender.Table("feature_data")
             .Column("Open", featureDataDTO.Open)

@@ -11,6 +11,7 @@ public class StrategyAccount
     public int strategy_traderId {get;set;}
     public int orders_per_direction {get;set;}
     public string logid {get;set;}
+    public string api_client_url {get;set;}
  
     
 }

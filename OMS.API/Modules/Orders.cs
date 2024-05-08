@@ -12,15 +12,18 @@ using YamlDotNet.Serialization;
 public static class Orders
 {
 
-    public static IEndpointRouteBuilder MapOrdersEndpoints(this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapOrdersEndpoints(this IEndpointRouteBuilder endpoints )
     {
+        
 
-        endpoints.MapPost(PlatformConstants.ML_ORDER_URI, async (OrderManagerService orderManagerService, NewOrderDTO order ) =>
+        endpoints.MapPost(PlatformConstants.ML_ORDER_URI, async (IConfiguration config, OrderManagerService orderManagerService, NewOrderDTO order ) =>
         {
             ModelOrderLog mol =  await orderManagerService.ProcessNewTraderOrder(order);
 
+            string service_url = config.GetValue<string>("ServiceUrls:STRATEGY_RUNNER_BASE_URL") + PlatformConstants.STRATEGY_RUNNER_EVALUATE;
+
             var _httpClient = new HttpClient();
-            var response = await _httpClient.PostAsJsonAsync(PlatformConstants.STRATEGY_RUNNER_BASE_URL + PlatformConstants.STRATEGY_RUNNER_EVALUATE, mol);
+            var response = await _httpClient.PostAsJsonAsync(service_url, mol);
             response.EnsureSuccessStatusCode();
             var dto = await response.Content.ReadFromJsonAsync<List<NewOrderDTO>>();
 

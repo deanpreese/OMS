@@ -8,20 +8,24 @@ using OMS.Infrastructure.Services.Common;
 using OMS.SharedKernel.Common;
 using OMS.SharedKernel.DTO;
 
-string conn =  PlatformConstants.CURRENT_CONN;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
 
+// Build a config object, using env vars and JSON providers.
+IConfigurationRoot configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
+
 builder.Services.AddDbContext<OrderManagementDbContext>(options =>
 {   
-    options.UseNpgsql(conn);
+    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
     options.EnableThreadSafetyChecks();
 });
 
 
-
+builder.Services.AddSingleton<IConfiguration>(configuration);
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ILiveOrderRepository, LiveOrderRepository>();

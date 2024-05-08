@@ -83,6 +83,21 @@ class ModelLoader:
         
         return self.model_list    
     
+    def load_top_models(self, experiment_id, num_models, group_id): 
+        
+        print("Querying Runs ...")
+        runs = mlflow.search_runs(experiment_ids=experiment_id, filter_string="", order_by=["metrics.MSE DESC"], max_results=num_models)
+        
+        for i in range(len(runs)):
+            r_id = runs.iloc[i].run_id 
+            self.model_group = group_id
+            print(f"Run Id     {r_id}")
+            self.add_model(r_id, True)
+        
+        return self.model_list     
+
+    
+    
     def load_random_models(self, experiment_id, num_models): 
         
         print("Querying Runs ...")

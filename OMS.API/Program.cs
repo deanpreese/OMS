@@ -18,17 +18,22 @@ using System.Text.Json;
 using OMS.SharedKernel;
 using OMS.SharedKernel.DTO;
 
+using Microsoft.Extensions.Configuration;
 
-string conn =  PlatformConstants.CURRENT_CONN;
-
+// Build a config object, using env vars and JSON providers.
+IConfigurationRoot configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<OrderManagementDbContext>(options =>
 {   
-    options.UseNpgsql(conn);
+    options.UseNpgsql(configuration.GetConnectionString("DEFAULT_CONNECTION"));
     options.EnableThreadSafetyChecks();
 });
+
+builder.Services.AddSingleton<IConfiguration>(configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

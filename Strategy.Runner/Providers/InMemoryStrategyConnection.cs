@@ -23,7 +23,6 @@ public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
     
     public InMemoryStrategyConnection()
     {
-        _apiClient = new CommonApiClient();
     }
 
     public string GetStrategyProfileKey()
@@ -34,6 +33,8 @@ public class InMemoryStrategyConnection : ScreenColorBase,  IStrategyConnection
     public async Task Initialize(StrategyAccount strategyAccountFromJSON)
     {
         CurrentStrategyAccount = strategyAccountFromJSON;
+
+        _apiClient = new CommonApiClient(CurrentStrategyAccount.api_client_url);
 
         NewTraderDTO n_strategy = new NewTraderDTO
         {

@@ -13,13 +13,14 @@ public static class NTSignals
     public static IEndpointRouteBuilder MapNTSignalsEndpoints(this IEndpointRouteBuilder endpoints)
     {
   
-        endpoints.MapPost(PlatformConstants.PROCESS_FEATURE_DATA_PREDICT, async (OrderManagerService orderManagerService, FeatureDataDTO featureData ) =>
+        endpoints.MapPost(PlatformConstants.PROCESS_FEATURE_DATA_PREDICT, async (IConfiguration config, OrderManagerService orderManagerService, FeatureDataDTO featureData ) =>
         {
             DateTime time = new DateTime(featureData.TimeTicks);
             string iso8601String = time.ToString("o");
             string csv_data = iso8601String + "," + featureData.FeatureSetData;
 
-            string nt_url = PlatformConstants.NT_ORDER_SERVICE_BASE_URL+PlatformConstants.NT_SIGNALS_PREDICT;
+            string strategy_runner_evaluate = config.GetValue<string>("ServiceUrls:STRATEGY_RUNNER_BASE_URL") + PlatformConstants.STRATEGY_RUNNER_EVALUATE;
+            string nt_url = config.GetValue<string>("ServiceUrls:NT_ORDER_SERVICE_BASE_URL") + PlatformConstants.NT_SIGNALS_PREDICT;
 
             List<NewOrderDTO> rtn_dto  =  await Send_ML_Data_Async(csv_data, nt_url);    
 
@@ -32,7 +33,7 @@ public static class NTSignals
                 ModelOrderLog mol =  await orderManagerService.ProcessNewTraderOrder(item);
                 
                 var _httpClient = new HttpClient();
-                var response = await _httpClient.PostAsJsonAsync(PlatformConstants.STRATEGY_RUNNER_BASE_URL + PlatformConstants.STRATEGY_RUNNER_EVALUATE, mol);
+                var response = await _httpClient.PostAsJsonAsync(strategy_runner_evaluate, mol);
                 response.EnsureSuccessStatusCode();
 
                 var dto = await response.Content.ReadFromJsonAsync<List<NewOrderDTO>>();

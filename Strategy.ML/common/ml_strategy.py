@@ -24,6 +24,8 @@ class MLStrategy (CommonStrategy):
 
     def do_predict(self,data):
         
+        self.set_predict_data(data) 
+        
         XD = data
         if len(self.column_filter) == 0:
             self.column_filter = list(data.keys())

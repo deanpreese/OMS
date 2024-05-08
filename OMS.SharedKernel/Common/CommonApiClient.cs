@@ -24,7 +24,7 @@ public class CommonApiClient : ScreenColorBase
 
     public string BaseUrl {get;set;}
 
-    public CommonApiClient(string baseUrl = PlatformConstants.OM_BASE_URL)
+    public CommonApiClient(string baseUrl)
     {
         BaseUrl = baseUrl;
     }

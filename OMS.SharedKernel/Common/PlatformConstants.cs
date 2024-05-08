@@ -21,17 +21,17 @@ public class PlatformConstants
     */
     
     // Postgres Constants
-    public const string LOCAL_CONN ="Host=localhost;Database=orders;Username=trading;Password=abc";
-    public const string REMOTE_CONN ="Host=10.0.0.50;Database=timedata;Username=omsuser;Password=abc";
-    public const string CYBER_CONN ="Host=10.0.0.240;Database=omsuser;Username=omsuser;Password=abc";
-    public const string CURRENT_CONN = LOCAL_CONN;
+    //public const string LOCAL_CONN ="Host=localhost;Database=orders;Username=trading;Password=abc";
+    //public const string REMOTE_CONN ="Host=10.0.0.50;Database=timedata;Username=omsuser;Password=abc";
+    //public const string CYBER_CONN ="Host=10.0.0.240;Database=omsuser;Username=omsuser;Password=abc";
+    //public const string CURRENT_CONN = LOCAL_CONN;
 
     // Order API Constants
-	public const string OSX_BASE_URL = "http://10.0.0.147:8786/";
-	public const string CYBER_BASE_URL = "http://10.0.0.240:8786/";
+	//public const string OSX_BASE_URL = "http://10.0.0.147:8786/";
+	//public const string CYBER_BASE_URL = "http://10.0.0.240:8786/";
 	
     //CHANGE BASED ON ENVIRONMENT
-	public const string OM_BASE_URL = CYBER_BASE_URL;
+	//public const string OM_BASE_URL = OSX_BASE_URL;
 	
     public const string ML_ORDER_URI="order/ml/process-order";
     public const string ML_ORDER_URI_Z="order/ml/process-order-z";
@@ -52,9 +52,9 @@ public class PlatformConstants
 
 
     // Strategy Runner API Constants
-	public const string OSX_STRATEGY_RUNNER_BASE_URL = "http://10.0.0.147:9999/";
-	public const string CYBER_STRATEGY_RUNNER_BASE_URL = "http://10.0.0.240:9999/";
-    public const string STRATEGY_RUNNER_BASE_URL = CYBER_STRATEGY_RUNNER_BASE_URL;
+	//public const string OSX_STRATEGY_RUNNER_BASE_URL = "http://10.0.0.147:9999/";
+	//public const string CYBER_STRATEGY_RUNNER_BASE_URL = "http://10.0.0.240:9999/";
+    //public const string STRATEGY_RUNNER_BASE_URL = OSX_STRATEGY_RUNNER_BASE_URL;
 	
     public const string STRATEGY_RUNNER_EVALUATE="api/strategy/evaluate";
 
@@ -62,9 +62,9 @@ public class PlatformConstants
     public const string PROCESS_FEATURE_DATA_PREDICT="data/new-feature-data";
     public const string PROCESS_RAW_FEATURE_DATA="data/raw-feature-data";
 
-    public const string NT_ORDER_SERVICE_BASE_URL = "http://10.0.0.147:9898/";
+    //public const string NT_ORDER_SERVICE_BASE_URL = "http://10.0.0.147:9898/";
     public const string NT_SIGNALS_PREDICT = "predict";
 
-    public const string QUEST_DB_CONN = "http::addr=10.0.0.50:9999;";
+    //public const string QUEST_DB_CONN = "http::addr=10.0.0.50:9999;";
 
 }
