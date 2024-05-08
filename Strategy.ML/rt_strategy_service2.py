@@ -24,8 +24,8 @@ models = []
 def LoadModels():
     m = []
    
-    group_id = 31
-    experiment_id = ["31"]
+    group_id = 0
+    experiment_id = ["42"]
     num_models = 1    
 
     # USed for base models
