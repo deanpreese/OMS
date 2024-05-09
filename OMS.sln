@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy.Runner", "Strategy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OMS.DataManager", "OMS.DataManager\OMS.DataManager.csproj", "{A2745A10-4D84-4E77-AB2F-B29460C18572}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strategy.EXP", "Strategy.EXP\Strategy.EXP.csproj", "{E49FFAB7-AFC2-4B4D-A603-6F058CD80534}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{A2745A10-4D84-4E77-AB2F-B29460C18572}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2745A10-4D84-4E77-AB2F-B29460C18572}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2745A10-4D84-4E77-AB2F-B29460C18572}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E49FFAB7-AFC2-4B4D-A603-6F058CD80534}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E49FFAB7-AFC2-4B4D-A603-6F058CD80534}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E49FFAB7-AFC2-4B4D-A603-6F058CD80534}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E49FFAB7-AFC2-4B4D-A603-6F058CD80534}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

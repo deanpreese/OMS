@@ -192,23 +192,19 @@ datafile = [
         'data/buildSeqInd_13X_5M_3070.csv',  #5
         'data/buildSeqIndX_5M_3070.csv',   #6
         'data/Fractal_ALL_5M.csv', #7
+        'data/buildSeqInd_Lucky11_5M_3070.csv',   #8
     ]
 
 
-dtx = pd.read_csv(datafile[2])
+dtx = pd.read_csv(datafile[8])
 
-"""
-est_list = [  TunableXGBRegressor(),  TunableLGBMRegressor(),
-                TunableXGBRegressor(),  TunableLGBMRegressor(),  
-              TunableXGBRegressor(),  TunableLGBMRegressor(),  
-             TunableXGBRegressor(),  TunableLGBMRegressor() ]
-"""
 
-"""
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
 
 
+
+"""
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
@@ -248,8 +244,8 @@ est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegr
 
 split_test_size_value = 0.7          
 
-min_features_used = 2
-max_features_used = 11
+min_features_used = 6
+max_features_used = 10
 step_features_used = 1
 total_cycles_used = 100
 
