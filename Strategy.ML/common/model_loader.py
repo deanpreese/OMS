@@ -10,7 +10,7 @@ from common.composite_strategy import CompositeStrategy
 
 from models import wrapped_models
 
-from  common.common_cli import CommonCli as common_cli
+from  common.common_cli import CommonCli 
 
 
 
@@ -21,8 +21,9 @@ class ModelLoader:
         #self.l_models = []
         self.l_artifacts = []
         self.model_list = []
-        
         self.model_group = 0
+
+        self.common_cli = CommonCli()
 
     # -------------------------
     # Main add_model function
@@ -56,7 +57,7 @@ class ModelLoader:
         lm.perf = rinfo.data.metrics["Perf"]
         
         if isReg:
-            t_id = common_cli.initialize_trader(lm.run_name, lm.trader_group)
+            t_id = self.common_cli.initialize_trader(lm.run_name, lm.trader_group)
             lm.trader_id = t_id
             
             print(f"Trader {t_id} initialized for {lm.run_name}")
@@ -166,7 +167,7 @@ class ModelLoader:
 
         t_id = 0
         if group_id > 0:
-            t_id = common_cli.initialize_trader(comp_strat.run_name, comp_strat.trader_group)
+            t_id = self.common_cli.initialize_trader(comp_strat.run_name, comp_strat.trader_group)
             
         comp_strat.trader_id = t_id
 

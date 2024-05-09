@@ -29,9 +29,9 @@ def LoadModels():
     m = []
    
     
-    group_id = 44
-    experiment_id = ["44"]
-    num_models = 1    
+    group_id = 6
+    experiment_id = ["46"]
+    num_models = 2    
 
     # USed for base models
     #m = model_loader.load_random_models(experiment_id, 5)
@@ -40,9 +40,9 @@ def LoadModels():
     m1 = model_loader.load_composite_models( experiment_id, num_models, group_id)
     
     # used for comp models by feature count
-    m2 = model_loader.load_composite_models_by_feature_count( experiment_id, num_models, group_id)
+    #m2 = model_loader.load_composite_models_by_feature_count( experiment_id, num_models, group_id)
     
-    m = m1 + m2
+    m = m1 
         
     return m
 

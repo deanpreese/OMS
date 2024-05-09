@@ -70,12 +70,14 @@ class PulsarProducerCli:
 
 class CommonCli:
                
+    def __init__(self):               
+        self.base_url = "http://10.0.0.240:8786/"
 
-    def initialize_trader(display_name, group_num ):
+    def initialize_trader(self,display_name, group_num ):
         
         t_id = 0
         
-        url = "http://10.0.0.147:8786/user/verify-model-trader"  
+        url = self.base_url + "user/verify-model-trader"  
 
         headers = {
             "Content-Type": "application/json"
@@ -108,7 +110,7 @@ class CommonCli:
 
     def send_order(self, new_order):
         
-        url = "http://10.0.0.147:8786/order/ml/process-order"  
+        url = self.base_url + "order/ml/process-order"  
 
         headers = {
             "Content-Type": "application/json"
@@ -123,7 +125,7 @@ class CommonCli:
 
     def send_order_z(self, new_order):
         
-        url = "http://10.0.0.147:8786/order/ml/process-order-z"  
+        url = self.base_url + "order/ml/process-order-z"  
 
         headers = {
             "Content-Type": "application/json"

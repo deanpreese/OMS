@@ -1,11 +1,11 @@
 {
     "strategy_assembly": "Strategy.Trader",    
-    "strategy_class": "Strategy.Trader.Strategy.FollowWinners",
-    "strategy_name" : "FollowWinners",
-    "group": 145,
+    "strategy_class": "Strategy.Trader.Strategy.BaseFollowStrategy",
+    "strategy_name" : "BaseFollowStrategy",
+    "group": 1040,
     "orders_per_direction": 1,
-    "logid" : "+-+-_FollowWinners.Strategy",
-    "api_client_url": "http://10.0.0.147:8786/"
+    "logid" : "+-+-_BaseFollowStrategy.Strategy",
+    "api_client_url": "http://10.0.0.240:8786/"
 }
 
 

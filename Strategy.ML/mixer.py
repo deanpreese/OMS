@@ -197,12 +197,18 @@ datafile = [
 
 dtx = pd.read_csv(datafile[2])
 
+"""
+est_list = [  TunableXGBRegressor(),  TunableLGBMRegressor(),
+                TunableXGBRegressor(),  TunableLGBMRegressor(),  
+              TunableXGBRegressor(),  TunableLGBMRegressor(),  
+             TunableXGBRegressor(),  TunableLGBMRegressor() ]
+"""
+
+"""
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
 
 
-
-"""
 est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),  
              TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]

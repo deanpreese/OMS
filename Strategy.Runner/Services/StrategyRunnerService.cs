@@ -24,7 +24,7 @@ public class StrategyRunnerService
 
     public async Task LoadService()
     {
-       string strategy_to_load = "Strategy3.json";
+       string strategy_to_load = "Strategy.json";
        loadedStrategy = await _strategyConfig.LoadStrategy(strategy_to_load);
         _strategyList.Add(loadedStrategy);       
     }

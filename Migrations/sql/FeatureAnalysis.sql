@@ -82,6 +82,7 @@ select
 
 from public."ClosedTrades" ct
 join public.full_feature_data as fd on ct."OpenOrderTime"  = fd.featuretime
-where ct."GroupID" = 40 
+where ct."GroupID" <100
 order by fd.featuretime desc
+limit(500)
 
