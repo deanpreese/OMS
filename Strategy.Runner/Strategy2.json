@@ -2,7 +2,7 @@
     "strategy_assembly": "Strategy.Trader",    
     "strategy_class": "Strategy.Trader.Strategy.BaseFollowStrategy",
     "strategy_name" : "BaseFollowStrategy",
-    "group": 1040,
+    "group": 1001,
     "orders_per_direction": 1,
     "logid" : "+-+-_BaseFollowStrategy.Strategy",
     "api_client_url": "http://10.0.0.240:8786/"
