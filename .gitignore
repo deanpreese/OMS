@@ -3,9 +3,6 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-
-
-
 # User-specific files
 
 *.rsuser
@@ -22,8 +19,9 @@
 *.csv
 
 [mlfl]ow/**
-STrategy.ML/data/**
-Strategy.ML/catboost_info/**
+Strategy.ML/data/
+Strategy.ML/catboost_info/
+
 
 # Mono auto generated files
 mono_crash.*
