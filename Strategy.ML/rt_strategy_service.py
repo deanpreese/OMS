@@ -16,52 +16,53 @@ logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
 
 
 model_loader = ModelLoader()
-models = []
+models_one = []
+models_two = []
 
 
 
-
-def LoadModels():
-    m = []
+def LoadModels(group_id, experiment_id, num_models):
    
-    group_id = 0
-    experiment_id = ["40"]
-    num_models = 1    
-
-    # USed for base models
-    #m = model_loader.load_random_models(experiment_id, 5)
+    return model_loader.load_composite_models( experiment_id, num_models, group_id)
     
-    #used for comp models
-    m = model_loader.load_composite_models( experiment_id, num_models, group_id)
-    
-    return m
 
 def init_app():
     app = Flask(__name__)
 
     with app.app_context():
-        #pass        
-        models = LoadModels()
+        models_one = LoadModels(0, ["42"], 1)
+        models_two = LoadModels(0, ["40"], 1)
        
        
-    @app.route('/predict', methods=['POST'])
-    def predictx():
+    @app.route('/predict-one', methods=['POST'])
+    def predict_one():
         
         csv_data = BytesIO(request.data)
         column_names = ['time', 'SDLR310', 'SDBB91', 'SDKC91', 'SDKC9', 'ROC', 'ATR34', 'ATR32', 'ATR31', 'ATR3', 'ATR21', 'ATR2', 'RSI', 'STOK1', 'output', 'outputC', 'actual']
         data_df = pd.read_csv(csv_data, header=None, names=column_names)
-        
-        #time_raw = data_df["time"]
-        #px_f = float(data_df["actual"][0])
         data_df.drop(columns=['time', 'actual', 'output', 'outputC'], inplace=True)
-        #print( data_df )
-       
-       
+
         loaded_prediction = 0
        
-        for m in range(len(models)):
-            loaded_prediction = models[m].do_predict(data_df)
-            print(f"Model-{m}    {loaded_prediction}")
+        for m in range(len(models_one)):
+            loaded_prediction = models_one[m].do_predict(data_df)
+            print(f"Model-One {m}    {loaded_prediction}")
+            
+        return str(loaded_prediction)
+
+    @app.route('/predict-two', methods=['POST'])
+    def predict_two():
+        
+        csv_data = BytesIO(request.data)
+        column_names = ['time', 'SDLR310', 'SDBB91', 'SDKC91', 'SDKC9', 'ROC', 'ATR34', 'ATR32', 'ATR31', 'ATR3', 'ATR21', 'ATR2', 'RSI', 'STOK1', 'output', 'outputC', 'actual']
+        data_df = pd.read_csv(csv_data, header=None, names=column_names)
+        data_df.drop(columns=['time', 'actual', 'output', 'outputC'], inplace=True)
+
+        loaded_prediction = 0
+       
+        for m in range(len(models_two)):
+            loaded_prediction = models_two[m].do_predict(data_df)
+            print(f"Model-Two {m}    {loaded_prediction}")
             
         return str(loaded_prediction)
         

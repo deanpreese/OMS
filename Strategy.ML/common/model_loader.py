@@ -165,7 +165,7 @@ class ModelLoader:
         comp_strat.run_name = rinfo.info.run_name   
         comp_strat.trader_group = group_id     
 
-        t_id = 0
+        t_id = 1
         if group_id > 0:
             t_id = self.common_cli.initialize_trader(comp_strat.run_name, comp_strat.trader_group)
             
