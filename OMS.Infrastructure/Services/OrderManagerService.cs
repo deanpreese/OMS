@@ -67,7 +67,7 @@ public class OrderManagerService
                         closedTrade = await _dataService.GetLastClosedTradeForTrader(liveOrder.UserID, liveOrder.GroupID);
                     }
 
-                    if (newOrderDTO.GroupID < 50)
+                    if (newOrderDTO.GroupID < 1000)
                     {
                         modelOrderLog = await _analytics_service.LogModelOrderData(liveOrder, newOrderDTO, closedTrade, scoreCard );  
                     }
