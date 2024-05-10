@@ -5,7 +5,7 @@
     "group": 1000,
     "orders_per_direction": 1,
     "logid" : "+-+-_BaseOpenClose.Strategy",
-    "api_client_url": "http://10.0.0.240:8786/"
+    "api_client_url": "http://10.0.0.147:8786/"
 }
 
 

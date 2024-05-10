@@ -69,8 +69,8 @@ def run_sim(exp_id, n_models, file, trades, delay, group_id):
     print(" ") 
     
     
-exp_idx = ["31"]
-group_id = 31
+exp_idx = ["38"]
+group_id = 38
 
 
 #num_models = 10
