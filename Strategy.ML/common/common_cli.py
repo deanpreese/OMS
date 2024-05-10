@@ -70,8 +70,9 @@ class PulsarProducerCli:
 
 class CommonCli:
                
-    def __init__(self):               
-        self.base_url = "http://10.0.0.147:8786/"
+    def __init__(self, client_url):               
+        #self.base_url = "http://10.0.0.147:8786/"
+        self.base_url = client_url
 
     def initialize_trader(self,display_name, group_num ):
         

@@ -1,16 +1,16 @@
 
-
 from common.model_loader import ModelLoader
-from common.order_manager import OrderManager
-
 import pandas as pd
-#import datetime as dt
-#import random as rand
 import time
+import threading
+
+import common.common_cli as common_cli
 
 import logging
 logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
 logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
+
+broker_cli = common_cli.KafkaProducerCli()
 
 def load_models(exp_id, n_models, group_id, api_url):
     
@@ -20,9 +20,16 @@ def load_models(exp_id, n_models, group_id, api_url):
     model_loader.init_api(api_url)
     return model_loader.load_composite_models( experiment_id, num_models, group_id)
 
+def send_data(predict_data):
+    
+    #broker_cli.send_order_pulsar(predict_data)
+    
+    print(f"Predict {predict_data}")
+
 def run_sim(exp_id, n_models, file, trades, delay, group_id, api_url):
 
-
+    
+    
     data = pd.read_csv(file)   
     num_columns = len(data.axes[1]) 
     input_features =  num_columns -2
@@ -30,10 +37,6 @@ def run_sim(exp_id, n_models, file, trades, delay, group_id, api_url):
     y = data["output"].values
     
     models = load_models(exp_id, n_models, group_id, api_url)
-
-    order_manager = OrderManager(api_url)
-    order_manager.is_sim(True)
-    
     
     total = 0
     order_total = 0
@@ -46,22 +49,13 @@ def run_sim(exp_id, n_models, file, trades, delay, group_id, api_url):
                 
                 predict = models[m].do_predict(X.iloc[i])
                 
-                #print(X.iloc[i])    
-                
-                order_manager.process_model(models[m], y[i], predict)            
-                order_total += 1
+                my_thread = threading.Thread(target=send_data, args=(predict,))
+                my_thread.start()
                 
                 time.sleep(delay)
 
-            total += 1        
-            order_manager.process_tick(y[i])
-
             if total > trades:
                 break    
-
-
-    for m in range(len(models)):
-        order_manager.close_all(models[m])
 
     end = time.time()
 
@@ -70,29 +64,16 @@ def run_sim(exp_id, n_models, file, trades, delay, group_id, api_url):
     print(" ") 
     
     
-exp_idx = ["56"]
-group_id = 56
-
-
-#num_models = 10
-num_models = 3
-#num_models = 2
-
-
-#trades = 500
-trades = 250
-#trades = 100
-#trades = 10
-
-
-#sim_delay = 0.0500
-#sim_delay = 0.025
-sim_delay = 0.0000000000002
-
-
-#file = "data/lucky13_short.csv"
     
+    
+exp_idx = ["40"]
+group_id = 48
+num_models = 50
+
+trades = 500
+sim_delay = 0.02
+  
+api_u = "http://10.0.0.147:8786"  
 file = "data/lucky13_oos.csv"    
-api_u = "http://10.0.0.147:8786/"    
 run_sim(exp_idx, num_models, file, trades, sim_delay, group_id, api_u)    
 

@@ -23,7 +23,8 @@ class ModelLoader:
         self.model_list = []
         self.model_group = 0
 
-        self.common_cli = CommonCli()
+    def init_api(self, api_url):
+        self.common_cli = CommonCli(api_url)
 
     # -------------------------
     # Main add_model function

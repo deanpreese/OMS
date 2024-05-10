@@ -6,12 +6,12 @@ from common.common_cli import CommonCli, KafkaProducerCli
 class OrderManager():
         
     
-    def __init__(self):
+    def __init__(self, api_url):
         self.px = 0
         self.commission = 0
         self.tick_dte = dt(2020, 1, 1)
         
-        self.com_cli = CommonCli()
+        self.com_cli = CommonCli(api_url)
         #self.pulsar_cli = PulsarProducerCli()
         #self.kafka_cli = KafkaProducerCli()
         

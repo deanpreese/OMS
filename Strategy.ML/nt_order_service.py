@@ -17,6 +17,8 @@ order_manager = OrderManager()
 order_manager.is_sim(False)
 
 model_loader = ModelLoader()
+model_loader.init_api("http://10.0.0.147:8786/")
+
 models = []
 
 

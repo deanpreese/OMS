@@ -20,12 +20,24 @@ using OMS.SharedKernel.DTO;
 
 using Microsoft.Extensions.Configuration;
 
-// Build a config object, using env vars and JSON providers.
-IConfigurationRoot configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .Build();
 
 var builder = WebApplication.CreateBuilder(args);
+
+IConfigurationRoot configuration = new ConfigurationBuilder().Build(); ;  
+
+if(builder.Environment.EnvironmentName == "OSX")
+{
+    configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.OSX.json")
+    .Build();    
+}
+
+if(builder.Environment.EnvironmentName == "WIN")
+{
+    configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.WIN.json")
+    .Build();    
+}
 
 builder.Services.AddDbContext<OrderManagementDbContext>(options =>
 {   

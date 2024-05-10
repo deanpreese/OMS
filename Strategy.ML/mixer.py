@@ -196,11 +196,16 @@ datafile = [
     ]
 
 
-dtx = pd.read_csv(datafile[8])
+dtx = pd.read_csv(datafile[2])
 
 
-est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
-             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
+est_list = [ TunableXGBRegressor(),  TunableXGBRegressor(), TunableXGBRegressor(),  TunableXGBRegressor(),
+             TunableXGBRegressor(),  TunableXGBRegressor(), TunableXGBRegressor(),  TunableXGBRegressor(), 
+             TunableXGBRegressor()]
+
+
+#est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
+#             TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor() ]
 
 
 
@@ -244,8 +249,8 @@ est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegr
 
 split_test_size_value = 0.7          
 
-min_features_used = 6
-max_features_used = 10
+min_features_used = 2
+max_features_used = 6
 step_features_used = 1
 total_cycles_used = 100
 
