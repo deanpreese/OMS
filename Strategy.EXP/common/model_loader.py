@@ -141,30 +141,6 @@ class ModelLoader:
         return comp_strategies    
 
 
-
-
-    def load_composite_virtual(self, trader_name, group_id, v_models):
-        self.model_group = group_id
-        
-        comp_strategies = []
-        comp_strat = CompositeStrategy()
-        comp_strat.run_id = 'rid8935487905348790354789035498'
-        comp_strat.run_name = "virtual-runner"
-        comp_strat.trader_group = group_id     
-        
-        t_id = 1
-        if group_id > 0:
-            t_id = self.common_cli.initialize_trader(comp_strat.run_name, comp_strat.trader_group)
-            
-        comp_strat.trader_id = t_id
-
-        for item in v_models:
-            self.add_model(item, False)
-                        
-        comp_strat.strategy_models = self.model_list    
-
-        return comp_strategies    
-
     # -------------------------
     def load_composite_models(self, experiment_id, num_models, group_id): 
         

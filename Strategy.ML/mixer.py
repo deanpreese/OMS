@@ -199,6 +199,7 @@ datafile = [
 dtx = pd.read_csv(datafile[2])
 
 
+<<<<<<< HEAD
 est_list = [ TunableXGBRegressor(),  TunableXGBRegressor(), TunableXGBRegressor(), 
              TunableXGBRegressor(),  TunableXGBRegressor(), TunableXGBRegressor(), 
             TunableXGBRegressor(),  TunableXGBRegressor(), TunableXGBRegressor(),
@@ -206,6 +207,18 @@ est_list = [ TunableXGBRegressor(),  TunableXGBRegressor(), TunableXGBRegressor(
             TunableXGBRegressor(),  TunableXGBRegressor(), TunableXGBRegressor() ,
             TunableXGBRegressor(),  TunableXGBRegressor(), TunableXGBRegressor()   
                 ]
+=======
+#est_list = [ TunableXGBRegressor(),  TunableXGBRegressor(), TunableXGBRegressor(),  TunableXGBRegressor(),
+#             TunableXGBRegressor(),  TunableXGBRegressor(), TunableXGBRegressor(),  TunableXGBRegressor(), 
+#             TunableXGBRegressor()]
+
+est_list = [TunableLGBMRegressor(), TunableLGBMRegressor(), TunableLGBMRegressor(),  
+            TunableLGBMRegressor(), TunableLGBMRegressor(), TunableLGBMRegressor(),  
+            TunableLGBMRegressor(), TunableLGBMRegressor(), TunableLGBMRegressor(),  
+            TunableLGBMRegressor(), TunableLGBMRegressor(), TunableLGBMRegressor(),  
+            TunableLGBMRegressor(), TunableLGBMRegressor(), TunableLGBMRegressor() 
+            ]
+>>>>>>> b73311c (TF new Env)
 
 
 #est_list = [ TunableCatBoostRegressor(), TunableXGBRegressor(),  TunableLGBMRegressor(),
@@ -256,8 +269,13 @@ est_list = [  TunableXGBRegressor(**param),  TunableXGBRegressor(**param),  Tuna
 
 split_test_size_value = 0.7          
 
+<<<<<<< HEAD
 min_features_used = 8
 max_features_used = 12
+=======
+min_features_used = 5
+max_features_used = 10
+>>>>>>> b73311c (TF new Env)
 step_features_used = 1
 total_cycles_used = 100
 
