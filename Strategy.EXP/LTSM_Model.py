@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 from keras.models import Sequential
-from keras.layers import Dense, LSTM, Dropout, Input, Embedding, Bidirectional,TimeDistributed, BatchNormalization, Conv1D  
+from keras.layers import Dense, LSTM, Dropout, Input, Embedding, Bidirectional,TimeDistributed, BatchNormalization, Attention
 from sklearn.ensemble import RandomForestRegressor
 from keras.callbacks import EarlyStopping
 
@@ -48,45 +48,43 @@ scaler = MinMaxScaler(feature_range=(-1, 1))
 X_train = np.array(X_train).reshape(X_train.shape[0], 1, X_train.shape[1])
 X_test = np.array(X_test).reshape(X_test.shape[0], 1, X_test.shape[1])
 
-units = 11
+units = 15
 regression= Sequential()
+regression.add(Input(shape=(1,input_features),))
 regression.add(LSTM(units=units,return_sequences=True,kernel_initializer='glorot_uniform',input_shape=(1,input_features)))
-regression.add(Dropout(0.2))
-regression.add(LSTM(units=units,return_sequences=True))
-#regression.add(LSTM(units=units,kernel_initializer='glorot_uniform',return_sequences=True))
-regression.add(Dropout(0.2))
-#regression.add(LSTM(units=units,kernel_initializer='glorot_uniform',return_sequences=True))
-#regression.add(LSTM(units=units,return_sequences=False))
 #regression.add(Dropout(0.2))
+
+regression.add(Attention(use_scale=False, score_mode="dot", dropout=0.2, seed=None))
+
+
+regression.add(LSTM(units=units,kernel_initializer='glorot_uniform',return_sequences=True))
+regression.add(Dropout(0.2))
+regression.add(LSTM(units=units,kernel_initializer='glorot_uniform',return_sequences=True))
+regression.add(Dropout(0.2))
 #regression.add(LSTM(units=units,kernel_initializer='glorot_uniform'))
 #regression.add(Dropout(0.2))
-regression.add(Dense(units=64))
-regression.add(Dropout(0.2))
+#regression.add(Dense(units=7))
+#regression.add(Dropout(0.2))
 #regression.add(Dense(units=1))
 
-hlayer0 = int(input_features * 5)
-hlayer1 = int(input_features * 5)
-hlayer2 = int(input_features * 6)
-hlayer3 = int(input_features * 3)
+hlayer0 = int(input_features * 3)
+hlayer1 = int(input_features * 2)
+hlayer2 = int(input_features * 2)
+hlayer3 = int(input_features * 2)
 hlayer4 = int(input_features * 1)
 
-#regression.add(Conv1D(filters=32,kernel_size=(units,),activation='relu'))
-regression.add(Bidirectional(LSTM(32, return_sequences=True)))
-regression.add(Bidirectional(LSTM(32)))    
 
-#regression.add(Input(shape=(1,input_features),))
-#regression.add(Dense(hlayer0,activation='relu'))
+
+regression.add(Dense(hlayer2,activation='relu'))
 regression.add(BatchNormalization())
-regression.add(Dropout(0.2))
-regression.add(Dense(hlayer1,activation='relu'))
-#regression.add(Dense(hlayer2,activation='relu'))
-regression.add(BatchNormalization())
-regression.add(Dropout(0.2))
-#regression.add(Dense(hlayer3,activation='relu'))
-#regression.add(Dropout(0.2))
+regression.add(Dropout(0.5))
+regression.add(Dense(hlayer2,activation='relu'))
 regression.add(Dense(hlayer4,activation='relu'))
-#regression.add(BatchNormalization())
+regression.add(Dropout(0.2))
+regression.add(Dense(hlayer4,activation='relu'))
+regression.add(BatchNormalization())
 regression.add(Dense(1, activation='linear'))
+regression.add(Dense(1))
 
 
 model = regression
