@@ -432,6 +432,9 @@ class TunableXGBRegressor(XGBRegressor):
     
     def __init__(self, **kwargs):
         self.used_params = kwargs
+
+        self.used_params['device'] = 'cuda'
+
         self.features_used = []
         super().__init__(**kwargs)
 
@@ -478,8 +481,15 @@ class TunableXGBRegressor(XGBRegressor):
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
         
             self.run_id = mlflow.active_run().info.run_id
-            model.fit(X_train, y_train)
-            y_pred = model.predict(X_test)
+            
+            import cupy as cp
+            model.fit(cp.array(X_train), cp.array(y_train))
+
+            #model.fit(X_train, y_train)
+            y_pred = model.predict(cp.array(X_test))
+            
+            #model.fit(X_train, y_train)
+            #y_pred = model.predict(X_test)
             
             mlflow.log_params( self.used_params )
             mlflow.xgboost.log_model(model, "model")

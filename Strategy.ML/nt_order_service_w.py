@@ -10,7 +10,7 @@ from io import BytesIO
 import time as mytime
 import logging
 
-from common.model_loader import ModelLoader
+from common.model_loader_w import ModelLoader_W
 from common.order_manager import OrderManager
 
 cli_api = "http://10.0.0.240:8786/"
@@ -18,7 +18,7 @@ cli_api = "http://10.0.0.240:8786/"
 order_manager = OrderManager(cli_api)
 order_manager.is_sim(False)
 
-model_loader = ModelLoader()
+model_loader = ModelLoader_W()
 model_loader.init_api(cli_api)
 
 models = []
@@ -28,21 +28,20 @@ logging.getLogger('mlflow.utils.autologging_utils').setLevel(logging.ERROR)
 logging.getLogger('mlflow.pyfunc').setLevel(logging.ERROR)
 
 
-
 def LoadModels():
     m = []
-   
-    
-    group_id = 156
-    experiment_id = ["56"]
+
+    group_id = 58
+    experiment_id = ["58"]
     num_models = 2    
 
     # USed for base models
     #m = model_loader.load_random_models(experiment_id, 5)
     
     #used for comp models
+    #m1 = model_loader.load_composite_models( experiment_id, num_models, group_id)
     m1 = model_loader.load_composite_models( experiment_id, num_models, group_id)
-    
+
     # used for comp models by feature count
     #m2 = model_loader.load_composite_models_by_feature_count( experiment_id, num_models, group_id)
     
