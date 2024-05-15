@@ -32,7 +32,7 @@ def create_sequences(data, seq_length):
         ys.append(y)
     return np.array(xs), np.array(ys)
 
-seq_length = 2
+seq_length = 10
 X, y = create_sequences(df, seq_length)
 
 # Split the data into training and test sets
@@ -55,27 +55,23 @@ test_dataset = TimeSeriesDataset(X_test, y_test)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
-class TransformerModel(nn.Module):
-    def __init__(self, input_dim, model_dim, num_heads, num_layers, output_dim):
-        super(TransformerModel, self).__init__()
-        self.encoder_layer = nn.TransformerEncoderLayer(d_model=model_dim, nhead=num_heads)
-        self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=num_layers)
-        self.fc = nn.Linear(model_dim, output_dim)
-        self.input_projection = nn.Linear(input_dim, model_dim)
+class GRUModel(nn.Module):
+    def __init__(self, input_dim, hidden_dim, num_layers, output_dim):
+        super(GRUModel, self).__init__()
+        self.gru = nn.GRU(input_dim, hidden_dim, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_dim, output_dim)
 
-    def forward(self, src):
-        src = self.input_projection(src)
-        src = self.transformer_encoder(src)
-        output = self.fc(src[:, -1, :])  # Use the output from the last time step
-        return output
+    def forward(self, x):
+        out, _ = self.gru(x)
+        out = self.fc(out[:, -1, :])  # Use the output from the last time step
+        return out
 
 input_dim = X_train.shape[2]
-model_dim = 64
-num_heads = 4
+hidden_dim = 64
 num_layers = 2
 output_dim = 1
 
-model = TransformerModel(input_dim, model_dim, num_heads, num_layers, output_dim)
+model = GRUModel(input_dim, hidden_dim, num_layers, output_dim)
 
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
