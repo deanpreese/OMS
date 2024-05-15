@@ -2,7 +2,7 @@
     "strategy_assembly": "Strategy.Trader",    
     "strategy_class": "Strategy.Trader.Strategy.OpenCloseStrategy",
     "strategy_name" : "OpenCloseStrategy",
-    "group": 1058,
+    "group": 1081,
     "orders_per_direction": 1,
     "logid" : "+-+-_BaseOpenClose.Strategy",
     "api_client_url2": "http://10.0.0.147:8786/",

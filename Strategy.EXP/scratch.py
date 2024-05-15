@@ -49,23 +49,28 @@ print(" ")
 tf.config.set_visible_devices([], 'GPU')
 
 
+X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))
+X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))
+
+
+
 tf_model = Sequential()
-tf_model.Add(Input(shape=(X_train.shape[1],1)))
+tf_model.add(Input(shape=(X_train.shape[1],1)))
 
-#tf_model.Add(LSTM(units=78,return_sequences=True,kernel_initializer='glorot_uniform'))
-tf_model.Add(LSTM(units=78,return_sequences=False,kernel_initializer='glorot_uniform'))
+tf_model.add(LSTM(units=78,return_sequences=True,kernel_initializer='glorot_uniform'))
+#tf_model.add(LSTM(units=78,return_sequences=False,kernel_initializer='glorot_uniform'))
 
-tf_model.Add(Attention(use_scale=True))
-tf_model.Add(BatchNormalization())
-tf_model.Add(Dropout(0.5))
+tf_model.add( Attention())
+tf_model.add(BatchNormalization())
+tf_model.add(Dropout(0.5))
 
 #tf_model.Add(Bidirectional(LSTM(39, return_sequences=True)))
-tf_model.Add(Bidirectional(LSTM(39, return_sequences=False)))
+tf_model.add(Bidirectional(LSTM(39, return_sequences=False)))
 
-tf_model.Add(Attention(use_scale=False))
+tf_model.add(Attention(use_scale=False))
 
 #tf_model.Add(LSTM(32,kernel_initializer='glorot_uniform',return_sequences=True))
-tf_model.Add(LSTM(32,kernel_initializer='glorot_uniform',return_sequences=False))
+tf_model.add(LSTM(32,kernel_initializer='glorot_uniform',return_sequences=False))
 
 #rnn_cells = [keras.layers.LSTMCell(units) for _ in range(2)]
 #stacked_lstm = keras.layers.StackedRNNCells(rnn_cells)
@@ -75,10 +80,10 @@ tf_model.Add(LSTM(32,kernel_initializer='glorot_uniform',return_sequences=False)
 #d2 = Dense(100,activation='relu')(d1)
 
 
-tf_model.Add(Dense(13,activation='softmax'))
+tf_model.add(Dense(13,activation='softmax'))
 
 #tf_model.Add(Dense(1, activation='linear'))
-tf_model.Add(Dense(1, activation='sigmoid'))
+tf_model.add(Dense(1, activation='sigmoid'))
 
 tf_model.compile(optimizer='adam', loss='mse', metrics=['mae','accuracy'])
 tf_model.summary()
