@@ -32,7 +32,7 @@ def create_sequences(data, seq_length):
         ys.append(y)
     return np.array(xs), np.array(ys)
 
-seq_length = 10
+seq_length = 3
 X, y = create_sequences(df, seq_length)
 
 # Split the data into training and test sets

@@ -9,7 +9,7 @@ from collections import Counter
 
 from botocore.client import Config
 
-def fetch_data(min_feature, max_feature, r_limit):
+def fetch_data(min_feature, max_feature, r_limit, group_limit):
     # Database connection parameters
     conn_params = {
         "host": "10.0.0.50",
@@ -30,7 +30,7 @@ def fetch_data(min_feature, max_feature, r_limit):
             expi.name
         FROM public.runs AS e 
         JOIN public.experiments AS expi ON e.experiment_id = expi.experiment_id
-        WHERE expi.name NOT LIKE '%output%'
+        WHERE expi.name  NOT LIKE '%output%'
     ),
     met_data AS
     (
@@ -62,7 +62,8 @@ def fetch_data(min_feature, max_feature, r_limit):
         met_data m ON e.run_uuid = m.run_uuid
     JOIN
         param_data p ON e.run_uuid = p.run_uuid
-    WHERE m.value > 0.75     
+    WHERE m.value > 0.75    
+        AND e.experiment_id > {group_limit}
         AND (p.features::numeric) > {min_feature}
         AND (p.features::numeric) < {max_feature}
     ORDER BY (m.value) DESC  
@@ -120,20 +121,24 @@ def list_s3_contents(s3_uri, minio_url, access_key, secret_key, secure=True):
     return obj_list
 
 
-def get_features(min_f, max_f, r_lim):
+def get_features(min_f, max_f, r_lim, grp_lim):
     
-    data = fetch_data(min_f, max_f, r_lim)
+    data = fetch_data(min_f, max_f, r_lim, grp_lim)
+    
+    #data.to_csv('coredata.csv', index=False, mode='a') 
+    
     distinct_list = []
     run_ids = []
 
     for i in range(len(data['artifact_uri'])):
         
-        run_ids.append(data.iloc[i][0])
+        rid = data.iloc[i][0]
+        run_ids.append(rid)
         
         full_uri = data.iloc[i][4]
         j_list = list_s3_contents(full_uri, 'http://10.0.0.50:9000', aws_access_key_id, aws_secret_access_key, secure=True)
         
-        #df =pd.DataFrame(j_list)
+        df =pd.DataFrame(j_list)
         #df.to_csv('jsondata.csv', index=False, mode='a') 
         
         features = []
@@ -180,14 +185,16 @@ def get_features(min_f, max_f, r_lim):
 aws_access_key_id='minioadmin'
 aws_secret_access_key='minioadmin'
 
-f_idx = get_features(1, 3, 1)
-f_idx += get_features(2, 4, 1)
-f_idx += get_features(3, 5, 1)
-f_idx += get_features(4, 6, 1)
-f_idx += get_features(5, 7, 1)
-f_idx += get_features(6, 8, 1)
-f_idx += get_features(7, 9, 1)
-f_idx += get_features(8, 10, 1)
+f_idx = []
+
+f_idx = get_features(1, 3, 1,30)
+f_idx += get_features(2, 4, 1,30)
+f_idx += get_features(3, 5, 1,30)
+f_idx += get_features(4, 6, 1,50)
+f_idx += get_features(5, 7, 1,50)
+f_idx += get_features(6, 8, 1,60)
+f_idx += get_features(7, 9, 1,60)
+f_idx += get_features(8, 10, 1,60)
 
 print(" ")
 print(f_idx)

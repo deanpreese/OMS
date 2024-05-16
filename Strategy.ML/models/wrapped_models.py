@@ -4,7 +4,6 @@ from catboost import CatBoostClassifier, CatBoostRegressor
 from common.common_func import calc_reg_streaks, show_stats, create_param_list
 
 import mlflow.onnx
-import cupy as cp
 
 
 import pandas as pd
@@ -483,13 +482,11 @@ class TunableXGBRegressor(XGBRegressor):
             self.run_id = mlflow.active_run().info.run_id
             
             
-            model.fit(cp.array(X_train), cp.array(y_train))
-
-            #model.fit(X_train, y_train)
-            y_pred = model.predict(cp.array(X_test))
+            #model.fit(cp.array(X_train), cp.array(y_train))
+            model.fit(X_train, y_train)
             
-            #model.fit(X_train, y_train)
-            #y_pred = model.predict(X_test)
+            #y_pred = model.predict(cp.array(X_test))
+            y_pred = model.predict(X_test)
             
             mlflow.log_params( self.used_params )
             mlflow.xgboost.log_model(model, "model")
