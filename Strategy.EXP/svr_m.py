@@ -6,7 +6,7 @@ from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error
 
 # Read the data into a DataFrame
-df = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+df = pd.read_csv('data/13_10K.csv')
 # Drop the outputC column
 df = df.drop(columns=['outputC'])
 

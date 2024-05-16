@@ -9,7 +9,10 @@ import torch.optim as optim
 
 
 # Read the data into a DataFrame
-df = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+#df = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+
+df = pd.read_csv('data/13_10K.csv')
+
 
 # Drop the outputC column
 df = df.drop(columns=['outputC'])
@@ -122,3 +125,5 @@ actuals = np.array(actuals)
 
 mse = np.mean((predictions - actuals) ** 2)
 print(f'Mean Squared Error on Test Data: {mse:.4f}')
+
+torch.save(model.state_dict(), 'transformer_model.pth')
