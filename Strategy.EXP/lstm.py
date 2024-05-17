@@ -1,83 +1,88 @@
+import math
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from tensorflow import keras
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error, mean_absolute_error, root_mean_squared_error
+from keras.models import Sequential
+from keras.layers import Dense, LSTM, Dropout, Input, Attention 
+from keras.callbacks import EarlyStopping
+from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 
-import datetime
+tf.config.set_visible_devices([], 'GPU')
 
-import keras
-from keras import regularizers
-from keras.models import Sequential, Model
-from keras.layers import Dense, LSTM, Dropout, Input, Bidirectional, BatchNormalization, Attention,  multiply, Reshape, Flatten, AdditiveAttention
-from sklearn.ensemble import RandomForestRegressor
-from keras.callbacks import EarlyStopping, TensorBoard
+import tensorflow as tf
+from tensorflow import keras
+import matplotlib.pyplot as plt
 
-early_stopping = EarlyStopping(monitor='loss',patience=5)
-from common.common_func import gen_importances, show_stats, calc_MSE
-from sklearn.metrics import mean_squared_error
+# Define constants based on your data
 
-
-# Read the data into a DataFrame
 data = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
-
-# Drop 'outputC' column
 data = data.drop(columns=['outputC'])
+data = data.drop(columns=['STOK1'])
+data = data.drop(columns=['RSI'])
 
-# Normalize the data
-scaler = MinMaxScaler()
-scaled_data = scaler.fit_transform(data)
+num_columns = len(data.axes[1]) 
+input_features =  num_columns -1
+features = data.iloc[:, 0:input_features]  
+target = data['output'].values
 
-# Convert to sequences for LSTM
-def create_sequences(data, sequence_length):
-    X, y = [], []
-    for i in range(len(data) - sequence_length):
-        X.append(data[i:i+sequence_length, :-1])
-        y.append(data[i+sequence_length, -1])
-    return np.array(X), np.array(y)
+n_features = input_features
+X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=0)
 
-sequence_length = 20
-X, y = create_sequences(scaled_data, sequence_length)
+X_train = np.array(X_train).reshape(X_train.shape[0], 1, X_train.shape[1])
+X_test = np.array(X_test).reshape(X_test.shape[0], 1, X_test.shape[1])
 
-# Split into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+timesteps = 10  # Number of features in each sequence
+layer1 = 64
+layer2 = 32
 
-layer1=25
-layer2=25
-
-# Build the LSTM model
+# Define the model
 model = Sequential()
-model.add(LSTM(layer1, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2])))
-model.add(Dropout(0.2))
+model.add(Input(shape=(timesteps, n_features)))
+model.add(LSTM(layer1, return_sequences=True))
 model.add(LSTM(layer2))
-model.add(Dropout(0.2))
 model.add(Dense(1))
 
 # Compile the model
-model.compile(optimizer='SGD', loss='mean_squared_error')
+model.compile(loss="mse", optimizer="adam")  # Mean Squared Error for regression
 model.summary()
 
+
 # Early stopping callback
-early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
-
+early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 # Train the model
-history = model.fit(X_train, y_train, epochs=100, batch_size=64, validation_split=0.3, callbacks=[early_stopping])
+#model.fit(X_train, y_train, epochs=10)
+history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=10, batch_size=32, callbacks=[early_stopping])
 
-# Evaluate the model
-loss = model.evaluate(X_test, y_test)
-print('Test loss:', loss)
 
-m_name = f"lstm-{layer1}-{layer2}-{sequence_length}.keras"
-model.save(m_name)
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
+fig.suptitle(f'LSTM Steps {timesteps}   {layer1} {layer2} ')
 
-# Plot loss and accuracy during training
-plt.figure(figsize=(10, 5))
-plt.plot(history.history['loss'], label='Training Loss')
-plt.plot(history.history['val_loss'], label='Validation Loss')
-plt.title('Model Loss')
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.legend()
+ax1.plot(history.history['loss'], label='Training Loss')
+ax1.plot(history.history['val_loss'], label='Validation Loss')
+ax1.set_xlabel('Epoch')
+ax1.set_ylabel('Loss')
+ax1.set_title('Training and Validation Loss')
+ax1.grid(True)
+
+
+# Evaluate the model on the testing data (optional)
+test_loss = model.evaluate(X_test, y_test)
+print("Test Loss:", test_loss)
+
+# Make predictions on test data
+predicted_values = model.predict(X_test)
+
+# Plot actual vs predicted values
+ax2.scatter(y_test, predicted_values)
+ax2.set_xlabel("Actual Output")
+ax2.set_ylabel("Predicted Output")
+ax2.set_title("Actual vs. Predicted Output")
+ax2.grid(True)
+
 plt.show()

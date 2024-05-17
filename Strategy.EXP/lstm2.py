@@ -1,92 +1,112 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
 from keras.models import Sequential
-from keras.layers import Dense, LSTM, Dropout, Input, Embedding, Bidirectional,TimeDistributed, Attention 
+from keras.layers import LSTM, Dense, Dropout, Input
 from keras.callbacks import EarlyStopping
 
-from sklearn.metrics import mean_squared_error
+tf.config.set_visible_devices([], 'GPU')
 
-# Read the data into a DataFrame
 data = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
-data.drop(columns=['outputC'])
+df = data.drop(columns=['outputC'])
 
-num_columns = len(data.axes[1]) 
-input_features =  num_columns -1
-X = data.iloc[:, 0:input_features]  
-y = data['output'].values
+# Convert data to sequences
+def create_sequences(data, seq_length):
+    xs, ys = [], []
+    for i in range(len(data) - seq_length):
+        x = data.iloc[i:(i + seq_length), :-1]
+        y = data.iloc[i + seq_length, -1]  # The 'output' column
+        xs.append(x.values)
+        ys.append(y)
+    return np.array(xs), np.array(ys)
 
-num_epocs = 100
-run_batch_size = 64
-run_test_size = 0.8
-units=input_features
+timesteps = 10  # Adjust as necessary for your data
+X, y = create_sequences(df, timesteps)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=run_test_size, random_state=0)
+# Normalize each sequence independently
+scalers = {}
+for i in range(X.shape[0]):
+    scalers[i] = MinMaxScaler()
+    X[i] = scalers[i].fit_transform(X[i])
 
-print("Number of TRAIN patterns:", X_train.shape[0])
-print("Size of input patterns:", X_train.shape[1])
-print(" ")
-print("Number of TEST patterns:", X_test.shape[0])
-print("Size of input patterns:", X_test.shape[1])
-print(" ")
+# Split the data into training and validation sets
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=0)
 
+layer1 = 100
+layer2 = 100
+layer3 = 50
 
-input_features = X_train.shape[1]
-
-# Rescale the data to the range -1 to 1
-#scaler = MinMaxScaler(feature_range=(-1, 1))
-scaler = MinMaxScaler()
-#scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-X_train = np.array(X_train).reshape(X_train.shape[0], 1, X_train.shape[1])
-X_test = np.array(X_test).reshape(X_test.shape[0], 1, X_test.shape[1])
-
-layer1 = 90
-layer2= 65
-layer3= 8
-
-
-# Build the LSTM model
+# Define the LSTM model
 model = Sequential()
-model.add(Input(shape = (X_train.shape[1], X_train.shape[2])))
+model.add( Input(shape=(timesteps, X_train.shape[2])))
 model.add(LSTM(layer1, return_sequences=True))
-model.add(Dropout(0.3))
-model.add(Dropout(0.2))
-model.add(LSTM(layer2))
-model.add(Dropout(0.2))
-model.add(Dense(layer3))
-model.add(Dropout(0.2))
+model.add(LSTM(layer2, return_sequences=True))
+#model.add(Dropout(0.2))
+model.add(LSTM(layer3, return_sequences=False))
+#model.add(Dropout(0.2))
 model.add(Dense(1))
 
-
-
-model.compile(optimizer='adam',loss='mean_squared_error')
-
-print(" ")
+model.compile(optimizer='adam', loss='mse')
 model.summary()
-print(" ")
 
-early_stopping = EarlyStopping(monitor='loss',patience=3)
+# Early stopping callback
+early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
-history = model.fit(X_train, y_train, epochs=num_epocs, batch_size=run_batch_size, validation_split=0.3, callbacks=[early_stopping])
+# Train the model
+history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32, callbacks=[early_stopping])
+
+fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(16, 9))
+fig.suptitle('Vertically stacked subplots')
+
+# Plot training and validation loss
+ax1.plot(history.history['loss'], label='Training Loss')
+ax1.plot(history.history['val_loss'], label='Validation Loss')
+ax1.set_xlabel('Epoch')
+ax1.set_ylabel('Loss')
+ax1.set_title('Training and Validation Loss')
+ax1.grid(True)
+
+# Save the model
+#model.save('lstm_model.keras')
+
+# Evaluate the model
+val_loss = model.evaluate(X_val, y_val)
+print(f'Validation Loss: {val_loss:.4f}')
+
+# Generate predictions
+predictions = model.predict(X_val)
+
+# Plot actual vs predicted values
+ax2.scatter(y_val, predictions)
+ax2.set_xlabel("Actual Output")
+ax2.set_ylabel("Predicted Output")
+ax2.set_title("Actual vs. Predicted Output")
+ax2.grid(True)
 
 
-predictions = model.predict(X_test)
-#ShowImportances(data.columns[:input_features],model.feature_importances_, False)
-#show_stats(False, y_test, predictions)
+# Reverse scaling for predictions
+def reverse_scaling(preds, scalers, seq_length):
+    reversed_preds = []
+    for i in range(len(preds)):
+        temp_input = np.zeros((seq_length, len(scalers[i].min_)))
+        temp_input[:, -1] = preds[i]
+        reversed_pred = scalers[i].inverse_transform(temp_input)
+        reversed_preds.append(reversed_pred[0, -1])
+    return np.array(reversed_preds)
 
-#RunMSE(y_test, predictions)
+# Reverse the scaling of predictions
+predictions_reversed = reverse_scaling(predictions, scalers, timesteps)
 
-# Plot loss and accuracy during training
-plt.figure(figsize=(10, 5))
-plt.plot(history.history['loss'], label='Training Loss')
-plt.plot(history.history['val_loss'], label='Validation Loss')
-plt.title('Model Loss')
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.legend()
+# Plot actual vs predicted values
+ax3.plot(range(len(y_val)), y_val, color='blue', label='Actual Values')
+ax3.plot(range(len(predictions_reversed)), predictions_reversed, color='red', linestyle='--', label='Predicted Values')
+ax3.set_title('Actual vs Predicted Values')
+ax3.set_xlabel('Index')
+ax3.set_ylabel('Output')
+ax2.grid(True)
+
+
 plt.show()
-
