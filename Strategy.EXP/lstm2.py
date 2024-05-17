@@ -51,7 +51,6 @@ layer2= 65
 model = Sequential()
 model.add(Input(shape = (X_train.shape[1], X_train.shape[2])))
 model.add(LSTM(layer1, return_sequences=True))
-#model.add(LSTM(layer1, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2])))
 model.add(Dropout(0.2))
 model.add(LSTM(layer2))
 model.add(Dropout(0.2))
