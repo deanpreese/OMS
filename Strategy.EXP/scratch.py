@@ -78,7 +78,6 @@ model = Model(inputs=inputs, outputs=output)
 model.compile(optimizer='adam', loss='mse')  # Mean Squared Error and Mean Absolute Error as metrics
 model.summary()
 
-
 early_stopping = EarlyStopping(monitor='loss',patience=3)
 history = model.fit(X_train, y_train, epochs=num_epocs, batch_size=run_batch_size, validation_split=0.1, callbacks=[early_stopping ])
 predictions = model.predict(X_test)
