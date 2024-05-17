@@ -46,14 +46,17 @@ X_test = np.array(X_test).reshape(X_test.shape[0], 1, X_test.shape[1])
 
 layer1 = 90
 layer2= 65
+layer3= 8
+
 
 # Build the LSTM model
 model = Sequential()
 model.add(Input(shape = (X_train.shape[1], X_train.shape[2])))
 model.add(LSTM(layer1, return_sequences=True))
-#model.add(LSTM(layer1, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2])))
-model.add(Dropout(0.2))
+model.add(Dropout(0.3))
 model.add(LSTM(layer2))
+model.add(Dropout(0.2))
+model.add(Dense(layer3))
 model.add(Dropout(0.2))
 model.add(Dense(1))
 
