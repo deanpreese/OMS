@@ -2,14 +2,14 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import tensorflow as tf
+
 from keras.models import  Model
 from keras.layers import Dense, LSTM, LSTMCell, Dropout, Input,StackedRNNCells, RNN,  Bidirectional, Attention, BatchNormalization
 from keras.callbacks import EarlyStopping
-
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 tf.config.set_visible_devices([], 'GPU')
 
@@ -31,10 +31,16 @@ def create_sequences(data, seq_length):
 timesteps = 60
 X, y = create_sequences(df, timesteps)
 
+scalers = {}
+for i in range(X.shape[0]):
+    scalers[i] = MinMaxScaler()
+    X[i] = scalers[i].fit_transform(X[i])
+
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 X_train, y_train = np.array(X_train), np.array(y_train) 
 
-inputs = Input(shape=(X_train.shape[1], X_train.shape[2]))
+
 
 layer1 = 50
 layer2 = 50 
@@ -42,7 +48,7 @@ rnn_cells_cnt = 50
 rnn_range = 2
 
 model = Model()
-
+inputs = Input(shape=(X_train.shape[1], X_train.shape[2]))
 lstm_out_one = LSTM(layer1,return_sequences=True)(inputs)
 dp0 = Dropout(0.3)(lstm_out_one)
 lstm_out_two = LSTM(layer2,return_sequences=True)(dp0)
@@ -95,3 +101,22 @@ ax2.set_title("Actual vs. Predicted Output")
 ax2.grid(True)
 
 plt.show()
+
+
+oos_file = 'data/lucky13_oos.csv'
+oos_data = pd.read_csv(oos_file)
+oos_df = oos_data.drop(columns=['outputC'])
+
+X, y = create_sequences(oos_df, timesteps)
+predictions = model.predict(X)
+
+# Plot actual vs predicted values
+plt.figure(figsize=(12, 6))
+plt.plot(range(len(y)), y, color='blue', label='Actual Values')
+plt.plot(range(len(predictions)), predictions, color='red', linestyle='--', label='Predicted Values')
+plt.title(f'Actual vs Predicted Values ')
+plt.xlabel('Index')
+plt.ylabel('Output')
+plt.legend()
+plt.show()
+
