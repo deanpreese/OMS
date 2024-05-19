@@ -11,7 +11,7 @@ from keras.callbacks import EarlyStopping
 
 from sklearn.metrics import mean_squared_error
 
-tf.config.set_visible_devices([], 'GPU')
+#tf.config.set_visible_devices([], 'GPU')
 
 data = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
 # Drop the outputC column
