@@ -3,11 +3,11 @@ import numpy as np
 import seaborn as sns
 import visualkeras
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 from keras.models import Sequential, Model
-from keras.layers import Dense, LSTM, LSTMCell, Dropout, Input,StackedRNNCells, RNN,  Bidirectional, Attention, BatchNormalization
+from keras.layers import Dense, LSTM, LSTMCell, Dropout, Input, StackedRNNCells, RNN, SimpleRNN, Bidirectional, Attention, BatchNormalization
 from tensorflow.keras.regularizers import l2
 from keras.callbacks import EarlyStopping
 import matplotlib.pyplot as plt
@@ -31,7 +31,8 @@ def create_sequences(data_in, seq_length_in):
 def normalize_sequences(sequences_in):
     scalers_out = {}
     for i in range(sequences_in.shape[0]):
-        scalers_out[i] = MinMaxScaler((-1,1))
+        #scalers_out[i] = MinMaxScaler((-1,1))
+        scalers_out[i] = MinMaxScaler()
         sequences_in[i] = scalers_out[i].fit_transform(sequences_in[i])
     return sequences_in, scalers_out
 
@@ -61,12 +62,12 @@ def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
     model = Sequential()
     model.add(Input(shape=(time_steps_in, X_train.shape[2])))
     
-    model.add(LSTM(units=400, return_sequences=True))
+    model.add(LSTM(units=200, return_sequences=True))
     #model.add(LSTM(units=200,return_sequences=True,kernel_initializer='glorot_uniform'))
     #model.add(Dropout(0.2))
     #model.add(LSTM(units=50,kernel_initializer='glorot_uniform',return_sequences=True))
     #model.add(Dropout(0.2))
-    #model.add(LSTM(units=150))
+    model.add(LSTM(units=150))
     #model.add(Dropout(0.2))
     model.add(Dense(units=25))
     #model.add(Dropout(0.2))
@@ -112,6 +113,97 @@ def train_model2(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
     history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
     
     return model, history_out
+
+
+
+
+def train_model3(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
+
+    model = Sequential()
+    
+    model.add(Input(shape=(time_steps_in, X_train.shape[2])))
+        
+    model.add(SimpleRNN(units = layer1,return_sequences = True))
+    model.add(LSTM(layer1, return_sequences=True))
+    #model.add(Dropout(0.2)) 
+    model.add(SimpleRNN(units = layer1,return_sequences = True))   
+    model.add(LSTM(layer2, return_sequences=True))
+    #model.add(Dropout(0.2))    
+    model.add(LSTM(layer2, return_sequences=True))
+    model.add(LSTM(50))
+    #model.add(Dropout(0.2))    
+    model.add(Dense(1))
+    
+    model.compile(optimizer='adam', loss='mse')
+    model.summary()
+    
+    early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
+    
+    return model, history_out
+
+def train_modelX(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
+    
+    regressor = Sequential()
+    regressor.add(Input(shape=(time_steps_in, X_train.shape[2])))
+    
+    regressor.add(
+    SimpleRNN(units = layer1,
+              return_sequences = True)
+             )
+
+    regressor.add(
+        Dropout(0.2)
+                )
+
+    # adding second RNN layer and dropout regulatization
+
+    regressor.add(
+        SimpleRNN(units = layer1,
+                return_sequences = True)
+                )
+
+    regressor.add(
+        Dropout(0.2)
+                )
+
+    # adding third RNN layer and dropout regulatization
+
+    regressor.add(
+        SimpleRNN(units = layer2,
+                return_sequences = True)
+                )
+
+    regressor.add(
+        Dropout(0.2)
+                )
+
+    # adding fourth RNN layer and dropout regulatization
+
+    regressor.add(
+        SimpleRNN(units = layer2)
+                )
+
+    regressor.add(
+        Dropout(0.2)
+                )
+
+    # adding the output layer
+    regressor.add(Dense(1))
+    
+
+    regressor.compile(optimizer='adam', loss='mse')  # Mean Squared Error and Mean Absolute Error as metrics
+    regressor.summary()
+    #visualkeras.layered_view(model).show() 
+
+    early_stopping = EarlyStopping(monitor='loss',patience=3)
+    history_out = regressor.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
+    
+    
+    return regressor, history_out
+
+
+
 
 def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timesteps_in, num_features_in):
     
@@ -187,7 +279,6 @@ train_file = pd.read_csv('data/sm13_3070.csv')
 #train_file = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
 data_loaded = train_file.drop(columns=['outputC'])
 
-
 #data_loaded = data_loaded.drop(columns=['STOK1'])
 #data_loaded = data_loaded.drop(columns=['RSI'])
 #data_loaded = data_loaded.drop(columns=['ATR2'])
@@ -204,14 +295,50 @@ data_loaded = data_loaded.drop(columns=['SDBB91'])
 
 #review_data(data_loaded)
 
-time_steps = 13  
+
+time_steps = 7  
 epocs_to_run = 100
-batch_size_to_run = 16
+batch_size_to_run = 64
 
-feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data_loaded, time_steps)
-model_result, history = train_model(X_train_out, y_train_out, X_test, y_test, time_steps, epocs_to_run, batch_size_to_run)
-eval_results(history, model_result, X_test, y_test, scalers_out, time_steps, feature_dim_out)
+run_data = []
 
+epocs_list = [5]
+time_step_list = [2,3,4,5,6,7,8,9,10,11,12, 13, 15, 20]
+layer_list1 = [75, 100, 125, 150, 200, 300]
+layer_list2 = [50, 50, 75, 100, 100, 150]
+
+
+for seq_length in time_step_list:
+    for epocs in epocs_list:
+       for x in range(len(layer_list1)):
+
+            feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data_loaded, seq_length)
+            model_result, history = train_model3(layer_list1[x], layer_list2[x], X_train_out, y_train_out, X_test, y_test, seq_length, epocs, batch_size_to_run)
+            
+            val_loss = model_result.evaluate(X_test, y_test)
+            predictions = model_result.predict(X_test)
+            predictions_reversed = reverse_scaling(predictions, scalers_out, seq_length, feature_dim_out )
+            
+            mse = mean_squared_error(y_test, predictions)
+            rmse = mse**.5
+
+            mse2 = mean_squared_error(y_test, predictions_reversed)
+            rmse2 = mse2**.5
+            
+            r_sq = r2_score(y_test,predictions)
+            
+            
+            r_d = {'Seq Len': seq_length, 'Features': feature_dim_out, 'R2': r_sq  , 'L1': layer_list1[x], 'L2': layer_list2[x], 'MSE': mse, 'RMSE': rmse, 'MSE_Reversed': mse2, 'RMSE_Reversed': rmse2 }
+            print(r_d)
+            run_data.append(r_d)
+
+
+
+d_out = pd.DataFrame(run_data)  
+d_out.columns = ["Seq Len", "Features", "R2", "L1", "L2","MSE", "RMSE", "MSE_Reversed", "RMSE_Reversed" ]
+print(d_out)
+d_out.to_csv("run_data.csv", index=False)
+    
+#eval_results(history, model_result, X_test, y_test, scalers_out, time_steps, feature_dim_out)
 #oos_file = 'data/lucky13_oos.csv'
 #load_and_predict_oos(oos_file, model_result, time_steps, feature_dim_out)
-
