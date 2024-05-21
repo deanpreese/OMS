@@ -9,7 +9,7 @@ import tensorflow as tf
 from keras.models import Sequential, Model
 from keras.layers import Dense, LSTM, LSTMCell, Dropout, Input,StackedRNNCells, RNN,  Bidirectional, Attention, BatchNormalization
 from tensorflow.keras.regularizers import l2
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import matplotlib.pyplot as plt
 import glob
 
@@ -19,8 +19,7 @@ def review_data(data_co):
     plt.figure(figsize=(16,8))
     #sns.heatmap(data_co.corr(),cmap="YlGnBu",square=False,linewidths=.2,center=0)
     sns.heatmap(data_co.corr(),cmap=sns.cubehelix_palette(as_cmap=True))
-    
-    
+        
     plt.show()
 
 
@@ -73,6 +72,7 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
     #ax1.set_title('Training and Validation Loss')
     ax1.grid(True)
 
+
     #plt.plot(history.history['accuracy'])
     #plt.plot(history.history['val_accuracy'])
     #plt.title('model accuracy')
@@ -97,24 +97,16 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
         
         if ((predictions[i][0] < 0 and y_test_in[i] > 0) or (predictions[i][0] > 0 and y_test_in[i] < 0)):
             
-            if abs(y_test_in[i]) > 1.0:
-                colors.append('white')
-                #dwns += 1
-            else:        
-                colors.append('red')
-                dwns += 1
+            colors.append('red')
+            dwns += 1
         
         elif ((predictions[i][0] > 0 and y_test_in[i] > 0) or (predictions[i][0] < 0 and y_test_in[i] < 0)):
             
-            if abs(y_test_in[i]) > 1.0:
-                colors.append('white')
-                #ups += 1
-            else:        
-                colors.append('green')   
-                ups += 1
+            colors.append('green')   
+            ups += 1
                            
         else:
-            colors.append('white')                 
+            colors.append('black')                 
             
     print("ups: " , ups , "        dwns: " , dwns)        
             
@@ -161,34 +153,38 @@ def load_and_predict_oos(file_path, model_in, seq_length, features):
     plt.show()
 
 
-def train_model2(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
 
-    layer1 = 200
-    layer2 = 150 
-    rnn_cells_cnt = 50
-    rnn_range = 3
+def train_modelX(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
+   
+    units=50
+    dropout_rate=0.6
+    learning_rate=0.00001
+   
+   
+    # Define the LSTM model
+    model = Sequential()
+    model.add(Input(shape=(time_steps_in, X_train.shape[2])))
+    
+    model.add(Bidirectional(LSTM(units ,return_sequences=True, activation='tanh'))) 
+    #model.add(Bidirectional(LSTM(units ,return_sequences=True)))
+    
+    model.add(Dropout(dropout_rate))
+    model.add(BatchNormalization())
 
-    model = Model()
-    inputs = Input(shape=(time_steps_in, X_train.shape[2]))
-    lstm_out_one = LSTM(layer1,return_sequences=True)(inputs)
-    dp0 = Dropout(0.3)(lstm_out_one)
-    lstm_out_two = LSTM(layer2,return_sequences=True)(dp0)
+    model.add(LSTM(units, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+    model.add(Dropout(dropout_rate))
+    model.add(LSTM(units // 2, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+    model.add(Dropout(dropout_rate))
+    model.add(BatchNormalization())
+    model.add(Dense(1, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 
-    rnn_cells = [LSTMCell(rnn_cells_cnt) for _ in range(rnn_range)]
-    stacked_rnn = StackedRNNCells(rnn_cells)
-    stacked_rnn_out = RNN(stacked_rnn)(lstm_out_two)
-
-    dp = Dropout(0.2)(stacked_rnn_out)
-    #output = Dense(1)(dp)  # Change activation and size based on your problem
-    output = Dense(1)(dp)  # Change activation and size based on your problem
-
-    model = Model(inputs=inputs, outputs=output)
-    model.compile(optimizer='adam', loss='mse')  # Mean Squared Error and Mean Absolute Error as metrics
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+    model.compile(optimizer=optimizer, loss='mse')
     model.summary()
-    #visualkeras.layered_view(model).show() 
-
-    early_stopping = EarlyStopping(monitor='loss',patience=3)
-    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
+   
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-5)
+    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping, reduce_lr])
     
     return model, history_out
 
@@ -196,71 +192,54 @@ def train_model2(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
 
 def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
    
-    units=16
-    dropout_rate=0.5
-    learning_rate=0.02
-   
-   
-    # Define the LSTM model
-    model = Sequential()
-    model.add(Input(shape=(time_steps_in, X_train.shape[2])))
-    
-    model.add(LSTM(units // 2, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-    model.add(Dropout(dropout_rate))
-    
-    #model.add(LSTM(units=5, return_sequences=True))
-    #model.add(Dropout(0.2))
-    #model.add(LSTM(units=50))
-    #model.add(LSTM(units=50,return_sequences=True,kernel_initializer='glorot_uniform'))
-    #model.add(Bidirectional(LSTM(units // 3 ,kernel_initializer='glorot_uniform',return_sequences=True)))
-    #model.add(Dropout(0.2))
-    
-    model.add(LSTM(units // 4, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-    model.add(Dropout(0.2))
-    
-    model.add(Dense(1, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+    layer1 = 30
+    layer2 = 20
+    dropout_rate=0.6
+    learning_rate=0.00001
 
+    model = Model()
+    inputs = Input(shape=(time_steps_in, X_train.shape[2]))
+    
+    att = Attention()([inputs, inputs])
+    
+    b1 = Bidirectional(LSTM(layer1 ,return_sequences=True, activation='relu'))(att)
+    dp0 = Dropout(dropout_rate)(b1)
+    bn = BatchNormalization()(dp0)    
+    
+    lstm1 = LSTM(layer2,activation='relu')(bn)    
+    
+    dp0 = Dropout(dropout_rate)(lstm1)
+    
+    #lstm2 = LSTM(layer2 //2,activation='tanh')(lstm1)
+    output = Dense(1, activation='linear')(dp0) # Change activation and size based on your problem
+        
+    model = Model(inputs=inputs, outputs=output)
+   
     optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
     model.compile(optimizer=optimizer, loss='mse')
     model.summary()
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
-    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
-    
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-5)
+    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping, reduce_lr])
+
     return model, history_out
+
+
 
 
 # -----------------------------------------------------------------------
 
 
-train_file = pd.read_csv('data/sm13_3070.csv')
-#train_file = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
-data_loaded = train_file.drop(columns=['outputC'])
-
-
-#data_loaded = data_loaded.drop(columns=['STOK1'])
-#data_loaded = data_loaded.drop(columns=['RSI'])
-data_loaded = data_loaded.drop(columns=['ATR2'])
-data_loaded = data_loaded.drop(columns=['ATR21'])
-data_loaded = data_loaded.drop(columns=['ATR3'])
-data_loaded = data_loaded.drop(columns=['ATR31']) 
-data_loaded = data_loaded.drop(columns=['ATR32']) 
-data_loaded = data_loaded.drop(columns=['ATR34'])   
-data_loaded = data_loaded.drop(columns=['ROC'])     
-data_loaded = data_loaded.drop(columns=['SDKC9'])   
-data_loaded = data_loaded.drop(columns=['SDKC91'])  
-data_loaded = data_loaded.drop(columns=['SDBB91'])  
-#data_loaded = data_loaded.drop(columns=['SDLR310'])
-
-#review_data(data_loaded)
-#exit()
-
-time_steps = 20
-epocs_to_run = 100
+#train_file = pd.read_csv('data/sm13_3070.csv')
+data_loaded = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+#data_loaded = pd.read_csv('data/Fractal_ALL_5M.csv')
+time_steps = 13
+epocs_to_run = 10
 batch_size_to_run = 64
 
 feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data_loaded, time_steps)
-model_result, history = train_model(X_train_out, y_train_out, X_test, y_test, time_steps, epocs_to_run, batch_size_to_run)
+model_result, history = train_modelX(X_train_out, y_train_out, X_test, y_test, time_steps, epocs_to_run, batch_size_to_run)
 eval_results(history, model_result, X_test, y_test, scalers_out, time_steps, feature_dim_out)
 
 #oos_file = 'data/lucky13_oos.csv'
