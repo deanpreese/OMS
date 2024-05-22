@@ -9,7 +9,7 @@ import tensorflow as tf
 from keras.models import Sequential, Model
 from keras.layers import Dense, LSTM, LSTMCell, Dropout, Input, StackedRNNCells, RNN, SimpleRNN, Bidirectional, Attention, BatchNormalization
 from tensorflow.keras.regularizers import l2
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import matplotlib.pyplot as plt
 import glob
 
@@ -55,6 +55,27 @@ def sequence_and_normalize(data_in, seq_length_in):
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.3, random_state=0)
     
     return feature_dim, scalers, X_train, X_val, y_train, y_val
+
+
+def eval_win_loss(history_in, model_in, X_test_in, y_test_in, scalers_in, timesteps_in, num_features_in):
+    
+    ups = 0
+    dwns = 0
+    
+    predictions = model_in.predict(X_test_in)
+    for i in range(len(predictions)):
+        #print(f"Predicted: {predictions[i][0]} Actual: {y_test_in[i]}")
+        
+        if ((predictions[i][0] < 0 and y_test_in[i] > 0) or (predictions[i][0] > 0 and y_test_in[i] < 0)):
+            dwns += 1
+        
+        elif ((predictions[i][0] > 0 and y_test_in[i] > 0) or (predictions[i][0] < 0 and y_test_in[i] < 0)):
+            ups += 1
+                        
+            
+    print("ups: " , ups , "        dwns: " , dwns)        
+    
+    return ups, dwns
 
 
 def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timesteps_in, num_features_in):
@@ -186,104 +207,39 @@ def train_model2(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
 
 
 
-
-def train_modelX(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
-    
-    regressor = Sequential()
-    regressor.add(Input(shape=(time_steps_in, X_train.shape[2])))
-    
-    regressor.add(
-    SimpleRNN(units = layer1,
-              return_sequences = True)
-             )
-
-    regressor.add(
-        Dropout(0.2)
-                )
-
-    # adding second RNN layer and dropout regulatization
-
-    regressor.add(
-        SimpleRNN(units = layer1,
-                return_sequences = True)
-                )
-
-    regressor.add(
-        Dropout(0.2)
-                )
-
-    # adding third RNN layer and dropout regulatization
-
-    regressor.add(
-        SimpleRNN(units = layer2,
-                return_sequences = True)
-                )
-
-    regressor.add(
-        Dropout(0.2)
-                )
-
-    # adding fourth RNN layer and dropout regulatization
-
-    regressor.add(
-        SimpleRNN(units = layer2)
-                )
-
-    regressor.add(
-        Dropout(0.2)
-                )
-
-    # adding the output layer
-    regressor.add(Dense(1))
-    
-
-    regressor.compile(optimizer='adam', loss='mse')  # Mean Squared Error and Mean Absolute Error as metrics
-    regressor.summary()
-    #visualkeras.layered_view(model).show() 
-
-    early_stopping = EarlyStopping(monitor='loss',patience=3)
-    history_out = regressor.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
-    
-    
-    return regressor, history_out
-
-
-
-
 def train_model3(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
 
-    
     dropout_rate=0.5
-    learning_rate=0.02
+    learning_rate=0.001
+    
+    model = Model()
+    inputs = Input(shape=(time_steps_in, X_train.shape[2]))
+    
+    att = Attention()([inputs, inputs])
+    
+    b1 = Bidirectional(LSTM(layer1 ,return_sequences=True, activation='relu'))(att)
+    dp0 = Dropout(dropout_rate)(b1)
+    bn = BatchNormalization()(dp0)    
+    
+    lstm1 = LSTM(layer2,activation='relu')(bn)    
+    
+    dp0 = Dropout(dropout_rate)(lstm1)
+    
+    #lstm2 = LSTM(layer2 //2,activation='tanh')(lstm1)
+    output = Dense(1, activation='linear')(dp0) # Change activation and size based on your problem
+        
+    model = Model(inputs=inputs, outputs=output)
    
-   
-    # Define the LSTM model
-    model = Sequential()
-    model.add(Input(shape=(time_steps_in, X_train.shape[2])))
-    
-    model.add(LSTM(layer1 , return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-    model.add(Dropout(dropout_rate))
-    
-    #model.add(LSTM(units=5, return_sequences=True))
-    #model.add(Dropout(0.2))
-    #model.add(LSTM(units=50))
-    #model.add(LSTM(units=50,return_sequences=True,kernel_initializer='glorot_uniform'))
-    model.add(Bidirectional(LSTM(layer1  ,kernel_initializer='glorot_uniform',return_sequences=True)))
-    #model.add(Dropout(0.2))
-    
-    model.add(LSTM(layer2 , return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-    model.add(Dropout(dropout_rate))
-    
-    model.add(Dense(1, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-
     optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
     model.compile(optimizer=optimizer, loss='mse')
     model.summary()
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
-    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
-    
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-5)
+    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping, reduce_lr])
+
     return model, history_out
+
 
 # -----------------------------------------------------------------------
 
@@ -310,14 +266,14 @@ data_loaded = data_loaded.drop(columns=['SDBB91'])
 
 time_steps = 7  
 epocs_to_run = 100
-batch_size_to_run = 16
+batch_size_to_run = 32
 
 run_data = []
 
 epocs_list = [100]
-time_step_list = [2,3,4,5,6,7,8,9,10,11,12, 13, 15, 20]
-layer_list1 = [3, 4, 6, 8, 10, 11, 13, 17,25,50,500]
-layer_list2 = [2, 2, 2, 4, 5, 6, 6, 7,12,25,250]
+time_step_list = [19,21, 23, 25]
+layer_list1 = [35, 50, 75, 100]
+layer_list2 = [17, 25, 35, 50]
 
 
 for seq_length in time_step_list:
@@ -329,6 +285,9 @@ for seq_length in time_step_list:
             
             val_loss = model_result.evaluate(X_test, y_test)
             predictions = model_result.predict(X_test)
+            
+            ups, dwns = eval_win_loss(history, model_result, X_test, y_test, scalers_out, time_steps, feature_dim_out)
+            
             #predictions_reversed = reverse_scaling(predictions, scalers_out, seq_length, feature_dim_out )
             
             mse = mean_squared_error(y_test, predictions)
@@ -340,7 +299,8 @@ for seq_length in time_step_list:
             r_sq = r2_score(y_test,predictions)
             
             
-            r_d = {'Seq Len': seq_length, 'Features': feature_dim_out, 'R2': r_sq  , 'L1': layer_list1[x], 'L2': layer_list2[x], 'MSE': mse, 'RMSE': rmse, }
+            r_d = {'Seq Len': seq_length, 'Features': feature_dim_out, 'R2': r_sq  , 
+                   'L1': layer_list1[x], 'L2': layer_list2[x], 'MSE': mse, 'RMSE': rmse, 'Wins': ups, 'Loses': dwns }
             print(r_d)
             run_data.append(r_d)
 

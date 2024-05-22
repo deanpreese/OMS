@@ -58,6 +58,25 @@ def sequence_and_normalize(data_in, seq_length_in):
     
     return feature_dim, scalers, X_train, X_val, y_train, y_val
 
+def eval_win_loss(history_in, model_in, X_test_in, y_test_in, scalers_in, timesteps_in, num_features_in):
+    
+    ups = 0
+    dwns = 0
+    
+    predictions = model_in.predict(X_test_in)
+    for i in range(len(predictions)):
+        #print(f"Predicted: {predictions[i][0]} Actual: {y_test_in[i]}")
+        
+        if ((predictions[i][0] < 0 and y_test_in[i] > 0) or (predictions[i][0] > 0 and y_test_in[i] < 0)):
+            dwns += 1
+        
+        elif ((predictions[i][0] > 0 and y_test_in[i] > 0) or (predictions[i][0] < 0 and y_test_in[i] < 0)):
+            ups += 1
+                        
+            
+    print("ups: " , ups , "        dwns: " , dwns)        
+    
+    return ups, dwns
 
 
 def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timesteps_in, num_features_in):
@@ -156,11 +175,10 @@ def load_and_predict_oos(file_path, model_in, seq_length, features):
 
 def train_modelX(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
    
-    units=50
+    units=30
     dropout_rate=0.6
-    learning_rate=0.00001
-   
-   
+    learning_rate=0.001
+  
     # Define the LSTM model
     model = Sequential()
     model.add(Input(shape=(time_steps_in, X_train.shape[2])))
@@ -194,9 +212,10 @@ def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
    
     layer1 = 30
     layer2 = 20
+    
     dropout_rate=0.6
-    learning_rate=0.00001
-
+    learning_rate=0.001
+    
     model = Model()
     inputs = Input(shape=(time_steps_in, X_train.shape[2]))
     
@@ -232,11 +251,14 @@ def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
 
 
 #train_file = pd.read_csv('data/sm13_3070.csv')
-data_loaded = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+file_loaded = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+data_loaded = file_loaded.drop(columns=['outputC'])
+
 #data_loaded = pd.read_csv('data/Fractal_ALL_5M.csv')
+
 time_steps = 13
-epocs_to_run = 10
-batch_size_to_run = 64
+epocs_to_run = 100
+batch_size_to_run = 32
 
 feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data_loaded, time_steps)
 model_result, history = train_modelX(X_train_out, y_train_out, X_test, y_test, time_steps, epocs_to_run, batch_size_to_run)
