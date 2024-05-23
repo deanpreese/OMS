@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import seaborn as sns
-import visualkeras
+
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
@@ -147,34 +147,35 @@ def load_and_predict_oos(file_path, model_in, seq_length, features):
     plt.show()
 
 
-def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
+def train_model(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
    
-    # Define the LSTM model
-    model = Sequential()
-    model.add(Input(shape=(time_steps_in, X_train.shape[2])))
+    dropout_rate=0.5
+    learning_rate=0.0001
     
-    model.add(LSTM(units=200, return_sequences=True))
-    #model.add(LSTM(units=200,return_sequences=True,kernel_initializer='glorot_uniform'))
-    #model.add(Dropout(0.2))
-    #model.add(LSTM(units=50,kernel_initializer='glorot_uniform',return_sequences=True))
-    #model.add(Dropout(0.2))
-    model.add(LSTM(units=150))
-    #model.add(Dropout(0.2))
-    model.add(Dense(units=25))
-    #model.add(Dropout(0.2))
-    model.add(Dense(1))
-
-    model.compile(optimizer='adam', loss='mse')
+    model = Model()
+    inputs = Input(shape=(time_steps_in, X_train.shape[2]))
+    b1 = Bidirectional(LSTM(layer1 // 2 ,return_sequences=True, activation='relu'))(inputs)
+    b2 = Bidirectional(LSTM(layer1 // 2,return_sequences=True, activation='relu'))(b1)
+    dp0 = Dropout(dropout_rate)(b1)
+    bn = BatchNormalization()(dp0)    
+    lstm1 = LSTM(layer2,activation='relu')(bn)    
+    dp0 = Dropout(dropout_rate)(lstm1)
+    output = Dense(1, activation='linear')(dp0) # Change activation and size based on your problem
+        
+    model = Model(inputs=inputs, outputs=output)
+   
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+    model.compile(optimizer=optimizer, loss='mse')
     model.summary()
-    #visualkeras.layered_view(model).show() 
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
-    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
-    
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-5)
+    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping, reduce_lr])
+
     return model, history_out
 
 
-def train_model2(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
+def train_model2(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
 
     layer1 = 200
     layer2 = 150 
@@ -249,31 +250,32 @@ data_loaded = train_file.drop(columns=['outputC'])
 
 #data_loaded = data_loaded.drop(columns=['STOK1'])
 #data_loaded = data_loaded.drop(columns=['RSI'])
-data_loaded = data_loaded.drop(columns=['ATR2'])
-data_loaded = data_loaded.drop(columns=['ATR21'])
-data_loaded = data_loaded.drop(columns=['ATR3'])
-data_loaded = data_loaded.drop(columns=['ATR31'])
-data_loaded = data_loaded.drop(columns=['ATR32'])
-data_loaded = data_loaded.drop(columns=['ATR34'])
-data_loaded = data_loaded.drop(columns=['ROC'])
-data_loaded = data_loaded.drop(columns=['SDKC9'])
-data_loaded = data_loaded.drop(columns=['SDKC91'])
-data_loaded = data_loaded.drop(columns=['SDBB91'])
+#data_loaded = data_loaded.drop(columns=['ATR2'])
+#data_loaded = data_loaded.drop(columns=['ATR21'])
+#data_loaded = data_loaded.drop(columns=['ATR3'])
+#data_loaded = data_loaded.drop(columns=['ATR31'])
+#data_loaded = data_loaded.drop(columns=['ATR32'])
+#data_loaded = data_loaded.drop(columns=['ATR34'])
+#data_loaded = data_loaded.drop(columns=['ROC'])
+#data_loaded = data_loaded.drop(columns=['SDKC9'])
+#data_loaded = data_loaded.drop(columns=['SDKC91'])
+#data_loaded = data_loaded.drop(columns=['SDBB91'])
 #data_loaded = data_loaded.drop(columns=['SDLR310'])
 
 #review_data(data_loaded)
 
 
-time_steps = 7  
+#time_steps = 7  
 epocs_to_run = 100
 batch_size_to_run = 32
 
 run_data = []
 
 epocs_list = [100]
-time_step_list = [19,21, 23, 25]
-layer_list1 = [35, 50, 75, 100]
-layer_list2 = [17, 25, 35, 50]
+#time_step_list = [5,7,9,11,13,15,17,19,21, 23, 25]
+time_step_list = [27,31,35, 40,50,60]
+layer_list1 = [35, 50, 75, 100, 150,200]
+layer_list2 = [17, 25, 35, 50, 75,100 ]
 
 
 for seq_length in time_step_list:
@@ -281,12 +283,12 @@ for seq_length in time_step_list:
        for x in range(len(layer_list1)):
 
             feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data_loaded, seq_length)
-            model_result, history = train_model3(layer_list1[x], layer_list2[x], X_train_out, y_train_out, X_test, y_test, seq_length, epocs, batch_size_to_run)
+            model_result, history = train_model(layer_list1[x], layer_list2[x], X_train_out, y_train_out, X_test, y_test, seq_length, epocs, batch_size_to_run)
             
             val_loss = model_result.evaluate(X_test, y_test)
             predictions = model_result.predict(X_test)
             
-            ups, dwns = eval_win_loss(history, model_result, X_test, y_test, scalers_out, time_steps, feature_dim_out)
+            ups, dwns = eval_win_loss(history, model_result, X_test, y_test, scalers_out, seq_length, feature_dim_out)
             
             #predictions_reversed = reverse_scaling(predictions, scalers_out, seq_length, feature_dim_out )
             
@@ -309,7 +311,7 @@ for seq_length in time_step_list:
 d_out = pd.DataFrame(run_data)  
 d_out.columns = ["Seq Len", "Features", "R2", "L1", "L2","MSE", "RMSE", "MSE_Reversed", "RMSE_Reversed" ]
 print(d_out)
-d_out.to_csv("run_data.csv", index=False)
+d_out.to_csv("run_data_all_features_2.csv", index=False)
     
 #eval_results(history, model_result, X_test, y_test, scalers_out, time_steps, feature_dim_out)
 #oos_file = 'data/lucky13_oos.csv'
