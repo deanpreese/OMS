@@ -175,9 +175,9 @@ def load_and_predict_oos(file_path, model_in, seq_length, features):
 
 def train_modelX(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
    
-    units=30
+    units=18
     dropout_rate=0.6
-    learning_rate=0.001
+    learning_rate=0.00001
   
     # Define the LSTM model
     model = Sequential()
@@ -187,13 +187,13 @@ def train_modelX(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
     #model.add(Bidirectional(LSTM(units ,return_sequences=True)))
     
     model.add(Dropout(dropout_rate))
-    model.add(BatchNormalization())
+    #model.add(BatchNormalization())
 
     model.add(LSTM(units, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
     model.add(Dropout(dropout_rate))
     model.add(LSTM(units // 2, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
     model.add(Dropout(dropout_rate))
-    model.add(BatchNormalization())
+    #odel.add(BatchNormalization())
     model.add(Dense(1, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 
     optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
@@ -219,18 +219,18 @@ def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
     model = Model()
     inputs = Input(shape=(time_steps_in, X_train.shape[2]))
     
-    att = Attention()([inputs, inputs])
+    #att = Attention()([inputs, inputs])
     
-    b1 = Bidirectional(LSTM(layer1 ,return_sequences=True, activation='relu'))(att)
-    dp0 = Dropout(dropout_rate)(b1)
-    bn = BatchNormalization()(dp0)    
+    b1 = Bidirectional(LSTM(layer1 ,return_sequences=True, activation='relu'))(inputs)
+    #dp0 = Dropout(dropout_rate)(b1)
+    #bn = BatchNormalization()(dp0)    
     
-    lstm1 = LSTM(layer2,activation='relu')(bn)    
+    lstm1 = LSTM(layer2,activation='relu')(b1)    
     
     dp0 = Dropout(dropout_rate)(lstm1)
     
     #lstm2 = LSTM(layer2 //2,activation='tanh')(lstm1)
-    output = Dense(1, activation='linear')(dp0) # Change activation and size based on your problem
+    output = Dense(1)(dp0) # Change activation and size based on your problem
         
     model = Model(inputs=inputs, outputs=output)
    
@@ -238,7 +238,7 @@ def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
     model.compile(optimizer=optimizer, loss='mse')
     model.summary()
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-5)
     history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping, reduce_lr])
 
@@ -250,13 +250,12 @@ def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
 # -----------------------------------------------------------------------
 
 
-#train_file = pd.read_csv('data/sm13_3070.csv')
+#file_loaded = pd.read_csv("data/IND_LSTM_ALL.csv")
+#file_loaded = pd.read_csv('data/sm13_3070.csv')
 file_loaded = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
 data_loaded = file_loaded.drop(columns=['outputC'])
 
-#data_loaded = pd.read_csv('data/Fractal_ALL_5M.csv')
-
-time_steps = 13
+time_steps = 15
 epocs_to_run = 100
 batch_size_to_run = 32
 

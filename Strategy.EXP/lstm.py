@@ -8,6 +8,8 @@ from sklearn.model_selection import train_test_split
 import tensorflow as tf
 from keras.models import Sequential, Model
 from keras.layers import Dense, LSTM, LSTMCell, Dropout, Input,StackedRNNCells, RNN,  Bidirectional, Attention, BatchNormalization
+from keras.layers import MultiHeadAttention, LayerNormalization, Add
+
 from tensorflow.keras.regularizers import l2
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import matplotlib.pyplot as plt
@@ -140,95 +142,33 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
     plt.show()
     
 
-def load_and_predict_oos(file_path, model_in, seq_length, features):
-    df = pd.read_csv(file_path)
-    df = df.drop(columns=['outputC'])
-
-    X, y = create_sequences(df, seq_length)
-    X, scalers_r = normalize_sequences(X)
-
-    predictions = model_in.predict(X)
-    predictions_reversed = reverse_scaling(predictions, scalers_r, seq_length, features)
-
-    # Plot actual vs predicted values
-    plt.figure(figsize=(12, 6))
-    plt.plot(range(len(y)), y, color='blue', label='Actual Values')
-    plt.plot(range(len(predictions_reversed)), predictions_reversed, color='red', linestyle='--', label='Predicted Values')
-    plt.title(f'Actual vs Predicted Values for {file_path}')
-    plt.xlabel('Index')
-    plt.ylabel('Output')
-    plt.legend()
-    plt.show()
-
-
-def train_model2(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
-
-    layer1 = 200
-    layer2 = 150 
-    rnn_cells_cnt = 50
-    rnn_range = 3
-
-    model = Model()
-    inputs = Input(shape=(time_steps_in, X_train.shape[2]))
-    lstm_out_one = LSTM(layer1,return_sequences=True)(inputs)
-    dp0 = Dropout(0.3)(lstm_out_one)
-    lstm_out_two = LSTM(layer2,return_sequences=True)(dp0)
-
-    rnn_cells = [LSTMCell(rnn_cells_cnt) for _ in range(rnn_range)]
-    stacked_rnn = StackedRNNCells(rnn_cells)
-    stacked_rnn_out = RNN(stacked_rnn)(lstm_out_two)
-
-    dp = Dropout(0.2)(stacked_rnn_out)
-    #output = Dense(1)(dp)  # Change activation and size based on your problem
-    output = Dense(1)(dp)  # Change activation and size based on your problem
-
-    model = Model(inputs=inputs, outputs=output)
-    model.compile(optimizer='adam', loss='mse')  # Mean Squared Error and Mean Absolute Error as metrics
-    model.summary()
-    #visualkeras.layered_view(model).show() 
-
-    early_stopping = EarlyStopping(monitor='loss',patience=3)
-    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
+# Define a single transformer encoder layer
+def transformer_encoder_layer(input_tensor, num_heads, key_dim, ff_dim, rate=0.1):
+    # Self-attention layer
+    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=key_dim)(input_tensor, input_tensor)
+    attn_output = Dropout(rate)(attn_output)
+    attn_output = LayerNormalization(epsilon=1e-6)(attn_output + input_tensor)
     
-    return model, history_out
+    # Feed-forward layer
+    ff_output = Dense(ff_dim, activation='relu')(attn_output)
+    ff_output = Dense(key_dim)(ff_output)
+    ff_output = Dropout(rate)(ff_output)
+    encoder_output = LayerNormalization(epsilon=1e-6)(ff_output + attn_output)
+    
+    return encoder_output
 
 
+def ModelT():
+    # Input tensor
+    input_tensor = Input(shape=(input_seq_length, input_dim))
 
-def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
-   
-    layer1 = 30
-    layer2 = 20
-    
-    dropout_rate=0.6
-    learning_rate=0.001
-    
-    model = Model()
-    inputs = Input(shape=(time_steps_in, X_train.shape[2]))
-    
-    att = Attention()([inputs, inputs])
-    
-    b1 = Bidirectional(LSTM(layer1 ,return_sequences=True, activation='relu'))(att)
-    dp0 = Dropout(dropout_rate)(b1)
-    bn = BatchNormalization()(dp0)    
-    
-    lstm1 = LSTM(layer2,activation='relu')(bn)    
-    
-    dp0 = Dropout(dropout_rate)(lstm1)
-    
-    #lstm2 = LSTM(layer2 //2,activation='tanh')(lstm1)
-    output = Dense(1, activation='linear')(dp0) # Change activation and size based on your problem
-        
-    model = Model(inputs=inputs, outputs=output)
-   
-    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-    model.compile(optimizer=optimizer, loss='mse')
-    model.summary()
+    # Apply the transformer encoder layer
+    output_tensor = transformer_encoder_layer(input_tensor, num_heads=8, key_dim=64, ff_dim=256)
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-5)
-    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping, reduce_lr])
+    # Define the model
+    model = Model(input_tensor, output_tensor)
+    model.compile(optimizer='adam', loss='mse')
 
-    return model, history_out
 
 
 

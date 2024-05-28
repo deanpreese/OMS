@@ -51,8 +51,14 @@ def sequence_and_normalize(data_in, seq_length_in):
     
     feature_dim = data_in.shape[1] - 1
     X, y = create_sequences(data_in, seq_length_in)
+    print("data_sequenced")
+    
     X, scalers = normalize_sequences(X)
+    
+    print("data_normalized")
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.3, random_state=0)
+    
+    print("data_split")
     
     return feature_dim, scalers, X_train, X_val, y_train, y_val
 
@@ -240,29 +246,28 @@ def train_model3(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, 
 
 # -----------------------------------------------------------------------
 
-
-train_file=pd.read_csv("data/IND_LSTM_ALL.csv")
-#train_file = pd.read_csv('data/sm13_3070.csv')
+train_file = pd.read_csv('data/sm13_3070.csv')
 #train_file = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
 data_loaded = train_file.drop(columns=['outputC'])
-
 
 #data_loaded = data_loaded.drop(columns=['STOK1'])
 #data_loaded = data_loaded.drop(columns=['RSI'])
 #data_loaded = data_loaded.drop(columns=['ATR2'])
-#data_loaded = data_loaded.drop(columns=['ATR21'])
+data_loaded = data_loaded.drop(columns=['ATR21'])
 #data_loaded = data_loaded.drop(columns=['ATR3'])
-#data_loaded = data_loaded.drop(columns=['ATR31'])
-#data_loaded = data_loaded.drop(columns=['ATR32'])
-#data_loaded = data_loaded.drop(columns=['ATR34'])
+data_loaded = data_loaded.drop(columns=['ATR31'])
+data_loaded = data_loaded.drop(columns=['ATR32'])
+data_loaded = data_loaded.drop(columns=['ATR34'])
 #data_loaded = data_loaded.drop(columns=['ROC'])
 #data_loaded = data_loaded.drop(columns=['SDKC9'])
-#data_loaded = data_loaded.drop(columns=['SDKC91'])
+data_loaded = data_loaded.drop(columns=['SDKC91'])
 #data_loaded = data_loaded.drop(columns=['SDBB91'])
 #data_loaded = data_loaded.drop(columns=['SDLR310'])
 
-#review_data(data_loaded)
 
+data_loaded = data_loaded.drop(columns=['outputC'])
+
+print("data_loaded")
 
 #time_steps = 7  
 epocs_to_run = 100
@@ -271,14 +276,10 @@ batch_size_to_run = 32
 run_data = []
 
 epocs_list = [100]
-time_step_list = [15,17,19,21, 23, 25]
-#time_step_list = [23,25,27,31,35, 40]
-
-layer_list1 = [25, 50, 100, 200]
-layer_list2 = [12, 25, 50, 100 ]
-
-#layer_list1 = [25, 27, 30, 35]
-#layer_list2 = [12, 13, 15, 17 ]
+#time_step_list = [5,7,9,11,13,15,17,19,21, 23, 25]
+time_step_list = [27,31,35, 40,50,60]
+layer_list1 = [35, 50, 75, 100, 150,200]
+layer_list2 = [17, 25, 35, 50, 75,100 ]
 
 
 for seq_length in time_step_list:
@@ -292,8 +293,9 @@ for seq_length in time_step_list:
             predictions = model_result.predict(X_test)
             
             ups, dwns = eval_win_loss(history, model_result, X_test, y_test, scalers_out, seq_length, feature_dim_out)
+            ups, dwns = eval_win_loss(history, model_result, X_test, y_test, scalers_out, seq_length, feature_dim_out)
             
-            #predictions_reversed = reverse_scaling(predictions, scalers_out, seq_length, feature_dim_out )
+            predictions_reversed = reverse_scaling(predictions, scalers_out, seq_length, feature_dim_out )
             
             #mse = mean_squared_error(y_test, predictions)
             #rmse = mse**.5
