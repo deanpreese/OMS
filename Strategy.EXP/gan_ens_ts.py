@@ -48,6 +48,7 @@ def create_gan(generators, discriminator, input_shape):
     gan_output = discriminator(combined_output)
     gan = Model(gan_inputs, gan_output)
     gan.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5))
+    gan.summary()
     return gan
 
 # Function to train the GAN model with early stopping
@@ -163,7 +164,7 @@ def evaluate_gan(generators, X_tests, y_test, scaler):
     mse = mean_squared_error(y_test_flat, y_pred_flat)
     rmse = np.sqrt(mse)
     
-    return y_test_rescaled, y_pred_rescaled, mse, rmse
+    return y_test_rescaled, y_pred_rescaled, mse, rmse, y_test_flat, y_pred_flat
 
 # Plotting function
 def plot_results(y_test, y_pred, history):
@@ -235,18 +236,20 @@ history = train_gan([generator1, generator2, generator3], discriminator, gan,
                     [X_train_scaled1, X_train_scaled2, X_train_scaled3], y_train_scaled, 
                     epochs=1000, batch_size=64, patience=10)
 
-# Save the models and scalers
-save_models([generator1, generator2, generator3], discriminator, gan)
-save_scalers(scaler_X, scaler_y)
 
 # Evaluate the model
-y_test_rescaled, y_pred_rescaled, mse, rmse = evaluate_gan([generator1, generator2, generator3], 
+y_test_rescaled, y_pred_rescaled, mse, rmse, y_test_flat, y_pred_flat = evaluate_gan([generator1, generator2, generator3], 
                                                            [X_test_scaled1, X_test_scaled2, X_test_scaled3], 
                                                            y_test_scaled, scaler_y)
 print(f"MSE: {mse}, RMSE: {rmse}")
 
 # Plot the results
-plot_results(y_test_rescaled, y_pred_rescaled, history)
+plot_results(y_test_flat, y_pred_flat, history)
+
+
+# Save the models and scalers
+#save_models([generator1, generator2, generator3], discriminator, gan)
+#save_scalers(scaler_X, scaler_y)
 
 
 """
