@@ -177,33 +177,29 @@ def train_model(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, e
 
 def train_model2(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
 
-    layer1 = 200
-    layer2 = 150 
-    rnn_cells_cnt = 50
-    rnn_range = 3
+    dropout_rate=0.5
+    learning_rate=0.00001
 
     model = Model()
     inputs = Input(shape=(time_steps_in, X_train.shape[2]))
     lstm_out_one = LSTM(layer1,return_sequences=True)(inputs)
-    dp0 = Dropout(0.3)(lstm_out_one)
+    dp0 = Dropout(dropout_rate)(lstm_out_one)
     lstm_out_two = LSTM(layer2,return_sequences=True)(dp0)
-
-    rnn_cells = [LSTMCell(rnn_cells_cnt) for _ in range(rnn_range)]
-    stacked_rnn = StackedRNNCells(rnn_cells)
-    stacked_rnn_out = RNN(stacked_rnn)(lstm_out_two)
-
-    dp = Dropout(0.2)(stacked_rnn_out)
+    dp = Dropout(dropout_rate)(lstm_out_two)
     #output = Dense(1)(dp)  # Change activation and size based on your problem
     output = Dense(1)(dp)  # Change activation and size based on your problem
 
     model = Model(inputs=inputs, outputs=output)
-    model.compile(optimizer='adam', loss='mse')  # Mean Squared Error and Mean Absolute Error as metrics
+   
+      
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+    model.compile(optimizer=optimizer, loss='mse')
     model.summary()
-    #visualkeras.layered_view(model).show() 
 
-    early_stopping = EarlyStopping(monitor='loss',patience=3)
-    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
-    
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-5)
+    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping, reduce_lr])
+
     return model, history_out
 
 
@@ -211,7 +207,7 @@ def train_model2(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, 
 def train_model3(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
 
     dropout_rate=0.5
-    learning_rate=0.001
+    learning_rate=0.0001
     
     model = Model()
     inputs = Input(shape=(time_steps_in, X_train.shape[2]))
@@ -244,9 +240,12 @@ def train_model3(layer1, layer2, X_train, y_train, X_val, y_val, time_steps_in, 
 
 # -----------------------------------------------------------------------
 
-train_file = pd.read_csv('data/sm13_3070.csv')
+
+train_file=pd.read_csv("data/IND_LSTM_ALL.csv")
+#train_file = pd.read_csv('data/sm13_3070.csv')
 #train_file = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
 data_loaded = train_file.drop(columns=['outputC'])
+
 
 #data_loaded = data_loaded.drop(columns=['STOK1'])
 #data_loaded = data_loaded.drop(columns=['RSI'])
@@ -272,10 +271,14 @@ batch_size_to_run = 32
 run_data = []
 
 epocs_list = [100]
-#time_step_list = [5,7,9,11,13,15,17,19,21, 23, 25]
-time_step_list = [27,31,35, 40,50,60]
-layer_list1 = [35, 50, 75, 100, 150,200]
-layer_list2 = [17, 25, 35, 50, 75,100 ]
+time_step_list = [15,17,19,21, 23, 25]
+#time_step_list = [23,25,27,31,35, 40]
+
+layer_list1 = [25, 50, 100, 200]
+layer_list2 = [12, 25, 50, 100 ]
+
+#layer_list1 = [25, 27, 30, 35]
+#layer_list2 = [12, 13, 15, 17 ]
 
 
 for seq_length in time_step_list:
@@ -283,7 +286,7 @@ for seq_length in time_step_list:
        for x in range(len(layer_list1)):
 
             feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data_loaded, seq_length)
-            model_result, history = train_model(layer_list1[x], layer_list2[x], X_train_out, y_train_out, X_test, y_test, seq_length, epocs, batch_size_to_run)
+            model_result, history = train_model3(layer_list1[x], layer_list2[x], X_train_out, y_train_out, X_test, y_test, seq_length, epocs, batch_size_to_run)
             
             val_loss = model_result.evaluate(X_test, y_test)
             predictions = model_result.predict(X_test)
@@ -292,17 +295,21 @@ for seq_length in time_step_list:
             
             #predictions_reversed = reverse_scaling(predictions, scalers_out, seq_length, feature_dim_out )
             
-            mse = mean_squared_error(y_test, predictions)
-            rmse = mse**.5
+            #mse = mean_squared_error(y_test, predictions)
+            #rmse = mse**.5
 
             #mse2 = mean_squared_error(y_test, predictions_reversed)
             #rmse2 = mse2**.5
             
-            r_sq = r2_score(y_test,predictions)
+            #r_sq = r2_score(y_test,predictions)
             
             
-            r_d = {'Seq Len': seq_length, 'Features': feature_dim_out, 'R2': r_sq  , 
-                   'L1': layer_list1[x], 'L2': layer_list2[x], 'MSE': mse, 'RMSE': rmse, 'Wins': ups, 'Loses': dwns }
+            #r_d = {'Seq Len': seq_length, 'Features': feature_dim_out, 'R2': r_sq  , 
+            #       'L1': layer_list1[x], 'L2': layer_list2[x], 'MSE': mse, 'RMSE': rmse, 'Wins': ups, 'Loses': dwns }
+
+            r_d = {'Seq Len': seq_length, 'Features': feature_dim_out, 
+                   'L1': layer_list1[x], 'L2': layer_list2[x], 'Wins': ups, 'Loses': dwns }
+
             print(r_d)
             run_data.append(r_d)
 
@@ -311,7 +318,7 @@ for seq_length in time_step_list:
 d_out = pd.DataFrame(run_data)  
 d_out.columns = ["Seq Len", "Features", "R2", "L1", "L2","MSE", "RMSE", "MSE_Reversed", "RMSE_Reversed" ]
 print(d_out)
-d_out.to_csv("run_data_all_features_2.csv", index=False)
+#d_out.to_csv("run_data_8_features_2.csv", index=False)
     
 #eval_results(history, model_result, X_test, y_test, scalers_out, time_steps, feature_dim_out)
 #oos_file = 'data/lucky13_oos.csv'
