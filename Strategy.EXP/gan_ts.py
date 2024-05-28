@@ -136,9 +136,9 @@ def train_model(df, timesteps, n_features, latent_dim, batch_size, epochs, steps
                 print(f"Epoch {epoch}, Step {step} G: {gen_loss}  D:  {total_loss}  ")
 
         # Optionally save the model periodically
-        if epoch % 100 == 0:
-            save_model(generator, f"m_data/generator_epoch_{epoch}.keras")
-            save_model(discriminator, f"m_data/discriminator_epoch_{epoch}.keras")
+        #if epoch % 100 == 0:
+        #    save_model(generator, f"m_data/generator_epoch_{epoch}.keras")
+        #    save_model(discriminator, f"m_data/discriminator_epoch_{epoch}.keras")
 
         # Check for early stopping
         if early_stopping.stopped_epoch > 0:
