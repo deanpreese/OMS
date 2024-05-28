@@ -175,7 +175,7 @@ def load_and_predict_oos(file_path, model_in, seq_length, features):
 
 def train_modelX(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
    
-    units=18
+    units=35
     dropout_rate=0.6
     learning_rate=0.00001
   
@@ -183,16 +183,17 @@ def train_modelX(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
     model = Sequential()
     model.add(Input(shape=(time_steps_in, X_train.shape[2])))
     
-    model.add(Bidirectional(LSTM(units ,return_sequences=True, activation='tanh'))) 
-    #model.add(Bidirectional(LSTM(units ,return_sequences=True)))
+    model.add(LSTM(units , return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+    #model.add(Dropout(dropout_rate))
     
-    model.add(Dropout(dropout_rate))
+    #model.add(Bidirectional(LSTM(units ,return_sequences=True, activation='tanh'))) 
+    model.add(Bidirectional(LSTM(units //2 ,return_sequences=True)))
+    
+    #model.add(Dropout(dropout_rate))
     #model.add(BatchNormalization())
 
-    model.add(LSTM(units, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-    model.add(Dropout(dropout_rate))
     model.add(LSTM(units // 2, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-    model.add(Dropout(dropout_rate))
+    #model.add(Dropout(dropout_rate))
     #odel.add(BatchNormalization())
     model.add(Dense(1, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
 
@@ -200,7 +201,7 @@ def train_modelX(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
     model.compile(optimizer=optimizer, loss='mse')
     model.summary()
    
-    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-5)
     history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping, reduce_lr])
     
@@ -221,11 +222,11 @@ def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
     
     #att = Attention()([inputs, inputs])
     
-    b1 = Bidirectional(LSTM(layer1 ,return_sequences=True, activation='relu'))(inputs)
+    b1 = Bidirectional(LSTM(layer1 ,return_sequences=True, activation='tanh'))(inputs)
     #dp0 = Dropout(dropout_rate)(b1)
     #bn = BatchNormalization()(dp0)    
     
-    lstm1 = LSTM(layer2,activation='relu')(b1)    
+    lstm1 = LSTM(layer2,activation='tanh')(b1)    
     
     dp0 = Dropout(dropout_rate)(lstm1)
     

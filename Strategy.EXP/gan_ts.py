@@ -2,18 +2,14 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import layers
+from tensorflow import layers
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from scipy.stats import ks_2samp
+import os
+import joblib
 
-# Save and Load Functions
-def save_model(model, filename):
-    model.save(filename)
-
-def load_model(filename):
-    return keras.models.load_model(filename)
 
 # Function to preprocess data
 def preprocess_data(df, timesteps):
@@ -59,7 +55,7 @@ def build_discriminator(timesteps, n_features , layer1, layer2):
     return model
 
 # Training function
-def train_model(df, timesteps, n_features, latent_dim, batch_size, epochs, steps_per_epoch, patience_epochs, layer1, layer2):
+def train_model(df, timesteps, n_features, latent_dim, batch_size, epochs, steps_per_epoch, patience_epochs, layer1, layer2, g_lr=0.001, d_lr=0.001):
 
     # Preprocess data
     X_train, y_train, scaler_features, scaler_target = preprocess_data(df, timesteps)
@@ -82,8 +78,8 @@ def train_model(df, timesteps, n_features, latent_dim, batch_size, epochs, steps
     generator_loss_fn = tf.keras.losses.MeanSquaredError()
 
     # Optimizers
-    generator_optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
-    discriminator_optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+    generator_optimizer = tf.keras.optimizers.Adam(learning_rate=g_lr)
+    discriminator_optimizer = tf.keras.optimizers.Adam(learning_rate=d_lr)
 
     # Compile the Discriminator model separately (trains to distinguish real from fake)
     discriminator.compile(loss=discriminator_loss_fn, optimizer=discriminator_optimizer)
@@ -136,16 +132,16 @@ def train_model(df, timesteps, n_features, latent_dim, batch_size, epochs, steps
                 print(f"Epoch {epoch}, Step {step} G: {gen_loss}  D:  {total_loss}  ")
 
         # Optionally save the model periodically
-        if epoch % 100 == 0:
-            save_model(generator, f"m_data/generator_epoch_{epoch}.keras")
-            save_model(discriminator, f"m_data/discriminator_epoch_{epoch}.keras")
+        #if epoch % 100 == 0:
+        #    save_model(generator, f"m_data/generator_epoch_{epoch}.keras")
+        #    save_model(discriminator, f"m_data/discriminator_epoch_{epoch}.keras")
 
         # Check for early stopping
         if early_stopping.stopped_epoch > 0:
             print(f"Early stopping at epoch {epoch}")
             break
 
-    return scaler_features, scaler_target, generator, discriminator, history, X_test
+    return gan_model, scaler_features, scaler_target, generator, discriminator, history, X_test 
 
 
 # Evaluation function
@@ -219,6 +215,52 @@ def evaluate_model(generator, discriminator, X_test, batch_size, latent_dim, his
 
 
 
+
+# Function to save models
+def save_models(generators, discriminator, gan, path="m_data"):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    
+    for i, gen in enumerate(generators):
+        gen.save(os.path.join(path, f'generator_{i}.keras'))
+    
+    discriminator.save(os.path.join(path, 'discriminator.keras'))
+    gan.save(os.path.join(path, 'gan.keras'))
+
+    print(f"Models saved to {path}")
+
+def load_model(filename):
+    return keras.models.load_model(filename)
+
+# Function to load models
+def load_models(path="m_data"):
+    generators = []
+    for i in range(3):  # Assuming 3 generators
+        generators.append(load_model(os.path.join(path, f'generator_{i}.keras')))
+    
+    discriminator = load_model(os.path.join(path, 'discriminator.keras'))
+    gan = load_model(os.path.join(path, 'gan.keras'))
+
+    print(f"Models loaded from {path}")
+    return generators, discriminator, gan
+
+# Function to save scalers
+def save_scalers(scaler_X, scaler_y, path="m_data"):
+    joblib.dump(scaler_X, os.path.join(path, 'scaler_X.pkl'))
+    joblib.dump(scaler_y, os.path.join(path, 'scaler_y.pkl'))
+    print(f"Scalers saved to {path}")
+
+
+# Function to load scalers
+def load_scalers(path="m_data"):    
+    scaler_X = joblib.load(os.path.join(path, 'scaler_X.pkl'))
+    scaler_y = joblib.load(os.path.join(path, 'scaler_y.pkl'))
+    print(f"Scalers loaded from {path}")
+    return scaler_X, scaler_y
+
+
+
+
 # Define constants
 timesteps_in = 21  # Number of timesteps in each sequence
 n_features_in = 13  # Number of features excluding output
@@ -230,6 +272,8 @@ patience_in = 15
 sample_index = 0
 lay1 = 17
 lay2 = 9
+g_learn = 0.0001
+d_learn = 0.0001
 
 # Paths to data and models
 training_data_path = 'data/buildSeqInd_Lucky13_5M_ALL.csv'
@@ -244,14 +288,15 @@ training_data = pd.read_csv(training_data_path)
 training_data = training_data.drop(columns=['outputC'])
 
 # Train the model
-scaler_features, scaler_target, generator, discriminator, history, X_test= train_model(training_data, timesteps_in, n_features_in, 
-                        latent_dim_in, batch_size_in, epochs_in, steps_per_epoch_in, patience_in, lay1, lay2)
+gan_model, scaler_features, scaler_target, generator, discriminator, history, X_test= train_model(training_data, timesteps_in, n_features_in, 
+                        latent_dim_in, batch_size_in, epochs_in, steps_per_epoch_in, patience_in, lay1, lay2, g_learn, d_learn)
+
+save_models([generator], discriminator, gan_model)
+save_scalers(scaler_features, scaler_target)
 
 evaluate_model(generator, discriminator, X_test, batch_size_in, latent_dim_in, history, sample_index=0)
 #evaluate_model(generator, discriminator, X_test, batch_size_in, latent_dim_in, history, sample_index=1)
 
-save_model(generator, "generator_final.keras")
-save_model(discriminator, "discriminator_final.keras")
 
 # Perform loop prediction
 #predictions = loop_predict(generator_model_path, new_data_path, scaler_features, scaler_target, timesteps, n_features, latent_dim)
