@@ -1,11 +1,21 @@
 import numpy as np
 import pandas as pd
+import random
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+
+tf.config.set_visible_devices([], 'GPU')
+
+def set_seeds(seed=42):
+    tf.keras.backend.clear_session()
+    np.random.seed(seed)
+    random.seed(seed)
+    tf.random.set_seed(seed)
+
 
 def preprocess_data(df1, df2, output, seq_length):
     scaler1 = MinMaxScaler()
@@ -25,6 +35,8 @@ def preprocess_data(df1, df2, output, seq_length):
 
     return np.array(X1), np.array(X2), np.array(y), scaler_output
 
+
+
 def build_generator(latent_dim, seq_length, n_features1, n_features2, lay1, lay2, lay3):
     input_noise = layers.Input(shape=(latent_dim,))
     input_features1 = layers.Input(shape=(seq_length, n_features1))
@@ -34,17 +46,19 @@ def build_generator(latent_dim, seq_length, n_features1, n_features2, lay1, lay2
     noise_reshape = layers.Reshape((seq_length, 1))(noise_dense)
 
     x = layers.Concatenate()([noise_reshape, input_features1, input_features2])
-    x = layers.LSTM(lay1, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+    x = layers.LSTM(lay1, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01),kernel_initializer='glorot_uniform')(x)
     
     if lay3 > 0:
-        x = layers.LSTM(lay2, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
-        x = layers.LSTM(lay3, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+        x = layers.LSTM(lay2, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01),kernel_initializer='glorot_uniform')(x)
+        x = layers.LSTM(lay3, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01),kernel_initializer='glorot_uniform')(x)
     else:        
-        x = layers.LSTM(lay2, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+        x = layers.LSTM(lay2, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01),kernel_initializer='glorot_uniform')(x)
         
     output = layers.Dense(1)(x)
 
     return tf.keras.Model([input_noise, input_features1, input_features2], output)
+
+
 
 def build_discriminator(seq_length, n_features1, n_features2, lay1, lay2, lay3):
     input_features1 = layers.Input(shape=(seq_length, n_features1))
@@ -55,17 +69,18 @@ def build_discriminator(seq_length, n_features1, n_features2, lay1, lay2, lay3):
     target_reshape = layers.Reshape((seq_length, 1))(target_dense)
 
     x = layers.Concatenate()([input_features1, input_features2, target_reshape])
-    x = layers.LSTM(lay1, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+    x = layers.LSTM(lay1, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01),kernel_initializer='glorot_uniform')(x)
     
     if lay3 > 0:
-        x = layers.LSTM(lay2, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
-        x = layers.LSTM(lay3, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+        x = layers.LSTM(lay2, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01),kernel_initializer='glorot_uniform')(x)
+        x = layers.LSTM(lay3, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01),kernel_initializer='glorot_uniform')(x)
     else:   
-        x = layers.LSTM(lay2, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)                    
+        x = layers.LSTM(lay2, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01),kernel_initializer='glorot_uniform')(x)                    
         
     output = layers.Dense(1, activation='sigmoid')(x)
-
     return tf.keras.Model([input_features1, input_features2, input_target], output)
+
+
 
 def compile_gan(generator, discriminator, latent_dim, seq_length, n_features1, n_features2, lr_g=0.0002, lr_d=0.0002):
     discriminator.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=lr_d), loss='binary_crossentropy', metrics=['accuracy'])
@@ -82,8 +97,9 @@ def compile_gan(generator, discriminator, latent_dim, seq_length, n_features1, n
     gan.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=lr_g), loss='binary_crossentropy')
     
     gan.summary()
-    
     return gan
+
+
 
 def train_gan(generator, discriminator, gan, X1, X2, y, latent_dim, seq_length, epochs=1000, batch_size=32, patience=10, min_delta=0.001):
     best_g_loss = np.inf
@@ -115,7 +131,7 @@ def train_gan(generator, discriminator, gan, X1, X2, y, latent_dim, seq_length, 
         history['d_loss'].append(d_loss[0])
         history['g_loss'].append(g_loss_value)
 
-        if epoch % 5 == 0:
+        if epoch % 2 == 0:
             print(f"{epoch} D loss: {d_loss[0]}, acc.: {100 * d_loss[1]} G loss: {g_loss_value}")
 
         # Early Stopping
@@ -130,6 +146,9 @@ def train_gan(generator, discriminator, gan, X1, X2, y, latent_dim, seq_length, 
             break
 
     return history
+
+
+
 
 def evaluate_and_plot(generator, X1, X2, y, scaler_output, latent_dim, seq_length, history_in):
     noise = np.random.normal(0, 1, (X1.shape[0], latent_dim))
@@ -179,8 +198,8 @@ def evaluate_and_plot(generator, X1, X2, y, scaler_output, latent_dim, seq_lengt
     ax2.set_ylabel('Accuracy')
     ax2.grid(True)
 
-    ax3.plot(actual.flatten(), label='Actual')
-    ax3.plot(predictions.flatten(), label='Predicted')
+    ax3.plot(actual, label='Actual')
+    ax3.plot(predictions, label='Predicted')
     ax3.set_xlabel('Time Step')
     ax3.set_ylabel('Output')
     ax3.legend()
@@ -189,44 +208,48 @@ def evaluate_and_plot(generator, X1, X2, y, scaler_output, latent_dim, seq_lengt
 
 
 
+set_seeds(42)
+
 training_data_path = 'data/IND_LSTM_ALL.csv'
 split1 = pd.read_csv(training_data_path)
 split1 = split1.drop(columns=['outputC'])
 
 #split1 = split1.drop(columns=['SD79'])
-#split1 = split1.drop(columns=['SD813'])
-#split1 = split1.drop(columns=['SD921'])
-split1 = split1.drop(columns=['SDLR9'])
+split1 = split1.drop(columns=['SD813'])
+split1 = split1.drop(columns=['SD921'])
+#split1 = split1.drop(columns=['SDLR9'])
 #split1 = split1.drop(columns=['SDLR921'])
 split1 = split1.drop(columns=['SDLR2155'])
-#split1 = split1.drop(columns=['SDLR310'])
-split1 = split1.drop(columns=['SDBB9'])
-#split1 = split1.drop(columns=['SDBB20'])
+split1 = split1.drop(columns=['SDLR310'])
+#split1 = split1.drop(columns=['SDBB9'])
+split1 = split1.drop(columns=['SDBB20'])
 split1 = split1.drop(columns=['SDKC9'])
 #split1 = split1.drop(columns=['ADX'])
-split1 = split1.drop(columns=['ROC'])
+#split1 = split1.drop(columns=['ROC'])
 #split1 = split1.drop(columns=['ATR3'])
 split1 = split1.drop(columns=['ATR2'])
 #split1 = split1.drop(columns=['RSI'])
 split1 = split1.drop(columns=['TSI'])
 #split1 = split1.drop(columns=['STOD7217'])
 split1 = split1.drop(columns=['STOK7217'])
-split1 = split1.drop(columns=['STOD15657'])
-split1 = split1.drop(columns=['STOK15657'])
+#split1 = split1.drop(columns=['STOD15657'])
+#split1 = split1.drop(columns=['STOK15657'])
 split1 = split1.drop(columns=['REMA'])
-#split1 = split1.drop(columns=['output'])
+split1 = split1.drop(columns=['output'])
 
 split2 = pd.read_csv(training_data_path)
 split2 = split2.drop(columns=['outputC'])
 
-split2 = split2.drop(columns=['SD79'])
-split2 = split2.drop(columns=['SD813'])
-split2 = split2.drop(columns=['SD921'])
+
+
+#split2 = split2.drop(columns=['SD79'])
+#split2 = split2.drop(columns=['SD813'])
+#split2 = split2.drop(columns=['SD921'])
 #split2 = split2.drop(columns=['SDLR9'])
-#split2 = split2.drop(columns=['SDLR921'])
-#split2 = split2.drop(columns=['SDLR2155'])
-split2 = split2.drop(columns=['SDLR310'])
-#split2 = split2.drop(columns=['SDBB9'])
+split2 = split2.drop(columns=['SDLR921'])
+split2 = split2.drop(columns=['SDLR2155'])
+#split2 = split2.drop(columns=['SDLR310'])
+split2 = split2.drop(columns=['SDBB9'])
 split2 = split2.drop(columns=['SDBB20'])
 #split2 = split2.drop(columns=['SDKC9'])
 split2 = split2.drop(columns=['ADX'])
@@ -240,12 +263,13 @@ split2 = split2.drop(columns=['STOD7217'])
 split2 = split2.drop(columns=['STOD15657'])
 #split2 = split2.drop(columns=['STOK15657'])
 split2 = split2.drop(columns=['REMA'])
-#split2 = split2.drop(columns=['output'])
+split2 = split2.drop(columns=['output'])
 
 df1 = split1
 df2 = split2
 
-output = df1['output'].values.reshape(-1, 1)
+output_df = pd.read_csv(training_data_path)
+output = output_df['output'].values.reshape(-1, 1)
 
 print(" ")
 print(f"df1 number of features: {df1.shape[0]}   {df1.shape[1]}")
@@ -258,7 +282,6 @@ if df1.shape[1] != df2.shape[1]:
     print("ERROR: df1 and df2 must have the same number of features")
     exit()
 
-
 # Sequence length for LSTM
 seq_length = 13
 
@@ -266,12 +289,12 @@ seq_length = 13
 X1, X2, y, scaler_output = preprocess_data(df1, df2, output, seq_length)
 
 # Build and compile GAN
-latent_dim_in = 7
+latent_dim_in = 20
 n_features1 = X1.shape[2]
 n_features2 = X2.shape[2]
 
-layer1 = 34
-layer2 = 17
+layer1 = 11
+layer2 = 11
 layer3 = 0
 
 generator = build_generator(latent_dim_in, seq_length, n_features1, n_features2, layer1, layer2, layer3)
@@ -280,7 +303,7 @@ discriminator.compile(optimizer='adam', loss='binary_crossentropy', metrics=['ac
 gan = compile_gan(generator, discriminator, latent_dim_in, seq_length, n_features1, n_features2, lr_g=0.00001, lr_d=0.00001)
 
 # Train the GAN with early stopping
-history_out = train_gan(generator, discriminator, gan, X1, X2, y, latent_dim_in, seq_length, epochs=1000, batch_size=32, patience=25, min_delta=0.0001)
+history_out = train_gan(generator, discriminator, gan, X1, X2, y, latent_dim_in, seq_length, epochs=100, batch_size=32, patience=25, min_delta=0.00001)
 
 # Evaluate and plot results
 evaluate_and_plot(generator, X1, X2, y, scaler_output, latent_dim_in, seq_length, history_out)

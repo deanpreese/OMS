@@ -1,14 +1,29 @@
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow import layers
+import random
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, LeakyReLU, BatchNormalization, Input, Dropout, LSTM, TimeDistributed, Reshape, Flatten
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.activations import softmax
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from scipy.stats import ks_2samp
 import os
 import joblib
+
+
+tf.config.set_visible_devices([], 'GPU')
+
+def set_seeds(seed=42):
+    tf.keras.backend.clear_session()
+    np.random.seed(seed)
+    random.seed(seed)
+    tf.random.set_seed(seed)
+
 
 
 # Function to preprocess data
@@ -35,23 +50,23 @@ def preprocess_data(df, timesteps):
 
 # Define the Generator model
 def build_generator(timesteps, n_features, latent_dim, output_dim, layer1, layer2):
-    model = keras.Sequential()
-    model.add(layers.Input(shape=(latent_dim,)))
-    model.add(layers.Dense(timesteps * n_features, activation="relu"))
-    model.add(layers.Reshape((timesteps, n_features)))
-    model.add(layers.LSTM(layer1, return_sequences=True))
-    model.add(layers.LSTM(layer2, return_sequences=True))  # Ensure output has 3 dimensions
-    model.add(layers.TimeDistributed(layers.Dense(output_dim)))  # Use TimeDistributed to output a sequence
+    model = Sequential()
+    model.add(Input(shape=(latent_dim,)))
+    model.add(Dense(timesteps * n_features, activation="relu"))
+    model.add(Reshape((timesteps, n_features)))
+    model.add(LSTM(layer1, return_sequences=True))
+    model.add(LSTM(layer2, return_sequences=True))  # Ensure output has 3 dimensions
+    model.add(TimeDistributed(Dense(output_dim)))  # Use TimeDistributed to output a sequence
     return model
 
 # Define the Discriminator model (for time series anomaly detection)
 def build_discriminator(timesteps, n_features , layer1, layer2):
-    model = keras.Sequential()
-    model.add(layers.Input(shape=(timesteps, n_features)))
-    model.add(layers.LSTM(layer1, return_sequences=True))
-    model.add(layers.LSTM(layer2))
-    model.add(layers.Flatten())
-    model.add(layers.Dense(1, activation="sigmoid"))
+    model = Sequential()
+    model.add(Input(shape=(timesteps, n_features)))
+    model.add(LSTM(layer1, return_sequences=True))
+    model.add(LSTM(layer2))
+    model.add(Flatten())
+    model.add(Dense(1, activation="sigmoid"))
     return model
 
 # Training function
@@ -68,10 +83,10 @@ def train_model(df, timesteps, n_features, latent_dim, batch_size, epochs, steps
     discriminator = build_discriminator(timesteps, n_features, layer1, layer2)
 
     # Define the combined GAN model for training (no training on the combined model directly)
-    gan_input = layers.Input(shape=(latent_dim,))
+    gan_input = Input(shape=(latent_dim,))
     generated_sequence = generator(gan_input)
     gan_output = discriminator(generated_sequence)
-    gan_model = keras.Model(gan_input, gan_output)
+    gan_model = Model(gan_input, gan_output)
 
     # Loss functions (Binary Cross Entropy for Discriminator, Mean Squared Error for Generator)
     discriminator_loss_fn = tf.keras.losses.BinaryCrossentropy(from_logits=True)
@@ -86,7 +101,7 @@ def train_model(df, timesteps, n_features, latent_dim, batch_size, epochs, steps
     discriminator.summary()
 
     # Early stopping callback
-    early_stopping = keras.callbacks.EarlyStopping(
+    early_stopping = EarlyStopping(
         monitor='gen_loss', patience=patience_epochs, restore_best_weights=True)
 
     # History collection
@@ -158,7 +173,7 @@ def evaluate_model(generator, discriminator, X_test, batch_size, latent_dim, his
     axs[0,0].set_xlabel('Timesteps')
     axs[0,0].set_ylabel('Normalized Values')
     
-    softmax = keras.activations.softmax
+    #softmax = keras.activations.softmax
     actual_softmax = softmax(X_test[sample_index], axis=-1)
     generated_softmax = softmax(generated_data[sample_index], axis=-1)
     
@@ -229,8 +244,9 @@ def save_models(generators, discriminator, gan, path="m_data"):
 
     print(f"Models saved to {path}")
 
+"""
 def load_model(filename):
-    return keras.models.load_model(filename)
+    return models.load_model(filename)
 
 # Function to load models
 def load_models(path="m_data"):
@@ -258,7 +274,11 @@ def load_scalers(path="m_data"):
     print(f"Scalers loaded from {path}")
     return scaler_X, scaler_y
 
+"""
 
+
+
+set_seeds(42)
 
 
 # Define constants
@@ -266,7 +286,7 @@ timesteps_in = 21  # Number of timesteps in each sequence
 n_features_in = 13  # Number of features excluding output
 latent_dim_in = 5  # Dimension of the latent space
 batch_size_in = 32
-epochs_in = 1000
+epochs_in = 100
 steps_per_epoch_in = 10
 patience_in = 15
 sample_index = 0
@@ -291,8 +311,8 @@ training_data = training_data.drop(columns=['outputC'])
 gan_model, scaler_features, scaler_target, generator, discriminator, history, X_test= train_model(training_data, timesteps_in, n_features_in, 
                         latent_dim_in, batch_size_in, epochs_in, steps_per_epoch_in, patience_in, lay1, lay2, g_learn, d_learn)
 
-save_models([generator], discriminator, gan_model)
-save_scalers(scaler_features, scaler_target)
+#save_models([generator], discriminator, gan_model)
+#save_scalers(scaler_features, scaler_target)
 
 evaluate_model(generator, discriminator, X_test, batch_size_in, latent_dim_in, history, sample_index=0)
 #evaluate_model(generator, discriminator, X_test, batch_size_in, latent_dim_in, history, sample_index=1)

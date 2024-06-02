@@ -172,6 +172,42 @@ def ModelT():
 
 
 
+def train_model(X_train, y_train, X_val, y_val, time_steps_in, epocs, batch):
+   
+    units=16
+    dropout_rate=0.5
+    learning_rate=0.02
+   
+   
+    # Define the LSTM model
+    model = Sequential()
+    model.add(Input(shape=(time_steps_in, X_train.shape[2])))
+    
+    model.add(LSTM(units // 2, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+    model.add(Dropout(dropout_rate))
+    
+    #model.add(LSTM(units=5, return_sequences=True))
+    #model.add(Dropout(0.2))
+    #model.add(LSTM(units=50))
+    #model.add(LSTM(units=50,return_sequences=True,kernel_initializer='glorot_uniform'))
+    #model.add(Bidirectional(LSTM(units // 3 ,kernel_initializer='glorot_uniform',return_sequences=True)))
+    #model.add(Dropout(0.2))
+    
+    model.add(LSTM(units // 4, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+    model.add(Dropout(0.2))
+    
+    model.add(Dense(1, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+    model.compile(optimizer=optimizer, loss='mse')
+    model.summary()
+
+    early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+    history_out = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
+    
+    return model, history_out
+
+
 # -----------------------------------------------------------------------
 
 

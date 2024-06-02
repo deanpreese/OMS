@@ -443,7 +443,8 @@ class TunableXGBRegressor(XGBRegressor):
     def param_set(self):
         
         params = {
-            'max_depth': 3, 
+            'max_depth': 3,
+            'booster' : 'dart', 
             'learning_rate': 0.1,
             'n_estimators':  50, 
             #'gamma': [0, 20], 
