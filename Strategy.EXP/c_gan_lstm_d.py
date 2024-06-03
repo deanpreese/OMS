@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score
 from math import sqrt
 
-tf.config.set_visible_devices([], 'GPU')
+#tf.config.set_visible_devices([], 'GPU')
 
 def print_pretty_results(results):
     print("     ")
