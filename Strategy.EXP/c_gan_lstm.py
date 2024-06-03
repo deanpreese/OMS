@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import random
-from tensorflow.keras.layers import Input, LSTM, Concatenate, Reshape, Flatten, Dense, LeakyReLU, Dropout
+from tensorflow.keras.layers import Input, LSTM, Concatenate, Reshape, Flatten, Dense, LeakyReLU, Dropout, MultiHeadAttention
 from tensorflow.keras.layers import   BatchNormalization, Layer,  Attention, Bidirectional, TimeDistributed, Conv1D, Conv2D
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
@@ -33,21 +33,24 @@ def create_sequences(data, sequence_length):
 # Function to create the generator model with LSTM
 def create_generator(input_dim, conditioning_dim, lay1, lay2, lay3, sequence_length):
     init = RandomNormal(stddev=0.02)
-    
     dims = input_dim + conditioning_dim
     
     input_layer = Input(shape=(sequence_length, dims))
-    print("IShape:", input_layer.shape)
+    print("Input Shape:", input_layer.shape)
 
-    x = TimeDistributed(Conv1D(filters=32, kernel_size=3, activation='relu', padding='same'))(input_layer)
+    reshaped_input = Reshape((sequence_length, dims, 1))(input_layer)
+    conv1 = TimeDistributed(Conv1D(filters=132, kernel_size=7, activation='relu', padding='same'))(reshaped_input)
+    conv1 = Flatten()(conv1)  
+    conv1 = Reshape((sequence_length, -1))(conv1)
 
-    x = LSTM(lay1, return_sequences=True, kernel_initializer=init)(x)
-    
-    #x = LSTM(lay1, return_sequences=True, kernel_initializer=init)(input_layer)
-    print("RS1", x.shape)
+    x = LSTM(lay1, return_sequences=True)(conv1)
+    x = MultiHeadAttention(num_heads=2, key_dim=25)(x, x)
 
+    concat = Concatenate()([conv1, x])
+    flatten = Flatten()(concat)
+    #x = LSTM(25, return_sequences=False)(x)
 
-       
+    #x = LSTM(lay1, return_sequences=True, kernel_initializer=init)(x)
     #x = LeakyReLU(negative_slope=0.2)(x)
     #x = BatchNormalization()(x)
     #x = Dropout(0.3)(x)

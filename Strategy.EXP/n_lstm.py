@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import random
 import seaborn as sns
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -9,11 +10,18 @@ from tensorflow.keras.layers import Input, LSTM, Dense, Conv1D, TimeDistributed,
 from keras.layers import MultiHeadAttention, LayerNormalization, Add, Reshape
 from tensorflow.keras.regularizers import l2
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.initializers import RandomNormal
 
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
-#tf.config.set_visible_devices([], 'GPU')
+tf.config.set_visible_devices([], 'GPU')
+
+def set_seeds(seed=42):
+    tf.keras.backend.clear_session()
+    np.random.seed(seed)
+    random.seed(seed)
+    tf.random.set_seed(seed)
 
 # Function to create sequences
 def create_sequences(data_in, seq_length_in):
@@ -131,41 +139,47 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
 
 
 
+set_seeds(42)
 
 #train_file = pd.read_csv('data/sm13_3070.csv')
 train_file = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
 data = train_file.drop(columns=['outputC'])
 print("Data Shape:", data.shape)
 
+
 # Generate sequences and split data
-n_steps = 25
+n_steps = 13
 feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data, n_steps)
 print("Train Shape:", X_train_out.shape)
 
 input_layer = Input(shape=(n_steps, feature_dim_out))
 print("Input Shape:", input_layer.shape)
 
+init = RandomNormal(stddev=0.02)
+
 reshaped_input = Reshape((n_steps, feature_dim_out, 1))(input_layer)
-conv1 = TimeDistributed(Conv1D(filters=132, kernel_size=7, activation='relu', padding='same'))(reshaped_input)
+conv1 = TimeDistributed(Conv1D(filters=32, kernel_size=n_steps, activation='relu', padding='same'))(reshaped_input)
 conv1 = Flatten()(conv1)  
 conv1 = Reshape((n_steps, -1))(conv1)
 
-x = LSTM(25, return_sequences=True)(conv1)
+x = BatchNormalization()(conv1)
+x = Dropout(0.5)(x)
+x = LeakyReLU(negative_slope=0.2)(x)
+
+x = LSTM(15, return_sequences=True, activation='tanh', kernel_initializer=init)(x)
 x = MultiHeadAttention(num_heads=2, key_dim=25)(x, x)
 
-#lstm = Bidirectional(LSTM(50, return_sequences=True))(conv1)
-#attention = MultiHeadAttention(num_heads=2, key_dim=50)(lstm, lstm)
+x = LeakyReLU(negative_slope=0.2)(x)
+x = BatchNormalization()(x)
+x = Dropout(0.5)(x)
 
-#concat = Concatenate()([conv1, x])
-#flatten = Flatten()(concat)
+x = LSTM(8, return_sequences=False, activation='tanh', kernel_initializer=init)(x)
 
-x = LSTM(25, return_sequences=False)(x)
-
-#dense = Dense(10, activation=LeakyReLU(negative_slope=0.2))(flatten)
-#dense = BatchNormalization()(dense)
-#dense = Dropout(0.5)(dense)
-#dense = Dense(50, activation=LeakyReLU(negative_slope=0.2))(dense)
-#dense = Dropout(0.3)(dense)
+x = Dense(10, activation=LeakyReLU(negative_slope=0.2))(x)
+x = BatchNormalization()(x)
+x = Dropout(0.5)(x)
+x = Dense(50, activation=LeakyReLU(negative_slope=0.2))(x)
+x = Dropout(0.3)(x)
 
 output_layer = Dense(1, activation='linear')(x)
 model = Model(inputs=input_layer, outputs=output_layer)

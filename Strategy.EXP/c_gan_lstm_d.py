@@ -40,7 +40,7 @@ def create_generator(input_dim, conditioning_dim, lay1, lay2, lay3, sequence_len
    
     x = Attention()([x, x])
    
-    #x = Bidirectional(LSTM(lay2 ,return_sequences=True))(x)
+    x = Bidirectional(LSTM(lay2 ,return_sequences=True))(x)
     x = LSTM(lay2, return_sequences=True, kernel_initializer=init)(x)
     x = LeakyReLU(negative_slope=0.2)(x)
     x = BatchNormalization()(x)
@@ -402,22 +402,21 @@ if __name__ == "__main__":
     
     
     
-    rm = True
+    rm = False
         
     
     if rm:
         run_multi(input_dim, conditioning_dim, x_data, y_pred)
     else:
         
-        sequence_length = 30
-        generator = create_generator(input_dim, conditioning_dim, 32, 64, 128, sequence_length)
+        sequence_length = 13
+        generator = create_generator(input_dim, conditioning_dim, 8, 16, 32, sequence_length)
         #generator = create_generator(input_dim, conditioning_dim, 16, 32, 64, sequence_length)
         
-        #discriminator = create_discriminator(input_dim, conditioning_dim, 128, 64, 32, sequence_length)
+        discriminator = create_discriminator(input_dim, conditioning_dim, 128, 64, 32, sequence_length)
         #discriminator = create_discriminator(input_dim, conditioning_dim, 256, 128, 16, sequence_length)    
-        discriminator = create_discriminator(input_dim, conditioning_dim, 64, 32, 8, sequence_length) 
-        
-            
+        #discriminator = create_discriminator(input_dim, conditioning_dim, 64, 32, 8, sequence_length) 
+                    
         discriminator.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5), metrics=['accuracy'])
 
         gan = create_gan(generator, discriminator, input_dim, conditioning_dim, sequence_length)
