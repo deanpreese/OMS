@@ -21,8 +21,6 @@ def review_data(data_co):
     plt.figure(figsize=(16,8))
     #sns.heatmap(data_co.corr(),cmap="YlGnBu",square=False,linewidths=.2,center=0)
     sns.heatmap(data_co.corr(),cmap=sns.cubehelix_palette(as_cmap=True))
-    
-    
     plt.show()
 
 

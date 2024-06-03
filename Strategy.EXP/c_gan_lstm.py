@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import random
-from tensorflow.keras.layers import Input, LSTM, Concatenate, Reshape, Flatten, Dense, LeakyReLU, Dropout, BatchNormalization, Layer,  Attention, Bidirectional, TimeDistributed, Conv1D
+from tensorflow.keras.layers import Input, LSTM, Concatenate, Reshape, Flatten, Dense, LeakyReLU, Dropout
+from tensorflow.keras.layers import   BatchNormalization, Layer,  Attention, Bidirectional, TimeDistributed, Conv1D, Conv2D
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.initializers import RandomNormal
@@ -33,13 +34,20 @@ def create_sequences(data, sequence_length):
 def create_generator(input_dim, conditioning_dim, lay1, lay2, lay3, sequence_length):
     init = RandomNormal(stddev=0.02)
     
-    input_layer = Input(shape=(sequence_length, input_dim + conditioning_dim))
-    print("Input Shape:", input_layer.shape)
+    dims = input_dim + conditioning_dim
+    
+    input_layer = Input(shape=(sequence_length, dims))
+    print("IShape:", input_layer.shape)
 
     x = TimeDistributed(Conv1D(filters=32, kernel_size=3, activation='relu', padding='same'))(input_layer)
-    print("After Conv1D Shape:", x.shape)
 
-    x = LSTM(lay1, return_sequences=True, kernel_initializer=init)(input_layer)
+    x = LSTM(lay1, return_sequences=True, kernel_initializer=init)(x)
+    
+    #x = LSTM(lay1, return_sequences=True, kernel_initializer=init)(input_layer)
+    print("RS1", x.shape)
+
+
+       
     #x = LeakyReLU(negative_slope=0.2)(x)
     #x = BatchNormalization()(x)
     #x = Dropout(0.3)(x)
@@ -65,7 +73,7 @@ def create_discriminator(input_dim, conditioning_dim, lay1, lay2, lay3, sequence
     init = RandomNormal(stddev=0.02)
     input_layer = Input(shape=(sequence_length, input_dim + conditioning_dim))
     
-    x = TimeDistributed(Conv1D(filters=32, kernel_size=3, activation='relu'))(input_layer)
+    #x = TimeDistributed(Conv1D(filters=14, kernel_size=3, activation='relu'))(input_layer)
 
     
     x = LSTM(lay1, return_sequences=True, kernel_initializer=init)(input_layer)
