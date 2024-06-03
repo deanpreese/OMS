@@ -9,6 +9,8 @@ from tensorflow.keras.initializers import RandomNormal
 from xgboost import XGBRegressor
 from lightgbm import LGBMRegressor
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.metrics import mean_squared_error, r2_score
 from math import sqrt
 
@@ -38,9 +40,9 @@ def create_generator(input_dim, conditioning_dim, lay1, lay2, lay3, sequence_len
     x = BatchNormalization()(x)
     x = Dropout(0.3)(x)
    
-    x = Attention()([x, x])
+    #x = Attention()([x, x])
    
-    x = Bidirectional(LSTM(lay2 ,return_sequences=True))(x)
+    #x = Bidirectional(LSTM(lay2 ,return_sequences=True))(x)
     x = LSTM(lay2, return_sequences=True, kernel_initializer=init)(x)
     x = LeakyReLU(negative_slope=0.2)(x)
     x = BatchNormalization()(x)
@@ -61,6 +63,7 @@ def create_generator(input_dim, conditioning_dim, lay1, lay2, lay3, sequence_len
 def create_discriminator(input_dim, conditioning_dim, lay1, lay2, lay3, sequence_length):
     init = RandomNormal(stddev=0.02)
     input_layer = Input(shape=(sequence_length, input_dim + conditioning_dim))
+    
     x = Flatten()(input_layer)
 
     slope = 0.2
@@ -71,18 +74,18 @@ def create_discriminator(input_dim, conditioning_dim, lay1, lay2, lay3, sequence
     x = BatchNormalization()(x)
     x = Dropout(dropout)(x)
     
-    x = Reshape((lay1, 1))(x)
-    attention = Attention()([x, x])
-    x = Flatten()(attention)    
+    #x = Reshape((lay1, 1))(x)
+    #attention = Attention()([x, x])
+    #x = Flatten()(attention)    
     
     x = Dense(lay2, kernel_initializer=init)(x)
     x = LeakyReLU(negative_slope=slope)(x)
     x = BatchNormalization()(x)
     x = Dropout(dropout)(x)
     
-    x = Reshape((lay2, 1))(x)
-    attention = Attention()([x, x])
-    x = Flatten()(attention)    
+    #x = Reshape((lay2, 1))(x)
+    #attention = Attention()([x, x])
+    #x = Flatten()(attention)    
     
     x = Dense(lay3, kernel_initializer=init)(x)
     x = LeakyReLU(negative_slope=slope)(x)
@@ -93,8 +96,8 @@ def create_discriminator(input_dim, conditioning_dim, lay1, lay2, lay3, sequence
     attention = Attention()([x, x])
     x = Flatten()(attention)
     
-    x = BatchNormalization()(x)
-    x = Dropout(dropout)(x)    
+    #x = BatchNormalization()(x)
+    #x = Dropout(dropout)(x)    
     
     x = Dense(1, activation='sigmoid')(x)
     return Model(input_layer, x)
@@ -359,6 +362,9 @@ if __name__ == "__main__":
     x_data = data.drop(columns=['output']).to_numpy().astype(np.float32)
     y_data = data['output'].values.reshape(-1, 1).astype(np.float32)
     
+    X_train, X_val, y_train, y_val = train_test_split(x_data, y_data, test_size=0.2, random_state=42)
+    
+    
     lgb_params = {
         'n_estimators': 250,
         'objective': 'regression',
@@ -374,10 +380,10 @@ if __name__ == "__main__":
 
     lgb_model = LGBMRegressor(**lgb_params)
     lgb_model2 = LGBMRegressor()
-    lgb_model.fit(x_data, y_data)
-    y_pred_lgb = lgb_model.predict(x_data).reshape(-1, 1).astype(np.float32)
-    lgb_model2.fit(x_data, y_data)
-    y_pred_lgb2 = lgb_model.predict(x_data).reshape(-1, 1).astype(np.float32)
+    lgb_model.fit(X_train, y_train)
+    y_pred_lgb = lgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
+    lgb_model2.fit(X_train, y_train)
+    y_pred_lgb2 = lgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
 
     xgb_params = {
         'max_depth': 6,
@@ -390,10 +396,10 @@ if __name__ == "__main__":
 
     xgb_model = XGBRegressor(**xgb_params)
     xgb_model2 = XGBRegressor()
-    xgb_model.fit(x_data, y_data)
-    y_pred_xgb = xgb_model.predict(x_data).reshape(-1, 1).astype(np.float32)
-    xgb_model2.fit(x_data, y_data)
-    y_pred_xgb2 = xgb_model.predict(x_data).reshape(-1, 1).astype(np.float32)
+    xgb_model.fit(X_train, y_train)
+    y_pred_xgb = xgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
+    xgb_model2.fit(X_train, y_train)
+    y_pred_xgb2 = xgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
     y_pred = (y_pred_lgb + y_pred_xgb + y_pred_lgb2 + y_pred_xgb2)/4
     
     # Create and compile models
@@ -410,12 +416,12 @@ if __name__ == "__main__":
     else:
         
         sequence_length = 13
-        generator = create_generator(input_dim, conditioning_dim, 8, 16, 32, sequence_length)
-        #generator = create_generator(input_dim, conditioning_dim, 16, 32, 64, sequence_length)
         
-        discriminator = create_discriminator(input_dim, conditioning_dim, 128, 64, 32, sequence_length)
-        #discriminator = create_discriminator(input_dim, conditioning_dim, 256, 128, 16, sequence_length)    
-        #discriminator = create_discriminator(input_dim, conditioning_dim, 64, 32, 8, sequence_length) 
+        #generator = create_generator(input_dim, conditioning_dim, 8, 16, 32, sequence_length)
+        generator = create_generator(input_dim, conditioning_dim, 32, 64, 512, sequence_length)
+        
+        #discriminator = create_discriminator(input_dim, conditioning_dim, 128, 64, 32, sequence_length)
+        discriminator = create_discriminator(input_dim, conditioning_dim, 256, 128, 16, sequence_length)    
                     
         discriminator.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5), metrics=['accuracy'])
 
@@ -423,13 +429,19 @@ if __name__ == "__main__":
         gan.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5))
         gan.summary()
 
+        scaler = MinMaxScaler()
+        #scaler = StandardScaler()
+        X_train = scaler.fit_transform(X_train)
+        X_val = scaler.transform(X_val)
+
         # Train GAN with discriminator
-        history = train_gan(generator, discriminator, gan, x_data, y_pred, 
+        
+        history = train_gan(generator, discriminator, gan, X_train, y_pred, 
             epochs=1000, batch_size=32, conditioning_dim=conditioning_dim, 
             sequence_length=sequence_length, patience=10, min_delta=0.001)
 
         # Evaluate GAN with discriminator
-        evaluation = evaluate_gan(generator, x_data, y_pred, conditioning_dim, sequence_length)
+        evaluation = evaluate_gan(generator, X_val, y_val, conditioning_dim, sequence_length)
         print_pretty_results(evaluation)
 
 

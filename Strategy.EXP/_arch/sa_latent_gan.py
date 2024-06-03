@@ -223,8 +223,8 @@ if __name__ == "__main__":
     #target = np.random.rand(1000, 1)
 
     #train_file = pd.read_csv('data/sm13_3070.csv')
-    train_file =  pd.read_csv('data/IND_LSTM_ALL.csv')
-    #train_file = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+    #train_file =  pd.read_csv('data/IND_LSTM_ALL.csv')
+    train_file = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
     data = train_file.drop(columns=['outputC'])
 
     features = data.drop(columns=['output']).to_numpy()

@@ -2,10 +2,16 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import random
-from tensorflow.keras.layers import Input, Dense, LeakyReLU, Dropout, BatchNormalization, Layer, Attention, Concatenate, Reshape, Flatten
+from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import Input, LSTM, Dense, Conv1D, TimeDistributed, Flatten, Dropout, BatchNormalization, LeakyReLU, Bidirectional, Concatenate, MultiHeadAttention
+from keras.layers import MultiHeadAttention, LayerNormalization, Add, Reshape, AdditiveAttention, Attention
+from tensorflow.keras.regularizers import l2
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.initializers import RandomNormal
+from tensorflow.keras.optimizers import Adam
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
 from xgboost import XGBRegressor
 from lightgbm import LGBMRegressor
 import matplotlib.pyplot as plt
@@ -35,13 +41,24 @@ def set_seeds(seed=42):
 # Function to create generator model
 def create_generator(input_dim, conditioning_dim, lay1, lay2, lay3):
     init = RandomNormal(stddev=0.02)
+    
     input_layer = Input(shape=(input_dim + conditioning_dim,))
+    
+    print("Input Shape:", input_layer.shape)
+    
+    #model.add(Dense(timesteps * n_features, activation="relu"))
+    #model.add(Reshape((timesteps, n_features)))
+
     
     x = Dense(lay1, kernel_initializer=init)(input_layer)
     x = LeakyReLU(negative_slope=0.2)(x)
     x = BatchNormalization()(x)
     x = Dropout(0.3)(x)
     
+    #x = Reshape((lay1, 1))(x)
+    #attention = Attention()([x, x])
+    #x = Flatten()(attention)
+        
     x = Dense(lay2, kernel_initializer=init)(x)
     x = LeakyReLU(negative_slope=0.2)(x)
     x = BatchNormalization()(x)
@@ -68,11 +85,19 @@ def create_discriminator(input_dim, conditioning_dim, lay1, lay2, lay3):
     x = LeakyReLU(negative_slope=0.2)(x)
     x = BatchNormalization()(x)
     x = Dropout(0.3)(x)
+
+    #x = Reshape((lay1, 1))(x)
+    #attention = Attention()([x, x])
+    #x = Flatten()(attention)
     
     x = Dense(lay2, kernel_initializer=init)(x)
     x = LeakyReLU(negative_slope=0.2)(x)
     x = BatchNormalization()(x)
     x = Dropout(0.3)(x)
+
+    #x = Reshape((lay2, 1))(x)
+    #attention = Attention()([x, x])
+    #x = Flatten()(attention)
     
     x = Dense(lay3, kernel_initializer=init)(x)
     x = LeakyReLU(negative_slope=0.2)(x)
@@ -167,7 +192,7 @@ def train_gan(generator, discriminator, gan, x_data, y_data, epochs, batch_size,
     return history
 
 # Function to evaluate the GAN model
-def evaluate_gan(generator, x_test, y_test, conditioning_dim):
+def evaluate_gan(generator, x_test, y_test):
     noise = np.random.normal(0, 1, (x_test.shape[0], x_test.shape[1]))
     gen_input = [noise, y_test]
     generated_samples = generator.predict(np.concatenate(gen_input, axis=1))
@@ -183,24 +208,27 @@ def evaluate_gan(generator, x_test, y_test, conditioning_dim):
     return {"MSE": mse, "RMSE": rmse, "R2": r2, "Wins": wins, "Losses": losses, "% Correct": per_c}
 
 # Function to plot results
-def plot_results(history, x_test, y_test, generator, conditioning_dim):
+def plot_results(history, x_test, y_test, generator):
     plt.figure(figsize=(10, 5))
     
     # Plot discriminator and generator loss
-    plt.subplot(1, 2, 1)
-    plt.plot(history['d_loss'], label='Discriminator Loss')
-    plt.plot(history['g_loss'], label='Generator Loss')
-    plt.legend()
-    plt.title('Losses')
+    #plt.subplot(1, 1,1)
+    #plt.plot(history['d_loss'], label='Discriminator Loss')
+    #plt.plot(history['g_loss'], label='Generator Loss')
+    #plt.legend()
+    #plt.title('Losses')
     
     # Plot actual vs predicted
     noise = np.random.normal(0, 1, (x_test.shape[0], x_test.shape[1]))
     gen_input = [noise, y_test]
     generated_samples = generator.predict(np.concatenate(gen_input, axis=1))
     
-    plt.subplot(1, 2, 2)
-    plt.scatter(x_test, generated_samples, alpha=0.5)
-    plt.plot([x_test.min(), x_test.max()], [x_test.min(), x_test.max()], 'k--', lw=2)
+    print(x_test.shape)
+    print(generated_samples.shape)
+    
+    plt.subplot(1, 1,1)
+    plt.scatter( x_test, generated_samples, alpha=0.5)
+    #plt.plot([x_test.min(), x_test.max()], [x_test.min(), x_test.max()], 'k--', lw=2)
     plt.xlabel('Actual')
     plt.ylabel('Predicted')
     plt.title('Actual vs Predicted')
@@ -214,10 +242,27 @@ if __name__ == "__main__":
     # Example data loading (replace with your actual dataset)
     train_file = pd.read_csv("data/buildSeqInd_Lucky13_5M_ALL.csv")
     data = train_file.drop(columns=['outputC'])
-
-    x_data = data.drop(columns=['output']).to_numpy()    
-    y_data = data['output'].values.reshape(-1, 1)
+        
+    #data_loaded = data_loaded.drop(columns=['STOK1'])
+    #data_loaded = data_loaded.drop(columns=['RSI'])
+    #data_loaded = data.drop(columns=['ATR2'])
+    data_loaded = data.drop(columns=['ATR21'])
+    #data_loaded = data.drop(columns=['ATR3'])
+    data_loaded = data.drop(columns=['ATR31']) 
+    data_loaded = data.drop(columns=['ATR32']) 
+    data_loaded = data.drop(columns=['ATR34'])   
+    #data_loaded = data.drop(columns=['ROC'])     
+    #data_loaded = data.drop(columns=['SDKC9'])   
+    data_loaded = data.drop(columns=['SDKC91'])  
+    data_loaded = data.drop(columns=['SDBB91'])  
+    #data_loaded = data_loaded.drop(columns=['SDLR310'])
     
+    X_data = data.drop(columns=['output']).to_numpy()    
+    y_data = data['output'].values.reshape(-1, 1)
+        
+    X_train, X_val, y_train, y_val = train_test_split(X_data, y_data, test_size=0.2, random_state=42)
+        
+        
     lgb_params = {
         'n_estimators': 250,
         'objective': 'regression',
@@ -233,10 +278,10 @@ if __name__ == "__main__":
 
     lgb_model = LGBMRegressor(**lgb_params)
     lgb_model2 = LGBMRegressor()
-    lgb_model.fit(x_data, y_data)
-    y_pred_lgb = lgb_model.predict(x_data).reshape(-1, 1).astype(np.float32)
-    lgb_model2.fit(x_data, y_data)
-    y_pred_lgb2 = lgb_model.predict(x_data).reshape(-1, 1).astype(np.float32)
+    lgb_model.fit(X_train, y_train)
+    y_pred_lgb = lgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
+    lgb_model2.fit(X_data, y_data)
+    y_pred_lgb2 = lgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
 
     xgb_params = {
         'max_depth': 6,
@@ -249,17 +294,21 @@ if __name__ == "__main__":
 
     xgb_model = XGBRegressor(**xgb_params)
     xgb_model2 = XGBRegressor()
-    xgb_model.fit(x_data, y_data)
-    y_pred_xgb = xgb_model.predict(x_data).reshape(-1, 1).astype(np.float32)
-    xgb_model2.fit(x_data, y_data)
-    y_pred_xgb2 = xgb_model.predict(x_data).reshape(-1, 1).astype(np.float32)
+    xgb_model.fit(X_train, y_train)
+    y_pred_xgb = xgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
+    xgb_model2.fit(X_train, y_train)
+    y_pred_xgb2 = xgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
     y_pred = (y_pred_lgb + y_pred_xgb + y_pred_lgb2 + y_pred_xgb2)/4
 
+    y_pred = (y_pred_lgb2 + y_pred_xgb2)/2
+    y_pred[y_pred > 0] = 1
+    y_pred[y_pred <= 0] = -1
+
     # Create and compile models
-    input_dim = x_data.shape[1]
+    input_dim = X_train.shape[1]
     conditioning_dim = y_pred.shape[1]
 
-    generator = create_generator(input_dim, conditioning_dim, 32, 64, 512)
+    generator = create_generator(input_dim, conditioning_dim, 16, 25, 512)
     discriminator = create_discriminator(input_dim, conditioning_dim, 256, 128, 16)
     
     discriminator.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5), metrics=['accuracy'])
@@ -268,15 +317,22 @@ if __name__ == "__main__":
     gan.compile(loss='binary_crossentropy', optimizer=Adam(0.0001, 0.5))
     gan.summary()
 
+    scaler = MinMaxScaler()
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_val = scaler.transform(X_val)
+
     # Train GAN
-    history = train_gan(generator, discriminator, gan, x_data, y_pred, 
+    history = train_gan(generator, discriminator, gan, X_train, y_pred, 
                         epochs=1000, batch_size=32, 
-                        conditioning_dim=conditioning_dim, patience=5, min_delta=0.001)
+                        conditioning_dim=conditioning_dim, patience=7, min_delta=0.001)
+
 
     # Evaluate GAN
-    evaluation = evaluate_gan(generator, x_data, y_pred, conditioning_dim)
+    evaluation = evaluate_gan(generator, X_val, y_val)
     print_pretty_results(evaluation)
 
 
     # Plot results
-    #plot_results(history, x_data, y_pred, generator, conditioning_dim)
+    #x_rev = scaler.inverse_transform(X_val)
+    #plot_results(history, x_rev, y_val, generator)

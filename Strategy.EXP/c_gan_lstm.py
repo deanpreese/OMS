@@ -11,6 +11,9 @@ from xgboost import XGBRegressor
 from lightgbm import LGBMRegressor
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
 from math import sqrt
 
 tf.config.set_visible_devices([], 'GPU')
@@ -287,6 +290,8 @@ if __name__ == "__main__":
     x_data = data.drop(columns=['output']).to_numpy().astype(np.float32)
     y_data = data['output'].values.reshape(-1, 1).astype(np.float32)
     
+    X_train, X_val, y_train, y_val = train_test_split(x_data, y_data, test_size=0.2, random_state=42)
+    
     lgb_params = {
         'n_estimators': 150,
         'objective': 'regression',
@@ -301,8 +306,8 @@ if __name__ == "__main__":
     }
 
     lgb_model = LGBMRegressor(**lgb_params)
-    lgb_model.fit(x_data, y_data)
-    y_pred_lgb = lgb_model.predict(x_data).reshape(-1, 1).astype(np.float32)
+    lgb_model.fit(X_train, y_train)
+    y_pred_lgb = lgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
 
     xgb_params = {
         'max_depth': 3,
@@ -314,14 +319,16 @@ if __name__ == "__main__":
     }
 
     xgb_model = XGBRegressor(**xgb_params)
-    xgb_model.fit(x_data, y_data)
-    y_pred_xgb = xgb_model.predict(x_data).reshape(-1, 1).astype(np.float32)
+    xgb_model.fit(X_train, y_train)
+    y_pred_xgb = xgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
     y_pred = (y_pred_xgb + y_pred_lgb)/2
 
     # Create and compile models
     input_dim = x_data.shape[1]
     conditioning_dim = y_pred.shape[1]
-    sequence_length = 3
+    sequence_length = 13
+
+
 
     #generator = create_generator(input_dim, conditioning_dim, 12, 24, 48, sequence_length)
     #discriminator = create_discriminator(input_dim, conditioning_dim, 128, 64, 32, sequence_length)
@@ -334,16 +341,21 @@ if __name__ == "__main__":
     gan = create_gan(generator, discriminator, input_dim, conditioning_dim, sequence_length)
     gan.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5))
     gan.summary()
+
+    scaler = MinMaxScaler()
+    #$scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_val = scaler.transform(X_val)
+
     
     # Train GAN with primary discriminator
-    history = train_gan(generator, discriminator, gan, x_data, y_pred, epochs=1000, batch_size=32, 
+    history = train_gan(generator, discriminator, gan, X_train, y_pred, epochs=1000, batch_size=32, 
                         conditioning_dim=conditioning_dim, 
                         sequence_length=sequence_length, patience=5, min_delta=0.001)
 
-    # Evaluate GAN with primary discriminator
-    evaluation = evaluate_gan(generator, x_data, y_pred, conditioning_dim, sequence_length)
-    #print(*evaluation)
 
+    # Evaluate GAN with primary discriminator
+    evaluation = evaluate_gan(generator, X_val, y_val, conditioning_dim, sequence_length)
     print_pretty_results(evaluation)
 
     # Plot results

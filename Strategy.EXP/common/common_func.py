@@ -85,6 +85,10 @@ def gen_importances(features, importances, display):
     return features_list
 
 
+def get_stats( y_test, predicted_values):
+    perf, total = show_stats( False, y_test, predicted_values)
+    return perf
+
 def show_stats( DisplayOutput, y_test, predicted_values):
     correct1 = 0 
     total = 0
