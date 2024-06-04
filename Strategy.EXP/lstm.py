@@ -212,10 +212,10 @@ data_loaded = data_loaded.drop(columns=['SDKC91'])
 #data_loaded = data_loaded.drop(columns=['SDLR310'])
 
 time_steps = 13
-learning_rate=0.001
-lay1 = 10
-lay2 = 15
-lay3 = 5
+learning_rate=0.0001
+lay1 = 100
+lay2 = 150
+lay3 = 50
 epocs = 100
 batch = 256
 
@@ -228,7 +228,8 @@ feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequenc
 t_model = build_modelX(feature_dim_out,  lay1, lay2, lay3, time_steps)
 
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-t_model.compile(optimizer=optimizer, loss='mse')
+t_model.compile(loss='binary_crossentropy', optimizer=Adam(0.0001, 0.5))
+#t_model.compile(optimizer=optimizer, loss='mse')
 t_model.summary()
 
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
