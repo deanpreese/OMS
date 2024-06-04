@@ -76,6 +76,7 @@ def create_generator(input_dim, conditioning_dim, lay1, lay2, lay3):
     output_layer = Dense(input_dim, activation='tanh')(x)
     return Model(input_layer, output_layer)
 
+
 # Function to create discriminator model
 def create_discriminator(input_dim, conditioning_dim, lay1, lay2, lay3):
     init = RandomNormal(stddev=0.02)

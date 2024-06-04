@@ -31,7 +31,8 @@ def create_sequences(data_in, seq_length_in):
 def normalize_sequences(sequences_in):
     scalers_out = {}
     for i in range(sequences_in.shape[0]):
-        scalers_out[i] = MinMaxScaler((0,1)) 
+        #scalers_out[i] = MinMaxScaler((0,1))
+        scalers_out[i] = StandardScaler() 
         sequences_in[i] = scalers_out[i].fit_transform(sequences_in[i])
     return sequences_in, scalers_out
 
@@ -115,19 +116,18 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
     print("ups: " , ups , "        dwns: " , dwns)        
             
     
-    ax2.scatter(predictions , y_test_in , color=colors)
+    predictions_reversed = reverse_scaling(predictions, scalers_in, timesteps_in, num_features_in )
+    
+    ax2.scatter(predictions_reversed , y_test_in , color=colors)
     ax2.set_xlabel("Actual Output")
     ax2.set_ylabel("Predicted Output")
     ax2.grid(True)    
-        
-    # Reverse the scaling of predictions
-    predictions_reversed = reverse_scaling(predictions, scalers_in, timesteps_in, num_features_in )
-
+    
     # Plot actual vs predicted values
     #ax3.plot(range(len(y_test_in)), y_test_in, color='blue', label='Actual Values')
     #ax3.plot(range(len(predictions_reversed)), predictions_reversed, color='red', linestyle='--', label='Predicted Values')
     
-    ax3.plot(range(len(predictions_reversed)), (predictions_reversed - y_test_in), color='red', linestyle='--', label='Predicted Values')
+    #ax3.plot(range(len(predictions_reversed)), (predictions_reversed - y_test_in), color='red', linestyle='--', label='Predicted Values')
     #ax3.set_title('Actual vs Predicted Values')
     ax3.set_xlabel('Index')
     ax3.set_ylabel('Output')
@@ -138,45 +138,45 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
 
 def build_model(input_dim,  lay1, lay2, lay3, sequence_length):
     
-    init = RandomNormal(stddev=0.02)    
+    init = RandomNormal(stddev=0.02)
+    dropout_rate=0.5
+    
     input_layer = Input(shape=(sequence_length, input_dim))
     print("Input Shape:", input_layer.shape)
 
     reshaped_input = Reshape((sequence_length, input_dim, 1))(input_layer)
-    conv1 = TimeDistributed(Conv1D(filters=132, kernel_size=7, activation='relu', padding='same'))(reshaped_input)
+    conv1 = TimeDistributed(Conv1D(filters=32, kernel_size=7, activation='relu', padding='same'))(reshaped_input)
     conv1 = Flatten()(conv1)  
     conv1 = Reshape((sequence_length, -1))(conv1)
 
-    x = LSTM(lay1, return_sequences=True)(conv1)
-    x = MultiHeadAttention(num_heads=2, key_dim=25)(x, x)
-
-    concat = Concatenate()([conv1, x])
-    flatten = Flatten()(concat)
-    #x = LSTM(25, return_sequences=False)(x)
-
-    #x = LSTM(lay1, return_sequences=True, kernel_initializer=init)(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = LSTM(lay1, return_sequences=True, kernel_initializer=init, kernel_regularizer=tf.keras.regularizers.l2(0.01))(conv1)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(dropout_rate)(x)
+       
+    x = MultiHeadAttention(num_heads=2, key_dim=15,kernel_regularizer=tf.keras.regularizers.l2(0.01))(x, x)
+    x = Dropout(dropout_rate)(x)
    
-    x = Bidirectional(LSTM(lay2 ,return_sequences=True))(x)
-    #x = LSTM(lay2, return_sequences=True, kernel_initializer=init)(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    #x = LSTM(lay2, return_sequences=True, kernel_initializer=init, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+    x = Bidirectional(LSTM(lay2,return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01)))(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(dropout_rate)(x)
     
     x = Attention()([x, x])    
     
-    x = LSTM(lay3, return_sequences=True)(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = LSTM(lay3, return_sequences=False, kernel_initializer=init, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(dropout_rate)(x)
         
-    x = Dense(input_dim, activation='tanh')(x)
-    
+    x = Dense(1, activation='tanh')(x)
+    #x = Dense(1)(x)
     return Model(input_layer, x)
 
 def build_modelX(input_dim,  lay1, lay2, lay3, sequence_length):
+   
+    init = RandomNormal(stddev=0.02)
    
     dropout_rate=0.5
     model = Sequential()
@@ -193,46 +193,37 @@ def build_modelX(input_dim,  lay1, lay2, lay3, sequence_length):
 
 
 # -----------------------------------------------------------------------
-
-
 #train_file = pd.read_csv('data/sm13_3070.csv')
 train_file = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
 data_loaded = train_file.drop(columns=['outputC'])
 
-
 #data_loaded = data_loaded.drop(columns=['STOK1'])
 #data_loaded = data_loaded.drop(columns=['RSI'])
-data_loaded = data_loaded.drop(columns=['ATR2'])
+#data_loaded = data_loaded.drop(columns=['ATR2'])
 data_loaded = data_loaded.drop(columns=['ATR21'])
-data_loaded = data_loaded.drop(columns=['ATR3'])
+#data_loaded = data_loaded.drop(columns=['ATR3'])
 data_loaded = data_loaded.drop(columns=['ATR31']) 
 data_loaded = data_loaded.drop(columns=['ATR32']) 
 data_loaded = data_loaded.drop(columns=['ATR34'])   
-data_loaded = data_loaded.drop(columns=['ROC'])     
-data_loaded = data_loaded.drop(columns=['SDKC9'])   
+#data_loaded = data_loaded.drop(columns=['ROC'])     
+#data_loaded = data_loaded.drop(columns=['SDKC9'])   
 data_loaded = data_loaded.drop(columns=['SDKC91'])  
-data_loaded = data_loaded.drop(columns=['SDBB91'])  
+#data_loaded = data_loaded.drop(columns=['SDBB91'])  
 #data_loaded = data_loaded.drop(columns=['SDLR310'])
 
-#review_data(data_loaded)
-#exit()
-
-time_steps = 7
-epocs_to_run = 100
-batch_size_to_run = 32
-learning_rate=0.02
-lay1 = 25
-lay2 = 50
-lay3 = 75
+time_steps = 13
+learning_rate=0.001
+lay1 = 10
+lay2 = 15
+lay3 = 5
 epocs = 100
-batch = 32
+batch = 256
 
 feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data_loaded, time_steps)
 
-
-print(feature_dim_out)
-print(X_train_out.shape)
-print(y_train_out.shape)
+#print(feature_dim_out)
+#print(X_train_out.shape)
+#print(y_train_out.shape)
 
 t_model = build_modelX(feature_dim_out,  lay1, lay2, lay3, time_steps)
 
@@ -240,7 +231,7 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 t_model.compile(optimizer=optimizer, loss='mse')
 t_model.summary()
 
-early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 history_out = t_model.fit(X_train_out, y_train_out, validation_data=(X_test, y_test), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
 
 eval_results(history_out, t_model, X_test, y_test, scalers_out, time_steps, feature_dim_out)
