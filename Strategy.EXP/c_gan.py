@@ -25,9 +25,6 @@ def print_pretty_results(results):
     print(f"MSE: {results['MSE']:.4f}")
     print(f"RMSE: {results['RMSE']:.4f}")
     print(f"R2: {results['R2']:.4f}")
-    print(f"Wins: {results['Wins']}")
-    print(f"Losses: {results['Losses']}")
-    print(f"% Correct: {results['% Correct']:.2%}")
     print("     ")
 
 
@@ -201,68 +198,158 @@ def evaluate_gan(generator, x_test, y_test):
     mse = mean_squared_error(x_test, generated_samples)
     rmse = sqrt(mse)
     r2 = r2_score(x_test, generated_samples)
-
-    wins = np.sum(np.logical_and(generated_samples > 0, x_test > 0))
-    losses = abs(x_test.shape[0] - wins)
-    per_c = wins/(wins + losses)
-
-    return {"MSE": mse, "RMSE": rmse, "R2": r2, "Wins": wins, "Losses": losses, "% Correct": per_c}
-
-# Function to plot results
-def plot_results(history, x_test, y_test, generator):
-    plt.figure(figsize=(10, 5))
     
-    # Plot discriminator and generator loss
-    #plt.subplot(1, 1,1)
-    #plt.plot(history['d_loss'], label='Discriminator Loss')
-    #plt.plot(history['g_loss'], label='Generator Loss')
-    #plt.legend()
-    #plt.title('Losses')
-    
-    # Plot actual vs predicted
-    noise = np.random.normal(0, 1, (x_test.shape[0], x_test.shape[1]))
-    gen_input = [noise, y_test]
-    generated_samples = generator.predict(np.concatenate(gen_input, axis=1))
-    
-    print(x_test.shape)
-    print(generated_samples.shape)
-    
-    plt.subplot(1, 1,1)
-    plt.scatter( x_test, generated_samples, alpha=0.5)
-    #plt.plot([x_test.min(), x_test.max()], [x_test.min(), x_test.max()], 'k--', lw=2)
-    plt.xlabel('Actual')
-    plt.ylabel('Predicted')
-    plt.title('Actual vs Predicted')
+    # Evaluate the model
+    #val_loss = model_in.evaluate(X_test_in, y_test_in)
+    #print(f'Validation Loss: {val_loss:.4f}')
+   
+    return {"MSE": mse, "RMSE": rmse, "R2": r2 }
 
+
+def evaluate_features(predictions_x, predictions, y_test_in):
+
+    
+
+    for z in range(predictions.shape[1]):
+    
+        ups = 0
+        dwns = 0
+        zeros = 0
+        total = 0
+    
+        for i in range(len(predictions)):
+            
+            total += 1
+            
+            print(f"prediction: {predictions[i][z]}  actual: {y_test_in[i]}")
+            
+            if ((predictions[i][z] < 0 and y_test_in[i] > 0) or (predictions[i][z] > 0 and y_test_in[i] < 0)):
+                    dwns += 1
+            
+            elif ((predictions[i][z] > 0 and y_test_in[i] > 0) or (predictions[i][z] < 0 and y_test_in[i] < 0)):
+                    ups += 1
+                            
+            else:
+                zeros += 1                
+                
+        print(f"{z} ups: {ups}  dwns: {dwns}  Zeros: {zeros}  Total: {total}  Perf/wZ {round(((ups+zeros)/total),4)}  PerfX/woZ {round(ups/(ups+dwns),4)}")        
+    print(" ")
+
+
+
+def plot_results(history_in, predictions, predictions_reversed, y_test_in):
+
+    fig = plt.figure(figsize=(16, 9))
+    gs = fig.add_gridspec(2, 2, height_ratios=[1, 2])
+    
+    ax1 = fig.add_subplot(gs[0, 0])
+    ax1.plot(history_in['d_loss'], label='Discriminator Loss')
+    ax1.plot(history_in['g_loss'], label='Generator Loss')
+    ax1.set_xlabel('Epoch')
+    ax1.set_ylabel('Loss')
+    ax1.set_title('Training and Validation Loss')
+    ax1.grid(True)
+
+    ax2 = fig.add_subplot(gs[0, 1])
+    # Plot discriminator accuracy
+    ax2.plot(history_in['d_acc'], label='Discriminator Accuracy')
+    ax2.legend()
+    ax2.set_title('Discriminator Accuracy')
+
+    colors = []
+
+    for z in range(predictions.shape[1]):
+    
+        ups = 0
+        dwns = 0
+        zeros = 0
+        total = 0
+    
+        for i in range(len(predictions)):
+            
+            total += 1
+            
+            if ((predictions[i][z] < 0 and y_test_in[i] > 0) or (predictions[i][z] > 0 and y_test_in[i] < 0)):
+                
+                if abs(y_test_in[i]) > 1.0:
+                    colors.append('red')
+                    dwns += 1
+                else:        
+                    colors.append('red')
+                    dwns += 1
+            
+            elif ((predictions[i][z] > 0 and y_test_in[i] > 0) or (predictions[i][z] < 0 and y_test_in[i] < 0)):
+                
+                if abs(y_test_in[i]) > 1.0:
+                    colors.append('green')
+                    ups += 1
+                else:        
+                    colors.append('green')   
+                    ups += 1
+                            
+            else:
+                colors.append('white') 
+                zeros += 1                
+                
+        print(f"{z} ups: {ups}  dwns: {dwns}  Zeros: {zeros}  Total: {total}  Perf/wZ {round(((ups+zeros)/total),4)}  PerfX/woZ {round(ups/(ups+dwns),4)}")        
+        
+    print(" ")
+    #print(f"pre_rev {predictions_reversed.shape}  y_test {y_test_in.shape}  Pred {predictions.shape[0]} {predictions.shape[1]} ")    
+    
+    ax3 = fig.add_subplot(gs[1, :])
+    ax3.plot(range(len(predictions_reversed)), predictions_reversed , color='red', linestyle='--', label='Predicted Values')
+    ax3.plot(range(len(predictions_reversed)), y_test_in , color='black', linestyle='-', label='Y Values')
+    ax3.set_title('Actual vs Predicted Values')
+    ax3.set_xlabel('Index')
+    ax3.set_ylabel('Output')
+    ax3.legend()
+    ax3.grid(True)
+
+    plt.tight_layout()
     plt.show()
+
 
 # Sample Usage
 if __name__ == "__main__":
     set_seeds(42)
 
-    # Example data loading (replace with your actual dataset)
-    train_file = pd.read_csv("data/buildSeqInd_Lucky13_5M_ALL.csv")
-    data = train_file.drop(columns=['outputC'])
-        
-    #data_loaded = data_loaded.drop(columns=['STOK1'])
-    #data_loaded = data_loaded.drop(columns=['RSI'])
-    #data_loaded = data.drop(columns=['ATR2'])
-    data_loaded = data.drop(columns=['ATR21'])
-    #data_loaded = data.drop(columns=['ATR3'])
-    data_loaded = data.drop(columns=['ATR31']) 
-    data_loaded = data.drop(columns=['ATR32']) 
-    data_loaded = data.drop(columns=['ATR34'])   
-    #data_loaded = data.drop(columns=['ROC'])     
-    #data_loaded = data.drop(columns=['SDKC9'])   
-    data_loaded = data.drop(columns=['SDKC91'])  
-    data_loaded = data.drop(columns=['SDBB91'])  
-    #data_loaded = data_loaded.drop(columns=['SDLR310'])
+ # Example data loading (replace with your actual dataset)
+    raw_data = pd.read_csv("data/buildSeqInd_Lucky13_5M_ALL.csv")
     
+    xgb_data = raw_data
+    lgb_data = raw_data
+    data = raw_data
+    #data = data.drop(columns=['STOK1'])
+    #data = data.drop(columns=['RSI'])
+    #data = data.drop(columns=['ATR2'])
+    data = data.drop(columns=['ATR21'])
+    #data = data.drop(columns=['ATR3'])
+    data = data.drop(columns=['ATR31']) 
+    data = data.drop(columns=['ATR32']) 
+    data = data.drop(columns=['ATR34'])   
+    #data = data.drop(columns=['ROC'])     
+    #data = data.drop(columns=['SDKC9'])   
+    data = data.drop(columns=['SDKC91'])  
+    data = data.drop(columns=['SDBB91'])  
+    #data = data.drop(columns=['SDLR310'])
+    data = data.drop(columns=['outputC'])
+    data = data.drop(columns=['outputX'])
+
     X_data = data.drop(columns=['output']).to_numpy()    
     y_data = data['output'].values.reshape(-1, 1)
+    X_train, X_val, y_train, y_val = train_test_split(X_data, y_data, test_size=0.4, random_state=42)
+    
+    data_xgb = xgb_data    
+    data_xgb = xgb_data.drop(columns=['ATR21', 'ATR31', 'ATR32', 'ATR34', 'SDKC91', 'SDBB91', 'outputC', 'outputX'])
+    X_data_xgb = data_xgb.drop(columns=['output']).to_numpy()    
+    y_data_xgb = data_xgb['output'].values.reshape(-1, 1)
+    X_train_xgb, X_val_xgb, y_train_xgb, y_val_xgb = train_test_split(X_data_xgb, y_data_xgb, test_size=0.4, random_state=42)
         
-    X_train, X_val, y_train, y_val = train_test_split(X_data, y_data, test_size=0.2, random_state=42)
-        
+    data_lgb = lgb_data        
+    data_lgb = lgb_data.drop(columns=['ATR21', 'ATR31', 'ATR32', 'ATR34', 'SDKC91', 'SDBB91', 'outputC', 'outputX'])    
+    X_data_lgb = data_lgb.drop(columns=['output']).to_numpy()    
+    y_data_lgb = data_lgb['output'].values.reshape(-1, 1)
+    X_train_lgb, X_val_lgb, y_train_lgb, y_val_lgb = train_test_split(X_data_lgb, y_data_lgb, test_size=0.4, random_state=42)
         
     lgb_params = {
         'n_estimators': 250,
@@ -279,10 +366,10 @@ if __name__ == "__main__":
 
     lgb_model = LGBMRegressor(**lgb_params)
     lgb_model2 = LGBMRegressor()
-    lgb_model.fit(X_train, y_train)
-    y_pred_lgb = lgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
-    lgb_model2.fit(X_data, y_data)
-    y_pred_lgb2 = lgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
+    lgb_model.fit(X_train_lgb, y_train_lgb)
+    y_pred_lgb = lgb_model.predict(X_train_lgb).reshape(-1, 1).astype(np.float32)
+    lgb_model2.fit(X_data_lgb, y_data_lgb)
+    y_pred_lgb2 = lgb_model2.predict(X_train_lgb).reshape(-1, 1).astype(np.float32)
 
     xgb_params = {
         'max_depth': 6,
@@ -295,10 +382,11 @@ if __name__ == "__main__":
 
     xgb_model = XGBRegressor(**xgb_params)
     xgb_model2 = XGBRegressor()
-    xgb_model.fit(X_train, y_train)
-    y_pred_xgb = xgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
-    xgb_model2.fit(X_train, y_train)
-    y_pred_xgb2 = xgb_model.predict(X_train).reshape(-1, 1).astype(np.float32)
+    xgb_model.fit(X_train_xgb, y_train_xgb)
+    y_pred_xgb = xgb_model.predict(X_train_xgb).reshape(-1, 1).astype(np.float32)
+    xgb_model2.fit(X_train_xgb, y_train_xgb)
+    y_pred_xgb2 = xgb_model2.predict(X_train_xgb).reshape(-1, 1).astype(np.float32)
+    
     y_pred = (y_pred_lgb + y_pred_xgb + y_pred_lgb2 + y_pred_xgb2)/4
 
     y_pred = (y_pred_lgb2 + y_pred_xgb2)/2
@@ -309,8 +397,8 @@ if __name__ == "__main__":
     input_dim = X_train.shape[1]
     conditioning_dim = y_pred.shape[1]
 
-    generator = create_generator(input_dim, conditioning_dim, 16, 25, 512)
-    discriminator = create_discriminator(input_dim, conditioning_dim, 256, 128, 16)
+    generator = create_generator(input_dim, conditioning_dim, 32, 64, 256)
+    discriminator = create_discriminator(input_dim, conditioning_dim, 256, 128, 64)
     
     discriminator.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5), metrics=['accuracy'])
 
@@ -318,8 +406,8 @@ if __name__ == "__main__":
     gan.compile(loss='binary_crossentropy', optimizer=Adam(0.0001, 0.5))
     gan.summary()
 
-    scaler = MinMaxScaler()
-    scaler = StandardScaler()
+    scaler = MinMaxScaler((0,1))
+    #scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_val = scaler.transform(X_val)
 
@@ -329,11 +417,13 @@ if __name__ == "__main__":
                         conditioning_dim=conditioning_dim, patience=7, min_delta=0.001)
 
 
+    x_rev = scaler.inverse_transform(X_val)
     # Evaluate GAN
-    evaluation = evaluate_gan(generator, X_val, y_val)
+    evaluation = evaluate_gan(generator, x_rev, y_val)
     print_pretty_results(evaluation)
 
+    evaluate_features( X_val, x_rev, y_val)
 
     # Plot results
-    #x_rev = scaler.inverse_transform(X_val)
-    #plot_results(history, x_rev, y_val, generator)
+    #plot_results(history, X_val, x_rev, y_val)
+    

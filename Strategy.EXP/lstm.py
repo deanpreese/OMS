@@ -8,6 +8,7 @@ from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.initializers import RandomNormal
 from tensorflow.keras.regularizers import l2
+from tensorflow.keras.metrics import MeanSquaredError, BinaryCrossentropy, BinaryAccuracy, AUC  
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 from xgboost import XGBRegressor
@@ -22,6 +23,7 @@ tf.config.set_visible_devices([], 'GPU')
 
 # Function to create sequences
 def create_sequences(data_in, seq_length_in):
+    print("create_sequences")
     xs = [data_in.iloc[i:i + seq_length_in, :-1].values for i in range(len(data_in) - seq_length_in)]
     ys = data_in.iloc[seq_length_in:, -1].values
     return np.array(xs), np.array(ys)
@@ -29,10 +31,13 @@ def create_sequences(data_in, seq_length_in):
 
 # Function to normalize sequences
 def normalize_sequences(sequences_in):
+    print("normalize_sequences")
     scalers_out = {}
     for i in range(sequences_in.shape[0]):
-        #scalers_out[i] = MinMaxScaler((0,1))
-        scalers_out[i] = StandardScaler() 
+        #scalers_out[i] = MinMaxScaler((-1,1))
+        scalers_out[i] = MinMaxScaler((0,1))
+        #scalers_out[i] = MinMaxScaler()
+        #scalers_out[i] = StandardScaler() 
         sequences_in[i] = scalers_out[i].fit_transform(sequences_in[i])
     return sequences_in, scalers_out
 
@@ -87,10 +92,14 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
 
     ups = 0
     dwns = 0
+    zeros = 0
+    total = 0
 
     colors = []
     for i in range(len(predictions)):
         #print(f"Predicted: {predictions[i][0]} Actual: {y_test_in[i]}")
+        
+        total += 1
         
         if ((predictions[i][0] < 0 and y_test_in[i] > 0) or (predictions[i][0] > 0 and y_test_in[i] < 0)):
             
@@ -111,9 +120,10 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
                 ups += 1
                            
         else:
-            colors.append('white')                 
+            colors.append('white') 
+            zeros += 1                
             
-    print("ups: " , ups , "        dwns: " , dwns)        
+    print(f" ups: {ups}  dwns: {dwns}  Zeros: {zeros}  Total: {total}  Perf {round(((ups+zeros)/total),4)}  PerfX {round(ups/(ups+dwns),4)}")        
             
     
     predictions_reversed = reverse_scaling(predictions, scalers_in, timesteps_in, num_features_in )
@@ -121,16 +131,19 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
     ax2.scatter(predictions_reversed , y_test_in , color=colors)
     ax2.set_xlabel("Actual Output")
     ax2.set_ylabel("Predicted Output")
+    ax2.legend()
     ax2.grid(True)    
     
     # Plot actual vs predicted values
     #ax3.plot(range(len(y_test_in)), y_test_in, color='blue', label='Actual Values')
     #ax3.plot(range(len(predictions_reversed)), predictions_reversed, color='red', linestyle='--', label='Predicted Values')
     
-    #ax3.plot(range(len(predictions_reversed)), (predictions_reversed - y_test_in), color='red', linestyle='--', label='Predicted Values')
+    ax3.plot(range(len(predictions_reversed)), predictions_reversed , color='red', linestyle='--', label='Predicted Values')
+    ax3.plot(range(len(predictions_reversed)), y_test_in , color='black', linestyle='-', label='Y Values')
     #ax3.set_title('Actual vs Predicted Values')
     ax3.set_xlabel('Index')
     ax3.set_ylabel('Output')
+    ax3.legend()
     ax2.grid(True)
 
     plt.show()
@@ -179,61 +192,76 @@ def build_modelX(input_dim,  lay1, lay2, lay3, sequence_length):
     init = RandomNormal(stddev=0.02)
    
     dropout_rate=0.5
-    model = Sequential()
-    model.add(Input(shape=(sequence_length, input_dim)))
-    model.add(LSTM(lay1, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-    model.add(Dropout(dropout_rate))
-    model.add(LSTM(lay2, return_sequences=True))
-    model.add(Dropout(0.2))
-    model.add(LSTM(lay3, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
-    model.add(Dropout(0.2))
-    model.add(Dense(1, kernel_regularizer=tf.keras.regularizers.l2(0.01)))
+    
+    input_layer = Input(shape=(sequence_length, input_dim))
+    x = LSTM(lay1, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01))(input_layer)
+    #x = Dropout(dropout_rate)(x)
+    x = LSTM(lay2, return_sequences=True)(x)
+    #x = Dropout(0.2)(x) 
+    x= LSTM(lay3, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+    #x= Dropout(0.2)(x) 
+    
+    x = Dense(lay3//2, kernel_initializer=init, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+    #x = LeakyReLU(negative_slope=0.2)(x)
+    #x = BatchNormalization()(x)
+    #x = Dropout(0.3)(x)
+    x = Dense(1, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
 
-    return model
+    return Model(input_layer, x)
 
 
 # -----------------------------------------------------------------------
-#train_file = pd.read_csv('data/sm13_3070.csv')
-train_file = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
-data_loaded = train_file.drop(columns=['outputC'])
+#data_loaded = pd.read_csv('data/sm13_3070.csv')
+data = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
 
-#data_loaded = data_loaded.drop(columns=['STOK1'])
-#data_loaded = data_loaded.drop(columns=['RSI'])
-#data_loaded = data_loaded.drop(columns=['ATR2'])
-data_loaded = data_loaded.drop(columns=['ATR21'])
-#data_loaded = data_loaded.drop(columns=['ATR3'])
-data_loaded = data_loaded.drop(columns=['ATR31']) 
-data_loaded = data_loaded.drop(columns=['ATR32']) 
-data_loaded = data_loaded.drop(columns=['ATR34'])   
-#data_loaded = data_loaded.drop(columns=['ROC'])     
-#data_loaded = data_loaded.drop(columns=['SDKC9'])   
-data_loaded = data_loaded.drop(columns=['SDKC91'])  
-#data_loaded = data_loaded.drop(columns=['SDBB91'])  
-#data_loaded = data_loaded.drop(columns=['SDLR310'])
+#data = data.drop(columns=['STOK1'])
+#data = data.drop(columns=['RSI'])
+#data = data.drop(columns=['ATR2'])
+data = data.drop(columns=['ATR21'])
+#data = data.drop(columns=['ATR3'])
+data = data.drop(columns=['ATR31']) 
+data = data.drop(columns=['ATR32']) 
+data = data.drop(columns=['ATR34'])   
+#data = data.drop(columns=['ROC'])     
+#data = data.drop(columns=['SDKC9'])   
+data = data.drop(columns=['SDKC91'])  
+data = data.drop(columns=['SDBB91'])  
+#data = data.drop(columns=['SDLR310'])
+
+data = data.drop(columns=['outputC'])
+data = data.drop(columns=['outputX'])
 
 time_steps = 13
 learning_rate=0.0001
+beta_1=0.5
 lay1 = 100
-lay2 = 150
-lay3 = 50
+lay2 = 75
+lay3 = 25
 epocs = 100
-batch = 256
+batch = 64
 
-feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data_loaded, time_steps)
+feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data, time_steps)
 
 #print(feature_dim_out)
 #print(X_train_out.shape)
 #print(y_train_out.shape)
 
 t_model = build_modelX(feature_dim_out,  lay1, lay2, lay3, time_steps)
+optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, beta_1=beta_1)
 
-optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-t_model.compile(loss='binary_crossentropy', optimizer=Adam(0.0001, 0.5))
-#t_model.compile(optimizer=optimizer, loss='mse')
+
+c_metrics = ['BinaryAccuracy', 'AUC', 'MeanSquaredError',]
+t_model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=c_metrics )
+
+
+#r_metrics = ['MeanSquaredError','BinaryAccuracy', 'AUC']
+#t_model.compile(optimizer=optimizer, loss='mse',metrics=r_metrics)
+
 t_model.summary()
-
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 history_out = t_model.fit(X_train_out, y_train_out, validation_data=(X_test, y_test), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
+
+
 
 eval_results(history_out, t_model, X_test, y_test, scalers_out, time_steps, feature_dim_out)
 
