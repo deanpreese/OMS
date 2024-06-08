@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
         "Npgsql"
-    ]
+    ],
+    "python.analysis.typeCheckingMode": "off",
+    "python.analysis.autoImportCompletions": false
 }

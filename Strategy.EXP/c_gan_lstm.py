@@ -49,27 +49,22 @@ def create_generator(input_dim, conditioning_dim, lay1, lay2, lay3, sequence_len
     x = LSTM(lay1, return_sequences=True)(conv1)
     x = MultiHeadAttention(num_heads=2, key_dim=25)(x, x)
 
-    concat = Concatenate()([conv1, x])
-    flatten = Flatten()(concat)
-    #x = LSTM(25, return_sequences=False)(x)
-
-    #x = LSTM(lay1, return_sequences=True, kernel_initializer=init)(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
    
     x = Bidirectional(LSTM(lay2 ,return_sequences=True))(x)
     #x = LSTM(lay2, return_sequences=True, kernel_initializer=init)(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
     
     x = Attention()([x, x])    
     
     x = LSTM(lay3, return_sequences=True)(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
         
     x = Dense(input_dim, activation='tanh')(x)
     return Model(input_layer, x)

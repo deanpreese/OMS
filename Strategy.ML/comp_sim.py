@@ -46,6 +46,7 @@ def run_sim(exp_id, n_models, file, trades, delay, group_id, api_url):
                 
                 predict = models[m].do_predict(X.iloc[i])
                 
+                
                 #print(X.iloc[i])    
                 
                 order_manager.process_model(models[m], y[i], predict)            

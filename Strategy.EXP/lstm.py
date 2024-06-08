@@ -35,8 +35,8 @@ def normalize_sequences(sequences_in):
     scalers_out = {}
     for i in range(sequences_in.shape[0]):
         #scalers_out[i] = MinMaxScaler((-1,1))
-        scalers_out[i] = MinMaxScaler((0,1))
-        #scalers_out[i] = MinMaxScaler()
+        #scalers_out[i] = MinMaxScaler((0,1))
+        scalers_out[i] = MinMaxScaler()
         #scalers_out[i] = StandardScaler() 
         sequences_in[i] = scalers_out[i].fit_transform(sequences_in[i])
     return sequences_in, scalers_out
@@ -57,7 +57,7 @@ def sequence_and_normalize(data_in, seq_length_in):
     feature_dim = data_in.shape[1] - 1
     X, y = create_sequences(data_in, seq_length_in)
     X, scalers = normalize_sequences(X)
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.4, random_state=42)
     
     return feature_dim, scalers, X_train, X_val, y_train, y_val
 
@@ -195,16 +195,15 @@ def build_modelX(input_dim,  lay1, lay2, lay3, sequence_length):
     
     input_layer = Input(shape=(sequence_length, input_dim))
     x = LSTM(lay1, return_sequences=True, kernel_regularizer=tf.keras.regularizers.l2(0.01))(input_layer)
-    #x = Dropout(dropout_rate)(x)
+    x = Dropout(dropout_rate)(x)
     x = LSTM(lay2, return_sequences=True)(x)
-    #x = Dropout(0.2)(x) 
-    x= LSTM(lay3, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
-    #x= Dropout(0.2)(x) 
-    
+    x = Dropout(0.2)(x) 
+    x = LSTM(lay3, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+    x = Dropout(0.2)(x) 
     x = Dense(lay3//2, kernel_initializer=init, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
     x = Dense(1, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
 
     return Model(input_layer, x)
@@ -231,14 +230,14 @@ data = data.drop(columns=['SDBB91'])
 data = data.drop(columns=['outputC'])
 data = data.drop(columns=['outputX'])
 
-time_steps = 13
+time_steps = 7
 learning_rate=0.0001
 beta_1=0.5
-lay1 = 100
-lay2 = 75
-lay3 = 25
+lay1 = 16
+lay2 = 128
+lay3 = 32
 epocs = 100
-batch = 64
+batch = 32
 
 feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data, time_steps)
 
@@ -250,12 +249,12 @@ t_model = build_modelX(feature_dim_out,  lay1, lay2, lay3, time_steps)
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, beta_1=beta_1)
 
 
-c_metrics = ['BinaryAccuracy', 'AUC', 'MeanSquaredError',]
-t_model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=c_metrics )
+#c_metrics = ['BinaryAccuracy', 'AUC', 'MeanSquaredError',]
+#t_model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=c_metrics )
 
 
-#r_metrics = ['MeanSquaredError','BinaryAccuracy', 'AUC']
-#t_model.compile(optimizer=optimizer, loss='mse',metrics=r_metrics)
+r_metrics = ['MeanSquaredError','BinaryAccuracy', 'AUC']
+t_model.compile(optimizer=optimizer, loss='mse',metrics=r_metrics)
 
 t_model.summary()
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)

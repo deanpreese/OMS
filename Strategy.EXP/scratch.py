@@ -1,20 +1,16 @@
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-import keras as keras
 import random
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-
-from keras.models import Model
-from keras.layers import Input, LSTM, Dense, Conv1D, TimeDistributed, Flatten, Dropout, BatchNormalization, LeakyReLU, Bidirectional, Concatenate, MultiHeadAttention
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, LSTM, Dense, Conv1D, TimeDistributed, Flatten, Dropout, BatchNormalization, LeakyReLU, Bidirectional, Concatenate, MultiHeadAttention
 from keras.layers import MultiHeadAttention, LayerNormalization, Add, Reshape, AdditiveAttention, Attention
-
-from keras.regularizers import l2
+from tensorflow.keras.regularizers import l2
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.initializers import RandomNormal
-from keras.optimizers import Adam
+from tensorflow.keras.initializers import RandomNormal
+from tensorflow.keras.optimizers import Adam
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from xgboost import XGBRegressor
 from lightgbm import LGBMRegressor
@@ -24,24 +20,13 @@ from math import sqrt
 
 tf.config.set_visible_devices([], 'GPU')
 
-def gen_cond_data(gb_data, split):
-    
-    X_data_xgb = gb_data.drop(columns=['output'])   
-    y_data_xgb = gb_data['output'].values.reshape(-1, 1)
-    X_train_xgb, X_val_xgb, y_train_xgb, y_val_xgb = train_test_split(X_data_xgb, y_data_xgb, test_size=split, random_state=17)
-    
-    xgb_model = XGBRegressor()
-    xgb_model.fit(X_train_xgb, y_train_xgb)
-    y_pred_v = xgb_model.predict(X_train_xgb)
-    y_pred = y_pred_v.reshape(-1, 1).astype(np.float32)
-        
-    y_pred[y_pred > 0] = 1
-    y_pred[y_pred <= 0] = -1    
-    
-    return y_pred
+def print_pretty_results(results):
+    print("     ")
+    print(f"MSE: {results['MSE']:.4f}")
+    print(f"RMSE: {results['RMSE']:.4f}")
+    print(f"R2: {results['R2']:.4f}")
+    print("     ")
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
 
 # Function to set seeds for reproducibility
 def set_seeds(seed=42):
@@ -57,28 +42,33 @@ def create_generator(input_dim, conditioning_dim, lay1, lay2, lay3):
     input_layer = Input(shape=(input_dim + conditioning_dim,))
     
     print("Input Shape:", input_layer.shape)
+    
+    #model.add(Dense(timesteps * n_features, activation="relu"))
+    #model.add(Reshape((timesteps, n_features)))
+
+    
     x = Dense(lay1, kernel_initializer=init)(input_layer)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
     
     #x = Reshape((lay1, 1))(x)
     #attention = Attention()([x, x])
     #x = Flatten()(attention)
         
     x = Dense(lay2, kernel_initializer=init)(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
     
-    #x = Reshape((lay2, 1))(x)
-    #attention = Attention()([x, x])
-    #x = Flatten()(attention)
+    x = Reshape((lay2, 1))(x)
+    attention = Attention()([x, x])
+    x = Flatten()(attention)
     
-    #x = Dense(lay3, kernel_initializer=init)(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = Dense(lay3, kernel_initializer=init)(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
     
     output_layer = Dense(input_dim, activation='tanh')(x)
     return Model(input_layer, output_layer)
@@ -90,31 +80,31 @@ def create_discriminator(input_dim, conditioning_dim, lay1, lay2, lay3):
     input_layer = Input(shape=(input_dim + conditioning_dim,))
     
     x = Dense(lay1, kernel_initializer=init)(input_layer)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
 
     #x = Reshape((lay1, 1))(x)
     #attention = Attention()([x, x])
     #x = Flatten()(attention)
     
     x = Dense(lay2, kernel_initializer=init)(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
 
     #x = Reshape((lay2, 1))(x)
     #attention = Attention()([x, x])
     #x = Flatten()(attention)
     
-    #x = Dense(lay3, kernel_initializer=init)(x)
-    #x = LeakyReLU(negative_slope=0.2)(x)
-    #x = BatchNormalization()(x)
-    #x = Dropout(0.3)(x)
+    x = Dense(lay3, kernel_initializer=init)(x)
+    x = LeakyReLU(negative_slope=0.2)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
     
-    #x = Reshape((lay3, 1))(x)
-    #attention = Attention()([x, x])
-    #x = Flatten()(attention)
+    x = Reshape((lay3, 1))(x)
+    attention = Attention()([x, x])
+    x = Flatten()(attention)
     
     x = Dense(1, activation='sigmoid')(x)
     return Model(input_layer, x)
@@ -142,7 +132,7 @@ def gradient_penalty(discriminator, real_samples, fake_samples, conditioning_sam
     return gradient_penalty
 
 # Function to train the GAN model
-def train_gan(generator, discriminator, gan, x_data, y_data, epochs, batch_size, conditioning_dim, patience=10, min_delta=0.0007, steps=1):
+def train_gan(generator, discriminator, gan, x_data, y_data, epochs, batch_size, conditioning_dim, patience=10, min_delta=0.001):
     history = {'d_loss': [], 'g_loss': [], 'd_acc': []}
     valid = np.ones((batch_size, 1))
     fake = np.zeros((batch_size, 1))
@@ -151,8 +141,8 @@ def train_gan(generator, discriminator, gan, x_data, y_data, epochs, batch_size,
     patience_counter = 0
 
     for epoch in range(epochs):
-        for _ in range(steps):  
-            
+        # Training Discriminator
+        for _ in range(1):  # Train discriminator more times
             idx = np.random.randint(0, x_data.shape[0], batch_size)
             real_samples = x_data[idx]
             real_conditions = y_data[idx]
@@ -168,11 +158,10 @@ def train_gan(generator, discriminator, gan, x_data, y_data, epochs, batch_size,
             d_loss = 0.5 * np.add(d_loss_real, d_loss_fake) + 10 * gp  # Gradient penalty coefficient
 
         # Training Generator
-        #for _ in range(1):  # Train generator more times
+        for _ in range(1):  # Train generator more times
             noise = np.random.normal(0, 1, (batch_size, x_data.shape[1]))
             gen_input = [noise, real_conditions]
             g_loss = gan.train_on_batch(gen_input, valid)
-            
 
         history['d_loss'].append(d_loss[0])  # Appending d_loss[0] as d_loss contains [loss_value, accuracy]
         history['g_loss'].append(g_loss)
@@ -201,79 +190,61 @@ def train_gan(generator, discriminator, gan, x_data, y_data, epochs, batch_size,
     return history
 
 # Function to evaluate the GAN model
-def evaluate_results(pred, y_act):
+def evaluate_gan(generator, x_test, y_test):
+    noise = np.random.normal(0, 1, (x_test.shape[0], x_test.shape[1]))
+    gen_input = [noise, y_test]
+    generated_samples = generator.predict(np.concatenate(gen_input, axis=1))
+
+    mse = mean_squared_error(x_test, generated_samples)
+    rmse = sqrt(mse)
+    r2 = r2_score(x_test, generated_samples)
     
-    accuracy = accuracy_score(pred, y_act)
-    print(f"Accuracy: {accuracy:.4f}")
-    print(" ")
-    # Confusion matrix
-    conf_matrix = confusion_matrix(pred, y_act)
-    print("Confusion Matrix:")
-    print(conf_matrix)
-    print(" ")
-    # Classification report
-    class_report = classification_report(pred, y_act, zero_division=1)
-    print("Classification Report:")
-    print(class_report)
-    print(" ")
+    # Evaluate the model
+    #val_loss = model_in.evaluate(_test, y_test)
+    #print(f'Validation Loss: {val_loss:.4f}')
+   
+    return {"MSE": mse, "RMSE": rmse, "R2": r2 }
 
 
-def evaluate_features( gan_vectors, eval_model, y_val):
+def evaluate_features(columns, predictions, xgblgb_model, y_val):
     
-    print(" ")
     print("Evaluating Features ...")
-    upsx = 0
-    downsx = 0
-    zerosx = 0
-
-    model_preds = []
-    for i in range(len(gan_vectors)):
+    
+    out_df = pd.DataFrame(columns=columns)
+    
+    ups = 0
+    dwns = 0
+    zeros = 0
+    
+    for i in range(len(predictions)):
         vals = []
 
-        for z in range(gan_vectors.shape[1]):
-                vals.append(gan_vectors[i][z])
-            
+        for z in range(predictions.shape[1]):
+            vals.append(predictions[i][z])
+        
         dv = pd.DataFrame(vals)
         dv = dv.transpose()
-        out_put = eval_model.predict(dv)    
+        out_put = xgblgb_model.predict(dv)      
         
-        print(f"Output: {sigmoid(out_put)}  Actual: {y_val[i]}")
+        #print(f"Index: {i}  Output: {out_put}  Actual: {y_val[i]}")
         
-        if out_put > 0:       
-            model_preds.append(1)
+        if out_put > 0 and y_val[i] > 0:
+            ups += 1
             
-            if y_val[i] > 0:
-                upsx += 1
+        elif out_put < 0 and y_val[i] < 0:
+            dwns += 1            
+        
+        elif out_put == 0 and y_val[i] == 0:
+            zeros += 1        
+        
                 
-            if y_val[i] < 0:
-                downsx += 1
-                
-            if y_val[i] == 0:
-                zerosx += 1                
-                                
-        elif out_put < 0:
-            model_preds.append(-1)
-            
-            if y_val[i] > 0:
-                downsx += 1
-                
-            if y_val[i] < 0:
-                upsx += 1
-                
-            if y_val[i] == 0:
-                zerosx += 1                
-            
-        elif out_put == 0:
-            model_preds.append(0)
-            zerosx += 1            
-            
-            
-    print(f"Ups: {upsx}  Dwns: {downsx}  Zeros: {zerosx}   {upsx/(downsx+upsx)}  " )
-    
-    return model_preds
+    #print(out_df)    
+    print(f"Ups: {ups}  Dwns: {dwns}  Zeros: {zeros}   {ups/(dwns+ups)}  " )
+
+    return out_df
 
 
-def plot_results(history_in, model_predictions, y_test):
+def plot_results(history_in, predictions, predictions_reversed, y_test_in):
 
     fig = plt.figure(figsize=(16, 9))
     gs = fig.add_gridspec(2, 2, height_ratios=[1, 2])
@@ -292,17 +263,7 @@ def plot_results(history_in, model_predictions, y_test):
     ax2.legend()
     ax2.set_title('Discriminator Accuracy')
   
-  
-    ax3 = fig.add_subplot(gs[1, :])
-    ax3.plot(range(len(model_predictions)), y_test , color='black', linestyle='--', label='Y Values')
-    ax3.plot(range(len(model_predictions)), model_predictions , color='red', linestyle='-', label='Predicted Values')    
-    ax3.set_title('Actual vs Predicted Values')
-    ax3.set_xlabel('Index')
-    ax3.set_ylabel('Output')
-    ax3.legend()
-    ax3.grid(True)
-  
-    """
+    
     ax3 = fig.add_subplot(gs[1, :])
     ax3.plot(range(len(predictions_reversed)), predictions_reversed , color='red', linestyle='--', label='Predicted Values')
     ax3.plot(range(len(predictions_reversed)), y_test_in , color='black', linestyle='-', label='Y Values')
@@ -311,46 +272,56 @@ def plot_results(history_in, model_predictions, y_test):
     ax3.set_ylabel('Output')
     ax3.legend()
     ax3.grid(True)
-    """
-    
+
     plt.tight_layout()
     plt.show()
 
 
 # Sample Usage
-def run():
+if __name__ == "__main__":
     set_seeds(42)
 
-    #raw_data = pd.read_csv("data/IND_LSTM_ALL.csv")    
+ # Example data loading (replace with your actual dataset)
     raw_data = pd.read_csv("data/buildSeqInd_Lucky13_5M_ALL.csv")
+    
+    xgb_data = raw_data
+    lgb_data = raw_data
     data = raw_data
+    #data = data.drop(columns=['STOK1'])
+    #data = data.drop(columns=['RSI'])
+    #data = data.drop(columns=['ATR2'])
+    data = data.drop(columns=['ATR21'])
+    #data = data.drop(columns=['ATR3'])
+    data = data.drop(columns=['ATR31']) 
+    data = data.drop(columns=['ATR32']) 
+    data = data.drop(columns=['ATR34'])   
+    #data = data.drop(columns=['ROC'])     
+    #data = data.drop(columns=['SDKC9'])   
+    data = data.drop(columns=['SDKC91'])  
+    data = data.drop(columns=['SDBB91'])  
+    #data = data.drop(columns=['SDLR310'])
+    data = data.drop(columns=['outputC'])
+    data = data.drop(columns=['outputX'])
 
-    drop_cols = [
-        #'STOK1',
-        #'RSI',
-        #'ATR2',
-        'ATR21',
-        #'ATR3',
-        'ATR31', 
-        'ATR32',
-        'ATR34',   
-        #'ROC',     
-        'SDKC9',   
-        'SDKC91',  
-        'SDBB91',  
-        #'SDLR310',
-        'outputX',
-        'outputC'
-    ]
-
-    data = data.drop(columns=drop_cols)
-    X_data = data.drop(columns=['output'])    
+    X_data = data.drop(columns=['output']).to_numpy()    
     y_data = data['output'].values.reshape(-1, 1)
+    X_train, X_val, y_train, y_val = train_test_split(X_data, y_data, test_size=0.4, random_state=42)
+
+    d2 = data.drop(columns=['output'], axis=1)
+    columns = d2.columns 
     
-    split = 0.2
-    
-    X_train, X_val, y_train, y_val = train_test_split(X_data, y_data, test_size=split, random_state=42)
-    
+    data_xgb = xgb_data    
+    data_xgb = xgb_data.drop(columns=['ATR21', 'ATR31', 'ATR32', 'ATR34', 'SDKC91', 'SDBB91', 'outputC', 'outputX'])
+    X_data_xgb = data_xgb.drop(columns=['output']).to_numpy()    
+    y_data_xgb = data_xgb['output'].values.reshape(-1, 1)
+    X_train_xgb, X_val_xgb, y_train_xgb, y_val_xgb = train_test_split(X_data_xgb, y_data_xgb, test_size=0.4, random_state=42)
+        
+    data_lgb = lgb_data        
+    data_lgb = lgb_data.drop(columns=['ATR21', 'ATR31', 'ATR32', 'ATR34', 'SDKC91', 'SDBB91', 'outputC', 'outputX'])    
+    X_data_lgb = data_lgb.drop(columns=['output']).to_numpy()    
+    y_data_lgb = data_lgb['output'].values.reshape(-1, 1)
+    X_train_lgb, X_val_lgb, y_train_lgb, y_val_lgb = train_test_split(X_data_lgb, y_data_lgb, test_size=0.4, random_state=42)
+        
     lgb_params = {
         'n_estimators': 250,
         'objective': 'regression',
@@ -365,76 +336,48 @@ def run():
     }
 
     lgb_model = LGBMRegressor(**lgb_params)
-    lgb_model.fit(X_train, y_train)
+    lgb_model.fit(X_train_lgb, y_train_lgb)
 
-    #y_pred = gen_cond_data(raw_data, split) 
+    xgb_model = XGBRegressor()
+    xgb_model.fit(X_train_xgb, y_train_xgb)
+    y_pred_xgb = xgb_model.predict(X_train_xgb).reshape(-1, 1).astype(np.float32)
+    y_pred = y_pred_xgb 
     
-    y_pred = gen_cond_data(data, split)    
+    y_pred[y_pred > 0] = 1
+    y_pred[y_pred <= 0] = -1
+
+    # Create and compile models
     input_dim = X_train.shape[1]
     conditioning_dim = y_pred.shape[1]
 
     generator = create_generator(input_dim, conditioning_dim, 4, 16, 32)
-    #generator = create_generator(input_dim, conditioning_dim, 8, 32, 64)
-    #generator = create_generator(input_dim, conditioning_dim, 32, 64, 128)
-    #generator = create_generator(input_dim, conditioning_dim, 64, 128, 256)
-    
-    discriminator = create_discriminator(input_dim, conditioning_dim, 32, 16, 4)    
-    #discriminator = create_discriminator(input_dim, conditioning_dim, 64, 16, 4)
-    #discriminator = create_discriminator(input_dim, conditioning_dim, 256, 128, 64)    
-    
+    discriminator = create_discriminator(input_dim, conditioning_dim, 64, 16, 4)
     
     discriminator.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5), metrics=['accuracy'])
+
     gan = create_gan(generator, discriminator, input_dim, conditioning_dim)
     gan.compile(loss='binary_crossentropy', optimizer=Adam(0.0001, 0.5))
     gan.summary()
 
-    #scaler = MinMaxScaler((-1,1))
-    scaler = StandardScaler()
-    #scaler = MinMaxScaler()
+    scaler = MinMaxScaler((0,1))
+    #scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
-    X_val_sc = scaler.transform(X_val)
+    X_val = scaler.transform(X_val)
 
+    # Train GAN
     history = train_gan(generator, discriminator, gan, X_train, y_pred, 
                         epochs=1000, batch_size=32, 
-                        conditioning_dim=conditioning_dim, patience=10, min_delta=0.0007, steps=1)
+                        conditioning_dim=conditioning_dim, patience=7, min_delta=0.001)
 
 
+    x_rev = scaler.inverse_transform(X_val)
+    # Evaluate GAN
+    evaluation = evaluate_gan(generator, x_rev, y_val)
+    print_pretty_results(evaluation)
 
-    print(" ")
-    gen_input = np.concatenate([X_val_sc, y_val], axis=1)
-    generated_data = generator.predict(gen_input) 
-    x_rev = scaler.inverse_transform(generated_data)  
-    model_preds = evaluate_features( x_rev, lgb_model, y_val)
-    
-    #evaluate_results(model_preds, y_val)
-    #plot_results(history, model_preds, y_val)
-                
-        
-    exit()
-    oo_df = pd.read_csv("data/lucky13_oos.csv")
-    oo_df = oo_df.drop(columns=drop_cols)
-    oo_X_data = oo_df.drop(columns=['output']) 
-    oo_y_data = oo_df['output'].values.reshape(-1, 1)
-    print(" ")
-   
-    #oo_y_data[oo_y_data > 0] = 1
-    #oo_y_data[oo_y_data < 0] = -1    
-    #oo_y_data[oo_y_data == 0] = 0            
-    
-    #scaler_n = MinMaxScaler()
-    scaler_n = MinMaxScaler((-1,1))
-    oo_X_sc = scaler_n.fit_transform(oo_X_data)
-    
-    oo_gen_input = np.concatenate([oo_X_sc, oo_y_data], axis=1)
-    oo_generated_data = generator.predict(oo_gen_input) 
-    oo_gen_rev = scaler_n.inverse_transform(oo_generated_data)
+    data_df1 = evaluate_features(columns, x_rev, lgb_model, y_val)
 
-    oos_pred = evaluate_features( oo_gen_rev, lgb_model, oo_y_data)
-    #evaluate_results(oos_pred, oo_y_data)
-    plot_results(history, oos_pred, oo_y_data)
 
-    print(" ")
-        
-if __name__ == "__main__":
-    run()    
+    # Plot results
+    #plot_results(history, X_val, x_rev, y_val)
     
