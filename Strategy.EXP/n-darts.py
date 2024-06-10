@@ -7,6 +7,19 @@ from darts.models import NBEATSModel
 from darts.metrics import mae, mape, rmse
 import joblib
 
+# Parameters
+FILE_PATH = "data/buildSeqInd_Lucky13_5M_ALL.csv"
+TARGET_COLUMN = 'output'  # Replace with your actual target column name
+INPUT_CHUNK_LENGTH = 60
+OUTPUT_CHUNK_LENGTH = 1
+N_EPOCHS = 20
+NUM_STACKS = 2
+NUM_BLOCKS = 1
+NUM_LAYERS = 4
+LAYER_WIDTHS = 512
+TEST_SPLIT_RATIO = 0.8
+MODEL_SAVE_PATH = "nbeats_model.pkl"
+
 # Data loading
 def load_data(file_path):
     data = pd.read_csv(file_path)
@@ -32,22 +45,6 @@ def plot_results(actuals, predictions):
 
 # Main function to run the entire script
 def main():
-    
-    
-    # Parameters
-    FILE_PATH = "data/buildSeqInd_Lucky13_5M_ALL.csv"
-    TARGET_COLUMN = 'output'  # Replace with your actual target column name
-    INPUT_CHUNK_LENGTH = 13
-    OUTPUT_CHUNK_LENGTH = 1
-    N_EPOCHS = 20
-    NUM_BLOCKS = 1
-    NUM_LAYERS = 2
-    NUM_NEURONS = 32
-    TEST_SPLIT_RATIO = 0.8
-    MODEL_SAVE_PATH = "nbeats_model.pkl"
-
-
-    
     # Load and preprocess data
     data = load_data(FILE_PATH)
     data = data.drop(columns=['outputC'])
@@ -66,16 +63,16 @@ def main():
         output_chunk_length=OUTPUT_CHUNK_LENGTH, 
         n_epochs=N_EPOCHS, 
         random_state=42, 
+        num_stacks=NUM_STACKS, 
         num_blocks=NUM_BLOCKS, 
         num_layers=NUM_LAYERS, 
-        num_neurons=NUM_NEURONS
+        layer_widths=LAYER_WIDTHS
     )
     model.fit(train_series)
     
-    
+    # Save the trained model
     joblib.dump(model, MODEL_SAVE_PATH)
     print(f"Model saved to {MODEL_SAVE_PATH}")
-    
     
     # Make predictions
     predictions = model.predict(len(test_series))
@@ -94,7 +91,6 @@ def main():
     print(f'Mean Absolute Error (MAE): {mae_score:.4f}')
     print(f'Mean Absolute Percentage Error (MAPE): {mape_score:.4f}%')
     print(f'Root Mean Squared Error (RMSE): {rmse_score:.4f}')
-
 
 if __name__ == "__main__":
     main()
