@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.dataprocessing.transformers import Scaler
 from darts.models import NBEATSModel
-from darts.metrics import mae
+from darts.metrics import mae, mape, rmse
+import joblib
 
 # Data loading
 def load_data(file_path):
@@ -43,6 +44,8 @@ def main():
     NUM_LAYERS = 2
     NUM_NEURONS = 32
     TEST_SPLIT_RATIO = 0.8
+    MODEL_SAVE_PATH = "nbeats_model.pkl"
+
 
     
     # Load and preprocess data
@@ -69,6 +72,11 @@ def main():
     )
     model.fit(train_series)
     
+    
+    joblib.dump(model, MODEL_SAVE_PATH)
+    print(f"Model saved to {MODEL_SAVE_PATH}")
+    
+    
     # Make predictions
     predictions = model.predict(len(test_series))
     
@@ -79,9 +87,14 @@ def main():
     # Plot the results
     plot_results(actual_values, predicted_values)
 
-    # Print the Mean Absolute Error (MAE)
+    # Print descriptive statistics for model performance
     mae_score = mae(test_series, predictions)
-    print(f'Mean Absolute Error: {mae_score:.4f}')
+    mape_score = mape(test_series, predictions)
+    rmse_score = rmse(test_series, predictions)
+    print(f'Mean Absolute Error (MAE): {mae_score:.4f}')
+    print(f'Mean Absolute Percentage Error (MAPE): {mape_score:.4f}%')
+    print(f'Root Mean Squared Error (RMSE): {rmse_score:.4f}')
+
 
 if __name__ == "__main__":
     main()
