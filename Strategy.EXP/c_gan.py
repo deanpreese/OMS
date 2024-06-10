@@ -30,6 +30,8 @@ def gen_cond_data(gb_data, split):
     y_data_xgb = gb_data['output'].values.reshape(-1, 1)
     X_train_xgb, X_val_xgb, y_train_xgb, y_val_xgb = train_test_split(X_data_xgb, y_data_xgb, test_size=split, random_state=17)
     
+    print(X_train_xgb.shape, y_train_xgb.shape)
+    
     xgb_model = XGBRegressor()
     xgb_model.fit(X_train_xgb, y_train_xgb)
     y_pred_v = xgb_model.predict(X_train_xgb)
@@ -37,6 +39,8 @@ def gen_cond_data(gb_data, split):
         
     y_pred[y_pred > 0] = 1
     y_pred[y_pred <= 0] = -1    
+    
+    exit()
     
     return y_pred
 
@@ -200,119 +204,70 @@ def train_gan(generator, discriminator, gan, x_data, y_data, epochs, batch_size,
             break
     return history
 
-# Function to evaluate the GAN model
+
 def evaluate_results(pred, y_act):
-    
     accuracy = accuracy_score(pred, y_act)
     print(f"Accuracy: {accuracy:.4f}")
-    print(" ")
-    # Confusion matrix
-    conf_matrix = confusion_matrix(pred, y_act)
     print("Confusion Matrix:")
-    print(conf_matrix)
-    print(" ")
-    # Classification report
-    class_report = classification_report(pred, y_act, zero_division=1)
+    print(confusion_matrix(pred, y_act))
     print("Classification Report:")
-    print(class_report)
-    print(" ")
+    print(classification_report(pred, y_act, zero_division=1))
 
-
-def evaluate_features( gan_vectors, eval_model, y_val):
-    
-    print(" ")
+# Function to evaluate features using LightGBM model
+def evaluate_features(gan_vectors, eval_model, y_val):
     print("Evaluating Features ...")
-    upsx = 0
-    downsx = 0
-    zerosx = 0
-
+    upsx, downsx, zerosx = 0, 0, 0
     model_preds = []
-    for i in range(len(gan_vectors)):
-        vals = []
 
-        for z in range(gan_vectors.shape[1]):
-                vals.append(gan_vectors[i][z])
+    counter = 0
+
+    for i in range(len(gan_vectors)):
+        vals = gan_vectors[i]
+        dv = pd.DataFrame([vals])
+        out_put = eval_model.predict(dv)
+        #print(f"Generated data for sample {i}: {y_val[i]}   {vals}")
+        #print(f"Prediction for sample {i}: {out_put[0]}   {y_val[i][0]}")
+
+        if out_put > 0.5:  # Since this is a classifier, use 0.5 threshold
             
-        dv = pd.DataFrame(vals)
-        dv = dv.transpose()
-        out_put = eval_model.predict(dv)    
-        
-        print(f"Output: {sigmoid(out_put)}  Actual: {y_val[i]}")
-        
-        if out_put > 0:       
+            counter +=  1
+            
             model_preds.append(1)
+            if y_val[i] > 0.5: upsx += 1
+            if y_val[i] < 0.5: downsx += 1
             
-            if y_val[i] > 0:
-                upsx += 1
-                
-            if y_val[i] < 0:
-                downsx += 1
-                
-            if y_val[i] == 0:
-                zerosx += 1                
-                                
-        elif out_put < 0:
+        elif out_put <= 0.5:
             model_preds.append(-1)
-            
-            if y_val[i] > 0:
-                downsx += 1
-                
-            if y_val[i] < 0:
-                upsx += 1
-                
-            if y_val[i] == 0:
-                zerosx += 1                
-            
-        elif out_put == 0:
-            model_preds.append(0)
-            zerosx += 1            
-            
-            
-    print(f"Ups: {upsx}  Dwns: {downsx}  Zeros: {zerosx}   {upsx/(downsx+upsx)}  " )
-    
+            if y_val[i] > 0.5: downsx += 1
+            if y_val[i] < 0.5: upsx += 1
+
+    print(f"Ups: {upsx}  Downs: {downsx}  Zeros: {zerosx}  {upsx/(downsx+upsx):.2f}  {counter} ")
     return model_preds
 
-
+# Function to plot the results
 def plot_results(history_in, model_predictions, y_test):
+    fig, axes = plt.subplots(2, 2, figsize=(16, 9), gridspec_kw={'height_ratios': [1, 2]})
 
-    fig = plt.figure(figsize=(16, 9))
-    gs = fig.add_gridspec(2, 2, height_ratios=[1, 2])
-    
-    ax1 = fig.add_subplot(gs[0, 0])
-    ax1.plot(history_in['d_loss'], label='Discriminator Loss')
-    ax1.plot(history_in['g_loss'], label='Generator Loss')
-    ax1.set_xlabel('Epoch')
-    ax1.set_ylabel('Loss')
-    ax1.set_title('Training and Validation Loss')
-    ax1.grid(True)
+    axes[0, 0].plot(history_in['d_loss'], label='Discriminator Loss')
+    axes[0, 0].plot(history_in['g_loss'], label='Generator Loss')
+    axes[0, 0].set_xlabel('Epoch')
+    axes[0, 0].set_ylabel('Loss')
+    axes[0, 0].set_title('Training and Validation Loss')
+    axes[0, 0].grid(True)
+    axes[0, 0].legend()
 
-    ax2 = fig.add_subplot(gs[0, 1])
-    # Plot discriminator accuracy
-    ax2.plot(history_in['d_acc'], label='Discriminator Accuracy')
-    ax2.legend()
-    ax2.set_title('Discriminator Accuracy')
-  
-  
-    ax3 = fig.add_subplot(gs[1, :])
-    ax3.plot(range(len(model_predictions)), y_test , color='black', linestyle='--', label='Y Values')
-    ax3.plot(range(len(model_predictions)), model_predictions , color='red', linestyle='-', label='Predicted Values')    
-    ax3.set_title('Actual vs Predicted Values')
-    ax3.set_xlabel('Index')
-    ax3.set_ylabel('Output')
-    ax3.legend()
-    ax3.grid(True)
-  
-    """
-    ax3 = fig.add_subplot(gs[1, :])
-    ax3.plot(range(len(predictions_reversed)), predictions_reversed , color='red', linestyle='--', label='Predicted Values')
-    ax3.plot(range(len(predictions_reversed)), y_test_in , color='black', linestyle='-', label='Y Values')
-    ax3.set_title('Actual vs Predicted Values')
-    ax3.set_xlabel('Index')
-    ax3.set_ylabel('Output')
-    ax3.legend()
-    ax3.grid(True)
-    """
+    axes[0, 1].plot(history_in['d_acc'], label='Discriminator Accuracy')
+    axes[0, 1].set_title('Discriminator Accuracy')
+    axes[0, 1].legend()
     
+    axes[1, :].plot(range(len(model_predictions)), y_test.flatten(), color='black', linestyle='--', label='Y Values')
+    axes[1, :].plot(range(len(model_predictions)), model_predictions, color='red', linestyle='-', label='Predicted Values')
+    axes[1, :].set_title('Actual vs Predicted Values')
+    axes[1, :].set_xlabel('Index')
+    axes[1, :].set_ylabel('Output')
+    axes[1, :].legend()
+    axes[1, :].grid(True)
+
     plt.tight_layout()
     plt.show()
 
@@ -339,11 +294,12 @@ def run():
         'SDKC91',  
         'SDBB91',  
         #'SDLR310',
-        'outputX',
         'outputC'
     ]
 
-    data = data.drop(columns=drop_cols)
+    #data = data.drop(columns=drop_cols)
+    data = data.drop(columns=['outputC'])
+    
     X_data = data.drop(columns=['output'])    
     y_data = data['output'].values.reshape(-1, 1)
     

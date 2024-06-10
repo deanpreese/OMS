@@ -27,7 +27,7 @@ class KafkaConsumerCli:
     def __init__(self, **kwargs):
         self.topic = "order_topic"
         
-        self.consumer = KafkaConsumer(self.topic,
+        self.consumer = KafkaConsumer('model-orders',
                          group_id='foox',
                          bootstrap_servers=['10.0.0.50:9092'])
         

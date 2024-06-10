@@ -59,6 +59,34 @@ class CompositeStrategy (CommonStrategy):
         
         return return_predict
     
+    
+    def do_predict_v(self,data):
+
+        return_predict = 0
+        
+        self.set_predict_data(data) 
+        
+        predicts = []
+        
+        for m in range(len(self.strategy_models)):
+            
+            predict = self.strategy_models[m].do_predict(data)
+            predicts.append(predict)
+            
+        count_u = sum(1 for x in predicts if x > 0)             
+        total_items = len(predicts)
+        percentage_positive = (count_u / total_items) 
+        
+        return_predict = 0
+        if percentage_positive > 0.69:
+            return_predict = 1
+
+        if percentage_positive < 0.31:
+            return_predict = -1
+                     
+        return return_predict
+    
+    
     def do_predict_x(self,data):
 
         agg_predict = 0    

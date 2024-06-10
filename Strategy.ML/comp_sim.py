@@ -22,7 +22,6 @@ def load_models(exp_id, n_models, group_id, api_url):
 
 def run_sim(exp_id, n_models, file, trades, delay, group_id, api_url):
 
-
     data = pd.read_csv(file)   
     num_columns = len(data.axes[1]) 
     input_features =  num_columns -2
@@ -74,17 +73,14 @@ def run_sim(exp_id, n_models, file, trades, delay, group_id, api_url):
 exp_idx = ["56"]
 group_id = 56
 
-
 #num_models = 10
 num_models = 3
 #num_models = 2
-
 
 #trades = 500
 trades = 250
 #trades = 100
 #trades = 10
-
 
 #sim_delay = 0.0500
 #sim_delay = 0.025

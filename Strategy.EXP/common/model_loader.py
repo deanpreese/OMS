@@ -45,6 +45,7 @@ class ModelLoader:
             arti_d = mlflow.artifacts.load_dict(art_to_load)
             cols = [x[0] for x in arti_d['data'] if x[0] != 'output']
             self.l_artifacts.append(cols)
+            print(cols)
             
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -68,8 +69,20 @@ class ModelLoader:
         
         self.model_list.append(lm)        
                 
-        return loaded_model, cols
+        return loaded_model, cols, lm
 
+
+    def load_models_by_run_ids(self, run_ids, group_id):
+        
+        self.model_group = group_id
+        
+        ml = []
+        
+        for rid in run_ids:
+            model, cols, lm = self.add_model(rid, True)
+            ml.append(lm)
+            
+        return ml            
 
     # -------------------------
     def load_selected_models(self, runs):        
@@ -140,30 +153,7 @@ class ModelLoader:
         
         return comp_strategies    
 
-
-    # -------------------------
-    def build_composite_model(self, group_id, strat_name, strat_runs): 
-
-        comp_strat = CompositeStrategy()
-        comp_strat.run_id = 0
-        comp_strat.run_name = strat_name
-        comp_strat.trader_group = group_id     
-
-        t_id = 1
-        if group_id > 0:
-            t_id = self.common_cli.initialize_trader(comp_strat.run_name, comp_strat.trader_group)
-            
-        comp_strat.trader_id = t_id
-
-        for r in range(len(strat_runs)):
-            item = strat_runs.iloc[r]
-            self.add_model(item, False)
-
-        comp_strat.strategy_models = self.model_list    
-        return comp_strat
-                    
         
-    
     def load_composite_models(self, experiment_id, num_models, group_id): 
         
         print("Querying Runs ...")

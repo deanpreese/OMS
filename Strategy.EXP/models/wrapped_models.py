@@ -6,7 +6,6 @@ from common.common_func import calc_reg_streaks, show_stats, create_param_list
 import mlflow.onnx
 
 
-
 import pandas as pd
 from enum import Enum
 
@@ -432,6 +431,9 @@ class TunableXGBRegressor(XGBRegressor):
     
     def __init__(self, **kwargs):
         self.used_params = kwargs
+
+        self.used_params['device'] = 'cuda'
+
         self.features_used = []
         super().__init__(**kwargs)
 
@@ -441,7 +443,8 @@ class TunableXGBRegressor(XGBRegressor):
     def param_set(self):
         
         params = {
-            'max_depth': 3, 
+            'max_depth': 3,
+            'booster' : 'dart', 
             'learning_rate': 0.1,
             'n_estimators':  50, 
             #'gamma': [0, 20], 
@@ -478,7 +481,12 @@ class TunableXGBRegressor(XGBRegressor):
         with mlflow.start_run(experiment_id = experiment_id, nested=nested):
         
             self.run_id = mlflow.active_run().info.run_id
+            
+            
+            #model.fit(cp.array(X_train), cp.array(y_train))
             model.fit(X_train, y_train)
+            
+            #y_pred = model.predict(cp.array(X_test))
             y_pred = model.predict(X_test)
             
             mlflow.log_params( self.used_params )
