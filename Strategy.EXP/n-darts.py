@@ -3,22 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.dataprocessing.transformers import Scaler
-from darts.models import NBEATSModel
-from darts.metrics import mae, mape, rmse
+from darts.models import NBEATSModel, NHiTSModel
+from darts.metrics import mae, mape, rmse, coefficient_of_variation, dtw_metric
 import joblib
-
-# Parameters
-FILE_PATH = "data/buildSeqInd_Lucky13_5M_ALL.csv"
-TARGET_COLUMN = 'output'  # Replace with your actual target column name
-INPUT_CHUNK_LENGTH = 60
-OUTPUT_CHUNK_LENGTH = 1
-N_EPOCHS = 20
-NUM_STACKS = 2
-NUM_BLOCKS = 1
-NUM_LAYERS = 4
-LAYER_WIDTHS = 512
-TEST_SPLIT_RATIO = 0.8
-MODEL_SAVE_PATH = "nbeats_model.pkl"
 
 # Data loading
 def load_data(file_path):
@@ -43,54 +30,95 @@ def plot_results(actuals, predictions):
     plt.legend()
     plt.show()
 
-# Main function to run the entire script
-def main():
-    # Load and preprocess data
-    data = load_data(FILE_PATH)
-    data = data.drop(columns=['outputC'])
-    feature_columns = list(data.columns[:-1])
-    target_column = TARGET_COLUMN
-    
-    # Create TimeSeries and preprocess data
-    series = TimeSeries.from_dataframe(data, value_cols=target_column).astype(np.float32)
-    train_data, test_data = series.split_after(TEST_SPLIT_RATIO)
-    train_series, scaler = preprocess_data(train_data.pd_dataframe(), feature_columns, target_column)
-    test_series = scaler.transform(test_data.astype(np.float32))
-    
-    # Build and train the N-BEATS model
-    model = NBEATSModel(
-        input_chunk_length=INPUT_CHUNK_LENGTH, 
-        output_chunk_length=OUTPUT_CHUNK_LENGTH, 
-        n_epochs=N_EPOCHS, 
-        random_state=42, 
-        num_stacks=NUM_STACKS, 
-        num_blocks=NUM_BLOCKS, 
-        num_layers=NUM_LAYERS, 
-        layer_widths=LAYER_WIDTHS
-    )
-    model.fit(train_series)
-    
-    # Save the trained model
-    joblib.dump(model, MODEL_SAVE_PATH)
-    print(f"Model saved to {MODEL_SAVE_PATH}")
-    
-    # Make predictions
-    predictions = model.predict(len(test_series))
-    
-    # Inverse transform the predictions and actual values
-    actual_values = scaler.inverse_transform(test_series).values()
-    predicted_values = scaler.inverse_transform(predictions).values()
-    
-    # Plot the results
-    plot_results(actual_values, predicted_values)
 
+def generate_statistics(test_series, predictions):
     # Print descriptive statistics for model performance
     mae_score = mae(test_series, predictions)
     mape_score = mape(test_series, predictions)
     rmse_score = rmse(test_series, predictions)
+    cov = coefficient_of_variation(test_series, predictions)
+    dtw = dtw_metric(test_series, predictions)
+    
+    print(f'Dynamic Time Warping (DTW): {dtw:.4f}')
+    print(f'Coefficient of Variation (CoV): {cov:.4f}')
     print(f'Mean Absolute Error (MAE): {mae_score:.4f}')
     print(f'Mean Absolute Percentage Error (MAPE): {mape_score:.4f}%')
     print(f'Root Mean Squared Error (RMSE): {rmse_score:.4f}')
+
+
+def train_and_save_model(train_series, input_chunk_length, output_chunk_length, 
+                n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path):
+    
+    # Build and train the N-BEATS model
+    model = NHiTSModel(
+        input_chunk_length=input_chunk_length, 
+        output_chunk_length=output_chunk_length, 
+        n_epochs=n_epochs, 
+        random_state=42, 
+        num_stacks=num_stacks, 
+        num_blocks=num_blocks, 
+        num_layers=num_layers, 
+        layer_widths=layer_widths
+    )
+    model.fit(train_series)
+    model.save(model_save_path)
+
+    return model
+
+# Main function to run the entire script
+def main():    
+    
+    file_path = "data/buildSeqInd_Lucky13_5M_ALL.csv"
+    drop_cols = [
+        #'STOK1',
+        #'RSI',
+        #'ATR2',
+        'ATR21',
+        #'ATR3',
+        'ATR31', 
+        'ATR32',
+        'ATR34',   
+        #'ROC',     
+        'SDKC9',   
+        'SDKC91',  
+        'SDBB91',  
+        #'SDLR310'
+    ]
+
+    target_column = 'output'  # Replace with your actual target column name
+    input_chunk_length = 60
+    output_chunk_length = 5
+    n_epochs = 10
+    num_stacks = 3
+    num_blocks = 2
+    num_layers = 4
+    layer_widths = 512
+    test_split = 0.7
+    model_save_path = "nbeats_model.pk"     
+    
+    # Load and preprocess data
+    data = load_data(file_path)
+    data = data.drop(columns=['outputC'])
+    data = data.drop(columns=drop_cols)
+    feature_columns = list(data.columns[:-1])
+    
+    # Create TimeSeries and preprocess data
+    series = TimeSeries.from_dataframe(data, value_cols=target_column).astype(np.float32)
+    train_data, test_data = series.split_after(test_split)
+    train_series, scaler = preprocess_data(train_data.pd_dataframe(), feature_columns, target_column)
+    test_series = scaler.transform(test_data.astype(np.float32))
+    
+    model = train_and_save_model(train_series, input_chunk_length, output_chunk_length, 
+                n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path)
+    
+    # Make predictions
+    predictions = model.predict(len(test_series))
+    generate_statistics(test_series, predictions)   
+
+    # Inverse transform the predictions and actual values
+    actual_values = scaler.inverse_transform(test_series).values()
+    predicted_values = scaler.inverse_transform(predictions).values()
+    plot_results(actual_values, predicted_values)
 
 if __name__ == "__main__":
     main()

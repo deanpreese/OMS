@@ -200,7 +200,7 @@ def run():
     early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
     lstm_model_2 = build_modelY(feature_dim_out,  8, 64, 32, seq_length)
-    optimizer_2 = tf.keras.optimizers.Adam(learning_rate=0.00001, beta_1=0.05)
+    optimizer_2 = tf.keras.optimizers.Adam(learning_rate=0.0001, beta_1=0.05)
     r_metrics_2 = ['MeanSquaredError','BinaryAccuracy', 'AUC']
     lstm_model_2.compile(optimizer=optimizer_2, loss='mse',metrics=r_metrics_2)
     lstm_model_2.summary()
@@ -208,7 +208,7 @@ def run():
 
 
     lstm_model = build_modelX(feature_dim_out,  8, 64, 32, seq_length)
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.00001, beta_1=0.05)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001, beta_1=0.05)
     r_metrics = ['MeanSquaredError','BinaryAccuracy', 'AUC']
     lstm_model.compile(optimizer=optimizer, loss='mse',metrics=r_metrics)
     lstm_model.summary()
