@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.dataprocessing.transformers import Scaler
 from darts.models import NBEATSModel, NHiTSModel
+from pytorch_lightning.callbacks import EarlyStopping
+from torchmetrics import MeanAbsolutePercentageError
 from darts.metrics import mae, mape, rmse, coefficient_of_variation, dtw_metric
 import joblib
 
@@ -49,6 +51,17 @@ def generate_statistics(test_series, predictions):
 def train_and_save_model(train_series, input_chunk_length, output_chunk_length, 
                 n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path):
     
+    torch_metrics = MeanAbsolutePercentageError()
+
+    # early stop callback
+    my_stopper = EarlyStopping(
+        monitor="val_MeanAbsolutePercentageError",  # "val_loss",
+        patience=5,
+        min_delta=0.05,
+        mode='min',
+    )
+    pl_trainer_kwargs = {"callbacks": [my_stopper]}
+    
     # Build and train the N-BEATS model
     model = NHiTSModel(
         input_chunk_length=input_chunk_length, 
@@ -58,8 +71,12 @@ def train_and_save_model(train_series, input_chunk_length, output_chunk_length,
         num_stacks=num_stacks, 
         num_blocks=num_blocks, 
         num_layers=num_layers, 
-        layer_widths=layer_widths
+        layer_widths=layer_widths,
+        torch_metrics=torch_metrics,
+        pl_trainer_kwargs=pl_trainer_kwargs,
+        log_tensorboard=True, save_checkpoints=True
     )
+    
     model.fit(train_series)
     model.save(model_save_path)
 
