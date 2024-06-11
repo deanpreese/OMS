@@ -3,9 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.dataprocessing.transformers import Scaler
-from darts.models import NBEATSModel, NHiTSModel
-from pytorch_lightning.callbacks import EarlyStopping
-from torchmetrics import MeanAbsolutePercentageError
+from darts.models import NHiTSModel
+from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
+from pytorch_lightning.loggers import TensorBoardLogger
+from darts.utils.likelihood_models import QuantileRegression
 from darts.metrics import mae, mape, rmse, coefficient_of_variation, dtw_metric
 import joblib
 
@@ -32,7 +33,6 @@ def plot_results(actuals, predictions):
     plt.legend()
     plt.show()
 
-
 def generate_statistics(test_series, predictions):
     # Print descriptive statistics for model performance
     mae_score = mae(test_series, predictions)
@@ -47,22 +47,9 @@ def generate_statistics(test_series, predictions):
     print(f'Mean Absolute Percentage Error (MAPE): {mape_score:.4f}%')
     print(f'Root Mean Squared Error (RMSE): {rmse_score:.4f}')
 
-
-def train_and_save_model(train_series, input_chunk_length, output_chunk_length, 
-                n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path):
-    
-    torch_metrics = MeanAbsolutePercentageError()
-
-    # early stop callback
-    my_stopper = EarlyStopping(
-        monitor="val_MeanAbsolutePercentageError",  # "val_loss",
-        patience=5,
-        min_delta=0.05,
-        mode='min',
-    )
-    pl_trainer_kwargs = {"callbacks": [my_stopper]}
-    
-    # Build and train the N-BEATS model
+def train_and_save_model(train_series, val_series, input_chunk_length, output_chunk_length, 
+                         n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path, pl_trainer_kwargs):
+    # Build and train the NHiTS model
     model = NHiTSModel(
         input_chunk_length=input_chunk_length, 
         output_chunk_length=output_chunk_length, 
@@ -72,19 +59,18 @@ def train_and_save_model(train_series, input_chunk_length, output_chunk_length,
         num_blocks=num_blocks, 
         num_layers=num_layers, 
         layer_widths=layer_widths,
-        torch_metrics=torch_metrics,
         pl_trainer_kwargs=pl_trainer_kwargs,
-        log_tensorboard=True, save_checkpoints=True
+        likelihood=QuantileRegression(),
+        log_tensorboard=True
     )
     
-    model.fit(train_series)
+    model.fit(train_series, val_series=val_series)
     model.save(model_save_path)
 
     return model
 
 # Main function to run the entire script
-def main():    
-    
+def main():
     file_path = "data/buildSeqInd_Lucky13_5M_ALL.csv"
     drop_cols = [
         #'STOK1',
@@ -111,8 +97,9 @@ def main():
     num_layers = 4
     layer_widths = 512
     test_split = 0.7
-    model_save_path = "nbeats_model.pk"     
-    
+    model_save_path = "nbeats_model.pk"
+    log_dir = "m_data"  # Directory to save TensorBoard logs
+
     # Load and preprocess data
     data = load_data(file_path)
     data = data.drop(columns=['outputC'])
@@ -125,13 +112,29 @@ def main():
     train_series, scaler = preprocess_data(train_data.pd_dataframe(), feature_columns, target_column)
     test_series = scaler.transform(test_data.astype(np.float32))
     
-    model = train_and_save_model(train_series, input_chunk_length, output_chunk_length, 
-                n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path)
+    # TensorBoard logger
+    lr_monitor = LearningRateMonitor(logging_interval='step')
+
+    # Early stopping callback
+    early_stopper = EarlyStopping(
+        monitor="val_loss",
+        patience=5,
+        min_delta=0.01,
+        verbose=True,
+        mode='min'
+    )
+
+    pl_trainer_kwargs = {
+        "callbacks": [early_stopper, lr_monitor]
+    }
+
+    model = train_and_save_model(train_series, test_series, input_chunk_length, output_chunk_length, 
+                                 n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path, pl_trainer_kwargs)
     
     # Make predictions
     predictions = model.predict(len(test_series))
-    generate_statistics(test_series, predictions)   
-
+    generate_statistics(test_series, predictions)
+    
     # Inverse transform the predictions and actual values
     actual_values = scaler.inverse_transform(test_series).values()
     predicted_values = scaler.inverse_transform(predictions).values()
