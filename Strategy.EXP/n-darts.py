@@ -91,15 +91,14 @@ def main():
     target_column = 'output'  # Replace with your actual target column name
     input_chunk_length = 60
     output_chunk_length = 5
-    n_epochs = 10
+    n_epochs = 1000
     num_stacks = 3
     num_blocks = 2
     num_layers = 4
     layer_widths = 512
     test_split = 0.7
     model_save_path = "nbeats_model.pk"
-    log_dir = "m_data"  # Directory to save TensorBoard logs
-
+    
     # Load and preprocess data
     data = load_data(file_path)
     data = data.drop(columns=['outputC'])
