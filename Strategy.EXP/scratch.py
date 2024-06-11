@@ -1,383 +1,144 @@
-import numpy as np
 import pandas as pd
-import tensorflow as tf
-import random
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, LSTM, Dense, Conv1D, TimeDistributed, Flatten, Dropout, BatchNormalization, LeakyReLU, Bidirectional, Concatenate, MultiHeadAttention
-from keras.layers import MultiHeadAttention, LayerNormalization, Add, Reshape, AdditiveAttention, Attention
-from tensorflow.keras.regularizers import l2
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from tensorflow.keras.initializers import RandomNormal
-from tensorflow.keras.optimizers import Adam
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-
-from xgboost import XGBRegressor
-from lightgbm import LGBMRegressor
+import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import mean_squared_error, r2_score
-from math import sqrt
+from darts import TimeSeries
+from darts.dataprocessing.transformers import Scaler
+from darts.models import NHiTSModel
+from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
+from pytorch_lightning.loggers import TensorBoardLogger
+from darts.utils.likelihood_models import QuantileRegression
+from darts.metrics import mae, mape, rmse, coefficient_of_variation, dtw_metric
+import joblib
 
-tf.config.set_visible_devices([], 'GPU')
+# Data loading
+def load_data(file_path):
+    data = pd.read_csv(file_path)
+    return data
 
-def print_pretty_results(results):
-    print("     ")
-    print(f"MSE: {results['MSE']:.4f}")
-    print(f"RMSE: {results['RMSE']:.4f}")
-    print(f"R2: {results['R2']:.4f}")
-    print("     ")
+# Preprocessing
+def preprocess_data(data, feature_columns, target_column):
+    series = TimeSeries.from_dataframe(data, value_cols=target_column).astype(np.float32)
+    scaler = Scaler()
+    scaled_series = scaler.fit_transform(series)
+    return scaled_series, scaler
 
-
-# Function to set seeds for reproducibility
-def set_seeds(seed=42):
-    tf.keras.backend.clear_session()
-    np.random.seed(seed)
-    random.seed(seed)
-    tf.random.set_seed(seed)
-
-# Function to create generator model
-def create_generator(input_dim, conditioning_dim, lay1, lay2, lay3):
-    init = RandomNormal(stddev=0.02)
-    
-    input_layer = Input(shape=(input_dim + conditioning_dim,))
-    
-    print("Input Shape:", input_layer.shape)
-    
-    #model.add(Dense(timesteps * n_features, activation="relu"))
-    #model.add(Reshape((timesteps, n_features)))
-
-    
-    x = Dense(lay1, kernel_initializer=init)(input_layer)
-    x = LeakyReLU(negative_slope=0.2)(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
-    
-    #x = Reshape((lay1, 1))(x)
-    #attention = Attention()([x, x])
-    #x = Flatten()(attention)
-        
-    x = Dense(lay2, kernel_initializer=init)(x)
-    x = LeakyReLU(negative_slope=0.2)(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
-    
-    x = Reshape((lay2, 1))(x)
-    attention = Attention()([x, x])
-    x = Flatten()(attention)
-    
-    x = Dense(lay3, kernel_initializer=init)(x)
-    x = LeakyReLU(negative_slope=0.2)(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
-    
-    output_layer = Dense(input_dim, activation='tanh')(x)
-    return Model(input_layer, output_layer)
-
-
-# Function to create discriminator model
-def create_discriminator(input_dim, conditioning_dim, lay1, lay2, lay3):
-    init = RandomNormal(stddev=0.02)
-    input_layer = Input(shape=(input_dim + conditioning_dim,))
-    
-    x = Dense(lay1, kernel_initializer=init)(input_layer)
-    x = LeakyReLU(negative_slope=0.2)(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
-
-    #x = Reshape((lay1, 1))(x)
-    #attention = Attention()([x, x])
-    #x = Flatten()(attention)
-    
-    x = Dense(lay2, kernel_initializer=init)(x)
-    x = LeakyReLU(negative_slope=0.2)(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
-
-    #x = Reshape((lay2, 1))(x)
-    #attention = Attention()([x, x])
-    #x = Flatten()(attention)
-    
-    x = Dense(lay3, kernel_initializer=init)(x)
-    x = LeakyReLU(negative_slope=0.2)(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
-    
-    x = Reshape((lay3, 1))(x)
-    attention = Attention()([x, x])
-    x = Flatten()(attention)
-    
-    x = Dense(1, activation='sigmoid')(x)
-    return Model(input_layer, x)
-
-# Function to create the GAN model
-def create_gan(generator, discriminator, input_dim, conditioning_dim):
-    discriminator.trainable = False
-    noise_input = Input(shape=(input_dim,))
-    condition_input = Input(shape=(conditioning_dim,))
-    gan_input = tf.keras.layers.Concatenate()([noise_input, condition_input])
-    x = generator(gan_input)
-    gan_output = discriminator(tf.keras.layers.Concatenate()([x, condition_input]))
-    return Model([noise_input, condition_input], gan_output)
-
-# Gradient Penalty Function
-def gradient_penalty(discriminator, real_samples, fake_samples, conditioning_samples, batch_size):
-    alpha = tf.random.normal([batch_size, 1], 0.0, 1.0)
-    interpolated = real_samples + alpha * (fake_samples - real_samples)
-    with tf.GradientTape() as tape:
-        tape.watch(interpolated)
-        d_interpolated = discriminator(tf.concat([interpolated, conditioning_samples], axis=1))
-    gradients = tape.gradient(d_interpolated, [interpolated])[0]
-    grad_l2 = tf.sqrt(tf.reduce_sum(tf.square(gradients), axis=1))
-    gradient_penalty = tf.reduce_mean((grad_l2 - 1.0) ** 2)
-    return gradient_penalty
-
-# Function to train the GAN model
-def train_gan(generator, discriminator, gan, x_data, y_data, epochs, batch_size, conditioning_dim, patience=10, min_delta=0.001):
-    history = {'d_loss': [], 'g_loss': [], 'd_acc': []}
-    valid = np.ones((batch_size, 1))
-    fake = np.zeros((batch_size, 1))
-    
-    best_g_loss = np.inf
-    patience_counter = 0
-
-    for epoch in range(epochs):
-        # Training Discriminator
-        for _ in range(1):  # Train discriminator more times
-            idx = np.random.randint(0, x_data.shape[0], batch_size)
-            real_samples = x_data[idx]
-            real_conditions = y_data[idx]
-
-            noise = np.random.normal(0, 1, (batch_size, x_data.shape[1]))
-            gen_input = [noise, real_conditions]
-            generated_samples = generator.predict(np.concatenate(gen_input, axis=1))
-            
-            d_loss_real = discriminator.train_on_batch(np.concatenate([real_samples, real_conditions], axis=1), valid)
-            d_loss_fake = discriminator.train_on_batch(np.concatenate([generated_samples, real_conditions], axis=1), fake)
-            
-            gp = gradient_penalty(discriminator, real_samples, generated_samples, real_conditions, batch_size)
-            d_loss = 0.5 * np.add(d_loss_real, d_loss_fake) + 10 * gp  # Gradient penalty coefficient
-
-        # Training Generator
-        for _ in range(1):  # Train generator more times
-            noise = np.random.normal(0, 1, (batch_size, x_data.shape[1]))
-            gen_input = [noise, real_conditions]
-            g_loss = gan.train_on_batch(gen_input, valid)
-
-        history['d_loss'].append(d_loss[0])  # Appending d_loss[0] as d_loss contains [loss_value, accuracy]
-        history['g_loss'].append(g_loss)
-        history['d_acc'].append(100 * d_loss_real[1])  # Update to d_loss_real[1] to track accuracy
-
-        if epoch % 2 == 0:
-            print(" ")
-            print(f"Epoch {epoch}/{epochs}  Patience: {patience_counter}  Accuracy: {100 * d_loss_real[1]}")
-            converted_values = [float(value) for value in d_loss]
-            print("Discriminator Loss:", *converted_values)
-            converted_values = [float(value) for value in g_loss]
-            print("Generator Loss:", *converted_values)
-            print(" ")
-
-        g_loss_value = np.mean(history['g_loss'])
-        
-        if g_loss_value < best_g_loss - min_delta:
-            best_g_loss = g_loss_value
-            patience_counter = 0
-        else:
-            patience_counter += 1
-
-        if patience_counter >= patience:
-            print(f"Early stopping at epoch {epoch}")
-            break
-    return history
-
-# Function to evaluate the GAN model
-def evaluate_gan(generator, x_test, y_test):
-    noise = np.random.normal(0, 1, (x_test.shape[0], x_test.shape[1]))
-    gen_input = [noise, y_test]
-    generated_samples = generator.predict(np.concatenate(gen_input, axis=1))
-
-    mse = mean_squared_error(x_test, generated_samples)
-    rmse = sqrt(mse)
-    r2 = r2_score(x_test, generated_samples)
-    
-    # Evaluate the model
-    #val_loss = model_in.evaluate(_test, y_test)
-    #print(f'Validation Loss: {val_loss:.4f}')
-   
-    return {"MSE": mse, "RMSE": rmse, "R2": r2 }
-
-
-def evaluate_features(columns, predictions, xgblgb_model, y_val):
-    
-    print("Evaluating Features ...")
-    
-    out_df = pd.DataFrame(columns=columns)
-    
-    ups = 0
-    dwns = 0
-    zeros = 0
-    
-    for i in range(len(predictions)):
-        vals = []
-
-        for z in range(predictions.shape[1]):
-            vals.append(predictions[i][z])
-        
-        dv = pd.DataFrame(vals)
-        dv = dv.transpose()
-        out_put = xgblgb_model.predict(dv)      
-        
-        #print(f"Index: {i}  Output: {out_put}  Actual: {y_val[i]}")
-        
-        if out_put > 0 and y_val[i] > 0:
-            ups += 1
-            
-        elif out_put < 0 and y_val[i] < 0:
-            dwns += 1            
-        
-        elif out_put == 0 and y_val[i] == 0:
-            zeros += 1        
-        
-                
-    #print(out_df)    
-    print(f"Ups: {ups}  Dwns: {dwns}  Zeros: {zeros}   {ups/(dwns+ups)}  " )
-
-    return out_df
-
-
-def plot_results(history_in, predictions, predictions_reversed, y_test_in):
-
-    fig = plt.figure(figsize=(16, 9))
-    gs = fig.add_gridspec(2, 2, height_ratios=[1, 2])
-    
-    ax1 = fig.add_subplot(gs[0, 0])
-    ax1.plot(history_in['d_loss'], label='Discriminator Loss')
-    ax1.plot(history_in['g_loss'], label='Generator Loss')
-    ax1.set_xlabel('Epoch')
-    ax1.set_ylabel('Loss')
-    ax1.set_title('Training and Validation Loss')
-    ax1.grid(True)
-
-    ax2 = fig.add_subplot(gs[0, 1])
-    # Plot discriminator accuracy
-    ax2.plot(history_in['d_acc'], label='Discriminator Accuracy')
-    ax2.legend()
-    ax2.set_title('Discriminator Accuracy')
-  
-    
-    ax3 = fig.add_subplot(gs[1, :])
-    ax3.plot(range(len(predictions_reversed)), predictions_reversed , color='red', linestyle='--', label='Predicted Values')
-    ax3.plot(range(len(predictions_reversed)), y_test_in , color='black', linestyle='-', label='Y Values')
-    ax3.set_title('Actual vs Predicted Values')
-    ax3.set_xlabel('Index')
-    ax3.set_ylabel('Output')
-    ax3.legend()
-    ax3.grid(True)
-
-    plt.tight_layout()
+# Plot results
+def plot_results(actuals, predictions):
+    plt.figure(figsize=(12, 6))
+    plt.plot(actuals, label='Actual')
+    plt.plot(predictions, label='Predicted')
+    plt.xlabel('Time')
+    plt.ylabel('Stock Price')
+    plt.title('Stock Price Prediction')
+    plt.legend()
     plt.show()
 
-
-# Sample Usage
-if __name__ == "__main__":
-    set_seeds(42)
-
- # Example data loading (replace with your actual dataset)
-    raw_data = pd.read_csv("data/buildSeqInd_Lucky13_5M_ALL.csv")
+def generate_statistics(test_series, predictions):
+    # Print descriptive statistics for model performance
+    mae_score = mae(test_series, predictions)
+    mape_score = mape(test_series, predictions)
+    rmse_score = rmse(test_series, predictions)
+    cov = coefficient_of_variation(test_series, predictions)
+    dtw = dtw_metric(test_series, predictions)
     
-    xgb_data = raw_data
-    lgb_data = raw_data
-    data = raw_data
-    #data = data.drop(columns=['STOK1'])
-    #data = data.drop(columns=['RSI'])
-    #data = data.drop(columns=['ATR2'])
-    data = data.drop(columns=['ATR21'])
-    #data = data.drop(columns=['ATR3'])
-    data = data.drop(columns=['ATR31']) 
-    data = data.drop(columns=['ATR32']) 
-    data = data.drop(columns=['ATR34'])   
-    #data = data.drop(columns=['ROC'])     
-    #data = data.drop(columns=['SDKC9'])   
-    data = data.drop(columns=['SDKC91'])  
-    data = data.drop(columns=['SDBB91'])  
-    #data = data.drop(columns=['SDLR310'])
+    print(f'Dynamic Time Warping (DTW): {dtw:.4f}')
+    print(f'Coefficient of Variation (CoV): {cov:.4f}')
+    print(f'Mean Absolute Error (MAE): {mae_score:.4f}')
+    print(f'Mean Absolute Percentage Error (MAPE): {mape_score:.4f}%')
+    print(f'Root Mean Squared Error (RMSE): {rmse_score:.4f}')
+
+def train_and_save_model(train_series, val_series, input_chunk_length, output_chunk_length, 
+                         n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path, pl_trainer_kwargs):
+    # Build and train the NHiTS model
+    model = NHiTSModel(
+        input_chunk_length=input_chunk_length, 
+        output_chunk_length=output_chunk_length, 
+        n_epochs=n_epochs, 
+        random_state=42, 
+        num_stacks=num_stacks, 
+        num_blocks=num_blocks, 
+        num_layers=num_layers, 
+        layer_widths=layer_widths,
+        pl_trainer_kwargs=pl_trainer_kwargs,
+        likelihood=QuantileRegression(),
+        log_tensorboard=True
+    )
+    
+    model.fit(train_series, val_series=val_series)
+    model.save(model_save_path)
+
+    return model
+
+# Main function to run the entire script
+def main():
+    file_path = "data/buildSeqInd_Lucky13_5M_ALL.csv"
+    drop_cols = [
+        #'STOK1',
+        #'RSI',
+        #'ATR2',
+        'ATR21',
+        #'ATR3',
+        'ATR31', 
+        'ATR32',
+        'ATR34',   
+        #'ROC',     
+        'SDKC9',   
+        'SDKC91',  
+        'SDBB91',  
+        #'SDLR310'
+    ]
+
+    target_column = 'output'  # Replace with your actual target column name
+    input_chunk_length = 60
+    output_chunk_length = 5
+    n_epochs = 10
+    num_stacks = 3
+    num_blocks = 2
+    num_layers = 4
+    layer_widths = 512
+    test_split = 0.7
+    model_save_path = "nbeats_model.pk"
+    log_dir = "m_data"  # Directory to save TensorBoard logs
+
+    # Load and preprocess data
+    data = load_data(file_path)
     data = data.drop(columns=['outputC'])
-    data = data.drop(columns=['outputX'])
-
-    X_data = data.drop(columns=['output']).to_numpy()    
-    y_data = data['output'].values.reshape(-1, 1)
-    X_train, X_val, y_train, y_val = train_test_split(X_data, y_data, test_size=0.4, random_state=42)
-
-    d2 = data.drop(columns=['output'], axis=1)
-    columns = d2.columns 
+    data = data.drop(columns=drop_cols)
+    feature_columns = list(data.columns[:-1])
     
-    data_xgb = xgb_data    
-    data_xgb = xgb_data.drop(columns=['ATR21', 'ATR31', 'ATR32', 'ATR34', 'SDKC91', 'SDBB91', 'outputC', 'outputX'])
-    X_data_xgb = data_xgb.drop(columns=['output']).to_numpy()    
-    y_data_xgb = data_xgb['output'].values.reshape(-1, 1)
-    X_train_xgb, X_val_xgb, y_train_xgb, y_val_xgb = train_test_split(X_data_xgb, y_data_xgb, test_size=0.4, random_state=42)
-        
-    data_lgb = lgb_data        
-    data_lgb = lgb_data.drop(columns=['ATR21', 'ATR31', 'ATR32', 'ATR34', 'SDKC91', 'SDBB91', 'outputC', 'outputX'])    
-    X_data_lgb = data_lgb.drop(columns=['output']).to_numpy()    
-    y_data_lgb = data_lgb['output'].values.reshape(-1, 1)
-    X_train_lgb, X_val_lgb, y_train_lgb, y_val_lgb = train_test_split(X_data_lgb, y_data_lgb, test_size=0.4, random_state=42)
-        
-    lgb_params = {
-        'n_estimators': 250,
-        'objective': 'regression',
-        'min_child_samples': 7,
-        'subsample': 1,
-        'num_leaves': 35,
-        'colsample_bytree': 1,
-        'random_state': 0,
-        'n_jobs': -1,
-        'learning_rate': 0.01,
-        'verbose': 1,
+    # Create TimeSeries and preprocess data
+    series = TimeSeries.from_dataframe(data, value_cols=target_column).astype(np.float32)
+    train_data, test_data = series.split_after(test_split)
+    train_series, scaler = preprocess_data(train_data.pd_dataframe(), feature_columns, target_column)
+    test_series = scaler.transform(test_data.astype(np.float32))
+    
+    # TensorBoard logger
+    lr_monitor = LearningRateMonitor(logging_interval='step')
+
+    # Early stopping callback
+    early_stopper = EarlyStopping(
+        monitor="val_loss",
+        patience=5,
+        min_delta=0.01,
+        verbose=True,
+        mode='min'
+    )
+
+    pl_trainer_kwargs = {
+        "callbacks": [early_stopper, lr_monitor]
     }
 
-    lgb_model = LGBMRegressor(**lgb_params)
-    lgb_model.fit(X_train_lgb, y_train_lgb)
-
-    xgb_model = XGBRegressor()
-    xgb_model.fit(X_train_xgb, y_train_xgb)
-    y_pred_xgb = xgb_model.predict(X_train_xgb).reshape(-1, 1).astype(np.float32)
-    y_pred = y_pred_xgb 
+    model = train_and_save_model(train_series, test_series, input_chunk_length, output_chunk_length, 
+                                 n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path, pl_trainer_kwargs)
     
-    y_pred[y_pred > 0] = 1
-    y_pred[y_pred <= 0] = -1
-
-    # Create and compile models
-    input_dim = X_train.shape[1]
-    conditioning_dim = y_pred.shape[1]
-
-    generator = create_generator(input_dim, conditioning_dim, 4, 16, 32)
-    discriminator = create_discriminator(input_dim, conditioning_dim, 64, 16, 4)
+    # Make predictions
+    predictions = model.predict(len(test_series))
+    generate_statistics(test_series, predictions)
     
-    discriminator.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5), metrics=['accuracy'])
+    # Inverse transform the predictions and actual values
+    actual_values = scaler.inverse_transform(test_series).values()
+    predicted_values = scaler.inverse_transform(predictions).values()
+    plot_results(actual_values, predicted_values)
 
-    gan = create_gan(generator, discriminator, input_dim, conditioning_dim)
-    gan.compile(loss='binary_crossentropy', optimizer=Adam(0.0001, 0.5))
-    gan.summary()
-
-    scaler = MinMaxScaler((0,1))
-    #scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_val = scaler.transform(X_val)
-
-    # Train GAN
-    history = train_gan(generator, discriminator, gan, X_train, y_pred, 
-                        epochs=1000, batch_size=32, 
-                        conditioning_dim=conditioning_dim, patience=7, min_delta=0.001)
-
-
-    x_rev = scaler.inverse_transform(X_val)
-    # Evaluate GAN
-    evaluation = evaluate_gan(generator, x_rev, y_val)
-    print_pretty_results(evaluation)
-
-    data_df1 = evaluate_features(columns, x_rev, lgb_model, y_val)
-
-
-    # Plot results
-    #plot_results(history, X_val, x_rev, y_val)
-    
+if __name__ == "__main__":
+    main()
