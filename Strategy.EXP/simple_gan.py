@@ -285,9 +285,9 @@ def build_discriminatorX(timesteps, n_features, layer3,layer2, layer1):
     
 def create_gan(generator, discriminator, latent_dim, g_lr=0.001, d_lr=0.001):
     """Create and compile the GAN model."""
+
     #discriminator.compile(loss='binary_crossentropy', optimizer=Adam(learning_rate=d_lr))
     discriminator.compile(loss='mean_squared_error', optimizer=Adam(learning_rate=d_lr))
-
 
     gan_input = Input(shape=(latent_dim,))
     generated_sequence = generator(gan_input)

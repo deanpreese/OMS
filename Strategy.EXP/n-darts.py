@@ -130,7 +130,6 @@ def main():
     model = train_and_save_model(train_series, test_series, input_chunk_length, output_chunk_length, 
                                  n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path, pl_trainer_kwargs)
     
-    # Make predictions
     predictions = model.predict(len(test_series))
     generate_statistics(test_series, predictions)
     

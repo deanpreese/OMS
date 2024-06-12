@@ -154,7 +154,7 @@ class TunableLGBMClassifier(LGBMClassifier):
     def __init__(self,boosting_type='gbdt', num_leaves=31, learning_rate=0.1, n_estimators=100, objective=None,
                  min_child_samples=20, subsample=1.0, colsample_bytree=1.0, random_state=None, n_jobs=-1):
 
-        mlflow.lightgbm.autolog() 
+        #mlflow.lightgbm.autolog() 
         self.features_used = []
          
         kwargs = {
@@ -241,7 +241,7 @@ class TunableLGBMClassifier(LGBMClassifier):
 class TunableXGBClassifier(XGBClassifier):
     def __init__(self, **kwargs):
         
-        mlflow.xgboost.autolog()
+        #mlflow.xgboost.autolog()
         self.used_params = kwargs        
         super().__init__(**kwargs)
 
@@ -253,7 +253,7 @@ class TunableXGBClassifier(XGBClassifier):
         params = {
             'colsample_bytree': 0.6655392754230048, 
             'gamma': 4.198875359789924, 
-            'max_depth': 17.0, 
+            'max_depth': 17, 
             'min_child_weight': 1.0, 
             'reg_alpha': 57.0, 
             'reg_lambda': 0.896332305739873
