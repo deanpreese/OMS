@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import datetime as dte_time
 import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.dataprocessing.transformers import Scaler
@@ -53,7 +54,8 @@ def train_and_save_model(train_series, val_series, input_chunk_length, output_ch
     model = NHiTSModel(
         input_chunk_length=input_chunk_length, 
         output_chunk_length=output_chunk_length, 
-        n_epochs=n_epochs, 
+        n_epochs=n_epochs,
+        batch_size=64, 
         random_state=42, 
         num_stacks=num_stacks, 
         num_blocks=num_blocks, 
@@ -89,19 +91,22 @@ def main():
     ]
 
     target_column = 'output'  # Replace with your actual target column name
-    input_chunk_length = 60
-    output_chunk_length = 5
+    input_chunk_length = 13
+    output_chunk_length = 2
     n_epochs = 1000
     num_stacks = 3
     num_blocks = 2
     num_layers = 4
     layer_widths = 512
-    test_split = 0.7
-    model_save_path = "nbeats_model.pk"
+    test_split = 0.85
+
+    time_stamp = dte_time.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
+    model_base_name = f"dart_NHiTSModel_{input_chunk_length}-{output_chunk_length}_{time_stamp}"
+    model_save_path = f"dart_logs/{model_base_name}.pk"
     
     # Load and preprocess data
     data = load_data(file_path)
-    data = data.drop(columns=['outputC'])
+    #data = data.drop(columns=['outputC'])
     data = data.drop(columns=drop_cols)
     feature_columns = list(data.columns[:-1])
     
@@ -124,14 +129,17 @@ def main():
     )
 
     pl_trainer_kwargs = {
-        "callbacks": [early_stopper, lr_monitor]
+        "callbacks": [early_stopper]
     }
 
+    print("Training model...")
     model = train_and_save_model(train_series, test_series, input_chunk_length, output_chunk_length, 
                                  n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path, pl_trainer_kwargs)
     
     # Make predictions
+    print("Making predictions...")
     predictions = model.predict(len(test_series))
+    print("Generating statistics...")
     generate_statistics(test_series, predictions)
     
     # Inverse transform the predictions and actual values
