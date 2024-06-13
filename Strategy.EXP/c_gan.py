@@ -270,6 +270,8 @@ def run():
     set_seeds(42)
     data = pd.read_csv("data/buildSeqInd_Lucky13_5M_ALL.csv")
     data = data.drop(columns=['outputC'])    
+    X_data = data.drop(columns=['output'])    
+    y_data = data['output'].values.reshape(-1, 1)
     
     drop_cols = [
         #'STOK1',
