@@ -1,6 +1,6 @@
+from pandas import date_range
 import numpy as np
 import pandas as pd
-from pandas import date_range
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
@@ -35,10 +35,10 @@ def main():
     features, target = load_data()
     X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
     
-    # Check and handle large period range
-    if len(y_train) > 20000:
-        print("Warning: Large dataset size may lead to date range issues. Adjusting frequency.")
-        freq = 'W'  # Weekly frequency to reduce the number of periods
+    # Check data size and adjust frequency
+    if len(y_train) > 10000:
+        print("Warning: Large dataset size. Using monthly frequency.")
+        freq = 'M'  # Monthly frequency
     else:
         freq = 'D'  # Daily frequency
 
