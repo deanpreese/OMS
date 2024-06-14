@@ -1,21 +1,22 @@
 import pandas as pd
-from pandas import date_range
 import numpy as np
 import datetime as dte_time
 import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.dataprocessing.transformers import Scaler
 from darts.models import NHiTSModel
+from torchmetrics import MetricCollection
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
 from pytorch_lightning.loggers import TensorBoardLogger
 from darts.utils.likelihood_models import QuantileRegression
 from darts.metrics import mae, mape, rmse, coefficient_of_variation, dtw_metric
+
+from torchmetrics.regression import SpearmanCorrCoef, PearsonCorrCoef, R2Score, MeanAbsoluteError 
+from torchmetrics.regression import MeanSquaredError, PearsonCorrCoef, MeanAbsolutePercentageError, CosineSimilarity
+
 import joblib
 
-# Data loading
-def load_data(file_path):
-    data = pd.read_csv(file_path)
-    return data
+
 
 # Preprocessing
 def preprocess_data(data, feature_columns, target_column):
@@ -50,7 +51,20 @@ def generate_statistics(test_series, predictions):
     print(f'Root Mean Squared Error (RMSE): {rmse_score:.4f}')
 
 def train_and_save_model(train_series, val_series, input_chunk_length, output_chunk_length, 
-                         n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path, pl_trainer_kwargs):
+                         n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
+                         model_save_path, pl_trainer_kwargs):
+    
+    metric_collection = MetricCollection([
+        #SpearmanCorrCoef(), 
+        #R2Score(), 
+        MeanAbsoluteError(),
+        MeanSquaredError(), 
+        #PearsonCorrCoef(), 
+        #MeanAbsolutePercentageError(), 
+        #CosineSimilarity()
+        ])
+    
+    
     # Build and train the NHiTS model
     model = NHiTSModel(
         input_chunk_length=input_chunk_length, 
@@ -64,6 +78,7 @@ def train_and_save_model(train_series, val_series, input_chunk_length, output_ch
         layer_widths=layer_widths,
         pl_trainer_kwargs=pl_trainer_kwargs,
         likelihood=QuantileRegression(),
+        torch_metrics=metric_collection,
         log_tensorboard=True
     )
     
@@ -75,6 +90,8 @@ def train_and_save_model(train_series, val_series, input_chunk_length, output_ch
 # Main function to run the entire script
 def main():
     file_path = "data/buildSeqInd_Lucky13_5M_ALL.csv"
+    data = pd.read_csv(file_path)
+    
     drop_cols = [
         #'STOK1',
         #'RSI',
@@ -91,9 +108,14 @@ def main():
         #'SDLR310'
     ]
 
+
+    #data = data.drop(columns=['outputC'])
+    data = data.drop(columns=drop_cols)
+    feature_columns = list(data.columns[:-1])
+
     target_column = 'output'  # Replace with your actual target column name
     input_chunk_length = 13
-    output_chunk_length = 2
+    output_chunk_length = 1
     n_epochs = 1000
     num_stacks = 3
     num_blocks = 2
@@ -103,22 +125,17 @@ def main():
 
     time_stamp = dte_time.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
     model_base_name = f"dart_NHiTSModel_{input_chunk_length}-{output_chunk_length}_{time_stamp}"
-    model_save_path = f"dart_logs/{model_base_name}.pk"
+    model_save_path = f"darts_saved_models/{model_base_name}.pk"
     
-    # Load and preprocess data
-    data = load_data(file_path)
-    #data = data.drop(columns=['outputC'])
-    data = data.drop(columns=drop_cols)
-    feature_columns = list(data.columns[:-1])
-    
-    # Create TimeSeries and preprocess data
-    series = TimeSeries.from_dataframe(data, value_cols=target_column).astype(np.float32)
+    series = TimeSeries.from_dataframe(data).astype(np.float32)    
     train_data, test_data = series.split_after(test_split)
-    train_series, scaler = preprocess_data(train_data.pd_dataframe(), feature_columns, target_column)
-    test_series = scaler.transform(test_data.astype(np.float32))
+    
+    scaler = Scaler()
+    train_series = scaler.fit_transform(train_data) 
+    test_series = scaler.transform(test_data.astype(np.float32))   
     
     # TensorBoard logger
-    lr_monitor = LearningRateMonitor(logging_interval='step')
+    #lr_monitor = LearningRateMonitor(logging_interval='step')
 
     # Early stopping callback
     early_stopper = EarlyStopping(
@@ -135,7 +152,8 @@ def main():
 
     print("Training model...")
     model = train_and_save_model(train_series, test_series, input_chunk_length, output_chunk_length, 
-                                 n_epochs, num_stacks, num_blocks, num_layers, layer_widths, model_save_path, pl_trainer_kwargs)
+            n_epochs, num_stacks, num_blocks, num_layers, 
+                    layer_widths, model_save_path, pl_trainer_kwargs)
     
     # Make predictions
     print("Making predictions...")

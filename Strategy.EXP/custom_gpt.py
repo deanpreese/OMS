@@ -10,14 +10,7 @@ from tensorflow.keras.optimizers import Adam
 from lightgbm import LGBMRegressor
 from darts.models import NHiTSModel
 from darts import TimeSeries
-
-def load_data():
-    data = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
-    features = data.drop(['output', 'outputC'], axis=1)
-    target = data['output']
-    scaler = MinMaxScaler()
-    features_scaled = scaler.fit_transform(features)
-    return features_scaled, target
+from darts.dataprocessing.transformers import Scaler
 
 def create_lstm_model(input_dim):
     model = Sequential([
@@ -31,23 +24,67 @@ def create_lstm_model(input_dim):
     model.compile(optimizer=Adam(learning_rate=0.01), loss='mse')
     return model
 
-def main():
-    features, target = load_data()
-    X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
+
+# Function to create sequences
+def create_sequences(data_in, seq_length_in):
+    print("create_sequences ")
+    xs = [data_in.iloc[i:i + seq_length_in, :-1].values for i in range(len(data_in) - seq_length_in)]
+    ys = data_in.iloc[seq_length_in:].values
+    xr = [data_in.iloc[i,].values for i in range(len(data_in) - seq_length_in)]
     
-    # Check data size and adjust frequency
-    if len(y_train) > 10000:
-        print("Warning: Large dataset size. Using monthly frequency.")
-        freq = 'M'  # Monthly frequency
-    else:
-        freq = 'D'  # Daily frequency
+    return np.array(xs), np.array(ys), np.array(xr)
 
-    train_dates = date_range(start='2020-01-01', periods=len(y_train), freq=freq)
-    test_dates = date_range(start='2020-01-01', periods=len(X_test), freq=freq)
+def main():
+    
+    sequence_length = 25
+    test_split = 0.85
+    
+    data = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+    data = data.drop(columns=['outputC'])
+    series = TimeSeries.from_dataframe(data, value_cols='output').astype(np.float32)
+    train_data, test_data = series.split_after(test_split)
+    
+    print(" Train Data ")
+    print(train_data.pd_dataframe().shape)
+    print(train_data.pd_dataframe())
+    print("  ")
+    
+    scaler = Scaler()
+    scaled_train_data = scaler.fit_transform(train_data)
+    scaled_test_data = scaler.fit_transform(test_data)
+    
+    features_cols = list(train_data.columns)  # Get all column names
+    X_train = scaled_train_data[features_cols]  # Select features using column names
+    y_train = scaled_train_data["output"]  # Select target variable column by name
+    X_test = scaled_test_data[features_cols]  # Select features using column names
+    y_test = scaled_test_data["output"]  # Select target variable column by name
+        
+    print(" Scaled ")
+    print(X_train.pd_dataframe().shape)
+    print(X_train.pd_dataframe())
+    print(X_test.pd_dataframe().shape)
+    print(X_train.pd_dataframe().shape)
+    print(y_test.pd_dataframe().shape)
+    print("  ")
+    
+    X_train_lstm, y_train_lstm, xr_train = create_sequences(train_data.pd_dataframe(), sequence_length)
+    X_test_lstm, y_test_lstm, xr_test = create_sequences(test_data.pd_dataframe(), sequence_length)
 
-    X_train_lstm = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))
-    X_test_lstm = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))
+    print(" Seq ")
+    print(X_train_lstm.shape)
+    print(xr_train.shape)
+    print(y_train_lstm.shape)
 
+    print(" Seq Removed")
+    print(X_test_lstm.shape)
+    print(xr_test.shape)    
+    print(xr_test)
+    
+    print(y_test_lstm.shape)    
+    print(y_test_lstm)    
+    
+
+    exit()
     lstm_model = create_lstm_model(X_train.shape[1])
     lstm_model.fit(X_train_lstm, y_train, epochs=50, batch_size=32, verbose=1, validation_split=0.1)
 
