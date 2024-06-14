@@ -16,8 +16,6 @@ from torchmetrics.regression import MeanSquaredError, PearsonCorrCoef, MeanAbsol
 
 import joblib
 
-
-
 # Preprocessing
 def preprocess_data(data, feature_columns, target_column):
     series = TimeSeries.from_dataframe(data, value_cols=target_column).astype(np.float32)
@@ -78,7 +76,7 @@ def train_and_save_model(train_series, val_series, input_chunk_length, output_ch
         layer_widths=layer_widths,
         pl_trainer_kwargs=pl_trainer_kwargs,
         likelihood=QuantileRegression(),
-        torch_metrics=metric_collection,
+        #torch_metrics=metric_collection,
         log_tensorboard=True
     )
     
@@ -96,15 +94,15 @@ def main():
         #'STOK1',
         #'RSI',
         #'ATR2',
-        'ATR21',
+        #'ATR21',
         #'ATR3',
-        'ATR31', 
-        'ATR32',
-        'ATR34',   
+        #'ATR31', 
+        #'ATR32',
+        #'ATR34',   
         #'ROC',     
-        'SDKC9',   
-        'SDKC91',  
-        'SDBB91',  
+        #'SDKC9',   
+        #'SDKC91',  
+        #'SDBB91',  
         #'SDLR310'
     ]
 

@@ -1,26 +1,33 @@
 import pandas as pd
 import numpy as np
-import datetime as dte_time
+from datetime import datetime
 import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.dataprocessing.transformers import Scaler
 from darts.models import NHiTSModel
+from torchmetrics import MetricCollection
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
+from pytorch_lightning.loggers import TensorBoardLogger
 from darts.utils.likelihood_models import QuantileRegression
 from darts.metrics import mae, mape, rmse, coefficient_of_variation, dtw_metric
+from torchmetrics.regression import SpearmanCorrCoef, PearsonCorrCoef, R2Score, MeanAbsoluteError 
+from torchmetrics.regression import MeanSquaredError, PearsonCorrCoef, MeanAbsolutePercentageError, CosineSimilarity
+
 import joblib
 
-# Data loading
-def load_data(file_path):
-    data = pd.read_csv(file_path)
-    return data
-
-# Preprocessing
-def preprocess_data(data, target_column):
-    series = TimeSeries.from_dataframe(data, value_cols=target_column).astype(np.float32)
+def process_data(data, feature_columns, target_column, split):
+    series = TimeSeries.from_dataframe(data).astype(np.float32)   
+    train, test = series.split_after(split)
+    X_train = train.drop_columns(target_column)
+    X_test = test.drop_columns(target_column)
+    y_train = train.drop_columns(feature_columns)
+    y_test = test.drop_columns(feature_columns)
+    
     scaler = Scaler()
-    scaled_series = scaler.fit_transform(series)
-    return scaled_series, scaler
+    X_train = scaler.fit_transform(X_train) 
+    X_test = scaler.transform(X_test.astype(np.float32))   
+    
+    return X_train, X_test, y_train, y_test, scaler
 
 # Plot results
 def plot_results(actuals, predictions):
@@ -47,9 +54,35 @@ def generate_statistics(test_series, predictions):
     print(f'Mean Absolute Percentage Error (MAPE): {mape_score:.4f}%')
     print(f'Root Mean Squared Error (RMSE): {rmse_score:.4f}')
 
-def train_and_save_model(train_series, val_series, input_chunk_length, output_chunk_length, 
-                         n_epochs, num_stacks, num_blocks, num_layers, 
-                         layer_widths, model_save_path, scaler_save_path, scaler, pl_trainer_kwargs):
+def train_and_save_model(train_target, val_target, train_covariates, val_covariates, 
+                         input_chunk_length, output_chunk_length, 
+                         n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
+                         patience_val, min_delta_val     
+                          ):
+        
+    # TensorBoard logger
+    lr_monitor = LearningRateMonitor(logging_interval='step')
+
+    # Early stopping callback
+    early_stopper = EarlyStopping(
+        monitor="val_loss",
+        patience=patience_val,
+        min_delta=min_delta_val,
+        verbose=True,
+        mode='min'
+    )
+
+    pl_trainer_kwargs = {
+        "callbacks": [early_stopper, lr_monitor]
+    }
+    
+    
+    metric_collection = MetricCollection([
+        MeanAbsoluteError(),
+        MeanSquaredError(), 
+        MeanAbsolutePercentageError(), 
+    ])
+    
     
     # Build and train the NHiTS model
     model = NHiTSModel(
@@ -64,44 +97,52 @@ def train_and_save_model(train_series, val_series, input_chunk_length, output_ch
         layer_widths=layer_widths,
         pl_trainer_kwargs=pl_trainer_kwargs,
         likelihood=QuantileRegression(),
+        torch_metrics=metric_collection,
         log_tensorboard=True
     )
     
-    model.fit(train_series, val_series=val_series)
+    
+    now = datetime.now()
+    ts = now.strftime("%Y-%m%d-%H-%M-%S")
+    model_base_name = f"dart_NHiTSModel_{input_chunk_length}-{output_chunk_length}-{ts}"
+    model_save_path = f"darts_saved_models/{model_base_name}.pk"
+    
+    model.fit(series=train_target, val_series=val_target, 
+              past_covariates=train_covariates, val_past_covariates=val_covariates)
+    
     model.save(model_save_path)
-    joblib.dump(scaler, scaler_save_path)
 
     return model
-
-def load_model_and_scaler(model_path, scaler_path):
-    model = NHiTSModel.load(model_path)
-    scaler = joblib.load(scaler_path)
-    return model, scaler
-
-def loop_predictions(model, series, input_chunk_length, output_chunk_length):
-    predictions = []
-    for i in range(0, len(series) - input_chunk_length, output_chunk_length):
-        input_series = series[i:i + input_chunk_length]
-        prediction = model.predict(output_chunk_length, input_series)
-        predictions.extend(prediction.values().flatten())
-    return np.array(predictions)
 
 # Main function to run the entire script
 def main():
     file_path = "data/buildSeqInd_Lucky13_5M_ALL.csv"
+    data = pd.read_csv(file_path)
+    
     drop_cols = [
+        #'STOK1',
+        #'RSI',
+        #'ATR2',
         'ATR21',
+        #'ATR3',
         'ATR31', 
         'ATR32',
         'ATR34',   
-        'SDKC9',   
+        #'ROC',     
+        #'SDKC9',   
         'SDKC91',  
         'SDBB91',  
+        #'SDLR310'
     ]
 
-    target_column = 'output'
-    input_chunk_length = 13
-    output_chunk_length = 2
+
+    data = data.drop(columns=['outputC'])
+    data = data.drop(columns=drop_cols)
+    feature_columns = list(data.columns[:-1])
+    
+    target_column = 'output'  # Replace with your actual target column name
+    input_chunk_length = 60
+    output_chunk_length = 10
     n_epochs = 1000
     num_stacks = 3
     num_blocks = 2
@@ -109,68 +150,27 @@ def main():
     layer_widths = 512
     test_split = 0.85
 
-    time_stamp = dte_time.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
-    model_base_name = f"dart_NHiTSModel_{input_chunk_length}-{output_chunk_length}_{time_stamp}"
-    model_save_path = f"dart_logs/{model_base_name}.pk"
-    scaler_save_path = f"dart_logs/{model_base_name}_scaler.pkl"
-    
-    # Load and preprocess data
-    data = load_data(file_path)
-    data = data.drop(columns=drop_cols)
-    feature_columns = list(data.columns[:-1])
-    
-    # Create TimeSeries and preprocess data
-    series = TimeSeries.from_dataframe(data, value_cols=target_column).astype(np.float32)
-    train_data, test_data = series.split_after(test_split)
-    train_series, scaler = preprocess_data(train_data.pd_dataframe(), target_column)
-    test_series = scaler.transform(test_data.astype(np.float32))
-    
-    # TensorBoard logger
-    lr_monitor = LearningRateMonitor(logging_interval='step')
 
-    # Early stopping callback
-    early_stopper = EarlyStopping(
-        monitor="val_loss",
-        patience=5,
-        min_delta=0.01,
-        verbose=True,
-        mode='min'
-    )
-
-    pl_trainer_kwargs = {
-        "callbacks": [early_stopper]
-    }
+    #(data, feature_columns, target_column, split):
+    X_train, X_test, y_train, y_test, scaler = process_data(data, feature_columns, target_column, test_split)
 
     print("Training model...")
-    model = train_and_save_model(train_series, test_series, input_chunk_length, output_chunk_length, 
-                                 n_epochs, num_stacks, num_blocks, num_layers, 
-                                 layer_widths, model_save_path, scaler_save_path,scaler, pl_trainer_kwargs)
+    # (train_target, val_target, train_covariates, val_covariates, 
+    model = train_and_save_model(y_train, y_test, X_train, X_test,
+        input_chunk_length, output_chunk_length, 
+            n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
+            patience_val=5, min_delta_val=0.005)
     
+    # Make predictions
     print("Making predictions...")
-    predictions = loop_predictions(model, test_series, input_chunk_length, output_chunk_length)
-    print("Generating statistics...")
-    generate_statistics(test_series, predictions)
+    predictions = model.predict(output_chunk_length-1, series=y_test, past_covariates=X_test)
+    #print("Generating statistics...")
+    #generate_statistics(test_series, predictions)
     
     # Inverse transform the predictions and actual values
-    actual_values = scaler.inverse_transform(test_series).values()
+    actual_values = scaler.inverse_transform(X_test).values()
     predicted_values = scaler.inverse_transform(predictions).values()
     plot_results(actual_values, predicted_values)
-
-    # Load out-of-sample data and make predictions
-    out_of_sample_file_path = "data/out_of_sample_data.csv"
-    out_of_sample_data = load_data(out_of_sample_file_path)
-    out_of_sample_data = out_of_sample_data.drop(columns=drop_cols)
-    out_of_sample_series = TimeSeries.from_dataframe(out_of_sample_data, value_cols=target_column).astype(np.float32)
-    
-    model, scaler = load_model_and_scaler(model_save_path, scaler_save_path)
-    scaled_out_of_sample_series = scaler.transform(out_of_sample_series)
-    
-    out_of_sample_predictions = loop_predictions(model, scaled_out_of_sample_series, input_chunk_length, output_chunk_length)
-    
-    # Inverse transform the out-of-sample predictions and actual values
-    actual_out_of_sample_values = scaler.inverse_transform(scaled_out_of_sample_series).values()
-    predicted_out_of_sample_values = scaler.inverse_transform(out_of_sample_predictions).values()
-    plot_results(actual_out_of_sample_values, predicted_out_of_sample_values)
 
 if __name__ == "__main__":
     main()
