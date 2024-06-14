@@ -73,7 +73,9 @@ def train_and_save_model(train_target, val_target, train_covariates, val_covaria
     )
 
     pl_trainer_kwargs = {
-        "callbacks": [early_stopper, lr_monitor]
+        "callbacks": [early_stopper, lr_monitor],
+        "accelerator": "gpu",
+        "devices": [0]
     }
     
     
@@ -168,9 +170,9 @@ def main():
     #generate_statistics(test_series, predictions)
     
     # Inverse transform the predictions and actual values
-    actual_values = scaler.inverse_transform(y_test).values()
-    predicted_values = scaler.inverse_transform(predictions).values()
-    plot_results(actual_values, predicted_values)
+    #actual_values = scaler.inverse_transform(y_test).values()
+    #predicted_values = scaler.inverse_transform(predictions).values()
+    plot_results(y_test, predictions)
 
 if __name__ == "__main__":
     main()
