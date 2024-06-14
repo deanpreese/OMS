@@ -163,12 +163,12 @@ def main():
     
     # Make predictions
     print("Making predictions...")
-    predictions = model.predict(output_chunk_length-1, series=y_test, past_covariates=X_test)
+    predictions = model.predict(1, series=y_test, past_covariates=X_test)
     #print("Generating statistics...")
     #generate_statistics(test_series, predictions)
     
     # Inverse transform the predictions and actual values
-    actual_values = scaler.inverse_transform(X_test).values()
+    actual_values = scaler.inverse_transform(y_test).values()
     predicted_values = scaler.inverse_transform(predictions).values()
     plot_results(actual_values, predicted_values)
 
