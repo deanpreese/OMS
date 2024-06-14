@@ -21,6 +21,9 @@
 [mlfl]ow/**
 Strategy.ML/data/
 Strategy.ML/catboost_info/
+Strategy.EXP/darts_saved_models/
+Strategy.EXP/darts_logs/
+Strategy.EXP/logs/
 
 
 # Mono auto generated files
