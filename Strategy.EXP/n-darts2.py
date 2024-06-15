@@ -32,12 +32,15 @@ def process_data(data, feature_columns, target_column, split):
 # Plot results
 def plot_results(actuals, predictions, last_x_rows=100):
     
-    model_predictions = model_predictions[-last_x_rows:]
-    y_test = y_test[-last_x_rows:]   
+    predictions = predictions[-last_x_rows:]
+    actuals = actuals[-last_x_rows:]   
     
     plt.figure(figsize=(12, 6))
-    plt.plot(actuals, label='Actual')
-    plt.plot(predictions, label='Predicted')
+    #plt.plot(actuals, label='Actual')
+    #plt.plot(predictions, label='Predicted')
+    actuals.plot(label='Actual')    
+    predictions.plot(label='Predicted')
+
     plt.xlabel('Time')
     plt.ylabel('Stock Price')
     plt.title('Stock Price Prediction')
@@ -130,15 +133,15 @@ def main():
         #'RSI',
         #'ATR2',
         'ATR21',
-        'ATR3',
+        #'ATR3',
         'ATR31', 
         'ATR32',
         'ATR34',   
-        'ROC',     
-        'SDKC9',   
-        'SDKC91',  
-        'SDBB91',  
-        'SDLR310'
+        #'ROC',     
+        #'SDKC9',   
+        #'SDKC91',  
+        #'SDBB91',  
+        #'SDLR310'
     ]
 
 
@@ -147,8 +150,8 @@ def main():
     feature_columns = list(data.columns[:-1])
     
     target_column = 'output'  # Replace with your actual target column name
-    input_chunk_length = 15
-    output_chunk_length = 3
+    input_chunk_length = 60
+    output_chunk_length = 15
     n_epochs = 1000
     num_stacks = 3
     num_blocks = 2
@@ -169,7 +172,7 @@ def main():
     
     # Make predictions
     print("Making predictions...")
-    predictions = model.predict(1, series=y_test, past_covariates=X_test)
+    predictions = model.predict(10, series=y_test, past_covariates=X_test)
     print("Generating statistics...")
     generate_statistics(y_test, predictions)
     
