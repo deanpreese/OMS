@@ -4,7 +4,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.dataprocessing.transformers import Scaler
-from darts.models import NHiTSModel
+from darts.models import NHiTSModel, NBEATSModel
 from torchmetrics import MetricCollection
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
 from pytorch_lightning.loggers import TensorBoardLogger
@@ -13,9 +13,12 @@ from darts.metrics import mae, mape, rmse, coefficient_of_variation, dtw_metric
 from torchmetrics.regression import SpearmanCorrCoef, PearsonCorrCoef, R2Score, MeanAbsoluteError 
 from torchmetrics.regression import MeanSquaredError, PearsonCorrCoef, MeanAbsolutePercentageError, CosineSimilarity
 
+from sklearn.decomposition import PCA
+
 import joblib
 
 def process_data(data, feature_columns, target_column, split):
+    print("Processing data...")
     series = TimeSeries.from_dataframe(data).astype(np.float32)   
     train, test = series.split_after(split)
     X_train = train.drop_columns(target_column)
@@ -94,7 +97,7 @@ def train_and_save_model(train_target, val_target, train_covariates, val_covaria
     
     
     # Build and train the NHiTS model
-    model = NHiTSModel(
+    model_x = NHiTSModel(
         input_chunk_length=input_chunk_length, 
         output_chunk_length=output_chunk_length, 
         n_epochs=n_epochs,
@@ -111,6 +114,27 @@ def train_and_save_model(train_target, val_target, train_covariates, val_covaria
     )
     
     
+    
+    # Build and train the NHiTS model
+    model = NBEATSModel(
+        input_chunk_length=input_chunk_length, 
+        output_chunk_length=output_chunk_length, 
+        n_epochs=n_epochs,
+        batch_size=64, 
+        random_state=42, 
+        num_stacks=num_stacks, 
+        num_blocks=num_blocks, 
+        num_layers=num_layers, 
+        layer_widths=layer_widths,
+        pl_trainer_kwargs=pl_trainer_kwargs,
+        likelihood=QuantileRegression(),
+        torch_metrics=metric_collection,
+        log_tensorboard=True
+    )
+    
+    
+    
+    
     now = datetime.now()
     ts = now.strftime("%Y-%m%d-%H-%M-%S")
     model_base_name = f"dart_NHiTSModel_{input_chunk_length}-{output_chunk_length}-{ts}"
@@ -125,32 +149,41 @@ def train_and_save_model(train_target, val_target, train_covariates, val_covaria
 
 # Main function to run the entire script
 def main():
+    
     file_path = "data/buildSeqInd_Lucky13_5M_ALL.csv"
+
+    #file_path = pd.read_csv("data/Fractal_ALL_5M_orig.csv")
+    #file_path = pd.read_csv("data/CleanReFried_5M_ALL.csv")
+    #file_path = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+    file_path = pd.read_csv("data/IND_LSTM_ALL.csv")
+
+    
+    #file_path="data/ReFried_5M_ALL.csv"
     data = pd.read_csv(file_path)
     
     drop_cols = [
         #'STOK1',
-        #'RSI',
+        'RSI',
         #'ATR2',
         'ATR21',
-        #'ATR3',
+        'ATR3',
         'ATR31', 
         'ATR32',
         'ATR34',   
-        #'ROC',     
-        #'SDKC9',   
-        #'SDKC91',  
-        #'SDBB91',  
-        #'SDLR310'
+        'ROC',     
+        'SDKC9',   
+        'SDKC91',  
+        'SDBB91',  
+        'SDLR310'
     ]
 
 
     data = data.drop(columns=['outputC'])
-    data = data.drop(columns=drop_cols)
+    #data = data.drop(columns=drop_cols)
     feature_columns = list(data.columns[:-1])
     
     target_column = 'output'  # Replace with your actual target column name
-    input_chunk_length = 60
+    input_chunk_length = 30
     output_chunk_length = 15
     n_epochs = 1000
     num_stacks = 3
@@ -162,19 +195,24 @@ def main():
 
     #(data, feature_columns, target_column, split):
     X_train, X_test, y_train, y_test, scaler = process_data(data, feature_columns, target_column, test_split)
-
+    
+    #print("X_train shape: ", X_train.all_values().shape)
+    #print("X_test shape: ", X_test.all_values().shape)
+    #print("y_train shape: ", y_train.all_values().shape)
+    #print("y_test shape: ", y_test.all_values().shape)
+    
     print("Training model...")
     # (train_target, val_target, train_covariates, val_covariates, 
     model = train_and_save_model(y_train, y_test, X_train, X_test,
         input_chunk_length, output_chunk_length, 
             n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
-            patience_val=5, min_delta_val=0.005)
+            patience_val=10, min_delta_val=0.005)
     
     # Make predictions
     print("Making predictions...")
-    predictions = model.predict(10, series=y_test, past_covariates=X_test)
-    print("Generating statistics...")
-    generate_statistics(y_test, predictions)
+    predictions = model.predict(output_chunk_length-1, series=y_test, past_covariates=X_test)
+    #print("Generating statistics...")
+    #generate_statistics(y_test, predictions)
     
     # Inverse transform the predictions and actual values
     #actual_values = scaler.inverse_transform(y_test).values()
