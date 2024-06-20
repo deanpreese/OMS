@@ -216,9 +216,6 @@ def eval_model(use_display, test_series, output_chunk, model, past_covariates=No
 def main():
     
     file_path = 'data/buildSeqInd_Lucky13_F.csv'
-    oos_file = 'data/oos_Lucky13_F.csv'
-
-    oos_data = pd.read_csv(oos_file)
     data = pd.read_csv(file_path)
     
     list80 = ['SDKC9', 'ATR3', 'STOK1', 'SDKC91', 'ATR21']
@@ -240,8 +237,6 @@ def main():
 
     oos_data = data.drop(columns=['outputC'])
     data = data.drop(columns=['outputC'])
-    
-    #oos_data = data.drop(columns=drop_cols)
     #data = data.drop(columns=drop_cols)
     
     feature_columns = list(data.columns[:-1])
