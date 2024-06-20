@@ -121,7 +121,7 @@ def train_and_save_model(train_target, val_target, train_covariates, val_covaria
         input_chunk_length=input_chunk_length, 
         output_chunk_length=output_chunk_length, 
         n_epochs=n_epochs,
-        batch_size=64, 
+        batch_size=32, 
         random_state=42, 
         num_stacks=num_stacks, 
         num_blocks=num_blocks, 
@@ -148,8 +148,8 @@ def train_and_save_model(train_target, val_target, train_covariates, val_covaria
 
 # Main function to run the entire script
 def main():
-    #file_path = "data/buildSeqInd_Lucky13_5M_ALL.csv"
-    file_path = "data/Fractal_ALL_5M_X.csv"
+    file_path = "data/buildSeqInd_Lucky13_5M_ALL.csv"
+    #file_path = "data/Fractal_ALL_5M_X.csv"
 
     data = pd.read_csv(file_path)
     
@@ -170,13 +170,13 @@ def main():
     ]
 
 
-    #data = data.drop(columns=['outputC'])
+    data = data.drop(columns=['outputC'])
     #data = data.drop(columns=drop_cols)
     feature_columns = list(data.columns[:-1])
     
     target_column = 'output'  # Replace with your actual target column name
-    input_chunk_length = 36
-    output_chunk_length = 7
+    input_chunk_length = 60
+    output_chunk_length = 3
     n_epochs = 1000
     num_stacks = 4
     num_blocks = 3
@@ -196,26 +196,26 @@ def main():
             patience_val=5, min_delta_val=0.005)
     
     model2 = train_and_save_model(y_train, y_test, X_train, X_test,
-        input_chunk_length+5, output_chunk_length+5, 
-            n_epochs, num_stacks+2, num_blocks+2, num_layers+2, layer_widths, 
+        input_chunk_length, output_chunk_length+1, 
+            n_epochs, num_stacks+1, num_blocks+1, num_layers+1, layer_widths, 
             patience_val=5, min_delta_val=0.005)
     
 
     model3 = train_and_save_model(y_train, y_test, X_train, X_test,
-    input_chunk_length+10, output_chunk_length+10, 
-        n_epochs, num_stacks+3, num_blocks+3, num_layers+3, layer_widths,
+    input_chunk_length, output_chunk_length+2, 
+        n_epochs, num_stacks+2, num_blocks+2, num_layers+2, layer_widths,
         patience_val=5, min_delta_val=0.005)
 
 
     # Make predictions
     print("Making predictions...")
-    predictions = model.predict(5, series=y_test, past_covariates=X_test)
+    predictions = model.predict(output_chunk_length-1, series=y_test, past_covariates=X_test)
     
     print("Making predictions...")
-    predictions2 = model2.predict(5, series=y_test, past_covariates=X_test)
+    predictions2 = model2.predict(output_chunk_length-1, series=y_test, past_covariates=X_test)
     
     print("Making predictions...")
-    predictions3 = model3.predict(5, series=y_test, past_covariates=X_test)
+    predictions3 = model3.predict(output_chunk_length-1, series=y_test, past_covariates=X_test)
     
     
     #print("Generating statistics...")
