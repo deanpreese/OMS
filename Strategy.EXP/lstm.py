@@ -66,6 +66,7 @@ def sequence_and_normalize(data_in, seq_length_in):
 
 def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timesteps_in, num_features_in):
     
+    """
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(16, 9))
 
     # Plot training and validation loss
@@ -85,7 +86,8 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
     # Evaluate the model
     #val_loss = model_in.evaluate(X_test_in, y_test_in)
     #print(f'Validation Loss: {val_loss:.4f}')
-
+    """
+    
     # Generate predictions
     predictions = model_in.predict(X_test_in)
 
@@ -127,6 +129,7 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
     print(f" ups: {ups}  dwns: {dwns}  Zeros: {zeros}  Total: {total}  Perf {round(((ups+zeros)/total),4)}  PerfX {round(ups/(ups+dwns),4)}")        
             
     
+    """
     predictions_reversed = reverse_scaling(predictions, scalers_in, timesteps_in, num_features_in )
     
     ax2.scatter(predictions_reversed , y_test_in , color=colors)
@@ -148,7 +151,7 @@ def eval_results(history_in, model_in, X_test_in, y_test_in, scalers_in, timeste
     ax2.grid(True)
 
     plt.show()
-    
+    """
 
 def build_model(input_dim,  lay1, lay2, lay3, sequence_length):
     
@@ -203,7 +206,7 @@ def build_modelX(input_dim,  lay1, lay2, lay3, sequence_length):
     x = Dropout(0.2)(x) 
     x = Dense(lay3//2, kernel_initializer=init, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
     x = LeakyReLU(negative_slope=0.2)(x)
-    x = BatchNormalization()(x)
+    #x = BatchNormalization()(x)
     x = Dropout(0.3)(x)
     x = Dense(1, kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
 
@@ -211,44 +214,50 @@ def build_modelX(input_dim,  lay1, lay2, lay3, sequence_length):
 
 
 # -----------------------------------------------------------------------
-data = pd.read_csv('data/buildSeqInd_Lucky13_F.csv')
+data = pd.read_csv('data/buildSeqInd_Lucky13_D.csv')
+#data = pd.read_csv('data/buildSeqInd_Lucky13_F.csv')
+
 #list80 = ['SDKC9', 'ATR3', 'STOK1', 'SDKC91', 'ATR21', 'output']
+list60 = ['SDKC9', 'ATR3', 'STOK1']
+
 #data = data[list80]
 
 #data = pd.read_csv('data/Ind_F.csv')
 #data_loaded = pd.read_csv('data/sm13_3070.csv')
 #data = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
 
+
 drop_cols = [
         #'STOK1',
-        #'RSI',
-        #'ATR2',
-        'ATR21',
+        'RSI',
+        'ATR2',
+        #'ATR21',
         #'ATR3',
         'ATR31', 
         'ATR32',
-        'ATR34',   
-        #'ROC',     
+        'ATR33',   
+        'ROC',     
         #'SDKC9',   
-        'SDKC91',  
+        #'SDKC91',  
         'SDBB91',  
-        #'SDLR310'
+        'SDLR310'
     ]
 
 
 
 #data = data.drop(columns=drop_cols)
 data = data.drop(columns=['outputC'])
+#data = data.drop(columns=['output'])
 #data = data.drop(columns=['outputX'])
 
-time_steps = 50
+time_steps = 15
 learning_rate=0.0001
-beta_1=0.5
-lay1 = 128
+beta_1 = 0.5
+lay1 = 32
 lay2 = 128
-lay3 = 128
+lay3 = 32
 epocs = 100
-batch = 32
+batch = 64
 
 feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequence_and_normalize(data, time_steps)
 
@@ -256,7 +265,7 @@ feature_dim_out, scalers_out, X_train_out, X_test, y_train_out, y_test = sequenc
 #print(X_train_out.shape)
 #print(y_train_out.shape)
 
-t_model = build_modelX(feature_dim_out,  lay1, lay2, lay3, time_steps)
+t_model = build_model(feature_dim_out,  lay1, lay2, lay3, time_steps)
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, beta_1=beta_1)
 
 

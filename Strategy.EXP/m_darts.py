@@ -23,6 +23,9 @@ def process_oos_data(data, feature_columns, target_column):
     
     scaler = Scaler()
     X_oos = scaler.fit_transform(X_oos) 
+
+    #print("X_oos shape: ", X_oos.all_values().shape)
+    #print("y_oos shape: ", y_oos.all_values().shape)        
     
     return X_oos, y_oos, scaler
 
@@ -39,6 +42,11 @@ def process_train_test_data(data, feature_columns, target_column, split):
     scaler = Scaler()
     X_train = scaler.fit_transform(X_train) 
     X_test = scaler.transform(X_test.astype(np.float32))   
+    
+    #print("X_train shape: ", X_train.all_values().shape)
+    #print("X_test shape: ", X_test.all_values().shape)
+    #print("y_train shape: ", y_train.all_values().shape)
+    #print("y_test shape: ", y_test.all_values().shape)
     
     return X_train, X_test, y_train, y_test, scaler
 
@@ -143,7 +151,7 @@ def build_NHits(input_chunk_length, output_chunk_length,
     return model
 
 
-def eval_model(plot_tf, test_series, output_chunk, model, past_covariates=None, future_covariates=None):
+def eval_model(use_display, test_series, output_chunk, model, past_covariates=None, future_covariates=None):
     
     forecast_results = model.historical_forecasts(series=test_series, 
                                           past_covariates=past_covariates,
@@ -176,7 +184,8 @@ def eval_model(plot_tf, test_series, output_chunk, model, past_covariates=None, 
 
     perf = round((correct)/total,4)
     
-    if plot_tf:
+    if use_display:
+        
         last_x_rows = 100
         like_results = model.historical_forecasts(series=test_series, 
             past_covariates=past_covariates,
@@ -191,17 +200,15 @@ def eval_model(plot_tf, test_series, output_chunk, model, past_covariates=None, 
         test_series = test_series[-last_x_rows:]
         like_results = like_results[-last_x_rows:]   
         
-       
-        
         plt.figure(figsize=(12, 6))
         test_series.plot(label='actual', color='black')
         like_results.plot(low_quantile=0.2, high_quantile=0.8, label="20-80th percentiles", color='green')
         forecast_results.plot(label='backtest (n=10)', color='red')
         plt.show()
 
-    print(f"RMSE: {e_rmse}")
-    print(f"Total {total}  Correct {correct}  Percent {perf}")
-    print(" ")
+        print(f"RMSE: {e_rmse}")
+        print(f"Total {total}  Correct {correct}  Percent {perf}")
+        print(" ")
 
     return e_rmse, total, correct, perf
 
@@ -234,13 +241,13 @@ def main():
     oos_data = data.drop(columns=['outputC'])
     data = data.drop(columns=['outputC'])
     
-    oos_data = data.drop(columns=drop_cols)
-    data = data.drop(columns=drop_cols)
+    #oos_data = data.drop(columns=drop_cols)
+    #data = data.drop(columns=drop_cols)
     
     feature_columns = list(data.columns[:-1])
     
     target_column = 'output'  # Replace with your actual target column name
-    input_chunk_length = 3
+    base_input_chunk_length = 3
     output_chunk_length = 1
     n_epochs = 100
     num_stacks = 3
@@ -254,41 +261,38 @@ def main():
     X_train, X_test, y_train, y_test, scaler = process_train_test_data(data, feature_columns, target_column, test_split)
     X_oos, y_oos, ooos_scaler =  process_oos_data(oos_data, feature_columns, target_column)
     
+    print("Training models...")
     
-    #print("X_train shape: ", X_train.all_values().shape)
-    #print("X_test shape: ", X_test.all_values().shape)
-    #print("y_train shape: ", y_train.all_values().shape)
-    #print("y_test shape: ", y_test.all_values().shape)
+    model_results = []
     
-    
-    print("Training model...")
-    #model_beats = build_NBeats(input_chunk_length, output_chunk_length, 
-    #        n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
-    #        patience_val=10, min_delta_val=0.005)
-    
-    model_hits = build_NHits(input_chunk_length, output_chunk_length, 
-            n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
-            patience_val=10, min_delta_val=0.005)
+    for i in range(0, 61, 2):
+        
+        input_chunk_length = base_input_chunk_length + i
 
-    model_hits.fit(series=y_train)
-    eval_model(False, y_test, output_chunk_length, model_hits)
+        model_beats = build_NBeats(input_chunk_length, output_chunk_length, 
+                n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
+                patience_val=10, min_delta_val=0.005)
+        
+        model_hits = build_NHits(input_chunk_length, output_chunk_length, 
+                n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
+                patience_val=10, min_delta_val=0.005)    
+                        
+        
+        model_beats.fit(series=y_train)
+        e_rmse_b, total_b, correct_b, perf_b = eval_model(False, y_test, output_chunk_length, model_beats)
+
+
+        model_hits.fit(series=y_train)
+        e_rmse_h, total_h, correct_h, perf_h = eval_model(False, y_test, output_chunk_length, model_hits)
     
-    #y_train, y_test, X_train, X_test,
-    #model_hits.fit(series=y_train, val_series=y_test, 
-    #          past_covariates=X_train, val_past_covariates=X_test)
-    
-    #eval_model(y_test, model_hits, X_test)
-    
-    
-    #print("Making predictions...")
-    #predictions_hits = model_hits.predict(output_chunk_length-1, series=y_test, past_covariates=X_test, predict_likelihood_parameters=True)
-    
-    #actual_values = scaler.inverse_transform(y_test).values()
-    #predicted_values = scaler.inverse_transform(predictions).values()
-    
-    #print("Plotting results...")
-    #plot_results(y_test, predictions_hits, 250)
-    #plot_results_m(y_test, predictions_hits, predictions_hits2, 100)
+        output = [input_chunk_length, output_chunk_length, e_rmse_b, total_b, correct_b, perf_b, e_rmse_h, total_h, correct_h, perf_h]
+        model_results.append(output)
+        
+    e_perf = pd.DataFrame(model_results)        
+    e_perf.columns = ["In Chunk", "Out Chunk", "RMSE B", "Total B", "Correct B", "Perf B", "RMSE H", "Total H", "Correct H", "Perf H"]        
+
+    print(e_perf)
+    print(" ")
 
 if __name__ == "__main__":
     main()
