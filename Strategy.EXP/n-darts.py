@@ -36,13 +36,14 @@ def plot_results_m(actuals, predictions_h, predictions_b, last_x_rows=100):
     
     predictions_h = predictions_h[-last_x_rows:]
     predictions_b = predictions_b[-last_x_rows:]
+    
     actuals = actuals[-last_x_rows:]   
     
     plt.figure(figsize=(12, 6))
-    #plt.plot(actuals, label='Actual')
+    plt.plot(actuals, label='Actual')
     #plt.plot(predictions, label='Predicted')
     actuals.plot(label='Actual')    
-    predictions_h.plot(label='Predicted', color='red')
+    #predictions_h.plot(label='Predicted', color='red')
     predictions_b.plot(label='Predicted', color='blue')
 
     plt.xlabel('Time')
@@ -59,9 +60,9 @@ def plot_results_s(actuals, predictions, last_x_rows=100):
     actuals = actuals[-last_x_rows:]   
     
     plt.figure(figsize=(12, 6))
-    #plt.plot(actuals, label='Actual')
+    plt.plot(actuals, label='Actual')
     #plt.plot(predictions, label='Predicted')
-    actuals.plot(label='Actual')    
+    #actuals.plot(label='Actual')    
     predictions.plot(label='Predicted')
 
     plt.xlabel('Time')
@@ -175,11 +176,13 @@ def train_and_save_model(train_target, val_target, train_covariates, val_covaria
 # Main function to run the entire script
 def main():
     
-    #file_path = "data/buildSeqInd_Lucky13_5M_ALL.csv"
-    file_path = "data/Fractal_ALL_5M_orig.csv"
-    
+    file_path = "data/buildSeqInd_Lucky13_5M_ALL.csv"
+    #file_path = "data/Fractal_ALL_5M_orig.csv"
     #file_path="data/ReFried_5M_ALL.csv"
+
+    #file_path = 'data/buildSeqInd_Lucky13_F.csv'
     data = pd.read_csv(file_path)
+    #data = data_o[['SDKC9', 'ATR3', 'STOK1', 'SDKC91', 'ATR21', 'output']]
     
     drop_cols = [
         #'STOK1',
@@ -198,7 +201,7 @@ def main():
     ]
 
 
-    #data = data.drop(columns=['outputC'])
+    data = data.drop(columns=['outputC'])
     #data = data.drop(columns=drop_cols)
     feature_columns = list(data.columns[:-1])
     
@@ -240,8 +243,10 @@ def main():
     #predicted_values = scaler.inverse_transform(predictions).values()
     
     print("Plotting results...")
-    #plot_results(y_test, predictions, 250)
-    plot_results_m(y_test, predictions_h, predictions_b, 100)
+    plot_results_s(y_test, predictions_h, 250)
+    plot_results_s(y_test, predictions_b, 250)
+    
+    #plot_results_m(y_test, predictions_h, predictions_b, 100)
 
 if __name__ == "__main__":
     main()

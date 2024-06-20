@@ -14,53 +14,54 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from models.wrapped_models import TunableCatBoostRegressor, TunableLGBMRegressor, TunableXGBRegressor
 
 
-def highest_lowest_correlations_over_windows(df, window_size, target_col):
-    highest_correlations = {}
-    lowest_correlations = {}
-
-    # Initialize dictionaries with empty lists for each feature
+# Function to calculate correlations over parts and summarize them
+def calculate_correlation_summary(df, num_parts, target_col):
+    part_size = len(df) // num_parts
     features = df.columns.drop(target_col)
-    for feature in features:
-        highest_correlations[feature] = []
-        lowest_correlations[feature] = []
-
-    # Calculate rolling correlations
-    for start in range(0, len(df) - window_size + 1):
-        window_df = df.iloc[start:start + window_size]
-        corr_matrix = window_df.corr()
-        target_corr = corr_matrix[target_col].drop(target_col)
-
-        for feature in features:
-            corr_value = target_corr[feature]
-            highest_correlations[feature].append(corr_value)
-            lowest_correlations[feature].append(corr_value)
-            
-            print(f"Feature {feature}  Corr {corr_value}")
-
-    # Find highest and lowest correlation for each feature
-    highest_lowest = {
+    
+    correlation_summary = {
         'Feature': [],
         'Highest Correlation': [],
-        'Lowest Correlation': []
+        'Lowest Correlation': [],
+        'Mean Correlation': [],
+        'Std Correlation': []
     }
+    
     for feature in features:
-        highest_lowest['Feature'].append(feature)
-        highest_lowest['Highest Correlation'].append(max(highest_correlations[feature]))
-        highest_lowest['Lowest Correlation'].append(min(lowest_correlations[feature]))
-
-    return pd.DataFrame(highest_lowest)
+        correlations = []
+        
+        for i in range(num_parts):
+            part_df = df.iloc[i * part_size:(i + 1) * part_size]
+            corr_matrix = part_df.corr()
+            corr_value = corr_matrix.at[feature, target_col]
+            correlations.append(corr_value)
+        
+        print(f"Correlations for {feature}: {correlations}")
+        
+        correlation_summary['Feature'].append(feature)
+        correlation_summary['Highest Correlation'].append(max(correlations))
+        correlation_summary['Lowest Correlation'].append(min(correlations))
+        correlation_summary['Mean Correlation'].append(np.mean(correlations))
+        correlation_summary['Std Correlation'].append(np.std(correlations))
+    
+    return pd.DataFrame(correlation_summary)
 
 
 #file_loaded = pd.read_csv("data/Fractal_ALL_5M_orig.csv")
-
-file_loaded = pd.read_csv("data/CleanReFried_5M_ALL.csv")
+#file_loaded = pd.read_csv("data/CleanReFried_5M_ALL.csv")
 #file_loaded = file_loaded.drop(columns=['outputC'])
 
 #file_loaded = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+file_loaded = pd.read_csv('data/buildSeqInd_Lucky13_F.csv')
 #file_loaded = file_loaded.drop(columns=['outputC'])
 
-#file_loaded = pd.read_csv("data/IND_LSTM_ALL.csv")
+#file_loaded = pd.read_csv('data/Ind_F.csv')
 file_loaded = file_loaded.drop(columns=['outputC'])
+
+
+#file_loaded = pd.read_csv("data/IND_LSTM_ALL.csv")
+#file_loaded = file_loaded.drop(columns=['outputC'])
+
 
 feature_columns = list(file_loaded.columns[:-1])
 num_columns = len(file_loaded.axes[1]) 
@@ -70,10 +71,10 @@ y = file_loaded['output'].values
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-window_size = 25000
+df = file_loaded
+num_parts = 10
 target_col = 'output'
-highest_lowest_correlations = highest_lowest_correlations_over_windows(file_loaded, window_size, target_col)
-
+correlation_summary_df = calculate_correlation_summary(df, num_parts, target_col)
 
 params = TunableXGBRegressor().param_set()
 
@@ -119,7 +120,9 @@ print(f"Selected features: {X.columns[select.get_support()]}")
 print("")
 
 print("Correlations")
-print(highest_lowest_correlations)
+print(correlation_summary_df)
+correlation_summary_df.to_csv("correlation_summary.csv")
+
 print("")
 print("Feature Importances")
 feature_importance = post_sel.feature_importances_
@@ -157,5 +160,10 @@ pos = np.arange(sorted_idx.shape[0]) + 0.5
 for ix in pi_result.importances_mean.argsort()[::-1]:
     print(f"{list(file_loaded.columns)[ix]} {pi_result.importances_mean[ix]}  {pi_result.importances_std[ix]}")
 
-print(" ")
+
+
+
+
+
+
 

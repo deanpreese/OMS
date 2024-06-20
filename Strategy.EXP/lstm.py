@@ -11,8 +11,8 @@ from tensorflow.keras.regularizers import l2
 from tensorflow.keras.metrics import MeanSquaredError, BinaryCrossentropy, BinaryAccuracy, AUC  
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
-from xgboost import XGBRegressor
-from lightgbm import LGBMRegressor
+#from xgboost import XGBRegressor
+#from lightgbm import LGBMRegressor
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
@@ -33,6 +33,7 @@ def create_sequences(data_in, seq_length_in):
 def normalize_sequences(sequences_in):
     print("normalize_sequences")
     scalers_out = {}
+    
     for i in range(sequences_in.shape[0]):
         #scalers_out[i] = MinMaxScaler((-1,1))
         #scalers_out[i] = MinMaxScaler((0,1))
@@ -183,8 +184,8 @@ def build_model(input_dim,  lay1, lay2, lay3, sequence_length):
     x = BatchNormalization()(x)
     x = Dropout(dropout_rate)(x)
         
-    x = Dense(1, activation='tanh')(x)
-    #x = Dense(1)(x)
+    #x = Dense(1, activation='tanh')(x)
+    x = Dense(1)(x)
     return Model(input_layer, x)
 
 def build_modelX(input_dim,  lay1, lay2, lay3, sequence_length):
@@ -210,32 +211,42 @@ def build_modelX(input_dim,  lay1, lay2, lay3, sequence_length):
 
 
 # -----------------------------------------------------------------------
+data = pd.read_csv('data/buildSeqInd_Lucky13_F.csv')
+#list80 = ['SDKC9', 'ATR3', 'STOK1', 'SDKC91', 'ATR21', 'output']
+#data = data[list80]
+
+#data = pd.read_csv('data/Ind_F.csv')
 #data_loaded = pd.read_csv('data/sm13_3070.csv')
-data = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
+#data = pd.read_csv('data/buildSeqInd_Lucky13_5M_ALL.csv')
 
-#data = data.drop(columns=['STOK1'])
-#data = data.drop(columns=['RSI'])
-#data = data.drop(columns=['ATR2'])
-data = data.drop(columns=['ATR21'])
-#data = data.drop(columns=['ATR3'])
-data = data.drop(columns=['ATR31']) 
-data = data.drop(columns=['ATR32']) 
-data = data.drop(columns=['ATR34'])   
-#data = data.drop(columns=['ROC'])     
-#data = data.drop(columns=['SDKC9'])   
-data = data.drop(columns=['SDKC91'])  
-data = data.drop(columns=['SDBB91'])  
-#data = data.drop(columns=['SDLR310'])
+drop_cols = [
+        #'STOK1',
+        #'RSI',
+        #'ATR2',
+        'ATR21',
+        #'ATR3',
+        'ATR31', 
+        'ATR32',
+        'ATR34',   
+        #'ROC',     
+        #'SDKC9',   
+        'SDKC91',  
+        'SDBB91',  
+        #'SDLR310'
+    ]
 
+
+
+#data = data.drop(columns=drop_cols)
 data = data.drop(columns=['outputC'])
-data = data.drop(columns=['outputX'])
+#data = data.drop(columns=['outputX'])
 
-time_steps = 7
+time_steps = 50
 learning_rate=0.0001
 beta_1=0.5
-lay1 = 16
+lay1 = 128
 lay2 = 128
-lay3 = 32
+lay3 = 128
 epocs = 100
 batch = 32
 
@@ -252,14 +263,12 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, beta_1=beta_1)
 #c_metrics = ['BinaryAccuracy', 'AUC', 'MeanSquaredError',]
 #t_model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=c_metrics )
 
-
 r_metrics = ['MeanSquaredError','BinaryAccuracy', 'AUC']
 t_model.compile(optimizer=optimizer, loss='mse',metrics=r_metrics)
 
 t_model.summary()
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 history_out = t_model.fit(X_train_out, y_train_out, validation_data=(X_test, y_test), epochs=epocs, batch_size=batch, callbacks=[early_stopping])
-
 
 
 eval_results(history_out, t_model, X_test, y_test, scalers_out, time_steps, feature_dim_out)
