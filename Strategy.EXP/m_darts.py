@@ -243,7 +243,7 @@ def main():
     
     target_column = 'output'  # Replace with your actual target column name
     base_input_chunk_length = 3
-    output_chunk_length = 1
+    base_output_chunk_length = 1
     n_epochs = 100
     num_stacks = 3
     num_blocks = 2
@@ -260,29 +260,31 @@ def main():
     
     model_results = []
     
-    for i in range(0, 61, 2):
-        
-        input_chunk_length = base_input_chunk_length + i
+    for out_chunk in range(0, 15, 1):
+        for in_chunk in range(0, 61, 5):
+            
+            input_chunk_length = base_input_chunk_length + in_chunk
+            output_chunk_length = base_output_chunk_length + out_chunk
 
-        model_beats = build_NBeats(input_chunk_length, output_chunk_length, 
-                n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
-                patience_val=10, min_delta_val=0.005)
-        
-        model_hits = build_NHits(input_chunk_length, output_chunk_length, 
-                n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
-                patience_val=10, min_delta_val=0.005)    
-                        
-        
-        model_beats.fit(series=y_train)
-        e_rmse_b, total_b, correct_b, perf_b = eval_model(False, y_test, output_chunk_length, model_beats)
+            model_beats = build_NBeats(input_chunk_length, output_chunk_length, 
+                    n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
+                    patience_val=10, min_delta_val=0.005)
+            
+            model_hits = build_NHits(input_chunk_length, output_chunk_length, 
+                    n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
+                    patience_val=10, min_delta_val=0.005)    
+                            
+            
+            model_beats.fit(series=y_train)
+            e_rmse_b, total_b, correct_b, perf_b = eval_model(False, y_test, output_chunk_length, model_beats)
 
 
-        model_hits.fit(series=y_train)
-        e_rmse_h, total_h, correct_h, perf_h = eval_model(False, y_test, output_chunk_length, model_hits)
-    
-        output = [input_chunk_length, output_chunk_length, e_rmse_b, total_b, correct_b, perf_b, e_rmse_h, total_h, correct_h, perf_h]
-        model_results.append(output)
+            model_hits.fit(series=y_train)
+            e_rmse_h, total_h, correct_h, perf_h = eval_model(False, y_test, output_chunk_length, model_hits)
         
+            output = [input_chunk_length, output_chunk_length, e_rmse_b, total_b, correct_b, perf_b, e_rmse_h, total_h, correct_h, perf_h]
+            model_results.append(output)
+            
     e_perf = pd.DataFrame(model_results)        
     e_perf.columns = ["In Chunk", "Out Chunk", "RMSE B", "Total B", "Correct B", "Perf B", "RMSE H", "Total H", "Correct H", "Perf H"]        
 
