@@ -266,6 +266,10 @@ def main():
             input_chunk_length = base_input_chunk_length + in_chunk
             output_chunk_length = base_output_chunk_length + out_chunk
 
+            print(" ")
+            print(f"Runnng Models with Input Chunk: {input_chunk_length}  Output Chunk: {output_chunk_length}")
+            print(" ")
+
             model_beats = build_NBeats(input_chunk_length, output_chunk_length, 
                     n_epochs, num_stacks, num_blocks, num_layers, layer_widths, 
                     patience_val=10, min_delta_val=0.005)
